@@ -56,10 +56,15 @@ class AcaiaScale extends ChangeNotifier {
   late Timer _heartBeatTimer;
   final flutterReactiveBle = FlutterReactiveBle();
 
+  late StreamSubscription<ConnectionStateUpdate> _deviceListener;
+
+  late StreamSubscription<List<int>> _characteristicsSubscription;
+
   AcaiaScale(this.device) {
     scaleService = getIt<ScaleService>();
-
-    flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    log("Connect to Acaia");
+    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
+        (connectionState) {
       // Handle connection state updates
       log('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
@@ -199,22 +204,28 @@ class AcaiaScale extends ChangeNotifier {
   }
 
   void _onStateChange(DeviceConnectionState state) async {
-    log('State changed to ' + state.toString());
+    log('SCALE State changed to ' + state.toString());
     _state = state;
 
     switch (state) {
+      case DeviceConnectionState.connecting:
+        log('Connecting');
+        break;
+
       case DeviceConnectionState.connected:
+        log('Connected');
         // await device.discoverAllServicesAndCharacteristics();
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID,
             characteristicId: CharateristicUUID,
             deviceId: device.id);
 
-        flutterReactiveBle
+        // flutterReactiveBle
+        //     .subscribeToCharacteristic(characteristic)
+        //     .listen(_notificationCallback);
+        _characteristicsSubscription = flutterReactiveBle
             .subscribeToCharacteristic(characteristic)
-            .listen(_notificationCallback);
-        flutterReactiveBle.subscribeToCharacteristic(characteristic).listen(
-            (data) {
+            .listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
@@ -233,7 +244,9 @@ class AcaiaScale extends ChangeNotifier {
       case DeviceConnectionState.disconnected:
         log('Acaia Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
+        _characteristicsSubscription?.cancel();
         _heartBeatTimer?.cancel();
+        _deviceListener?.cancel();
         notifyListeners();
         return;
       default:

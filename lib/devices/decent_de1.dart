@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:typed_data';
@@ -143,6 +144,8 @@ class DE1 extends ChangeNotifier {
 
   bool mmrAvailable = true;
 
+  late StreamSubscription<ConnectionStateUpdate> _connectToDeviceSubscription;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -153,7 +156,9 @@ class DE1 extends ChangeNotifier {
     // });
     // device.connect();
 
-    flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _connectToDeviceSubscription = flutterReactiveBle
+        .connectToDevice(id: device.id)
+        .listen((connectionState) {
       // Handle connection state updates
       log('DE1 Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
@@ -390,6 +395,7 @@ class DE1 extends ChangeNotifier {
         return;
       case DeviceConnectionState.disconnected:
         log('de1 disconnected. Destroying');
+        _connectToDeviceSubscription.cancel;
         notifyListeners();
         return;
       default:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class ShotState {
   ShotState(
@@ -50,6 +51,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setShot(ShotState shot) {
     _state.shot = shot;
+    log('Shot' + shot.headTemp.toString());
     notifyListeners();
   }
 

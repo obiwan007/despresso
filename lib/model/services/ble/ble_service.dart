@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 // import 'dart:html';
+// import 'dart:html';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
@@ -27,14 +28,15 @@ class BLEService extends ChangeNotifier {
 
     // bleManager.observeBluetoothState().listen(btStateListener);
     // startScanning();
-    _startScan();
+    startScan();
   }
 
   // void btStateListener(BluetoothState btState) {
   //   print(btState);
   // }
 
-  void _startScan() {
+  void startScan() {
+    _devicesList.clear();
     _subscription?.cancel();
     _subscription = flutterReactiveBle.scanForDevices(
         withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
@@ -68,31 +70,41 @@ class BLEService extends ChangeNotifier {
       log('Removing device');
       _devicesList.remove(device);
       // bleManager.startPeripheralScan().listen(deviceScanListener);
-      _startScan();
+      startScan();
     }
   }
 
   void _addDeviceTolist(final DiscoveredDevice device) async {
-    if (!_devicesList.map((e) => e.id).contains(device.id)) {
-      if (device.name != null && device.name.startsWith('ACAIA')) {
-        log('Creating Acaia Scale!');
-        AcaiaScale(device).addListener(() => _checkdevice(device));
+    if (!device.name.isEmpty) {
+      log('Device: ' + device.name);
+      if (!_devicesList.map((e) => e.id).contains(device.id)) {
+        if (device.name != null && device.name.startsWith('ACAIA')) {
+          log('Creating Acaia Scale!');
+          AcaiaScale(device).addListener(() => _checkdevice(device));
+        }
+        if (device.name != null && device.name.startsWith('DE1')) {
+          log('Creating DE1 machine!');
+          DE1(device).addListener(() => _checkdevice(device));
+        }
+        _devicesList.add(device);
+        notifyListeners();
       }
-      if (device.name != null && device.name.startsWith('DE1')) {
-        log('Creating DE1 machine!');
-        DE1(device).addListener(() => _checkdevice(device));
-      }
-      _devicesList.add(device);
-      notifyListeners();
     }
   }
 
   Future<void> _checkPermissions() async {
     // if (Permission.location.serviceStatus.isEnabled == true){
+    // var status2 = await Permission.bluetooth.request();
+    // var status1 = await Permission.location.request();
 
-    var status1 = await Permission.location.request();
-    var status2 = await Permission.bluetooth.request();
-    if (status1.isGranted) {
+// You can request multiple permissions at once.
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+    ].request();
+
+    if (!statuses.values.any((element) => element.isDenied)) {
       return;
     }
     return Future.error(Exception('Location permission not granted'));

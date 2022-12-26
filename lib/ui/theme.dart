@@ -55,12 +55,12 @@ class TextStyles {
       color: Colors.primaryColor,
       fontFamily: 'Poppins',
       fontWeight: FontWeight.w300,
-      fontSize: 28.0);
+      fontSize: 20.0);
 
   static const TextStyle tabSecondary = TextStyle(
       color: Colors.primaryColor,
       fontFamily: 'Poppins',
-      fontWeight: FontWeight.w300,
+      fontWeight: FontWeight.w100,
       fontSize: 20.0);
 
   static const TextStyle tabTertiary = TextStyle(

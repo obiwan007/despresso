@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'ui/homepage.dart';
+import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
 
 void main() {
@@ -19,7 +19,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp(){
+  MyApp() {
     setupServices();
   }
 
@@ -29,9 +29,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'despresso',
       theme: ThemeData(
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        brightness: Brightness.light,
       ),
-      home: HomePage(title: 'despresso'),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      home: LandingPage(title: 'despresso'),
     );
   }
 }

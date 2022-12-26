@@ -10,12 +10,12 @@ import 'package:despresso/ui/screens/machine_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
-class CoffeeScreen extends StatefulWidget {
+class EspressoScreen extends StatefulWidget {
   @override
-  _CoffeeScreenState createState() => _CoffeeScreenState();
+  _EspressoScreenState createState() => _EspressoScreenState();
 }
 
-class _CoffeeScreenState extends State<CoffeeScreen> {
+class _EspressoScreenState extends State<EspressoScreen> {
   late CoffeeService coffeeSelectionService;
   late EspressoMachineService machineService;
   late ProfileService profileService;
@@ -26,7 +26,9 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     machineService.addListener(() {
-      setState(() {});
+      setState(() {
+        updateCoffee();
+      });
     });
     profileService = getIt<ProfileService>();
     profileService.addListener(() {
@@ -43,10 +45,13 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
 
   void updateCoffee() => setState(() {
         var shot = machineService.state.shot;
-        if (machineService.state.coffeeState == EspressoMachineState.idle) {
-          inShot = false;
+        if (shot == null) {
           return;
         }
+        // if (machineService.state.coffeeState == EspressoMachineState.idle) {
+        //   inShot = false;
+        //   return;
+        // }
         if (!inShot) {
           inShot = true;
           dataPoints.clear();
@@ -76,6 +81,15 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         id: 'Flow',
         domainFn: (ShotState point, _) => point.sampleTime,
         measureFn: (ShotState point, _) => point.groupFlow,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: dataPoints,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'Temp',
+        domainFn: (ShotState point, _) => point.sampleTime,
+        measureFn: (ShotState point, _) => point.headTemp,
         colorFn: (_, __) =>
             charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
         strokeWidthPxFn: (_, __) => 3,
@@ -143,7 +157,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         children: [
           Row(
             children: [
-              Text('State: ', style: theme.TextStyles.tabSecondary),
+              const Text('State: ', style: theme.TextStyles.tabSecondary),
               Text(
                   machineService.state.coffeeState
                       .toString()
@@ -239,85 +253,17 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: theme.Colors.backgroundColor,
-          title: Row(
-            children: [
-              Text('Coffee', style: theme.TextStyles.tabSecondary),
-              Container(
-                width: 30,
-              ),
-              Flexible(
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                        theme.Colors.primaryColor),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      pressAttention
-                          ? theme.Colors.goodColor
-                          : theme.Colors.badColor,
-                    ),
-                  ),
-                  onPressed: () =>
-                      setState(() => pressAttention = !pressAttention),
-                  child: pressAttention ? Text('Start') : Text('Stop'),
-                ),
-              ),
-            ],
-          ),
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: BubbleTabIndicator(
-              indicatorHeight: 25.0,
-              indicatorColor: theme.Colors.tabColor,
-              tabBarIndicatorSize: TabBarIndicatorSize.tab,
-            ),
-            tabs: [
-              Tab(
-                child: Text(
-                  'Live',
-                  style: theme.TextStyles.tabLabel,
-                ),
-              ),
-              Tab(
-                child: Text(
-                  'Settings',
-                  style: theme.TextStyles.tabLabel,
-                ),
-              ),
-              Tab(
-                child: Text(
-                  'History2',
-                  style: theme.TextStyles.tabLabel,
-                ),
-              ),
-            ],
-          ),
         ),
-        body: TabBarView(
+        body: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: theme.Colors.screenBackground,
-              ),
+            Expanded(
+              flex: 8, // takes 30% of available width
+              child: _buildGraph(),
+            ),
+            Expanded(
+              flex: 2, // takes 30% of available width
               child: Column(
-                children: <Widget>[
-                  _buildLiveInsights(),
-                  theme.Helper.horizontalBorder(),
-                  _buildScaleInsight(),
-                  _buildGraph(),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: theme.Colors.screenBackground,
-              ),
-              child: CoffeeSelectionTab(),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: theme.Colors.screenBackground,
-              ),
-              child: CoffeeSelectionTab(),
+                  children: [_buildLiveInsights(), _buildScaleInsight()]),
             ),
           ],
         ),
