@@ -22,10 +22,11 @@ class MachineState {
   String subState = "";
 }
 
-enum EspressoMachineState { idle, espresso, water, steam }
+enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected }
 
 class EspressoMachineService extends ChangeNotifier {
-  final MachineState _state = MachineState(null, EspressoMachineState.idle);
+  final MachineState _state =
+      MachineState(null, EspressoMachineState.disconnected);
 
   EspressoMachineService();
 

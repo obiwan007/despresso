@@ -196,6 +196,16 @@ class DE1 extends ChangeNotifier {
     // });
   }
 
+  switchOn() {
+    write(Endpoint.RequestedState, Uint8List.fromList([0x02]));
+    log('SwitchOn Requested');
+  }
+
+  switchOff() {
+    write(Endpoint.RequestedState, Uint8List.fromList([0x00]));
+    log('SwitchOff Requested');
+  }
+
   Future<List<int>> read(Endpoint e) {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID,
@@ -222,20 +232,22 @@ class DE1 extends ChangeNotifier {
     var state = value.getUint8(0);
     var subState = value.getUint8(1);
 
-    log('DE1 is in state: ' +
-        states[state] +
-        ' substate: ' +
-        subStates[subState]);
+    log("DE1 is in state: ${states[state]} ${state} substate: ${subStates[subState]}");
+    service.setSubState(subStates[subState]);
 
     switch (state) {
+      case 0x00: // 4 Making espresso
+        service.setState(EspressoMachineState.sleep);
+        switchOn();
+        break;
       case 0x04: // 4 Making espresso
         service.setState(EspressoMachineState.espresso);
         break;
       case 0x05: // 5 Making steam
-        service.setState(EspressoMachineState.espresso);
+        service.setState(EspressoMachineState.steam);
         break;
       case 0x06: // 6 Making hot water
-        service.setState(EspressoMachineState.espresso);
+        service.setState(EspressoMachineState.water);
         break;
       default:
         service.setState(EspressoMachineState.idle);
@@ -309,7 +321,9 @@ class DE1 extends ChangeNotifier {
         setGroupPressure,
         setGroupFlow,
         frameNumber,
-        steamTemp));
+        steamTemp,
+        0,
+        ""));
   }
 
   void parseShotSetting(ByteData r) {

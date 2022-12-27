@@ -93,8 +93,12 @@ class ShotState {
       this.setGroupPressure,
       this.setGroupFlow,
       this.frameNumber,
-      this.steamTemp);
+      this.steamTemp,
+      this.weight,
+      this.subState);
 
+  String subState;
+  double weight;
   double sampleTime;
   double sampleTimeCorrected = 0;
   double groupPressure;

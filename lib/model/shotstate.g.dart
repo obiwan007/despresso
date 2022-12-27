@@ -33,9 +33,13 @@ ShotState _$ShotStateFromJson(Map<String, dynamic> json) => ShotState(
       (json['setGroupFlow'] as num).toDouble(),
       json['frameNumber'] as int,
       json['steamTemp'] as int,
+      (json['weight'] as num).toDouble(),
+      json['subState'] as String,
     );
 
 Map<String, dynamic> _$ShotStateToJson(ShotState instance) => <String, dynamic>{
+      'subState': instance.subState,
+      'weight': instance.weight,
       'sampleTime': instance.sampleTime,
       'sampleTimeCorrected': instance.sampleTimeCorrected,
       'groupPressure': instance.groupPressure,
