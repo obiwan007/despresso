@@ -10,6 +10,8 @@ import 'package:despresso/ui/screens/machine_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
+import '../../model/shotstate.dart';
+
 class CoffeeScreen extends StatefulWidget {
   @override
   _CoffeeScreenState createState() => _CoffeeScreenState();
@@ -50,11 +52,11 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         if (!inShot) {
           inShot = true;
           dataPoints.clear();
-          baseTime = shot!.sampleTime;
+          baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
         }
 
         shot!.sampleTime = shot!.sampleTime - baseTime;
-        dataPoints.add(shot);
+        dataPoints.add(shot!);
       });
 
   bool inShot = false;

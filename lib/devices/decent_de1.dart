@@ -7,6 +7,8 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+
+import '../model/shotstate.dart';
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 enum Endpoint {
@@ -293,8 +295,11 @@ class DE1 extends ChangeNotifier {
     var frameNumber = r.getUint8(17);
     var steamTemp = r.getUint8(18);
 
+    sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    // log('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
     service.setShot(ShotState(
         sampleTime,
+        0,
         groupPressure,
         groupFlow,
         mixTemp,

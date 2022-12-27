@@ -1,38 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:developer';
-
-class ShotState {
-  ShotState(
-      this.sampleTime,
-      this.groupPressure,
-      this.groupFlow,
-      this.mixTemp,
-      this.headTemp,
-      this.setMixTemp,
-      this.setHeadTemp,
-      this.setGroupPressure,
-      this.setGroupFlow,
-      this.frameNumber,
-      this.steamTemp);
-
-  double sampleTime;
-  double groupPressure;
-  double groupFlow;
-  double mixTemp;
-  double headTemp;
-  double setMixTemp;
-  double setHeadTemp;
-  double setGroupPressure;
-  double setGroupFlow;
-  int frameNumber;
-  int steamTemp;
-}
+import '../../shotstate.dart';
 
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
 
-  int waterLevel;
-  int waterLimit;
+  int waterLevel = 0;
+  int waterLimit = 0;
+
+  int getLevelPercent() {
+    var l = waterLevel - waterLimit;
+    return (l * 100 / 8300).toInt();
+  }
 }
 
 class MachineState {
@@ -40,6 +19,7 @@ class MachineState {
   ShotState? shot;
   WaterLevel? water;
   EspressoMachineState coffeeState;
+  String subState = "";
 }
 
 enum EspressoMachineState { idle, espresso, water, steam }
@@ -51,7 +31,6 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setShot(ShotState shot) {
     _state.shot = shot;
-    log('Shot' + shot.headTemp.toString());
     notifyListeners();
   }
 
@@ -62,6 +41,11 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setState(EspressoMachineState state) {
     _state.coffeeState = state;
+    notifyListeners();
+  }
+
+  void setSubState(String state) {
+    _state.subState = state;
     notifyListeners();
   }
 

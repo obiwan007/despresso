@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -10,6 +12,8 @@ import 'package:despresso/ui/screens/machine_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
+import '../../model/shotstate.dart';
+
 class EspressoScreen extends StatefulWidget {
   @override
   _EspressoScreenState createState() => _EspressoScreenState();
@@ -20,6 +24,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
   late EspressoMachineService machineService;
   late ProfileService profileService;
   late ScaleService scaleService;
+
+  ShotList shotList = ShotList([]);
 
   @override
   void initState() {
@@ -41,59 +47,74 @@ class _EspressoScreenState extends State<EspressoScreen> {
     });
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
+    shotList.load("testshot.json");
   }
 
   void updateCoffee() => setState(() {
         var shot = machineService.state.shot;
         if (shot == null) {
+          log('Shot null');
           return;
         }
-        // if (machineService.state.coffeeState == EspressoMachineState.idle) {
-        //   inShot = false;
-        //   return;
-        // }
+        if (machineService.state.coffeeState == EspressoMachineState.idle) {
+          inShot = false;
+          if (shotList.entries.isNotEmpty &&
+              shotList.saving == false &&
+              shotList.saved == false) {
+            shotFinished();
+          }
+
+          return;
+        }
         if (!inShot) {
+          log('Not Idle and not in Shot');
           inShot = true;
-          dataPoints.clear();
-          baseTime = shot!.sampleTime;
+          shotList.clear();
+          baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+          log("basetime $baseTime");
         }
 
-        shot!.sampleTime = shot!.sampleTime - baseTime;
-        dataPoints.add(shot);
+        shot!.sampleTimeCorrected = shot.sampleTime - baseTime;
+        log("Sample ${shot!.sampleTimeCorrected} $baseTime");
+        shotList.add(shot);
       });
 
   bool inShot = false;
-  List<ShotState> dataPoints = [];
   double baseTime = 0;
+
+  shotFinished() async {
+    log("Save last shot");
+    await shotList.saveData("testshot.json");
+  }
 
   List<charts.Series<ShotState, double>> _createData() {
     return [
       charts.Series<ShotState, double>(
         id: 'Pressure',
-        domainFn: (ShotState point, _) => point.sampleTime,
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
         colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.backgroundColor),
+            charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: dataPoints,
+        data: shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'Flow',
-        domainFn: (ShotState point, _) => point.sampleTime,
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
         colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
+            charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: dataPoints,
+        data: shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'Temp',
-        domainFn: (ShotState point, _) => point.sampleTime,
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
         colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
+            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: dataPoints,
+        data: shotList.entries,
       ),
     ];
   }
@@ -168,44 +189,56 @@ class _EspressoScreenState extends State<EspressoScreen> {
           ),
           Row(
             children: [
-              Text('Pressure: ', style: theme.TextStyles.tabSecondary),
-              Text(
-                  machineService.state.shot!.groupPressure.toStringAsFixed(1) +
-                      ' bar',
+              const Text('Op: ', style: theme.TextStyles.tabSecondary),
+              Text(machineService.state.subState,
                   style: theme.TextStyles.tabPrimary),
             ],
           ),
           Row(
             children: [
-              Text('Flow: ', style: theme.TextStyles.tabSecondary),
+              const Text('Pressure: ', style: theme.TextStyles.tabSecondary),
               Text(
-                  machineService.state.shot!.groupFlow.toStringAsFixed(2) +
-                      ' ml/s',
+                  '${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar',
                   style: theme.TextStyles.tabPrimary),
             ],
           ),
           Row(
             children: [
-              Text('Mix Temp: ', style: theme.TextStyles.tabSecondary),
+              const Text('Flow: ', style: theme.TextStyles.tabSecondary),
               Text(
-                  machineService.state.shot!.mixTemp.toStringAsFixed(2) + ' °C',
+                  '${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s',
                   style: theme.TextStyles.tabPrimary),
             ],
           ),
           Row(
             children: [
-              Text('Head Temp: ', style: theme.TextStyles.tabSecondary),
+              const Text('Mix Temp: ', style: theme.TextStyles.tabSecondary),
               Text(
-                  machineService.state.shot!.headTemp.toStringAsFixed(2) +
-                      ' °C',
+                  '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C',
+                  style: theme.TextStyles.tabPrimary),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Head Temp: ', style: theme.TextStyles.tabSecondary),
+              Text(
+                  '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C',
+                  style: theme.TextStyles.tabPrimary),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Water: ', style: theme.TextStyles.tabSecondary),
+              Text(
+                  '${machineService.state.water?.getLevelPercent()}% / ${machineService.state.water?.waterLevel}',
                   style: theme.TextStyles.tabPrimary),
             ],
           ),
         ],
       );
     } else {
-      insights =
-          Text('Machine is not connected', style: theme.TextStyles.tabPrimary);
+      insights = const Text('Machine is not connected',
+          style: theme.TextStyles.tabPrimary);
     }
     return insights;
   }
@@ -213,7 +246,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Row _buildScaleInsight() {
     return Row(
       children: [
-        Spacer(),
+        const Spacer(),
         StreamBuilder<WeightMeassurement>(
           stream: scaleService.stream,
           initialData: WeightMeassurement(0, 0),
@@ -223,15 +256,16 @@ class _EspressoScreenState extends State<EspressoScreen> {
               children: <Widget>[
                 Row(
                   children: [
-                    Text('Weight: ', style: theme.TextStyles.tabSecondary),
-                    Text(snapshot.data!.weight.toStringAsFixed(2) + 'g',
+                    const Text('Weight: ',
+                        style: theme.TextStyles.tabSecondary),
+                    Text('${snapshot.data!.weight.toStringAsFixed(2)}g',
                         style: theme.TextStyles.tabSecondary),
                   ],
                 ),
                 Row(
                   children: [
-                    Text('Flow: ', style: theme.TextStyles.tabSecondary),
-                    Text(snapshot.data!.flow.toStringAsFixed(2) + 'g/s',
+                    const Text('Flow: ', style: theme.TextStyles.tabSecondary),
+                    Text('${snapshot.data!.flow.toStringAsFixed(2)}g/s',
                         style: theme.TextStyles.tabSecondary)
                   ],
                 ),
@@ -239,7 +273,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
             );
           },
         ),
-        Spacer(),
+        const Spacer(),
       ],
     );
   }

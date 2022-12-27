@@ -5,6 +5,8 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
+import '../../model/shotstate.dart';
+
 class WaterScreen extends StatefulWidget {
   @override
   _WaterScreenState createState() => _WaterScreenState();
