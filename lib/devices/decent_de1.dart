@@ -250,6 +250,12 @@ class DE1 extends ChangeNotifier {
       case 0x06: // 6 Making hot water
         service.setState(EspressoMachineState.water);
         break;
+      case 0x11: // 6 Water empty
+        service.setState(EspressoMachineState.refill);
+        break;
+      case 0x0f: // flush water in grouphead
+        service.setState(EspressoMachineState.flush);
+        break;
       default:
         service.setState(EspressoMachineState.idle);
         break;

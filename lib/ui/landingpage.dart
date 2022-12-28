@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
@@ -21,7 +22,8 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> {
+class _LandingPageState extends State<LandingPage>
+    with SingleTickerProviderStateMixin {
   bool available = false;
 
   late CoffeeService coffeeSelection;
@@ -29,28 +31,46 @@ class _LandingPageState extends State<LandingPage> {
   late EspressoMachineService machineService;
 
   late BLEService bleService;
+  late final _tabController =
+      TabController(length: 4, vsync: this, initialIndex: 1);
+
+  EspressoMachineState? lastState;
+
+  int selectedPage = 0;
 
   @override
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
-    coffeeSelection.addListener(() {
-      setState(() {});
-    });
+
+    machineService.addListener(updatedMachine);
 
     bleService = getIt<BLEService>();
 
     profileService = getIt<ProfileService>();
-    profileService.addListener(() {
-      setState(() {});
-    });
+    // profileService.addListener(() {
+    //   setState(() {});
+    // });
+    // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    //   log("Print after 5 seconds");
+    //   selectedPage++;
+    //   if (selectedPage > 2) selectedPage = 0;
+    //   _tabController.index = selectedPage;
+    // });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    machineService.removeListener(updatedMachine);
   }
 
   Widget _buildButton(child, onpress) {
     var color = theme.Colors.backgroundColor;
     return Container(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: TextButton(
           style: ButtonStyle(
             foregroundColor:
@@ -60,7 +80,7 @@ class _LandingPageState extends State<LandingPage> {
           onPressed: onpress,
           child: Container(
             height: 50,
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: child,
           ),
         ));
@@ -72,26 +92,26 @@ class _LandingPageState extends State<LandingPage> {
     var currentCoffee = coffeeSelection.currentCoffee;
     if (currentCoffee != null) {
       coffee = Row(children: [
-        Spacer(
+        const Spacer(
           flex: 2,
         ),
         Text(
           currentCoffee.roaster,
           style: theme.TextStyles.tabSecondary,
         ),
-        Spacer(
+        const Spacer(
           flex: 1,
         ),
         Text(
           currentCoffee.name,
           style: theme.TextStyles.tabSecondary,
         ),
-        Spacer(
+        const Spacer(
           flex: 2,
         ),
       ]);
     } else {
-      coffee = Text(
+      coffee = const Text(
         'No Coffee selected',
         style: theme.TextStyles.tabSecondary,
       );
@@ -114,30 +134,31 @@ class _LandingPageState extends State<LandingPage> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
-            bottom: const TabBar(
+            bottom: TabBar(
+              controller: _tabController,
               tabs: [
-                Tab(
+                const Tab(
                   icon: Icon(Icons.directions_car),
                   child: Text(
-                    'Espresso',
+                    "Espresso",
                     style: theme.TextStyles.tabLabel,
                   ),
                 ),
-                Tab(
+                const Tab(
                   icon: Icon(Icons.directions_transit),
                   child: Text(
                     'Steam',
                     style: theme.TextStyles.tabLabel,
                   ),
                 ),
-                Tab(
+                const Tab(
                   icon: Icon(Icons.directions_bike),
                   child: Text(
                     "Flush",
                     style: theme.TextStyles.tabLabel,
                   ),
                 ),
-                Tab(
+                const Tab(
                   icon: Icon(Icons.directions_bike),
                   child: Text(
                     'Water',
@@ -148,13 +169,14 @@ class _LandingPageState extends State<LandingPage> {
             ),
           ),
           body: TabBarView(
+            controller: _tabController,
             children: [
               Container(
                 child: EspressoScreen(),
               ),
-              Icon(Icons.directions_transit),
-              Icon(Icons.directions_bike),
-              Icon(Icons.directions_bike),
+              const Icon(Icons.coffee),
+              const Icon(Icons.directions_bike),
+              const Icon(Icons.directions_bike),
             ],
           ),
           drawer: Drawer(
@@ -214,17 +236,9 @@ class _LandingPageState extends State<LandingPage> {
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     machineService.de1?.switchOff();
                     // Then close the drawer
-
-                    const oneSec = Duration(seconds: 2);
-                    Timer.periodic(
-                      oneSec,
-                      (Timer timer) => setState(
-                        () {
-                          timer.cancel();
-                          SystemNavigator.pop();
-                        },
-                      ),
-                    );
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      SystemNavigator.pop();
+                    });
                   },
                 ),
               ],
@@ -243,5 +257,29 @@ class _LandingPageState extends State<LandingPage> {
           },
         ));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void updatedMachine() {
+    if (lastState != machineService.state.coffeeState) {
+      log("Machine state: ${machineService.state.coffeeState}");
+      lastState = machineService.state.coffeeState;
+      setState(() {
+        switch (lastState) {
+          case EspressoMachineState.espresso:
+            selectedPage = 0;
+            break;
+          case EspressoMachineState.steam:
+            selectedPage = 1;
+            break;
+          case EspressoMachineState.flush:
+            selectedPage = 2;
+            break;
+          case EspressoMachineState.water:
+            selectedPage = 3;
+            break;
+        }
+        _tabController.index = selectedPage;
+      });
+    }
   }
 }

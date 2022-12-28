@@ -15,7 +15,7 @@ part 'shotstate.g.dart';
 class ShotList {
   bool saving = false;
 
-  bool saved = false;
+  bool saved = true;
 
   ShotList(this.entries);
   List<ShotState> entries;

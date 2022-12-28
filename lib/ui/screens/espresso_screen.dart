@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:charts_flutter/flutter.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -30,35 +31,57 @@ class _EspressoScreenState extends State<EspressoScreen> {
   String lastSubstate = '';
 
   String subState = "";
+
+  bool refillAnounced = false;
   _EspressoScreenState() {
     shotList.load("testshot.json");
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // TODO: implement dispose
+    machineService.removeListener(updateMachine);
+    profileService.removeListener(updateProfile);
+    coffeeSelectionService.removeListener(updateCoffeeSelection);
+    log('Disposed espresso');
+  }
+
+  updateMachine() {
+    setState(() {
+      updateCoffee();
+    });
+  }
+
+  updateProfile() {
+    setState(() {});
+  }
+
+  updateCoffeeSelection() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
-    machineService.addListener(() {
-      setState(() {
-        updateCoffee();
-      });
-    });
+    machineService.addListener(updateMachine);
+
     profileService = getIt<ProfileService>();
-    profileService.addListener(() {
-      setState(() {});
-    });
+    profileService.addListener(updateProfile);
 
     coffeeSelectionService = getIt<CoffeeService>();
-    coffeeSelectionService.addListener(() {
-      setState(() {});
-    });
+    coffeeSelectionService.addListener(updateCoffeeSelection);
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
   }
 
   void updateCoffee() => setState(() {
+        checkForRefill();
         if (machineService.state.coffeeState == EspressoMachineState.sleep ||
             machineService.state.coffeeState ==
-                EspressoMachineState.disconnected) {
+                EspressoMachineState.disconnected ||
+            machineService.state.coffeeState == EspressoMachineState.refill) {
           return;
         }
         var shot = machineService.state.shot;
@@ -70,8 +93,10 @@ class _EspressoScreenState extends State<EspressoScreen> {
           return;
         }
         if (machineService.state.coffeeState == EspressoMachineState.idle) {
+          refillAnounced = false;
           inShot = false;
-          if (shotList.entries.isNotEmpty &&
+          if (shotList.saved == false &&
+              shotList.entries.isNotEmpty &&
               shotList.saving == false &&
               shotList.saved == false) {
             shotFinished();
@@ -79,15 +104,18 @@ class _EspressoScreenState extends State<EspressoScreen> {
 
           return;
         }
-        if (!inShot) {
+        if (!inShot &&
+            machineService.state.coffeeState == EspressoMachineState.espresso) {
           log('Not Idle and not in Shot');
           inShot = true;
           shotList.clear();
           baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
           log("basetime $baseTime");
         }
+
         subState = machineService.state.subState;
-        if (!(shot.sampleTimeCorrected > 0)) {
+
+        if (!(shot.sampleTimeCorrected > 0 && inShot == true)) {
           if (lastSubstate != subState && subState.isNotEmpty) {
             log("SubState: $subState");
             lastSubstate = machineService.state.subState;
@@ -101,20 +129,36 @@ class _EspressoScreenState extends State<EspressoScreen> {
         }
       });
 
+  void checkForRefill() {
+    if (refillAnounced == false &&
+        machineService.state.coffeeState == EspressoMachineState.refill) {
+      var snackBar = SnackBar(
+          content: const Text('Refill the water tank'),
+          action: SnackBarAction(
+            label: 'ok',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      refillAnounced = true;
+    }
+  }
+
   shotFinished() async {
     log("Save last shot");
     await shotList.saveData("testshot.json");
   }
 
-  _createPhases() {
+  Iterable<RangeAnnotationSegment<double>> _createPhases() {
     if (shotList.entries.isEmpty) {
       return [];
     }
-    shotList.entries.forEach((element) {
-      if (element.subState.isNotEmpty) {
-        log(element.subState + " " + element.sampleTimeCorrected.toString());
-      }
-    });
+    // shotList.entries.forEach((element) {
+    //   if (element.subState.isNotEmpty) {
+    //     log(element.subState + " " + element.sampleTimeCorrected.toString());
+    //   }
+    // });
     var stateChanges = shotList.entries
         .where((element) => element.subState.isNotEmpty)
         .toList();
@@ -190,16 +234,26 @@ class _EspressoScreenState extends State<EspressoScreen> {
     ];
   }
 
-  Widget _buildGraphTemp() {
+  _buildGraphs() {
     var ranges = _createPhases();
     var data = _createData();
+    var temp = _buildGraphTemp(data, ranges);
+    var flow = _buildGraphFlow(data, ranges);
+    var pressure = _buildGraphPressure(data, ranges);
+
+    return {"temp": temp, "flow": flow, "pressure": pressure};
+  }
+
+  Widget _buildGraphTemp(List<Series<ShotState, double>> data,
+      Iterable<RangeAnnotationSegment<double>> ranges) {
     // data[2].setAttribute(charts.measureAxisIdKey, "secondaryMeasureAxisId");
     var flowChart = charts.LineChart(
       [data[2]],
-      animate: true,
+      animate: false,
       behaviors: [
         // Define one domain and two measure annotations configured to render
         // labels in the chart margins.
+        charts.SeriesLegend(),
         charts.RangeAnnotation([
           ...ranges,
           // charts.RangeAnnotationSegment(
@@ -222,6 +276,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
+        tickProviderSpec: charts.BasicNumericTickProviderSpec(zeroBound: false),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle: charts.TextStyleSpec(
               fontSize: 10,
@@ -256,19 +311,22 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphPressure() {
+  Widget _buildGraphPressure(List<Series<ShotState, double>> data,
+      Iterable<RangeAnnotationSegment<double>> ranges) {
     var flowChart = charts.LineChart(
-      [_createData()[0]],
-      animate: true,
+      [data[0]],
+      animate: false,
       behaviors: [
+        charts.SeriesLegend(),
         // Define one domain and two measure annotations configured to render
         // labels in the chart margins.
         charts.RangeAnnotation([
-          charts.RangeAnnotationSegment(
-              9.5, 12, charts.RangeAnnotationAxisType.measure,
-              labelAnchor: charts.AnnotationLabelAnchor.end,
-              color: const charts.Color(r: 0xff, g: 0, b: 0, a: 0x30),
-              labelDirection: charts.AnnotationLabelDirection.vertical),
+          ...ranges,
+          // charts.RangeAnnotationSegment(
+          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
+          //     labelAnchor: charts.AnnotationLabelAnchor.end,
+          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
+          //     labelDirection: charts.AnnotationLabelDirection.vertical),
         ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       primaryMeasureAxis: charts.NumericAxisSpec(
@@ -294,7 +352,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
 
     return Container(
-      height: 300,
+      // height: 100,
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
@@ -306,22 +364,38 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphFlow() {
-    var data = _createData();
+  Widget _buildGraphFlow(List<Series<ShotState, double>> data,
+      Iterable<RangeAnnotationSegment<double>> ranges) {
+    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var flowChart = charts.LineChart(
-      [data[1], data[3]],
-      animate: true,
+      [
+        data[1],
+        data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
+      ],
+      animate: false,
       behaviors: [
+        charts.SeriesLegend(),
         // Define one domain and two measure annotations configured to render
         // labels in the chart margins.
         charts.RangeAnnotation([
-          charts.RangeAnnotationSegment(
-              9.5, 12, charts.RangeAnnotationAxisType.measure,
-              labelAnchor: charts.AnnotationLabelAnchor.end,
-              color: const charts.Color(r: 0xff, g: 0, b: 0, a: 0x30),
-              labelDirection: charts.AnnotationLabelDirection.vertical),
+          ...ranges,
+          // charts.RangeAnnotationSegment(
+          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
+          //     labelAnchor: charts.AnnotationLabelAnchor.end,
+          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
+          //     labelDirection: charts.AnnotationLabelDirection.vertical),
         ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
+      secondaryMeasureAxis: charts.NumericAxisSpec(
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+        ),
+      ),
       primaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
           labelStyle: charts.TextStyleSpec(
@@ -345,7 +419,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
 
     return Container(
-      height: 300,
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
@@ -486,14 +559,74 @@ class _EspressoScreenState extends State<EspressoScreen> {
             },
           ),
         ),
+        Expanded(
+          flex: 1,
+          child: IconButton(
+            iconSize: 50,
+            isSelected:
+                machineService.state.coffeeState == EspressoMachineState.sleep,
+            icon: const Icon(Icons.offline_bolt),
+            selectedIcon: const Icon(Icons.bolt),
+            tooltip: 'Test',
+            onPressed: () {
+              _displayDialog(context);
+            },
+          ),
+        ),
       ],
     );
   }
 
   var pressAttention = true;
 
+  _displayDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      transitionDuration: Duration(milliseconds: 500),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: animation,
+            child: child,
+          ),
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return SafeArea(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            padding: EdgeInsets.all(20),
+            color: Colors.white,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Hai This Is Full Screen Dialog',
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "DISMISS",
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    var graphs = _buildGraphs();
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -508,15 +641,15 @@ class _EspressoScreenState extends State<EspressoScreen> {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: _buildGraphPressure(),
+                    child: graphs["pressure"],
                   ),
                   Expanded(
                     flex: 1,
-                    child: _buildGraphFlow(),
+                    child: graphs["flow"],
                   ),
                   Expanded(
                     flex: 1,
-                    child: _buildGraphTemp(),
+                    child: graphs["temp"],
                   ),
                 ],
               ),
