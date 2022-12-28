@@ -464,6 +464,32 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
+  Row _buildButtons() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: IconButton(
+            iconSize: 50,
+            isSelected:
+                machineService.state.coffeeState == EspressoMachineState.sleep,
+            icon: const Icon(Icons.offline_bolt),
+            selectedIcon: const Icon(Icons.bolt),
+            tooltip: 'Switch on/off decent de1',
+            onPressed: () {
+              if (machineService.state.coffeeState ==
+                  EspressoMachineState.sleep) {
+                machineService.de1?.switchOn();
+              } else {
+                machineService.de1?.switchOff();
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   var pressAttention = true;
 
   @override
@@ -497,8 +523,17 @@ class _EspressoScreenState extends State<EspressoScreen> {
             ),
             Expanded(
               flex: 2, // takes 30% of available width
-              child: Column(
-                  children: [_buildLiveInsights(), _buildScaleInsight()]),
+              child: Column(children: [
+                Expanded(
+                  flex: 0,
+                  child: _buildLiveInsights(),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: _buildScaleInsight(),
+                ),
+                _buildButtons()
+              ]),
             ),
           ],
         ),

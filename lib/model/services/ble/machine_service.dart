@@ -1,3 +1,4 @@
+import 'package:despresso/devices/decent_de1.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import '../../shotstate.dart';
@@ -28,6 +29,8 @@ class EspressoMachineService extends ChangeNotifier {
   final MachineState _state =
       MachineState(null, EspressoMachineState.disconnected);
 
+  DE1? de1;
+
   EspressoMachineService();
 
   void setShot(ShotState shot) {
@@ -51,4 +54,8 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   MachineState get state => _state;
+
+  void setDecentInstance(DE1 de1) {
+    this.de1 = de1;
+  }
 }

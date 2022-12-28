@@ -167,6 +167,8 @@ class DE1 extends ChangeNotifier {
     }, onError: (Object error) {
       // Handle a possible error
     });
+
+    service.setDecentInstance(this);
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
@@ -238,7 +240,6 @@ class DE1 extends ChangeNotifier {
     switch (state) {
       case 0x00: // 4 Making espresso
         service.setState(EspressoMachineState.sleep);
-        switchOn();
         break;
       case 0x04: // 4 Making espresso
         service.setState(EspressoMachineState.espresso);

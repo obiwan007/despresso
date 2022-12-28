@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -5,7 +7,9 @@ import 'package:despresso/ui/screens/coffee_screen.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../model/services/ble/ble_service.dart';
+import '../model/services/ble/machine_service.dart';
 import 'theme.dart' as theme;
 
 class LandingPage extends StatefulWidget {
@@ -22,12 +26,14 @@ class _LandingPageState extends State<LandingPage> {
 
   late CoffeeService coffeeSelection;
   late ProfileService profileService;
+  late EspressoMachineService machineService;
 
   late BLEService bleService;
 
   @override
   void initState() {
     super.initState();
+    machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
     coffeeSelection.addListener(() {
       setState(() {});
@@ -191,7 +197,34 @@ class _LandingPageState extends State<LandingPage> {
                     // ...
                     bleService.startScan();
                     // Then close the drawer
+                  },
+                ),
+                ListTile(
+                  title: const Text('Exit'),
+                  onTap: () {
                     Navigator.pop(context);
+                    var snackBar = SnackBar(
+                        content: const Text('Going to sleep'),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    machineService.de1?.switchOff();
+                    // Then close the drawer
+
+                    const oneSec = Duration(seconds: 2);
+                    Timer.periodic(
+                      oneSec,
+                      (Timer timer) => setState(
+                        () {
+                          timer.cancel();
+                          SystemNavigator.pop();
+                        },
+                      ),
+                    );
                   },
                 ),
               ],
