@@ -32,6 +32,32 @@ enum Endpoint {
   Calibration
 }
 
+enum De1StateEnum {
+  Sleep, // 0x0  Everything is off
+  GoingToSleep, // 0x1
+  Idle, // 0x2  Heaters are controlled, tank water will be heated if required.
+  Busy, // 0x3  Firmware is doing something you can't interrupt (eg. cooling down water heater after a shot, calibrating sensors on startup).
+  Espresso, // 0x4  Making espresso
+  Steam, // 0x5  Making steam
+  HotWater, // 0x6  Making hot water
+  ShortCal, // 0x7  Running a short calibration
+  SelfTest, // 0x8  Checking as much as possible within the firmware. Probably only used during manufacture or repair.
+  LongCal, // 0x9  Long and involved calibration, possibly involving user interaction. (See substates below, for cases like that).
+  Descale, // 0xA  Descale the whole bang-tooty
+  FatalError, // 0xB  Something has gone horribly wrong
+  Init, // 0xC  Machine has not been run yet
+  NoRequest, // 0xD  State for T_RequestedState. Means nothing is specifically requested
+  SkipToNext, // 0xE  In Espresso, skip to next frame. Others, go to Idle if possible
+  HotWaterRinse, // 0xF  Produce hot water at whatever temperature is available
+  SteamRinse, // 0x10 Produce a blast of steam
+  Refill, // 0x11 Attempting, or needs, a refill.
+  Clean, // 0x12 Clean group head
+  InBootLoader, // 0x13 The main firmware has not run for some reason. Bootloader is active.
+  AirPurge, // 0x14 Air purge.
+  SchedIdle, // 0x15 Scheduled wake up idle state
+  Unknown
+}
+
 class DE1 extends ChangeNotifier {
   static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
 
@@ -198,14 +224,23 @@ class DE1 extends ChangeNotifier {
     // });
   }
 
+  setIdleState() {
+    requestState(De1StateEnum.Idle);
+    log('idleState Requested');
+  }
+
   switchOn() {
-    write(Endpoint.RequestedState, Uint8List.fromList([0x02]));
+    requestState(De1StateEnum.Idle);
     log('SwitchOn Requested');
   }
 
   switchOff() {
-    write(Endpoint.RequestedState, Uint8List.fromList([0x00]));
+    requestState(De1StateEnum.Sleep);
     log('SwitchOff Requested');
+  }
+
+  requestState(De1StateEnum state) {
+    write(Endpoint.RequestedState, Uint8List.fromList([state.index]));
   }
 
   Future<List<int>> read(Endpoint e) {
@@ -344,17 +379,22 @@ class DE1 extends ChangeNotifier {
     var targetGroupTemp = r.getUint16(7) / (1 << 8);
 
     log('SteamBits = ' + steamBits.toRadixString(16));
-    log('TargetSteamTemp = ' + targetSteamTemp.toRadixString(16));
-    log('TargetSteamLength = ' + targetSteamLength.toRadixString(16));
-    log('TargetWaterTemp = ' + targetWaterTemp.toRadixString(16));
-    log('TargetWaterVolume = ' + targetWaterVolume.toRadixString(16));
-    log('TargetWaterLength = ' + targetWaterLength.toRadixString(16));
-    log('TargetEspressoVolume = ' + targetEspressoVolume.toRadixString(16));
+    log('TargetSteamTemp = ' + targetSteamTemp.toString());
+    log('TargetSteamLength = ' + targetSteamLength.toString());
+    log('TargetWaterTemp = ' + targetWaterTemp.toString());
+    log('TargetWaterVolume = ' + targetWaterVolume.toString());
+    log('TargetWaterLength = ' + targetWaterLength.toString());
+    log('TargetEspressoVolume = ' + targetEspressoVolume.toString());
     log('TargetGroupTemp = ' + targetGroupTemp.toString());
   }
 
+  String toHexString(int number) =>
+      '0x${number.toRadixString(16).padLeft(2, '0')}';
+
   void mmrNotification(ByteData value) {
-    log('Got mmr notification');
+    var list = value.buffer.asUint8List();
+    print(list.map(toHexString).toList());
+    log('mmr received');
   }
 
   void get ghcMode {
@@ -362,12 +402,13 @@ class DE1 extends ChangeNotifier {
     mmrRead(0x803820, 0);
   }
 
-  void get ghcInstalled {
+  void ghcInstalled() {
     log('Reading whether the group head controller is installed or not');
     mmrRead(0x80381C, 0);
   }
 
   void mmrRead(int address, int length) {
+    log("MMR READ REQUEST");
     if (!mmrAvailable) {
       log('Unable to mmr_read because MMR not available');
       return;
@@ -410,13 +451,14 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.ShotSettings, parseShotSetting);
 
         enableNotification(Endpoint.ShotMapRequest, (e) => log(e.toString()));
-        enableNotification(Endpoint.HeaderWrite, (e) => log(e.toString()));
+        enableNotification(
+            Endpoint.HeaderWrite, (e) => {log('SHOT HEADER' + e.toString())});
         enableNotification(Endpoint.FrameWrite, (e) => log(e.toString()));
 
         enableNotification(Endpoint.ReadFromMMR, mmrNotification);
         enableNotification(Endpoint.WriteToMMR, mmrNotification);
 
-        ghcInstalled;
+        ghcInstalled();
 
         return;
       case DeviceConnectionState.disconnected:

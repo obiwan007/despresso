@@ -1,3 +1,4 @@
+import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -20,20 +21,29 @@ class _WaterScreenState extends State<WaterScreen> {
   double _currentAmount = 100;
   double _currentSteamAutoOff = 45;
   double _currentFlushAutoOff = 15;
+  List<ShotState> dataPoints = [];
+  EspressoMachineState currentState = EspressoMachineState.disconnected;
 
   @override
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
-    machineService.addListener(() {
-      setState(() {});
-    });
+    machineService.addListener(machineStateListener);
 
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
   }
 
-  List<ShotState> dataPoints = [];
+  @override
+  void dispose() {
+    super.dispose();
+    machineService.removeListener(machineStateListener);
+  }
+
+  machineStateListener() {
+    setState(() => {currentState = machineService.state.coffeeState});
+    // machineService.de1?.setIdleState();
+  }
 
   List<charts.Series<ShotState, double>> _createData() {
     return [
@@ -329,58 +339,61 @@ class _WaterScreenState extends State<WaterScreen> {
   }
 
   Widget _buildControls() {
-    return Row(
+    var isSelected =
+        machineService.state.coffeeState == EspressoMachineState.water;
+    return Column(
       children: [
-        Spacer(
-          flex: 5,
+        Column(
+          children: [
+            Row(
+              children: [
+                const Text('State: ', style: theme.TextStyles.tabSecondary),
+                Text(
+                    machineService.state.coffeeState.name
+                        .toString()
+                        .toUpperCase(),
+                    style: theme.TextStyles.tabPrimary),
+              ],
+            ),
+            Row(
+              children: [
+                const Text('Op: ', style: theme.TextStyles.tabSecondary),
+                Text(machineService.state.subState,
+                    style: theme.TextStyles.tabPrimary),
+              ],
+            ),
+          ],
         ),
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
-          ),
-          onPressed: () => setState(() => {}),
-          child: Text(
-            'Water',
-            style: theme.TextStyles.tabTertiary,
-          ),
-        ),
-        Spacer(
-          flex: 1,
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
-          ),
-          onPressed: () => setState(() => {}),
-          child: Text(
-            'Steam',
-            style: theme.TextStyles.tabTertiary,
-          ),
-        ),
-        Spacer(
-          flex: 1,
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
-          ),
-          onPressed: () => setState(() => {}),
-          child: Text(
-            'Flush',
-            style: theme.TextStyles.tabTertiary,
-          ),
-        ),
-        Spacer(
-          flex: 5,
+        Row(
+          children: [
+            Spacer(
+              flex: 1,
+            ),
+            Column(
+              children: [
+                IconButton(
+                    iconSize: 150,
+                    isSelected: isSelected,
+                    icon: const Icon(Icons.play_circle),
+                    selectedIcon: const Icon(Icons.stop),
+                    tooltip: 'Water',
+                    onPressed: () {
+                      if (!isSelected) {
+                        machineService.de1?.requestState(De1StateEnum.HotWater);
+                      } else {
+                        machineService.de1?.setIdleState();
+                      }
+                    }),
+                Text(
+                  isSelected ? "Stop" : "Start",
+                  style: theme.TextStyles.tabSecondary,
+                ),
+              ],
+            ),
+            Spacer(
+              flex: 1,
+            ),
+          ],
         ),
       ],
     );
@@ -400,21 +413,21 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         child: ListView(
           children: <Widget>[
-            _buildGraph(),
-            theme.Helper.horizontalBorder(),
+            // _buildGraph(),
+            // theme.Helper.horizontalBorder(),
             Center(
               child: _buildControls(),
             ),
-            theme.Helper.horizontalBorder(),
-            _buildTemperaturControl(),
-            _buildWaterControl(),
-            theme.Helper.horizontalBorder(),
-            _buildFlushControl(),
-            theme.Helper.horizontalBorder(),
-            _buildSteamConrol(),
-            Container(
-              height: 40,
-            ),
+            // theme.Helper.horizontalBorder(),
+            // _buildTemperaturControl(),
+            // _buildWaterControl(),
+            // theme.Helper.horizontalBorder(),
+            // _buildFlushControl(),
+            // theme.Helper.horizontalBorder(),
+            // _buildSteamConrol(),
+            // Container(
+            //   height: 40,
+            // ),
           ],
         ),
       ),

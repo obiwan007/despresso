@@ -630,9 +630,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: theme.Colors.backgroundColor,
-        ),
         body: Row(
           children: [
             Expanded(

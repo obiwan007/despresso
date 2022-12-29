@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_screen.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
+import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +33,7 @@ class _LandingPageState extends State<LandingPage>
 
   late BLEService bleService;
   late final _tabController =
-      TabController(length: 4, vsync: this, initialIndex: 1);
+      TabController(length: 4, vsync: this, initialIndex: 0);
 
   EspressoMachineState? lastState;
 
@@ -118,17 +119,7 @@ class _LandingPageState extends State<LandingPage>
     }
     Widget profile;
     var currentProfile = profileService.currentProfile;
-    // if (currentProfile != null) {
-    //   profile = Text(
-    //     currentProfile.name,
-    //     style: theme.TextStyles.tabSecondary,
-    //   );
-    // } else {
-    //   profile = Text(
-    //     'No Profile selected',
-    //     style: theme.TextStyles.tabSecondary,
-    //   );
-    // }
+
     return DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -138,28 +129,28 @@ class _LandingPageState extends State<LandingPage>
               controller: _tabController,
               tabs: [
                 const Tab(
-                  icon: Icon(Icons.directions_car),
-                  child: Text(
+                  icon: const Icon(Icons.coffee),
+                  child: const Text(
                     "Espresso",
                     style: theme.TextStyles.tabLabel,
                   ),
                 ),
                 const Tab(
-                  icon: Icon(Icons.directions_transit),
+                  icon: Icon(Icons.filter_list),
                   child: Text(
                     'Steam',
                     style: theme.TextStyles.tabLabel,
                   ),
                 ),
                 const Tab(
-                  icon: Icon(Icons.directions_bike),
+                  icon: Icon(Icons.water),
                   child: Text(
                     "Flush",
                     style: theme.TextStyles.tabLabel,
                   ),
                 ),
                 const Tab(
-                  icon: Icon(Icons.directions_bike),
+                  icon: Icon(Icons.water_drop),
                   child: Text(
                     'Water',
                     style: theme.TextStyles.tabLabel,
@@ -171,12 +162,10 @@ class _LandingPageState extends State<LandingPage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              Container(
-                child: EspressoScreen(),
-              ),
+              EspressoScreen(),
               const Icon(Icons.coffee),
               const Icon(Icons.directions_bike),
-              const Icon(Icons.directions_bike),
+              WaterScreen(),
             ],
           ),
           drawer: Drawer(
@@ -200,6 +189,11 @@ class _LandingPageState extends State<LandingPage>
                     // ...
                     // Then close the drawer
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfilesScreen()),
+                    );
                   },
                 ),
                 ListTile(
@@ -276,6 +270,21 @@ class _LandingPageState extends State<LandingPage>
             break;
           case EspressoMachineState.water:
             selectedPage = 3;
+            break;
+          case EspressoMachineState.idle:
+            // TODO: Handle this case.
+            break;
+          case EspressoMachineState.sleep:
+            // TODO: Handle this case.
+            break;
+          case EspressoMachineState.disconnected:
+            // TODO: Handle this case.
+            break;
+          case EspressoMachineState.refill:
+            // TODO: Handle this case.
+            break;
+          default:
+            // TODO: Handle this case.
             break;
         }
         _tabController.index = selectedPage;
