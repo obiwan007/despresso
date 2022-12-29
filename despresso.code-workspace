@@ -5,5 +5,7 @@
             "path": "."
         }
     ],
-    "settings": {}
+    "settings": {
+        "dart.flutterSdkPath": null
+    }
 }

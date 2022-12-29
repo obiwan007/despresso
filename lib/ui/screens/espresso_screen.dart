@@ -10,6 +10,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
+import '../../devices/decent_de1.dart';
 import '../../model/shotstate.dart';
 
 class EspressoScreen extends StatefulWidget {
@@ -627,6 +628,9 @@ class _EspressoScreenState extends State<EspressoScreen> {
   @override
   Widget build(BuildContext context) {
     var graphs = _buildGraphs();
+    var isSelected =
+        machineService.state.coffeeState == EspressoMachineState.espresso;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -661,6 +665,28 @@ class _EspressoScreenState extends State<EspressoScreen> {
                 Expanded(
                   flex: 1,
                   child: _buildScaleInsight(),
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                        iconSize: 150,
+                        isSelected: isSelected,
+                        icon: const Icon(Icons.play_circle),
+                        selectedIcon: const Icon(Icons.stop),
+                        tooltip: 'Water',
+                        onPressed: () {
+                          if (!isSelected) {
+                            machineService.de1
+                                ?.requestState(De1StateEnum.Espresso);
+                          } else {
+                            machineService.de1?.setIdleState();
+                          }
+                        }),
+                    Text(
+                      isSelected ? "Stop" : "Start",
+                      style: theme.TextStyles.tabSecondary,
+                    ),
+                  ],
                 ),
                 _buildButtons()
               ]),

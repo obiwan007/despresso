@@ -1,4 +1,5 @@
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/model/shotdecoder.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import '../../shotstate.dart';
@@ -18,6 +19,9 @@ class WaterLevel {
 class MachineState {
   MachineState(this.shot, this.coffeeState);
   ShotState? shot;
+  De1ShotHeaderClass? shotHeader;
+  De1ShotFrameClass? shotFrame;
+
   WaterLevel? water;
   EspressoMachineState coffeeState;
   String subState = "";
@@ -66,5 +70,17 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setDecentInstance(DE1 de1) {
     this.de1 = de1;
+  }
+
+  void setShotHeader(De1ShotHeaderClass sh) {
+    _state.shotHeader = sh;
+    log("Shotheader:$sh");
+    notifyListeners();
+  }
+
+  void setShotFrame(De1ShotFrameClass sh) {
+    _state.shotFrame = sh;
+    log("ShotFrame:$sh");
+    notifyListeners();
   }
 }

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/shotdecoder.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -368,6 +369,24 @@ class DE1 extends ChangeNotifier {
         ""));
   }
 
+  void parseShotHeaderSettings(ByteData r) {
+    log("Shotheader received");
+    var sh = De1ShotHeaderClass();
+    De1ShotHeaderClass.decodeDe1ShotHeader(r, sh, true);
+
+    service.setShotHeader(sh);
+  }
+
+  void parseShotMapRequest(ByteData r) {
+    log("parseShotMapRequest received");
+  }
+
+  void parseFrameWrite(ByteData r) {
+    var sh = De1ShotFrameClass();
+    De1ShotFrameClass.DecodeDe1ShotFrame(r, sh, true);
+    service.setShotFrame(sh);
+  }
+
   void parseShotSetting(ByteData r) {
     var steamBits = r.getUint8(0);
     var targetSteamTemp = r.getUint8(1);
@@ -441,6 +460,13 @@ class DE1 extends ChangeNotifier {
         parseShotSetting(ByteData.sublistView(
             Uint8List.fromList((await read(Endpoint.ShotSettings)))));
 
+        // parseShotMapRequest(ByteData.sublistView(
+        //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
+        parseShotHeaderSettings(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.HeaderWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.FrameWrite)))));
+
         enableNotification(Endpoint.RequestedState, requestedState);
 
         enableNotification(Endpoint.Temperatures, tempatureNotification);
@@ -450,10 +476,9 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.ShotSample, shotSampleNotification);
         enableNotification(Endpoint.ShotSettings, parseShotSetting);
 
-        enableNotification(Endpoint.ShotMapRequest, (e) => log(e.toString()));
-        enableNotification(
-            Endpoint.HeaderWrite, (e) => {log('SHOT HEADER' + e.toString())});
-        enableNotification(Endpoint.FrameWrite, (e) => log(e.toString()));
+        enableNotification(Endpoint.ShotMapRequest, parseShotMapRequest);
+        enableNotification(Endpoint.HeaderWrite, parseShotHeaderSettings);
+        enableNotification(Endpoint.FrameWrite, parseFrameWrite);
 
         enableNotification(Endpoint.ReadFromMMR, mmrNotification);
         enableNotification(Endpoint.WriteToMMR, mmrNotification);

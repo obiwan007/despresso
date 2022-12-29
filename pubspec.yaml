@@ -82,6 +82,7 @@ flutter:
     - assets/decent.png
     - assets/fill_tank.jpg
     - assets/filling_tank.jpg
+    - assets/profiles/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       title: 'despresso',
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
