@@ -37,6 +37,8 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     profileService.addListener(profileListener);
     log(profileService.currentProfile.toString());
     _selectedProfile = profileService.profiles.first;
+    calcProfileGraph();
+    phases = _createPhases();
   }
 
   @override
@@ -104,7 +106,6 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                           "Target Weight",
                           _selectedProfile!.shot_header.target_weight
                               .toString()),
-                      // ...createSteps(),
                     ],
                   ),
                 ),
@@ -122,7 +123,15 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                   ),
                   Expanded(
                     flex: 6,
-                    child: const Text('!!!!!!!!!!!!!!!!! Go back!'),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...createSteps(),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -207,8 +216,8 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
   createSteps() {
     return _selectedProfile!.shot_frames
-        .map((p) => createKeyValue(p.frameToWrite.toString(),
-            "${p.name}\nT: ${p.temp}\nV: ${p.setVal}"))
+        .map((p) => createKeyValue(
+            p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
         .toList();
   }
 
