@@ -65,28 +65,29 @@ class TextStyles {
   const TextStyles();
 
   static const TextStyle tabPrimary = TextStyle(
-      color: Colors.primaryColor,
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.w300,
-      fontSize: 20.0);
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w300,
+  );
 
   static const TextStyle tabSecondary = TextStyle(
-      color: Colors.primaryColor,
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.w100,
-      fontSize: 20.0);
+    color: Colors.secondaryColor,
+    fontWeight: FontWeight.w100,
+  );
 
   static const TextStyle tabTertiary = TextStyle(
-      color: Colors.primaryColor,
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.w300,
-      fontSize: 16.0);
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w300,
+  );
 
   static const TextStyle tabLabel = TextStyle(
-      color: Colors.primaryColor,
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.w300,
-      fontSize: 16.0);
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w300,
+  );
+  static const TextStyle tabHeading = TextStyle(
+    color: Colors.primaryColor,
+    // fontSize: 72.0,
+    fontWeight: FontWeight.bold,
+  );
 }
 
 class Helper {

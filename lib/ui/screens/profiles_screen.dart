@@ -59,33 +59,47 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
           children: [
             Expanded(
               flex: 4, // takes 30% of available width
-              child: Column(
-                children: [
-                  DropdownButton(
-                      isExpanded: true,
-                      alignment: Alignment.centerLeft,
-                      value: _selectedProfile,
-                      items: items,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedProfile = value!;
-                        });
-                      },
-                      hint: Text("Select item")),
-                  createKeyValue("Notes", _selectedProfile!.shot_header.notes),
-                  createKeyValue(
-                      "Beverage", _selectedProfile!.shot_header.beverage_type),
-                  createKeyValue("Type", _selectedProfile!.shot_header.type),
-                  createKeyValue("Max Flow",
-                      _selectedProfile!.shot_header.maximumFlow.toString()),
-                  createKeyValue("Max Pressure",
-                      _selectedProfile!.shot_header.minimumPressure.toString()),
-                  createKeyValue("Target Volume",
-                      _selectedProfile!.shot_header.target_volume.toString()),
-                  createKeyValue("Target Weight",
-                      _selectedProfile!.shot_header.target_weight.toString()),
-                  ...createSteps(),
-                ],
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DropdownButton(
+                          isExpanded: true,
+                          alignment: Alignment.centerLeft,
+                          value: _selectedProfile,
+                          items: items,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedProfile = value!;
+                            });
+                          },
+                          hint: Text("Select item")),
+                      createKeyValue(
+                          "Notes", _selectedProfile!.shot_header.notes),
+                      createKeyValue("Beverage",
+                          _selectedProfile!.shot_header.beverage_type),
+                      createKeyValue(
+                          "Type", _selectedProfile!.shot_header.type),
+                      createKeyValue("Max Flow",
+                          _selectedProfile!.shot_header.maximumFlow.toString()),
+                      createKeyValue(
+                          "Max Pressure",
+                          _selectedProfile!.shot_header.minimumPressure
+                              .toString()),
+                      createKeyValue(
+                          "Target Volume",
+                          _selectedProfile!.shot_header.target_volume
+                              .toString()),
+                      createKeyValue(
+                          "Target Weight",
+                          _selectedProfile!.shot_header.target_weight
+                              .toString()),
+                      // ...createSteps(),
+                    ],
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -103,21 +117,21 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     );
   }
 
-  Row createKeyValue(String key, String value) {
-    return Row(
+  Column createKeyValue(String key, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(flex: 3, child: Text(key, style: theme.TextStyles.tabLabel)),
-        Expanded(
-          flex: 7,
-          child: Text(value, style: theme.TextStyles.tabLabel),
-        ),
+        Text(key, style: theme.TextStyles.tabHeading),
+        Text(value, style: theme.TextStyles.tabPrimary),
       ],
     );
   }
 
   createSteps() {
     return _selectedProfile!.shot_frames
-        .map((p) => createKeyValue(p.frameToWrite.toString(), p.name))
+        .map((p) => createKeyValue(p.frameToWrite.toString(),
+            "${p.name}\nT: ${p.temp}\nV: ${p.setVal}"))
         .toList();
   }
 
