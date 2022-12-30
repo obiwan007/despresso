@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:charts_flutter/flutter.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/shotdecoder.dart';
+import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:despresso/ui/theme.dart' as theme;
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
@@ -18,10 +21,12 @@ class ProfilesScreen extends StatefulWidget {
 
 class _ProfilesScreenState extends State<ProfilesScreen> {
   late ProfileService profileService;
-
+  ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
 
   De1ShotProfile? _selectedProfile = null;
+
+  Iterable<RangeAnnotationSegment<double>> phases = [];
   @override
   void initState() {
     super.initState();
@@ -73,6 +78,8 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                           onChanged: (value) {
                             setState(() {
                               _selectedProfile = value!;
+                              calcProfileGraph();
+                              phases = _createPhases();
                             });
                           },
                           hint: Text("Select item")),
@@ -104,16 +111,85 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
             ),
             Expanded(
               flex: 6, // takes 30% of available width
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigate back to first route when tapped.
-                },
-                child: const Text('Go back!'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: _buildGraphPressure(),
+                  ),
+                  Expanded(
+                    flex: 6,
+                    child: const Text('!!!!!!!!!!!!!!!!! Go back!'),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildGraphPressure() {
+    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
+    var data = _createSeriesData();
+    var flowChart = charts.LineChart(
+      [
+        data[0],
+        data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
+      ],
+      animate: false,
+      behaviors: [
+        charts.SeriesLegend(),
+        // Define one domain and two measure annotations configured to render
+        // labels in the chart margins.
+        charts.RangeAnnotation([...phases],
+            defaultLabelPosition: charts.AnnotationLabelPosition.margin),
+      ],
+      primaryMeasureAxis: charts.NumericAxisSpec(
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+        ),
+      ),
+      secondaryMeasureAxis: charts.NumericAxisSpec(
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+        ),
+      ),
+      domainAxis: charts.NumericAxisSpec(
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+        ),
+      ),
+    );
+
+    return Container(
+      // height: 100,
+      margin: const EdgeInsets.only(left: 10.0),
+      width: MediaQuery.of(context).size.width - 105,
+      decoration: BoxDecoration(
+        color: theme.Colors.tabColor,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: flowChart,
     );
   }
 
@@ -137,5 +213,145 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
   void profileListener() {
     log('Profile updated');
+  }
+
+  List<charts.Series<ShotState, double>> _createSeriesData() {
+    return [
+      charts.Series<ShotState, double>(
+        id: 'Pressure',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.groupPressure,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'Flow',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.groupFlow,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'Temp',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.headTemp,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'Weight',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.weight,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+    ];
+  }
+
+  void calcProfileGraph() {
+    // this.sampleTime,
+    //   this.sampleTimeCorrected,
+    //   this.groupPressure,
+    //   this.groupFlow,
+    //   this.mixTemp,
+    //   this.headTemp,
+    //   this.setMixTemp,
+    //   this.setHeadTemp,
+    //   this.setGroupPressure,
+    //   this.setGroupFlow,
+    //   this.frameNumber,
+    //   this.steamTemp,
+    //   this.weight,
+    //   this.subState
+
+    // int frameToWrite = 0;
+    // int flag = 0;
+    // double setVal = 0; // {
+    // double temp = 0; // {
+    // double frameLen = 0.0; // convert_F8_1_7_to_float
+    // double triggerVal = 0; // {
+    // double maxVol = 0.0; // convert_bottom_10_of_U10P0
+    // String name = "";
+    // String pump = "";
+    // String sensor = "";
+    // String transition = "";
+    shotList.clear();
+    var time = 0.0;
+    var frame = _selectedProfile!.shot_frames.first;
+
+    ShotState shotState = ShotState(time, time, 0, 0, frame.temp, frame.temp,
+        frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
+
+    shotList.entries.add(shotState);
+    _selectedProfile!.shot_frames.forEach((frame) {
+      time += frame.frameLen;
+      ShotState shotState = ShotState(
+          time,
+          time,
+          frame.setVal,
+          frame.setVal,
+          frame.temp,
+          frame.temp,
+          frame.temp,
+          frame.temp,
+          0,
+          0,
+          0,
+          0,
+          0,
+          frame.name);
+      shotList.entries.add(shotState);
+    });
+  }
+
+  Iterable<RangeAnnotationSegment<double>> _createPhases() {
+    if (shotList.entries.isEmpty) {
+      return [];
+    }
+    // shotList.entries.forEach((element) {
+    //   if (element.subState.isNotEmpty) {
+    //     log(element.subState + " " + element.sampleTimeCorrected.toString());
+    //   }
+    // });
+    var stateChanges = shotList.entries
+        .where((element) => element.subState.isNotEmpty)
+        .toList();
+    // log("Phases= ${stateChanges.length}");
+
+    int i = 0;
+    var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
+    return stateChanges.map((from) {
+      var toSampleTime = maxSampleTime;
+      // og(from.subState);
+      if (i < stateChanges.length - 1) {
+        i++;
+        toSampleTime = stateChanges[i].sampleTimeCorrected;
+      }
+      var to = stateChanges[i];
+
+      var col = theme.Colors.statesColors[from.subState];
+      var col2 = charts.ColorUtil.fromDartColor(
+          col != null ? col! : theme.Colors.backgroundColor);
+      // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
+      return charts.RangeAnnotationSegment(from.sampleTimeCorrected,
+          toSampleTime, charts.RangeAnnotationAxisType.domain,
+          labelAnchor: charts.AnnotationLabelAnchor.end,
+          color: col2,
+          startLabel: from.subState,
+          labelStyleSpec: charts.TextStyleSpec(
+              fontSize: 10,
+              color:
+                  charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelDirection: charts.AnnotationLabelDirection.vertical);
+      // log("Phase ${element.subState}");
+    });
   }
 }
