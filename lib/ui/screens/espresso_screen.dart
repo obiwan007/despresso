@@ -1,12 +1,13 @@
 import 'dart:developer';
 
-import 'package:charts_flutter/flutter.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart'
+    as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
@@ -151,7 +152,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
     await shotList.saveData("testshot.json");
   }
 
-  Iterable<RangeAnnotationSegment<double>> _createPhases() {
+  Iterable<charts.RangeAnnotationSegment<double>> _createPhases() {
     if (shotList.entries.isEmpty) {
       return [];
     }

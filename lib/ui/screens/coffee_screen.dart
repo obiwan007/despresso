@@ -4,7 +4,8 @@ import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart'
+    as charts;
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/machine_selection.dart';
 import 'package:flutter/material.dart';

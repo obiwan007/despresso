@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:charts_flutter/flutter.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/shotdecoder.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart'
+    as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
