@@ -1,7 +1,9 @@
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/model/settings.dart';
 import 'package:despresso/model/shotdecoder.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../shotstate.dart';
 
 class WaterLevel {
@@ -34,9 +36,20 @@ class EspressoMachineService extends ChangeNotifier {
 
   DE1? de1;
 
-  De1OtherSetnClass de1Settings = De1OtherSetnClass();
+  Settings de1Settings = Settings();
+
+  late SharedPreferences prefs;
 
   EspressoMachineService();
+
+  void init() async {
+    prefs = await SharedPreferences.getInstance();
+    log('Preferences loaded');
+
+    var settingsString = prefs.getString("de1Setting");
+
+    notifyListeners();
+  }
 
   void setShot(ShotState shot) {
     _state.shot = shot;
@@ -116,7 +129,7 @@ class EspressoMachineService extends ChangeNotifier {
     // check if we need to send the new water temp
     if (de1Settings.targetGroupTemp != profile.shot_frames[0].temp) {
       profile.shot_header.targetGroupTemp = profile.shot_frames[0].temp;
-      var bytes = De1OtherSetnClass.encodeDe1OtherSetn(de1Settings);
+      var bytes = Settings.encodeDe1OtherSetn(de1Settings);
 
       try {
         await de1!.writeWithResult(Endpoint.ShotSettings, bytes);

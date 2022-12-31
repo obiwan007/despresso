@@ -3,55 +3,14 @@
 import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:json_annotation/json_annotation.dart';
+
 class De1ShotProfile {
   De1ShotProfile(this.shot_header, this.shot_frames, this.shot_exframes);
 
   De1ShotHeaderClass shot_header;
   List<De1ShotFrameClass> shot_frames;
   List<De1ShotExtFrameClass> shot_exframes;
-}
-
-class De1OtherSetnClass {
-  int steamSettings = 0; // do not know what is this, use always 0
-  int targetSteamTemp = 130;
-  int targetSteamLength = 30;
-  int targetHotWaterTemp = 85;
-  int targetHotWaterVol = 120;
-  int targetHotWaterLength = 45;
-  int targetEspressoVol = 35;
-  double targetGroupTemp = 98.0; // taken form the shot data
-
-  De1OtherSetnClass();
-
-  static Uint8List encodeDe1OtherSetn(De1OtherSetnClass other_setn) {
-    Uint8List data = Uint8List(9);
-
-    int index = 0;
-    data[index] = other_setn.steamSettings;
-    index++;
-    data[index] = other_setn.targetSteamTemp;
-    index++;
-    data[index] = other_setn.targetSteamLength;
-    index++;
-    data[index] = other_setn.targetHotWaterTemp;
-    index++;
-    data[index] = other_setn.targetHotWaterVol;
-    index++;
-    data[index] = other_setn.targetHotWaterLength;
-    index++;
-    data[index] = other_setn.targetEspressoVol;
-    index++;
-
-    data[index] = other_setn.targetGroupTemp.toInt();
-    index++;
-    data[index] =
-        ((other_setn.targetGroupTemp - other_setn.targetGroupTemp.floor()) *
-                256.0)
-            .toInt();
-    index++;
-
-    return data;
-  }
 }
 
 class De1ShotHeaderClass // proc spec_shotdescheader
@@ -110,8 +69,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     return "$numberOfFrames($numberOfPreinfuseFrames) P:$minimumPressure F:$maximumFlow";
   }
 
-  static bool decodeDe1ShotHeader(
-      ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
+  static bool decodeDe1ShotHeader(ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
     if (data.buffer.lengthInBytes != 5) return false;
 
     try {
@@ -209,8 +167,7 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
-  static bool DecodeDe1ShotFrame(
-      ByteData data, De1ShotFrameClass shot_frame, bool check_encoding) {
+  static bool DecodeDe1ShotFrame(ByteData data, De1ShotFrameClass shot_frame, bool check_encoding) {
     if (data.buffer.lengthInBytes != 8) return false;
     log('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
     try {
@@ -223,14 +180,12 @@ class De1ShotFrameClass // proc spec_shotframe
       index++;
       shot_frame.temp = data.getUint8(index++) / 2.0;
       index++;
-      shot_frame.frameLen =
-          Helper.convert_F8_1_7_to_float(data.getUint8(index++));
+      shot_frame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
       index++; // convert_F8_1_7_to_float
       shot_frame.triggerVal = data.getUint8(index++) / 16.0;
       index++;
       shot_frame.maxVol = Helper.convert_bottom_10_of_U10P0(
-          256 * data.getUint8(index++) +
-              data.getUint8(index++)); // convert_bottom_10_of_U10P0
+          256 * data.getUint8(index++) + data.getUint8(index++)); // convert_bottom_10_of_U10P0
 
       if (check_encoding) {
         var array = data.buffer.asUint8List();
@@ -301,12 +256,10 @@ class De1ShotExtFrameClass // extended frames
   }
 
   static Uint8List EncodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
-    return EncodeDe1ExtentionFrame2(
-        exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
+    return EncodeDe1ExtentionFrame2(exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
   }
 
-  static Uint8List EncodeDe1ExtentionFrame2(
-      int frameToWrite, double limit_value, double limit_range) {
+  static Uint8List EncodeDe1ExtentionFrame2(int frameToWrite, double limit_value, double limit_range) {
     Uint8List data = Uint8List(8);
 
     data[0] = frameToWrite;
@@ -363,8 +316,7 @@ class Helper {
     }
   }
 
-  static void convert_float_to_U10P0_for_tail(
-      double x, Uint8List data, int index) {
+  static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
     int ix = x.toInt();
 
     if (ix > 255) // lets make life esier and limit x to 255

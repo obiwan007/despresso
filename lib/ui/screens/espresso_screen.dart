@@ -35,9 +35,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   String subState = "";
 
   bool refillAnounced = false;
-  _EspressoScreenState() {
-    shotList.load("testshot.json");
-  }
+  _EspressoScreenState() {}
 
   @override
   void dispose() {
@@ -63,7 +61,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   @override
-  void initState() {
+  initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     machineService.addListener(updateMachine);
@@ -75,6 +73,13 @@ class _EspressoScreenState extends State<EspressoScreen> {
     coffeeSelectionService.addListener(updateCoffeeSelection);
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
+
+    loadShotData();
+  }
+
+  loadShotData() async {
+    await shotList.load("testshot.json");
+    setState(() {});
   }
 
   void updateCoffee() => setState(() {
@@ -687,7 +692,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
                   flex: 1,
                   child: _buildScaleInsight(),
                 ),
-                StartStopButton(machineService: machineService),
+                const StartStopButton(),
                 _buildButtons()
               ]),
             ),

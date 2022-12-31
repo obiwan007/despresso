@@ -2,12 +2,12 @@ import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart'
-    as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
 import '../../model/shotstate.dart';
+import '../widgets/start_stop_button.dart';
 
 class WaterScreen extends StatefulWidget {
   @override
@@ -52,8 +52,7 @@ class _WaterScreenState extends State<WaterScreen> {
         id: 'Pressure',
         domainFn: (ShotState point, _) => point.sampleTime,
         measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.backgroundColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.backgroundColor),
         strokeWidthPxFn: (_, __) => 3,
         data: dataPoints,
       ),
@@ -61,8 +60,7 @@ class _WaterScreenState extends State<WaterScreen> {
         id: 'Flow',
         domainFn: (ShotState point, _) => point.sampleTime,
         measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
         strokeWidthPxFn: (_, __) => 3,
         data: dataPoints,
       ),
@@ -78,10 +76,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '-5',
@@ -107,10 +103,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '+5',
@@ -137,10 +131,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '-1',
@@ -166,10 +158,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '+1',
@@ -196,10 +186,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '-1',
@@ -225,10 +213,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '+1',
@@ -255,10 +241,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '-1',
@@ -284,10 +268,8 @@ class _WaterScreenState extends State<WaterScreen> {
         ),
         ElevatedButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.goodColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
           ),
           child: Text(
             '+1',
@@ -321,18 +303,14 @@ class _WaterScreenState extends State<WaterScreen> {
         behaviors: [],
         primaryMeasureAxis: charts.NumericAxisSpec(
           renderSpec: charts.GridlineRendererSpec(
-            labelStyle: charts.TextStyleSpec(
-                fontSize: 10, color: charts.MaterialPalette.white),
-            lineStyle: charts.LineStyleSpec(
-                thickness: 0, color: charts.MaterialPalette.gray.shadeDefault),
+            labelStyle: charts.TextStyleSpec(fontSize: 10, color: charts.MaterialPalette.white),
+            lineStyle: charts.LineStyleSpec(thickness: 0, color: charts.MaterialPalette.gray.shadeDefault),
           ),
         ),
         domainAxis: charts.NumericAxisSpec(
           renderSpec: charts.GridlineRendererSpec(
-            labelStyle: charts.TextStyleSpec(
-                fontSize: 10, color: charts.MaterialPalette.white),
-            lineStyle: charts.LineStyleSpec(
-                thickness: 0, color: charts.MaterialPalette.gray.shadeDefault),
+            labelStyle: charts.TextStyleSpec(fontSize: 10, color: charts.MaterialPalette.white),
+            lineStyle: charts.LineStyleSpec(thickness: 0, color: charts.MaterialPalette.gray.shadeDefault),
           ),
         ),
       ),
@@ -340,61 +318,103 @@ class _WaterScreenState extends State<WaterScreen> {
   }
 
   Widget _buildControls() {
-    var isSelected =
-        machineService.state.coffeeState == EspressoMachineState.water;
-    return Column(
+    var settings = machineService.de1Settings;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Column(
-          children: [
-            Row(
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
               children: [
-                const Text('State: ', style: theme.TextStyles.tabSecondary),
-                Text(
-                    machineService.state.coffeeState.name
-                        .toString()
-                        .toUpperCase(),
-                    style: theme.TextStyles.tabPrimary),
-              ],
-            ),
-            Row(
-              children: [
-                const Text('Op: ', style: theme.TextStyles.tabSecondary),
-                Text(machineService.state.subState,
-                    style: theme.TextStyles.tabPrimary),
-              ],
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Spacer(
-              flex: 1,
-            ),
-            Column(
-              children: [
-                IconButton(
-                    iconSize: 150,
-                    isSelected: isSelected,
-                    icon: const Icon(Icons.play_circle),
-                    selectedIcon: const Icon(Icons.stop),
-                    tooltip: 'Water',
-                    onPressed: () {
-                      if (!isSelected) {
-                        machineService.de1?.requestState(De1StateEnum.HotWater);
-                      } else {
-                        machineService.de1?.setIdleState();
-                      }
-                    }),
-                Text(
-                  isSelected ? "Stop" : "Start",
-                  style: theme.TextStyles.tabSecondary,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text("Temperatur ${settings.targetHotWaterTemp}°C", style: theme.TextStyles.tabHeading),
+                      Slider(
+                        value: settings.targetHotWaterTemp.toDouble(),
+                        max: 100,
+                        min: 30,
+                        divisions: 100,
+                        label: "${settings.targetHotWaterTemp} °C",
+                        onChanged: (double value) {
+                          setState(() {
+                            settings.targetHotWaterTemp = value.toInt();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text("Max Time ${settings.targetHotWaterLength} s", style: theme.TextStyles.tabHeading),
+                      Slider(
+                        value: settings.targetHotWaterLength.toDouble(),
+                        max: 100,
+                        min: 1,
+                        divisions: 100,
+                        label: "${settings.targetHotWaterLength} s",
+                        onChanged: (double value) {
+                          setState(() {
+                            settings.targetHotWaterLength = value.toInt();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text("Weight ${settings.targetHotWaterWeight} g", style: theme.TextStyles.tabHeading),
+                      Slider(
+                        value: settings.targetHotWaterWeight.toDouble(),
+                        max: 200,
+                        min: 10,
+                        divisions: 200,
+                        label: "${settings.targetHotWaterWeight} g",
+                        onChanged: (double value) {
+                          setState(() {
+                            settings.targetHotWaterWeight = value.toInt();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            Spacer(
-              flex: 1,
-            ),
-          ],
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const StartStopButton(),
+            ],
+          ),
         ),
       ],
     );
@@ -402,36 +422,8 @@ class _WaterScreenState extends State<WaterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.Colors.backgroundColor,
-        title:
-            Text('Water / Steam / Flush', style: theme.TextStyles.tabSecondary),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: theme.Colors.screenBackground,
-        ),
-        child: ListView(
-          children: <Widget>[
-            // _buildGraph(),
-            // theme.Helper.horizontalBorder(),
-            Center(
-              child: _buildControls(),
-            ),
-            // theme.Helper.horizontalBorder(),
-            // _buildTemperaturControl(),
-            // _buildWaterControl(),
-            // theme.Helper.horizontalBorder(),
-            // _buildFlushControl(),
-            // theme.Helper.horizontalBorder(),
-            // _buildSteamConrol(),
-            // Container(
-            //   height: 40,
-            // ),
-          ],
-        ),
-      ),
+    return Container(
+      child: _buildControls(),
     );
   }
 }

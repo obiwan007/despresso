@@ -20,8 +20,7 @@ class ShotList {
   ShotList(this.entries);
   List<ShotState> entries;
 
-  factory ShotList.fromJson(Map<String, dynamic> json) =>
-      _$ShotListFromJson(json);
+  factory ShotList.fromJson(Map<String, dynamic> json) => _$ShotListFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -39,7 +38,7 @@ class ShotList {
     saved = false;
   }
 
-  void load(String s) async {
+  Future load(String s) async {
     try {
       saved = true;
       log("Loading shot: ${s}");
@@ -116,8 +115,7 @@ class ShotState {
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
   /// The constructor is named after the source class, in this case, User.
-  factory ShotState.fromJson(Map<String, dynamic> json) =>
-      _$ShotStateFromJson(json);
+  factory ShotState.fromJson(Map<String, dynamic> json) => _$ShotStateFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

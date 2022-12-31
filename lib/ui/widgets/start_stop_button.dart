@@ -8,10 +8,7 @@ import '../../service_locator.dart';
 class StartStopButton extends StatefulWidget {
   const StartStopButton({
     Key? key,
-    required this.machineService,
   }) : super(key: key);
-
-  final EspressoMachineService machineService;
 
   @override
   State<StartStopButton> createState() => _StartStopButtonState();
@@ -77,6 +74,25 @@ class _StartStopButtonState extends State<StartStopButton> {
         mode = Colors.blue;
         title = "Switch on";
         break;
+
+      case EspressoMachineState.idle:
+        break;
+      case EspressoMachineState.espresso:
+        break;
+      case EspressoMachineState.water:
+        break;
+      case EspressoMachineState.steam:
+        break;
+      case EspressoMachineState.disconnected:
+        mode = Colors.orange;
+        title = "Reconnect";
+        break;
+      case EspressoMachineState.connecting:
+        break;
+      case EspressoMachineState.refill:
+        break;
+      case EspressoMachineState.flush:
+        break;
     }
     return Column(
       children: [
@@ -89,9 +105,9 @@ class _StartStopButtonState extends State<StartStopButton> {
                 machineService.de1?.switchOn();
               } else {
                 if (!isBusy) {
-                  widget.machineService.de1?.requestState(De1StateEnum.Espresso);
+                  machineService.de1?.requestState(De1StateEnum.Espresso);
                 } else {
-                  widget.machineService.de1?.setIdleState();
+                  machineService.de1?.setIdleState();
                 }
               }
             },
