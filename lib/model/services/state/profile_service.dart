@@ -21,94 +21,40 @@ const int Interpolate = 0x20; // Hard jump to target value, or ramp?
 const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
 class ProfileService extends ChangeNotifier {
-  static const String testInput = '''{
-    "name": "New Profile",
-  "frames": [
-    {
-      "name": "Infuse",
-      "index": 0,
-      "temp": 90.0,
-      "duration": 7,
-      "target": {
-        "value": 5.0,
-        "type": "flow",
-        "interpolate": false
-      },
-      "trigger": {
-        "type": "pressure",
-        "value": 1.0,
-        "operator": "greater_than"
-      }
-    },
-    {
-      "name": "Brew",
-      "index": 1,
-      "temp": 95.0,
-      "duration": 10,
-      "target": {
-        "value": 2.0,
-        "type": "flow",
-        "interpolate": false
-      },
-      "trigger": {
-        "type": "flow",
-        "value": 4,
-        "operator": "greater_than"
-      }
-    },
-    {
-      "name": "Brew",
-      "index": 2,
-      "temp": 90.0,
-      "duration": 5,
-      "target": {
-        "value": 2.0,
-        "type": "flow",
-        "interpolate": true
-      }
-    },
-    {
-      "name": "Brew",
-      "index": 3,
-      "temp": 90.0,
-      "duration": 2,
-      "target": {
-        "value": 4.0,
-        "type": "flow",
-        "interpolate": false
-      }
-    },
-    {
-      "name": "Brew",
-      "index": 4,
-      "temp": 90.0,
-      "duration": 10,
-      "target": {
-        "value": 2.0,
-        "type": "flow",
-        "interpolate": false
-      }
-    }
-  ]
-}''';
-
-  late Profile currentProfile;
-  List<Profile> knownProfiles = [];
+  De1ShotProfile? currentProfile;
   late SharedPreferences prefs;
   List<De1ShotProfile> profiles = <De1ShotProfile>[];
 
   ProfileService() {
-    Map userMap = jsonDecode(ProfileService.testInput);
-    currentProfile = Profile.fromJson(userMap);
     init();
-    Map<String, dynamic> user = jsonDecode(testInput);
-    log(user.toString());
-    loadAllProfiles();
   }
 
   void init() async {
     prefs = await SharedPreferences.getInstance();
-    //TODO read profiles
+    log('Preferences loaded');
+
+    var profileName = prefs.getString("profilename");
+    await loadAllProfiles();
+    log('Profiles loaded');
+
+    currentProfile = profiles.first;
+    if (profileName!.isNotEmpty) {
+      currentProfile = profiles
+          .where((element) => element.shot_header.title == profileName)
+          .first;
+      log("Profile ${currentProfile!.shot_header.title} loaded");
+    }
+    notifyListeners();
+  }
+
+  void notify() {
+    notifyListeners();
+  }
+
+  void setProfile(De1ShotProfile profile) {
+    currentProfile = profile;
+    prefs.setString("profilename", profile.shot_header.title);
+    log("Profile selected and saved");
   }
 
   Future<void> loadAllProfiles() async {
@@ -117,15 +63,17 @@ class ProfileService extends ChangeNotifier {
     List get =
         jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
-    get.forEach((file) async {
+    for (var file in get) {
       log("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
-      log("Parsing profile $file $rawJson");
+
       parseProfile(rawJson);
-    });
+    }
+    log('all profiles loaded');
   }
 
   parseProfile(String json_string) {
+    log("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> ex_frames = <De1ShotExtFrameClass>[];
@@ -133,43 +81,6 @@ class ProfileService extends ChangeNotifier {
       return "Failed to encode profile " + ", try to load another profile";
     profiles.add(De1ShotProfile(header, frames, ex_frames));
     log("$header $frames $ex_frames");
-    // var res_header = await writeToDE(header.bytes, De1ChrEnum.ShotHeader);
-    // if (res_header != "")
-    //     return "Error writing profile header " + res_header;
-
-    // foreach (var fr in frames)
-    // {
-    //     var res_frames = await writeToDE(fr.bytes, De1ChrEnum.ShotFrame);
-    //     if (res_frames != "")
-    //         return "Error writing shot frame " + res_frames;
-    // }
-
-    // foreach (var ex_fr in ex_frames)
-    // {
-    //     var res_frames = await writeToDE(ex_fr.bytes, De1ChrEnum.ShotFrame);
-    //     if (res_frames != "")
-    //         return "Error writing ext shot frame " + res_frames;
-    // }
-
-    // // stop at volume in the profile tail
-    // if(ProfileMaxVol > 0.0)
-    // {
-    //     var tail_bytes = EncodeDe1ShotTail(frames.Count, ProfileMaxVol);
-
-    //     var res_tail = await writeToDE(tail_bytes, De1ChrEnum.ShotFrame);
-    //     if (res_tail != "")
-    //         return "Error writing profile tail " + res_tail;
-    // }
-
-    // // check if we need to send the new water temp
-    // if (De1OtherSetn.TargetGroupTemp != frames[0].Temp)
-    // {
-    //     De1OtherSetn.TargetGroupTemp = frames[0].Temp;
-    //     var bytes = EncodeDe1OtherSetn(De1OtherSetn);
-    //     var res_water = await writeToDE(bytes, De1ChrEnum.OtherSetn);
-    //     if (res_water != "")
-    //         return "Error " + res_water;
-    // }
 
     return "";
   }

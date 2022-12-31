@@ -11,6 +11,49 @@ class De1ShotProfile {
   List<De1ShotExtFrameClass> shot_exframes;
 }
 
+class De1OtherSetnClass {
+  int steamSettings = 0; // do not know what is this, use always 0
+  int targetSteamTemp = 130;
+  int targetSteamLength = 30;
+  int targetHotWaterTemp = 85;
+  int targetHotWaterVol = 120;
+  int targetHotWaterLength = 45;
+  int targetEspressoVol = 35;
+  double targetGroupTemp = 98.0; // taken form the shot data
+
+  De1OtherSetnClass();
+
+  static Uint8List encodeDe1OtherSetn(De1OtherSetnClass other_setn) {
+    Uint8List data = Uint8List(9);
+
+    int index = 0;
+    data[index] = other_setn.steamSettings;
+    index++;
+    data[index] = other_setn.targetSteamTemp;
+    index++;
+    data[index] = other_setn.targetSteamLength;
+    index++;
+    data[index] = other_setn.targetHotWaterTemp;
+    index++;
+    data[index] = other_setn.targetHotWaterVol;
+    index++;
+    data[index] = other_setn.targetHotWaterLength;
+    index++;
+    data[index] = other_setn.targetEspressoVol;
+    index++;
+
+    data[index] = other_setn.targetGroupTemp.toInt();
+    index++;
+    data[index] =
+        ((other_setn.targetGroupTemp - other_setn.targetGroupTemp.floor()) *
+                256.0)
+            .toInt();
+    index++;
+
+    return data;
+  }
+}
+
 class De1ShotHeaderClass // proc spec_shotdescheader
 {
   int headerV = 1; // hard-coded
@@ -43,7 +86,9 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   String notes = "";
 
-  String beverage_type = ""; // to compare bytes
+  String beverage_type = "";
+
+  double targetGroupTemp = 0.0; // to compare bytes
 
   De1ShotHeaderClass();
 
@@ -112,6 +157,22 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     index++;
     data[index] = shotHeader.maximumFlow;
     index++;
+
+    return data;
+  }
+
+  static Uint8List encodeDe1ShotTail(int frameToWrite, double maxTotalVolume) {
+    Uint8List data = Uint8List(8);
+
+    data[0] = frameToWrite;
+
+    Helper.convert_float_to_U10P0_for_tail(maxTotalVolume, data, 1);
+
+    data[3] = 0;
+    data[4] = 0;
+    data[5] = 0;
+    data[6] = 0;
+    data[7] = 0;
 
     return data;
   }
@@ -300,6 +361,17 @@ class Helper {
     } else {
       return (0.5 + x * 10).toInt();
     }
+  }
+
+  static void convert_float_to_U10P0_for_tail(
+      double x, Uint8List data, int index) {
+    int ix = x.toInt();
+
+    if (ix > 255) // lets make life esier and limit x to 255
+      ix = 255;
+
+    data[index] = 0x4; // take PI into account
+    data[index + 1] = ix;
   }
 
   static double convert_bottom_10_of_U10P0(int x) {

@@ -44,6 +44,8 @@ class EspressoMachineService extends ChangeNotifier {
 
   DE1? de1;
 
+  De1OtherSetnClass de1Settings = De1OtherSetnClass();
+
   EspressoMachineService();
 
   void setShot(ShotState shot) {
@@ -82,5 +84,56 @@ class EspressoMachineService extends ChangeNotifier {
     _state.shotFrame = sh;
     log("ShotFrame:$sh");
     notifyListeners();
+  }
+
+  Future<String> uploadProfile(De1ShotProfile profile) async {
+    var header = profile.shot_header;
+
+    try {
+      await de1!.writeWithResult(Endpoint.HeaderWrite, header.bytes);
+    } catch (ex) {
+      return "Error writing profile header " + ex.toString();
+    }
+
+    for (var fr in profile.shot_frames) {
+      try {
+        await de1!.writeWithResult(Endpoint.FrameWrite, fr.bytes);
+      } catch (ex) {
+        return "Error writing shot frame $fr";
+      }
+    }
+
+    for (var ex_fr in profile.shot_exframes) {
+      try {
+        await de1!.writeWithResult(Endpoint.FrameWrite, ex_fr.bytes);
+      } catch (ex) {
+        return "Error writing ex shot frame $ex_fr";
+      }
+    }
+
+    // stop at volume in the profile tail
+    if (profile.shot_header.target_volume > 0.0) {
+      var tail_bytes = De1ShotHeaderClass.encodeDe1ShotTail(
+          profile.shot_frames.length, profile.shot_header.target_volume);
+
+      try {
+        await de1!.writeWithResult(Endpoint.FrameWrite, tail_bytes);
+      } catch (ex) {
+        return "Error writing shot frame tail $tail_bytes";
+      }
+    }
+
+    // check if we need to send the new water temp
+    if (de1Settings.targetGroupTemp != profile.shot_frames[0].temp) {
+      profile.shot_header.targetGroupTemp = profile.shot_frames[0].temp;
+      var bytes = De1OtherSetnClass.encodeDe1OtherSetn(de1Settings);
+
+      try {
+        await de1!.writeWithResult(Endpoint.ShotSettings, bytes);
+      } catch (ex) {
+        return "Error writing shot settings $bytes";
+      }
+    }
+    return Future.value("");
   }
 }

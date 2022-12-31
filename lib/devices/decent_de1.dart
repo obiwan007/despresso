@@ -265,6 +265,17 @@ class DE1 extends ChangeNotifier {
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
 
+  Future<void> writeWithResult(Endpoint e, Uint8List data) {
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
+    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic,
+        value: data);
+
+    // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
+  }
+
   void tempatureNotification(ByteData value) {}
   void stateNotification(ByteData value) {
     var state = value.getUint8(0);

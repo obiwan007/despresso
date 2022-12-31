@@ -9,6 +9,7 @@ class WeightMeassurement {
 
 class ScaleService {
   double _weight = 0.0;
+  double _flow = 0.0;
   DateTime last = DateTime.now();
 
   late StreamController<WeightMeassurement> _controller;
@@ -32,10 +33,12 @@ class ScaleService {
 
     _controller.add(WeightMeassurement(weight, flow));
     _weight = weight;
+    _flow = flow;
     last = now;
   }
 
   Stream<WeightMeassurement> get stream => _stream;
 
   double get weight => _weight;
+  double get flow => _flow;
 }

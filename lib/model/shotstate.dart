@@ -109,6 +109,7 @@ class ShotState {
   double setHeadTemp;
   double setGroupPressure;
   double setGroupFlow;
+  double flowWeight = 0;
   int frameNumber;
   int steamTemp;
 

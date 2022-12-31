@@ -125,6 +125,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
           }
 
           shot.weight = scaleService.weight;
+          shot.flowWeight = scaleService.flow;
           shot.sampleTimeCorrected = shot.sampleTime - baseTime;
           // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
           shotList.add(shot);
@@ -156,21 +157,16 @@ class _EspressoScreenState extends State<EspressoScreen> {
     if (shotList.entries.isEmpty) {
       return [];
     }
-    // shotList.entries.forEach((element) {
-    //   if (element.subState.isNotEmpty) {
-    //     log(element.subState + " " + element.sampleTimeCorrected.toString());
-    //   }
-    // });
+
     var stateChanges = shotList.entries
         .where((element) => element.subState.isNotEmpty)
         .toList();
-    // log("Phases= ${stateChanges.length}");
 
     int i = 0;
     var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
     return stateChanges.map((from) {
       var toSampleTime = maxSampleTime;
-      // og(from.subState);
+
       if (i < stateChanges.length - 1) {
         i++;
         toSampleTime = stateChanges[i].sampleTimeCorrected;
@@ -198,7 +194,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   List<charts.Series<ShotState, double>> _createData() {
     return [
       charts.Series<ShotState, double>(
-        id: 'Pressure',
+        id: 'Pressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
         colorFn: (_, __) =>
@@ -207,7 +203,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         data: shotList.entries,
       ),
       charts.Series<ShotState, double>(
-        id: 'Flow',
+        id: 'Flow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
         colorFn: (_, __) =>
@@ -216,7 +212,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         data: shotList.entries,
       ),
       charts.Series<ShotState, double>(
-        id: 'Temp',
+        id: 'Temp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
         colorFn: (_, __) =>
@@ -225,9 +221,18 @@ class _EspressoScreenState extends State<EspressoScreen> {
         data: shotList.entries,
       ),
       charts.Series<ShotState, double>(
-        id: 'Weight',
+        id: 'Weight [g]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'Flow [g/s]',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.flowWeight,
         colorFn: (_, __) =>
             charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
@@ -372,6 +377,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
     var flowChart = charts.LineChart(
       [
         data[1],
+        data[4],
         data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
       ],
       animate: false,
@@ -437,6 +443,13 @@ class _EspressoScreenState extends State<EspressoScreen> {
     if (machineService.state.shot != null) {
       insights = Column(
         children: [
+          Row(
+            children: [
+              // const Text('Profile: ', style: theme.TextStyles.tabSecondary),
+              Text(profileService.currentProfile!.shot_header.title,
+                  style: theme.TextStyles.tabHeading),
+            ],
+          ),
           Row(
             children: [
               const Text('State: ', style: theme.TextStyles.tabSecondary),

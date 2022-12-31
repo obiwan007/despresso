@@ -1,4 +1,5 @@
 import 'package:despresso/model/machine.dart';
+import 'package:despresso/model/shotdecoder.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';

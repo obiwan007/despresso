@@ -36,7 +36,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
     profileService.addListener(profileListener);
     log(profileService.currentProfile.toString());
-    _selectedProfile = profileService.profiles.first;
+    _selectedProfile = profileService.currentProfile;
     calcProfileGraph();
     phases = _createPhases();
   }
@@ -81,6 +81,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                           onChanged: (value) {
                             setState(() {
                               _selectedProfile = value!;
+                              profileService.setProfile(_selectedProfile!);
                               calcProfileGraph();
                               phases = _createPhases();
                             });
@@ -125,10 +126,48 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                     flex: 6,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          ...createSteps(),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ...createSteps(),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                ElevatedButton.icon(
+                                  icon: Icon(Icons.add),
+                                  onPressed: () async {
+                                    var result = await machineService
+                                        .uploadProfile(_selectedProfile!);
+
+                                    var snackBar = SnackBar(
+                                        content: Text(
+                                            'Profile is selected: $result'),
+                                        action: SnackBarAction(
+                                          label: 'Ok',
+                                          onPressed: () {
+                                            // Some code to undo the change.
+                                          },
+                                        ));
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  },
+                                  label: const Text(
+                                    "Save to Decent",
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -223,6 +262,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
   void profileListener() {
     log('Profile updated');
+    _selectedProfile = profileService.currentProfile;
   }
 
   List<charts.Series<ShotState, double>> _createSeriesData() {
