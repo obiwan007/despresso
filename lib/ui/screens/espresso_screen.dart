@@ -127,6 +127,14 @@ class _EspressoScreenState extends State<EspressoScreen> {
           shot.weight = scaleService.weight;
           shot.flowWeight = scaleService.flow;
           shot.sampleTimeCorrected = shot.sampleTime - baseTime;
+
+          if (profileService.currentProfile!.shot_header.target_weight > 1 &&
+              profileService.currentProfile!.shot_header.target_weight >
+                  shot.weight + 1) {
+            log("Shot Weight reached ${shot.weight}");
+            machineService.setState(EspressoMachineState.idle);
+          }
+          //if (profileService.currentProfile.shot_header.target_weight)
           // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
           shotList.add(shot);
         }
@@ -523,24 +531,36 @@ class _EspressoScreenState extends State<EspressoScreen> {
         const Spacer(),
         StreamBuilder<WeightMeassurement>(
           stream: scaleService.stream,
-          initialData: WeightMeassurement(0, 0),
+          initialData: WeightMeassurement(0, 0, ScaleState.disconnected),
           builder: (BuildContext context,
               AsyncSnapshot<WeightMeassurement> snapshot) {
             return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Row(
+                  children: [
+                    const Text('State: ', style: theme.TextStyles.tabSecondary),
+                    Text('${snapshot.data!.state}',
+                        style: theme.TextStyles.tabPrimary),
+                  ],
+                ),
                 Row(
                   children: [
                     const Text('Weight: ',
                         style: theme.TextStyles.tabSecondary),
-                    Text('${snapshot.data!.weight.toStringAsFixed(2)}g',
-                        style: theme.TextStyles.tabSecondary),
+                    Text(
+                        profileService.currentProfile != null
+                            ? '${snapshot.data!.weight.toStringAsFixed(2)}g / ${profileService.currentProfile!.shot_header.target_weight}g'
+                            : '',
+                        style: theme.TextStyles.tabPrimary),
                   ],
                 ),
                 Row(
                   children: [
                     const Text('Flow: ', style: theme.TextStyles.tabSecondary),
                     Text('${snapshot.data!.flow.toStringAsFixed(2)}g/s',
-                        style: theme.TextStyles.tabSecondary)
+                        style: theme.TextStyles.tabPrimary)
                   ],
                 ),
               ],

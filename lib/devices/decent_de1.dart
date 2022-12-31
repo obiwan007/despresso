@@ -184,7 +184,7 @@ class DE1 extends ChangeNotifier {
     //   _onStateChange(connectionState);
     // });
     // device.connect();
-
+    service.setState(EspressoMachineState.connecting);
     _connectToDeviceSubscription = flutterReactiveBle
         .connectToDevice(id: device.id)
         .listen((connectionState) {

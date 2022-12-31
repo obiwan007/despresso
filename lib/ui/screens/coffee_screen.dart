@@ -205,7 +205,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         Spacer(),
         StreamBuilder<WeightMeassurement>(
           stream: scaleService.stream,
-          initialData: WeightMeassurement(0, 0),
+          initialData: WeightMeassurement(0, 0, ScaleState.disconnected),
           builder: (BuildContext context,
               AsyncSnapshot<WeightMeassurement> snapshot) {
             return Column(

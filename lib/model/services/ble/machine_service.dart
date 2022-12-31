@@ -34,6 +34,7 @@ enum EspressoMachineState {
   steam,
   sleep,
   disconnected,
+  connecting,
   refill,
   flush
 }

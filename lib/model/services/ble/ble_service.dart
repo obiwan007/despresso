@@ -76,8 +76,8 @@ class BLEService extends ChangeNotifier {
 
   void _addDeviceTolist(final DiscoveredDevice device) async {
     if (!device.name.isEmpty) {
-      log('Device: ' + device.name);
       if (!_devicesList.map((e) => e.id).contains(device.id)) {
+        log('Found Device: ' + device.name);
         if (device.name != null && device.name.startsWith('ACAIA')) {
           log('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
@@ -88,6 +88,8 @@ class BLEService extends ChangeNotifier {
         }
         _devicesList.add(device);
         notifyListeners();
+      } else {
+        log('Ignoring existing device: ${device.name}');
       }
     }
   }

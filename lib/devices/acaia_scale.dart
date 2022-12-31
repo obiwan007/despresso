@@ -63,6 +63,7 @@ class AcaiaScale extends ChangeNotifier {
   AcaiaScale(this.device) {
     scaleService = getIt<ScaleService>();
     log("Connect to Acaia");
+    scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
         (connectionState) {
       // Handle connection state updates
@@ -154,6 +155,8 @@ class AcaiaScale extends ChangeNotifier {
   void _sendHeatbeat() {
     if (_state != DeviceConnectionState.connected) {
       log('Disconnected from acaia scale. Not sending heartbeat');
+
+      scaleService.setState(ScaleState.disconnected);
       return;
     }
     final characteristic = QualifiedCharacteristic(
@@ -170,6 +173,8 @@ class AcaiaScale extends ChangeNotifier {
   void _sendIdent() {
     if (_state != DeviceConnectionState.connected) {
       log('Disconnected from acaia scale. Not sending ident');
+
+      scaleService.setState(ScaleState.disconnected);
       return;
     }
 
@@ -188,6 +193,7 @@ class AcaiaScale extends ChangeNotifier {
   void _sendConfig() {
     if (_state != DeviceConnectionState.connected) {
       log('Disconnected from acaia scale. Not sending config');
+      scaleService.setState(ScaleState.disconnected);
       return;
     }
 
@@ -210,10 +216,12 @@ class AcaiaScale extends ChangeNotifier {
     switch (state) {
       case DeviceConnectionState.connecting:
         log('Connecting');
+        scaleService.setState(ScaleState.connecting);
         break;
 
       case DeviceConnectionState.connected:
         log('Connected');
+        scaleService.setState(ScaleState.connected);
         // await device.discoverAllServicesAndCharacteristics();
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID,
@@ -242,6 +250,7 @@ class AcaiaScale extends ChangeNotifier {
             Timer.periodic(_heartbeat_time, (Timer t) => _sendHeatbeat());
         return;
       case DeviceConnectionState.disconnected:
+        scaleService.setState(ScaleState.disconnected);
         log('Acaia Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription?.cancel();
