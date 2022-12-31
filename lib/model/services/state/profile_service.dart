@@ -66,8 +66,11 @@ class ProfileService extends ChangeNotifier {
     for (var file in get) {
       log("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
-
-      parseProfile(rawJson);
+      try {
+        parseProfile(rawJson);
+      } catch (ex) {
+        log("Profile parse error: $ex");
+      }
     }
     log('all profiles loaded');
   }

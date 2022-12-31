@@ -4,6 +4,9 @@ import 'dart:developer';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:reactive_ble_platform_interface/src/model/connection_state_update.dart';
 
+import '../../../service_locator.dart';
+import 'ble_service.dart';
+
 enum ScaleState {
   /// Currently establishing a connection.
   connecting,
@@ -74,5 +77,10 @@ class ScaleService {
     _state = state;
     log('Scale State: $_state');
     _controller.add(WeightMeassurement(_weight, _flow, _state));
+  }
+
+  void connect() {
+    var bleService = getIt<BLEService>();
+    bleService.startScan();
   }
 }

@@ -128,10 +128,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
           shot.flowWeight = scaleService.flow;
           shot.sampleTimeCorrected = shot.sampleTime - baseTime;
 
-          if (profileService.currentProfile!.shot_header.target_weight > 1 &&
-              profileService.currentProfile!.shot_header.target_weight >
-                  shot.weight + 1) {
-            log("Shot Weight reached ${shot.weight}");
+          if (scaleService.state == ScaleState.connected &&
+              profileService.currentProfile!.shot_header.target_weight > 1 &&
+              shot.weight + 1 >
+                  profileService.currentProfile!.shot_header.target_weight) {
+            log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
             machineService.setState(EspressoMachineState.idle);
           }
           //if (profileService.currentProfile.shot_header.target_weight)
@@ -200,6 +201,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   List<charts.Series<ShotState, double>> _createData() {
+    log("Create Data");
     return [
       charts.Series<ShotState, double>(
         id: 'Pressure [bar]',
@@ -233,7 +235,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
         colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+            charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -242,8 +244,38 @@ class _EspressoScreenState extends State<EspressoScreen> {
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.flowWeight,
         colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'SetFlow [ml/s]',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.setGroupFlow,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        dashPatternFn: (_, __) => [5, 5],
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'SetPressure [bar]',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.setGroupPressure,
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        dashPatternFn: (datum, index) => [5, 5],
+        strokeWidthPxFn: (_, __) => 3,
+        data: shotList.entries,
+      ),
+      charts.Series<ShotState, double>(
+        id: 'SetTemp [°C]',
+        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
+        measureFn: (ShotState point, _) => point.setHeadTemp,
+        colorFn: (_, __) =>
             charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
+        dashPatternFn: (datum, index) => [5, 5],
         data: shotList.entries,
       ),
     ];
@@ -262,8 +294,9 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Widget _buildGraphTemp(List<Series<ShotState, double>> data,
       Iterable<RangeAnnotationSegment<double>> ranges) {
     // data[2].setAttribute(charts.measureAxisIdKey, "secondaryMeasureAxisId");
+    log('data length ${data.length}');
     var flowChart = charts.LineChart(
-      [data[2]],
+      [data[2], data[7]],
       animate: false,
       behaviors: [
         // Define one domain and two measure annotations configured to render
@@ -328,8 +361,9 @@ class _EspressoScreenState extends State<EspressoScreen> {
 
   Widget _buildGraphPressure(List<Series<ShotState, double>> data,
       Iterable<RangeAnnotationSegment<double>> ranges) {
+    log('data length ${data.length}');
     var flowChart = charts.LineChart(
-      [data[0]],
+      [data[0], data[6]],
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
@@ -382,9 +416,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Widget _buildGraphFlow(List<Series<ShotState, double>> data,
       Iterable<RangeAnnotationSegment<double>> ranges) {
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
+    log('data length ${data.length}');
     var flowChart = charts.LineChart(
       [
         data[1],
+        data[5],
         data[4],
         data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
       ],
@@ -541,8 +577,25 @@ class _EspressoScreenState extends State<EspressoScreen> {
                 Row(
                   children: [
                     const Text('State: ', style: theme.TextStyles.tabSecondary),
-                    Text('${snapshot.data!.state}',
-                        style: theme.TextStyles.tabPrimary),
+                    Column(
+                      children: snapshot.data!.state == ScaleState.disconnected
+                          ? [
+                              Text('${snapshot.data!.state}',
+                                  style: theme.TextStyles.tabPrimary),
+                              ElevatedButton(
+                                onPressed: () {
+                                  scaleService.connect();
+                                },
+                                child: Text(
+                                  "Connect",
+                                ),
+                              ),
+                            ]
+                          : [
+                              Text('${snapshot.data!.state}',
+                                  style: theme.TextStyles.tabPrimary),
+                            ],
+                    ),
                   ],
                 ),
                 Row(
@@ -661,7 +714,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var graphs = _buildGraphs();
+    Map<String, dynamic> graphs = {};
+    var isEmpty = shotList.entries.isEmpty;
+    if (!isEmpty) {
+      graphs = _buildGraphs();
+    }
     var isSelected =
         machineService.state.coffeeState == EspressoMachineState.espresso;
 
@@ -673,20 +730,22 @@ class _EspressoScreenState extends State<EspressoScreen> {
             Expanded(
               flex: 8, // takes 30% of available width
               child: Column(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: graphs["pressure"],
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: graphs["flow"],
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: graphs["temp"],
-                  ),
-                ],
+                children: isEmpty
+                    ? [Text("Loading")]
+                    : [
+                        Expanded(
+                          flex: 1,
+                          child: graphs["pressure"],
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: graphs["flow"],
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: graphs["temp"],
+                        ),
+                      ],
               ),
             ),
             Expanded(
