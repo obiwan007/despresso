@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:despresso/ui/screens/coffee_screen.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
@@ -23,8 +22,7 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage>
-    with SingleTickerProviderStateMixin {
+class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
   bool available = false;
 
   late CoffeeService coffeeSelection;
@@ -32,8 +30,7 @@ class _LandingPageState extends State<LandingPage>
   late EspressoMachineService machineService;
 
   late BLEService bleService;
-  late final _tabController =
-      TabController(length: 4, vsync: this, initialIndex: 0);
+  late final _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
 
   EspressoMachineState? lastState;
 
@@ -74,8 +71,7 @@ class _LandingPageState extends State<LandingPage>
         padding: const EdgeInsets.all(10.0),
         child: TextButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
             backgroundColor: MaterialStateProperty.all<Color>(color),
           ),
           onPressed: onpress,
@@ -191,8 +187,7 @@ class _LandingPageState extends State<LandingPage>
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProfilesScreen()),
+                      MaterialPageRoute(builder: (context) => const ProfilesScreen()),
                     );
                   },
                 ),

@@ -12,7 +12,7 @@ class WaterLevel {
 
   int getLevelPercent() {
     var l = waterLevel - waterLimit;
-    return (l * 100 / 8300).toInt();
+    return l * 100 ~/ 8300;
   }
 }
 
@@ -27,21 +27,10 @@ class MachineState {
   String subState = "";
 }
 
-enum EspressoMachineState {
-  idle,
-  espresso,
-  water,
-  steam,
-  sleep,
-  disconnected,
-  connecting,
-  refill,
-  flush
-}
+enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush }
 
 class EspressoMachineService extends ChangeNotifier {
-  final MachineState _state =
-      MachineState(null, EspressoMachineState.disconnected);
+  final MachineState _state = MachineState(null, EspressoMachineState.disconnected);
 
   DE1? de1;
 
@@ -93,7 +82,7 @@ class EspressoMachineService extends ChangeNotifier {
     try {
       await de1!.writeWithResult(Endpoint.HeaderWrite, header.bytes);
     } catch (ex) {
-      return "Error writing profile header " + ex.toString();
+      return "Error writing profile header $ex";
     }
 
     for (var fr in profile.shot_frames) {
@@ -104,23 +93,23 @@ class EspressoMachineService extends ChangeNotifier {
       }
     }
 
-    for (var ex_fr in profile.shot_exframes) {
+    for (var exFrame in profile.shot_exframes) {
       try {
-        await de1!.writeWithResult(Endpoint.FrameWrite, ex_fr.bytes);
+        await de1!.writeWithResult(Endpoint.FrameWrite, exFrame.bytes);
       } catch (ex) {
-        return "Error writing ex shot frame $ex_fr";
+        return "Error writing ex shot frame $exFrame";
       }
     }
 
     // stop at volume in the profile tail
     if (profile.shot_header.target_volume > 0.0) {
-      var tail_bytes = De1ShotHeaderClass.encodeDe1ShotTail(
-          profile.shot_frames.length, profile.shot_header.target_volume);
+      var tailBytes =
+          De1ShotHeaderClass.encodeDe1ShotTail(profile.shot_frames.length, profile.shot_header.target_volume);
 
       try {
-        await de1!.writeWithResult(Endpoint.FrameWrite, tail_bytes);
+        await de1!.writeWithResult(Endpoint.FrameWrite, tailBytes);
       } catch (ex) {
-        return "Error writing shot frame tail $tail_bytes";
+        return "Error writing shot frame tail $tailBytes";
       }
     }
 
