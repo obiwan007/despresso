@@ -12,6 +12,7 @@ import 'package:despresso/ui/theme.dart' as theme;
 
 import '../../devices/decent_de1.dart';
 import '../../model/shotstate.dart';
+import '../widgets/start_stop_button.dart';
 
 class EspressoScreen extends StatefulWidget {
   @override
@@ -686,27 +687,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
                   flex: 1,
                   child: _buildScaleInsight(),
                 ),
-                Column(
-                  children: [
-                    IconButton(
-                        iconSize: 150,
-                        isSelected: isSelected,
-                        icon: const Icon(Icons.play_circle),
-                        selectedIcon: const Icon(Icons.stop),
-                        tooltip: 'Water',
-                        onPressed: () {
-                          if (!isSelected) {
-                            machineService.de1?.requestState(De1StateEnum.Espresso);
-                          } else {
-                            machineService.de1?.setIdleState();
-                          }
-                        }),
-                    Text(
-                      isSelected ? "Stop" : "Start",
-                      style: theme.TextStyles.tabSecondary,
-                    ),
-                  ],
-                ),
+                StartStopButton(machineService: machineService),
                 _buildButtons()
               ]),
             ),

@@ -15,27 +15,21 @@ class Colors {
     "heat_water_heater": Color.fromARGB(100, 198, 23, 40),
   };
 
-  static const Color pressureColor =
-      Color.fromARGB(255, 166, 250, 29); //Color(0xFFFFFFFF);
+  static const Color pressureColor = Color.fromARGB(255, 166, 250, 29); //Color(0xFFFFFFFF);
   static const Color tempColor = Color.fromARGB(255, 250, 45, 45);
   static const Color flowColor = Color.fromARGB(255, 58, 157, 244);
   static const Color weightColor = Color.fromARGB(255, 131, 109, 105);
 
   static const Color backgroundColor = Color(0xFF184059); //0xFFFF4580
   static const Color tabImageBorder = Color(0xFFFFFFFF); // 0xFFFFD2CF
-  static final Color tabImageShadowColor =
-      HSLColor.fromColor(backgroundColor).withLightness(0.7).toColor();
-  static final Color tabShadowColor =
-      HSLColor.fromColor(backgroundColor).withLightness(1).toColor();
+  static final Color tabImageShadowColor = HSLColor.fromColor(backgroundColor).withLightness(0.7).toColor();
+  static final Color tabShadowColor = HSLColor.fromColor(backgroundColor).withLightness(1).toColor();
 
-  static final Color tabColor =
-      HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
+  static final Color tabColor = HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
 
   static final _value = HSVColor.fromColor(backgroundColor).value;
-  static final _top =
-      HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
-  static final _bottom =
-      HSVColor.fromColor(backgroundColor).withValue(_value - .1).toColor();
+  static final _top = HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
+  static final _bottom = HSVColor.fromColor(backgroundColor).withValue(_value - .1).toColor();
 
   static final screenBackground = LinearGradient(
     colors: [
@@ -86,6 +80,11 @@ class TextStyles {
   static const TextStyle tabHeading = TextStyle(
     color: Colors.primaryColor,
     // fontSize: 72.0,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle tabStatusbutton = TextStyle(
+    color: Colors.primaryColor,
+    fontSize: 22.0,
     fontWeight: FontWeight.bold,
   );
 }
