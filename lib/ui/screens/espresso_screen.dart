@@ -571,13 +571,17 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Row _buildButtons() {
     return Row(
       children: [
+        Spacer(flex: 1),
         Expanded(
           flex: 1,
           child: IconButton(
             iconSize: 50,
             isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-            icon: const Icon(Icons.offline_bolt),
-            selectedIcon: const Icon(Icons.bolt),
+            icon: const Icon(Icons.power_settings_new, color: Colors.green),
+            selectedIcon: const Icon(
+              Icons.power_off,
+              color: Colors.red,
+            ),
             tooltip: 'Switch on/off decent de1',
             onPressed: () {
               if (machineService.state.coffeeState == EspressoMachineState.sleep) {
@@ -588,19 +592,19 @@ class _EspressoScreenState extends State<EspressoScreen> {
             },
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: IconButton(
-            iconSize: 50,
-            isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-            icon: const Icon(Icons.offline_bolt),
-            selectedIcon: const Icon(Icons.bolt),
-            tooltip: 'Test',
-            onPressed: () {
-              _displayDialog(context);
-            },
-          ),
-        ),
+        // Expanded(
+        //   flex: 1,
+        //   child: IconButton(
+        //     iconSize: 50,
+        //     isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
+        //     icon: const Icon(Icons.power_off),
+        //     selectedIcon: const Icon(Icons.power_settings_new),
+        //     tooltip: 'Test',
+        //     onPressed: () {
+        //       _displayDialog(context);
+        //     },
+        //   ),
+        // ),
       ],
     );
   }
