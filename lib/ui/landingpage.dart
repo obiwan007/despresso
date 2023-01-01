@@ -6,11 +6,13 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
+import 'screens/flush_screen.dart';
 import 'theme.dart' as theme;
 
 class LandingPage extends StatefulWidget {
@@ -159,8 +161,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
             controller: _tabController,
             children: [
               EspressoScreen(),
-              const Icon(Icons.coffee),
-              const Icon(Icons.directions_bike),
+              SteamScreen(),
+              FlushScreen(),
               WaterScreen(),
             ],
           ),

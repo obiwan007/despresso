@@ -78,7 +78,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   loadShotData() async {
     await shotList.load("testshot.json");
-    log("Lastshot loaded");
+    log("Lastshot loaded ${shotList.entries.length}");
     notifyListeners();
   }
 
@@ -189,7 +189,7 @@ class EspressoMachineService extends ChangeNotifier {
       log('Shot null');
       return;
     }
-    if (state.coffeeState == EspressoMachineState.idle) {
+    if (state.coffeeState == EspressoMachineState.idle && inShot == true) {
       baseTimeDate = DateTime.now();
       refillAnounced = false;
       inShot = false;
@@ -215,6 +215,20 @@ class EspressoMachineService extends ChangeNotifier {
       baseTimeDate = DateTime.now();
       log("basetime $baseTime");
     }
+
+    if (state.coffeeState == EspressoMachineState.steam && lastSubstate != state.subState && state.subState == "pour") {
+      log('Startet steam pour');
+      baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      baseTimeDate = DateTime.now();
+      log("basetime $baseTime");
+    }
+    if (state.coffeeState == EspressoMachineState.flush && lastSubstate != state.subState && state.subState == "pour") {
+      log('Startet flush pour');
+      baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      baseTimeDate = DateTime.now();
+      log("basetime $baseTime");
+    }
+
     var subState = state.subState;
     timer = DateTime.now().difference(baseTimeDate);
     if (!(shot.sampleTimeCorrected > 0)) {
@@ -249,8 +263,26 @@ class EspressoMachineService extends ChangeNotifier {
           }
           if (state.subState == "pour" &&
               settings.targetHotWaterLength > 1 &&
-              timer.inSeconds + 1 > settings.targetHotWaterLength) {
+              timer.inSeconds > settings.targetHotWaterLength) {
             log("Water Timer reached ${timer.inSeconds} > ${settings.targetHotWaterLength}");
+
+            triggerEndOfShot();
+          }
+
+          break;
+        case EspressoMachineState.steam:
+          if (state.subState == "pour" &&
+              settings.targetSteamLength > 1 &&
+              timer.inSeconds > settings.targetSteamLength) {
+            log("Steam Timer reached ${timer.inSeconds} > ${settings.targetSteamLength}");
+
+            triggerEndOfShot();
+          }
+
+          break;
+        case EspressoMachineState.flush:
+          if (state.subState == "pour" && settings.targetFlushTime > 1 && timer.inSeconds > settings.targetFlushTime) {
+            log("Flush Timer reached ${timer.inSeconds} > ${settings.targetFlushTime}");
 
             triggerEndOfShot();
           }

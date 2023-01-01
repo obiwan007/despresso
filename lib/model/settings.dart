@@ -12,6 +12,7 @@ class Settings {
   int targetHotWaterWeight = 120;
   int targetHotWaterLength = 45;
   int targetEspressoVol = 35;
+  int targetFlushTime = 5;
   double targetGroupTemp = 98.0; // taken form the shot data
 
   Settings();

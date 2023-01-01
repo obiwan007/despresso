@@ -15,6 +15,7 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings()
   ..targetHotWaterWeight = json['targetHotWaterWeight'] as int
   ..targetHotWaterLength = json['targetHotWaterLength'] as int
   ..targetEspressoVol = json['targetEspressoVol'] as int
+  ..targetFlushTime = json['targetFlushTime'] as int
   ..targetGroupTemp = (json['targetGroupTemp'] as num).toDouble();
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
@@ -26,5 +27,6 @@ Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
       'targetHotWaterWeight': instance.targetHotWaterWeight,
       'targetHotWaterLength': instance.targetHotWaterLength,
       'targetEspressoVol': instance.targetEspressoVol,
+      'targetFlushTime': instance.targetFlushTime,
       'targetGroupTemp': instance.targetGroupTemp,
     };

@@ -385,23 +385,23 @@ class _WaterScreenState extends State<WaterScreen> {
                         width: 100,
                         child: Stack(
                           children: <Widget>[
-                            Center(
-                              child: Container(
-                                width: 200,
-                                height: 200,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 15,
-                                  value: machineService.timer.inSeconds / settings.targetHotWaterLength,
+                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
+                              Center(
+                                child: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 15,
+                                    value: machineService.state.coffeeState == EspressoMachineState.water
+                                        ? machineService.timer.inSeconds / settings.targetHotWaterLength
+                                        : 0,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)} g")),
+                              Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)}s")),
+                            ],
                           ],
                         ),
-                        // CircularProgressIndicator(
-                        //   value: machineService.scaleService.weight / settings.targetHotWaterWeight,
-                        //   semanticsLabel: 'Current Weight',
-                        // ),
                       ),
                     ],
                   ),
@@ -441,23 +441,21 @@ class _WaterScreenState extends State<WaterScreen> {
                         width: 100,
                         child: Stack(
                           children: <Widget>[
-                            Center(
-                              child: Container(
-                                width: 200,
-                                height: 200,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 15,
-                                  value: machineService.scaleService.weight / settings.targetHotWaterWeight,
+                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
+                              Center(
+                                child: Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 15,
+                                    value: machineService.scaleService.weight / settings.targetHotWaterWeight,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Center(child: Text("${machineService.scaleService.weight.toStringAsFixed(0)} g")),
+                              Center(child: Text("${machineService.scaleService.weight.toStringAsFixed(0)} g")),
+                            ]
                           ],
                         ),
-                        // CircularProgressIndicator(
-                        //   value: machineService.scaleService.weight / settings.targetHotWaterWeight,
-                        //   semanticsLabel: 'Current Weight',
-                        // ),
                       ),
                     ],
                   ),
