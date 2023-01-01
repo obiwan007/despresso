@@ -4,7 +4,10 @@ import 'package:despresso/model/shotdecoder.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../service_locator.dart';
 import '../../shotstate.dart';
+import '../state/profile_service.dart';
+import 'scale_service.dart';
 
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
@@ -36,23 +39,49 @@ class EspressoMachineService extends ChangeNotifier {
 
   DE1? de1;
 
-  Settings de1Settings = Settings();
+  Settings settings = Settings();
 
   late SharedPreferences prefs;
 
-  EspressoMachineService();
+  late ProfileService profileService;
 
+  bool refillAnounced = false;
+
+  bool inShot = false;
+
+  String lastSubstate = "";
+
+  late ScaleService scaleService;
+
+  ShotList shotList = ShotList([]);
+  double baseTime = 0;
+
+  EspressoMachineService() {
+    init();
+  }
   void init() async {
+    profileService = getIt<ProfileService>();
+    profileService.addListener(updateProfile);
+    scaleService = getIt<ScaleService>();
     prefs = await SharedPreferences.getInstance();
     log('Preferences loaded');
 
     var settingsString = prefs.getString("de1Setting");
 
     notifyListeners();
+    loadShotData();
   }
 
+  loadShotData() async {
+    await shotList.load("testshot.json");
+    log("Lastshot loaded");
+    notifyListeners();
+  }
+
+  updateProfile() {}
   void setShot(ShotState shot) {
     _state.shot = shot;
+    handleShotData();
     notifyListeners();
   }
 
@@ -127,9 +156,9 @@ class EspressoMachineService extends ChangeNotifier {
     }
 
     // check if we need to send the new water temp
-    if (de1Settings.targetGroupTemp != profile.shot_frames[0].temp) {
+    if (settings.targetGroupTemp != profile.shot_frames[0].temp) {
       profile.shot_header.targetGroupTemp = profile.shot_frames[0].temp;
-      var bytes = Settings.encodeDe1OtherSetn(de1Settings);
+      var bytes = Settings.encodeDe1OtherSetn(settings);
 
       try {
         await de1!.writeWithResult(Endpoint.ShotSettings, bytes);
@@ -138,5 +167,96 @@ class EspressoMachineService extends ChangeNotifier {
       }
     }
     return Future.value("");
+  }
+
+  void handleShotData() {
+    // checkForRefill();
+
+    if (state.coffeeState == EspressoMachineState.sleep ||
+        state.coffeeState == EspressoMachineState.disconnected ||
+        state.coffeeState == EspressoMachineState.refill) {
+      return;
+    }
+    var shot = state.shot;
+    // if (machineService.state.subState.isNotEmpty) {
+    //   subState = machineService.state.subState;
+    // }
+    if (shot == null) {
+      log('Shot null');
+      return;
+    }
+    if (state.coffeeState == EspressoMachineState.idle) {
+      refillAnounced = false;
+      inShot = false;
+      if (shotList.saved == false &&
+          shotList.entries.isNotEmpty &&
+          shotList.saving == false &&
+          shotList.saved == false) {
+        shotFinished();
+      }
+
+      return;
+    }
+    if (!inShot && state.coffeeState == EspressoMachineState.espresso) {
+      log('Not Idle and not in Shot');
+      inShot = true;
+      shotList.clear();
+      baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      log("basetime $baseTime");
+    }
+
+    var subState = state.subState;
+
+    if (!(shot.sampleTimeCorrected > 0)) {
+      if (lastSubstate != subState && subState.isNotEmpty) {
+        log("SubState: $subState");
+        lastSubstate = state.subState;
+        shot.subState = lastSubstate;
+      }
+
+      shot.weight = scaleService.weight;
+      shot.flowWeight = scaleService.flow;
+      shot.sampleTimeCorrected = shot.sampleTime - baseTime;
+      if (scaleService.state == ScaleState.connected) {
+        switch (state.coffeeState) {
+          case EspressoMachineState.espresso:
+            if (profileService.currentProfile!.shot_header.target_weight > 1 &&
+                shot.weight + 1 > profileService.currentProfile!.shot_header.target_weight) {
+              log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
+
+              triggerEndOfShot();
+            }
+            break;
+          case EspressoMachineState.water:
+            if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
+              log("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
+
+              triggerEndOfShot();
+            }
+            break;
+        }
+      }
+
+      //if (profileService.currentProfile.shot_header.target_weight)
+      // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
+      if (inShot == true) {
+        shotList.add(shot);
+      }
+    }
+  }
+
+  void triggerEndOfShot() {
+    log("Idle mode initiated because of weight", error: {DateTime.now()});
+
+    de1?.requestState(De1StateEnum.Idle);
+    // Future.delayed(const Duration(milliseconds: 5000), () {
+    //   log("Idle mode initiated finished", error: {DateTime.now()});
+    //   stopTriggered = false;
+    // });
+  }
+
+  shotFinished() async {
+    log("Save last shot");
+    await shotList.saveData("testshot.json");
   }
 }

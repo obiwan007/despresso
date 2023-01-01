@@ -58,7 +58,7 @@ class BLEService extends ChangeNotifier {
   }
 
   void deviceScanListener(DiscoveredDevice result) {
-    log('Scanned Peripheral ${result..name}, RSSI ${result.rssi}');
+    print('Scanned Peripheral ${result..name}, RSSI ${result.rssi}');
     _addDeviceTolist(result);
   }
 
@@ -88,7 +88,7 @@ class BLEService extends ChangeNotifier {
         _devicesList.add(device);
         notifyListeners();
       } else {
-        log('Ignoring existing device: ${device.name}');
+        print('Ignoring existing device: ${device.name}');
       }
     }
   }

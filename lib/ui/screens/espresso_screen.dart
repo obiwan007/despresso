@@ -25,8 +25,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
   late ProfileService profileService;
   late ScaleService scaleService;
 
-  ShotList shotList = ShotList([]);
-
   bool inShot = false;
   double baseTime = 0;
 
@@ -75,75 +73,73 @@ class _EspressoScreenState extends State<EspressoScreen> {
     coffeeSelectionService.addListener(updateCoffeeSelection);
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
-
-    loadShotData();
   }
 
-  loadShotData() async {
-    await shotList.load("testshot.json");
-    setState(() {});
-  }
+  // loadShotData() async {
+  //   await shotList.load("testshot.json");
+  //   setState(() {});
+  // }
 
   void updateCoffee() => setState(() {
         checkForRefill();
 
-        if (machineService.state.coffeeState == EspressoMachineState.sleep ||
-            machineService.state.coffeeState == EspressoMachineState.disconnected ||
-            machineService.state.coffeeState == EspressoMachineState.refill) {
-          return;
-        }
-        var shot = machineService.state.shot;
-        // if (machineService.state.subState.isNotEmpty) {
-        //   subState = machineService.state.subState;
+        // if (machineService.state.coffeeState == EspressoMachineState.sleep ||
+        //     machineService.state.coffeeState == EspressoMachineState.disconnected ||
+        //     machineService.state.coffeeState == EspressoMachineState.refill) {
+        //   return;
         // }
-        if (shot == null) {
-          log('Shot null');
-          return;
-        }
-        if (machineService.state.coffeeState == EspressoMachineState.idle) {
-          refillAnounced = false;
-          inShot = false;
-          if (shotList.saved == false &&
-              shotList.entries.isNotEmpty &&
-              shotList.saving == false &&
-              shotList.saved == false) {
-            shotFinished();
-          }
+        // var shot = machineService.state.shot;
+        // // if (machineService.state.subState.isNotEmpty) {
+        // //   subState = machineService.state.subState;
+        // // }
+        // if (shot == null) {
+        //   log('Shot null');
+        //   return;
+        // }
+        // if (machineService.state.coffeeState == EspressoMachineState.idle) {
+        //   refillAnounced = false;
+        //   inShot = false;
+        //   if (shotList.saved == false &&
+        //       shotList.entries.isNotEmpty &&
+        //       shotList.saving == false &&
+        //       shotList.saved == false) {
+        //     shotFinished();
+        //   }
 
-          return;
-        }
-        if (!inShot && machineService.state.coffeeState == EspressoMachineState.espresso) {
-          log('Not Idle and not in Shot');
-          inShot = true;
-          shotList.clear();
-          baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-          log("basetime $baseTime");
-        }
+        //   return;
+        // }
+        // if (!inShot && machineService.state.coffeeState == EspressoMachineState.espresso) {
+        //   log('Not Idle and not in Shot');
+        //   inShot = true;
+        //   shotList.clear();
+        //   baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+        //   log("basetime $baseTime");
+        // }
 
-        subState = machineService.state.subState;
+        // subState = machineService.state.subState;
 
-        if (!(shot.sampleTimeCorrected > 0 && inShot == true)) {
-          if (lastSubstate != subState && subState.isNotEmpty) {
-            log("SubState: $subState");
-            lastSubstate = machineService.state.subState;
-            shot.subState = lastSubstate;
-          }
+        // if (!(shot.sampleTimeCorrected > 0 && inShot == true)) {
+        //   if (lastSubstate != subState && subState.isNotEmpty) {
+        //     log("SubState: $subState");
+        //     lastSubstate = machineService.state.subState;
+        //     shot.subState = lastSubstate;
+        //   }
 
-          shot.weight = scaleService.weight;
-          shot.flowWeight = scaleService.flow;
-          shot.sampleTimeCorrected = shot.sampleTime - baseTime;
+        //   shot.weight = scaleService.weight;
+        //   shot.flowWeight = scaleService.flow;
+        //   shot.sampleTimeCorrected = shot.sampleTime - baseTime;
 
-          if (scaleService.state == ScaleState.connected &&
-              profileService.currentProfile!.shot_header.target_weight > 1 &&
-              shot.weight + 1 > profileService.currentProfile!.shot_header.target_weight) {
-            log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
+        //   if (scaleService.state == ScaleState.connected &&
+        //       profileService.currentProfile!.shot_header.target_weight > 1 &&
+        //       shot.weight + 1 > profileService.currentProfile!.shot_header.target_weight) {
+        //     log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
 
-            triggerEndOfShot();
-          }
-          //if (profileService.currentProfile.shot_header.target_weight)
-          // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
-          shotList.add(shot);
-        }
+        //     triggerEndOfShot();
+        //   }
+        //   //if (profileService.currentProfile.shot_header.target_weight)
+        //   // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
+        //   shotList.add(shot);
+        // }
       });
   void triggerEndOfShot() {
     log("Idle mode initiated because of weight", error: {DateTime.now()});
@@ -170,20 +166,20 @@ class _EspressoScreenState extends State<EspressoScreen> {
     }
   }
 
-  shotFinished() async {
-    log("Save last shot");
-    await shotList.saveData("testshot.json");
-  }
+  // shotFinished() async {
+  //   log("Save last shot");
+  //   await shotList.saveData("testshot.json");
+  // }
 
   Iterable<charts.RangeAnnotationSegment<double>> _createPhases() {
-    if (shotList.entries.isEmpty) {
+    if (machineService.shotList.entries.isEmpty) {
       return [];
     }
 
-    var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
+    var stateChanges = machineService.shotList.entries.where((element) => element.subState.isNotEmpty).toList();
 
     int i = 0;
-    var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
+    var maxSampleTime = machineService.shotList.entries.last.sampleTimeCorrected;
     return stateChanges.map((from) {
       var toSampleTime = maxSampleTime;
 
@@ -216,7 +212,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         measureFn: (ShotState point, _) => point.groupPressure,
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'Flow [ml/s]',
@@ -224,7 +220,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         measureFn: (ShotState point, _) => point.groupFlow,
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'Temp [°C]',
@@ -232,7 +228,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         measureFn: (ShotState point, _) => point.headTemp,
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'Weight [g]',
@@ -240,7 +236,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         measureFn: (ShotState point, _) => point.weight,
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'Flow [g/s]',
@@ -248,7 +244,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         measureFn: (ShotState point, _) => point.flowWeight,
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'SetFlow [ml/s]',
@@ -257,7 +253,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
         dashPatternFn: (_, __) => [5, 5],
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'SetPressure [bar]',
@@ -266,7 +262,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
         dashPatternFn: (datum, index) => [5, 5],
         strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
       charts.Series<ShotState, double>(
         id: 'SetTemp [°C]',
@@ -275,7 +271,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         dashPatternFn: (datum, index) => [5, 5],
-        data: shotList.entries,
+        data: machineService.shotList.entries,
       ),
     ];
   }
@@ -396,24 +392,20 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   Widget _buildGraphFlow(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+    double maxWeight = (profileService.currentProfile?.shot_header.target_weight ?? 200.0) * 1.5;
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var flowChart = charts.LineChart(
       [data[1], data[5], data[4], data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
-        // Define one domain and two measure annotations configured to render
-        // labels in the chart margins.
         charts.RangeAnnotation([
           ...ranges,
-          // charts.RangeAnnotationSegment(
-          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
-          //     labelAnchor: charts.AnnotationLabelAnchor.end,
-          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
-          //     labelDirection: charts.AnnotationLabelDirection.vertical),
         ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       secondaryMeasureAxis: charts.NumericAxisSpec(
+        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
+        viewport: charts.NumericExtents(0.0, maxWeight),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
               charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
@@ -422,6 +414,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
+        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
               charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
@@ -662,7 +655,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> graphs = {};
-    var isEmpty = shotList.entries.isEmpty;
+    var isEmpty = machineService.shotList.entries.isEmpty;
     if (!isEmpty) {
       graphs = _buildGraphs();
     }

@@ -318,7 +318,7 @@ class _WaterScreenState extends State<WaterScreen> {
   }
 
   Widget _buildControls() {
-    var settings = machineService.de1Settings;
+    var settings = machineService.settings;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -384,20 +384,50 @@ class _WaterScreenState extends State<WaterScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Text("Weight ${settings.targetHotWaterWeight} g", style: theme.TextStyles.tabHeading),
-                      Slider(
-                        value: settings.targetHotWaterWeight.toDouble(),
-                        max: 200,
-                        min: 10,
-                        divisions: 200,
-                        label: "${settings.targetHotWaterWeight} g",
-                        onChanged: (double value) {
-                          setState(() {
-                            settings.targetHotWaterWeight = value.toInt();
-                          });
-                        },
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            Text("Weight ${settings.targetHotWaterWeight} g", style: theme.TextStyles.tabHeading),
+                            Slider(
+                              value: settings.targetHotWaterWeight.toDouble(),
+                              max: 200,
+                              min: 10,
+                              divisions: 200,
+                              label: "${settings.targetHotWaterWeight} g",
+                              onChanged: (double value) {
+                                setState(() {
+                                  settings.targetHotWaterWeight = value.toInt();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Stack(
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                width: 200,
+                                height: 200,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 15,
+                                  value: machineService.scaleService.weight / settings.targetHotWaterWeight,
+                                ),
+                              ),
+                            ),
+                            Center(child: Text("${machineService.scaleService.weight.toStringAsFixed(0)} g")),
+                          ],
+                        ),
+                        // CircularProgressIndicator(
+                        //   value: machineService.scaleService.weight / settings.targetHotWaterWeight,
+                        //   semanticsLabel: 'Current Weight',
+                        // ),
                       ),
                     ],
                   ),
