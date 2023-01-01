@@ -56,6 +56,10 @@ class EspressoMachineService extends ChangeNotifier {
   ShotList shotList = ShotList([]);
   double baseTime = 0;
 
+  DateTime baseTimeDate = DateTime.now();
+
+  Duration timer = const Duration(seconds: 0);
+
   EspressoMachineService() {
     init();
   }
@@ -186,6 +190,7 @@ class EspressoMachineService extends ChangeNotifier {
       return;
     }
     if (state.coffeeState == EspressoMachineState.idle) {
+      baseTimeDate = DateTime.now();
       refillAnounced = false;
       inShot = false;
       if (shotList.saved == false &&
@@ -204,9 +209,14 @@ class EspressoMachineService extends ChangeNotifier {
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log("basetime $baseTime");
     }
-
+    if (state.coffeeState == EspressoMachineState.water && lastSubstate != state.subState && state.subState == "pour") {
+      log('Startet water pour');
+      baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      baseTimeDate = DateTime.now();
+      log("basetime $baseTime");
+    }
     var subState = state.subState;
-
+    timer = DateTime.now().difference(baseTimeDate);
     if (!(shot.sampleTimeCorrected > 0)) {
       if (lastSubstate != subState && subState.isNotEmpty) {
         log("SubState: $subState");
@@ -217,24 +227,35 @@ class EspressoMachineService extends ChangeNotifier {
       shot.weight = scaleService.weight;
       shot.flowWeight = scaleService.flow;
       shot.sampleTimeCorrected = shot.sampleTime - baseTime;
-      if (scaleService.state == ScaleState.connected) {
-        switch (state.coffeeState) {
-          case EspressoMachineState.espresso:
+
+      switch (state.coffeeState) {
+        case EspressoMachineState.espresso:
+          if (scaleService.state == ScaleState.connected) {
             if (profileService.currentProfile!.shot_header.target_weight > 1 &&
                 shot.weight + 1 > profileService.currentProfile!.shot_header.target_weight) {
               log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
 
               triggerEndOfShot();
             }
-            break;
-          case EspressoMachineState.water:
+          }
+          break;
+        case EspressoMachineState.water:
+          if (scaleService.state == ScaleState.connected) {
             if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
               log("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
 
               triggerEndOfShot();
             }
-            break;
-        }
+          }
+          if (state.subState == "pour" &&
+              settings.targetHotWaterLength > 1 &&
+              timer.inSeconds + 1 > settings.targetHotWaterLength) {
+            log("Water Timer reached ${timer.inSeconds} > ${settings.targetHotWaterLength}");
+
+            triggerEndOfShot();
+          }
+
+          break;
       }
 
       //if (profileService.currentProfile.shot_header.target_weight)
