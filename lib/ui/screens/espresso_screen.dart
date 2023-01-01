@@ -512,7 +512,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Row _buildScaleInsight() {
     return Row(
       children: [
-        const Spacer(),
         StreamBuilder<WeightMeassurement>(
           stream: scaleService.stream,
           initialData: WeightMeassurement(0, 0, ScaleState.disconnected),
@@ -525,9 +524,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
                   children: [
                     const Text('State: ', style: theme.TextStyles.tabSecondary),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: snapshot.data!.state == ScaleState.disconnected
                           ? [
-                              Text('${snapshot.data!.state}', style: theme.TextStyles.tabPrimary),
+                              Text('${snapshot.data!.state.name}', style: theme.TextStyles.tabPrimary),
                               ElevatedButton(
                                 onPressed: () {
                                   scaleService.connect();
@@ -548,7 +549,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
                     const Text('Weight: ', style: theme.TextStyles.tabSecondary),
                     Text(
                         profileService.currentProfile != null
-                            ? '${snapshot.data!.weight.toStringAsFixed(2)}g / ${profileService.currentProfile!.shot_header.target_weight}g'
+                            ? '${snapshot.data!.weight.toStringAsFixed(1)}g / ${profileService.currentProfile!.shot_header.target_weight}g'
                             : '',
                         style: theme.TextStyles.tabPrimary),
                   ],
@@ -556,7 +557,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
                 Row(
                   children: [
                     const Text('Flow: ', style: theme.TextStyles.tabSecondary),
-                    Text('${snapshot.data!.flow.toStringAsFixed(2)}g/s', style: theme.TextStyles.tabPrimary)
+                    Text('${snapshot.data!.flow.toStringAsFixed(1)}g/s', style: theme.TextStyles.tabPrimary)
                   ],
                 ),
               ],
