@@ -35,6 +35,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
   String subState = "";
 
   bool refillAnounced = false;
+
+  bool stopTriggered = false;
   _EspressoScreenState() {}
 
   @override
@@ -84,6 +86,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
 
   void updateCoffee() => setState(() {
         checkForRefill();
+
         if (machineService.state.coffeeState == EspressoMachineState.sleep ||
             machineService.state.coffeeState == EspressoMachineState.disconnected ||
             machineService.state.coffeeState == EspressoMachineState.refill) {
@@ -134,13 +137,23 @@ class _EspressoScreenState extends State<EspressoScreen> {
               profileService.currentProfile!.shot_header.target_weight > 1 &&
               shot.weight + 1 > profileService.currentProfile!.shot_header.target_weight) {
             log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
-            machineService.setState(EspressoMachineState.idle);
+
+            triggerEndOfShot();
           }
           //if (profileService.currentProfile.shot_header.target_weight)
           // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
           shotList.add(shot);
         }
       });
+  void triggerEndOfShot() {
+    log("Idle mode initiated because of weight", error: {DateTime.now()});
+
+    machineService.de1?.requestState(De1StateEnum.Idle);
+    // Future.delayed(const Duration(milliseconds: 5000), () {
+    //   log("Idle mode initiated finished", error: {DateTime.now()});
+    //   stopTriggered = false;
+    // });
+  }
 
   void checkForRefill() {
     if (refillAnounced == false && machineService.state.coffeeState == EspressoMachineState.refill) {

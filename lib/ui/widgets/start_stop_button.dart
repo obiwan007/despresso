@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
@@ -105,6 +107,7 @@ class _StartStopButtonState extends State<StartStopButton> {
                 machineService.de1?.switchOn();
               } else {
                 if (!isBusy) {
+                  log("Start", error: {DateTime.now()});
                   machineService.de1?.requestState(De1StateEnum.Espresso);
                 } else {
                   machineService.de1?.setIdleState();
