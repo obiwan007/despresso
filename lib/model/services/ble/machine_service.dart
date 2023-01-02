@@ -123,16 +123,20 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   Future<String> uploadProfile(De1ShotProfile profile) async {
+    log("Save profile $profile");
     var header = profile.shot_header;
 
     try {
+      log("Write Header: $header");
       await de1!.writeWithResult(Endpoint.HeaderWrite, header.bytes);
     } catch (ex) {
+      log("Save profile $profile");
       return "Error writing profile header $ex";
     }
 
     for (var fr in profile.shot_frames) {
       try {
+        log("Write Frame: $fr");
         await de1!.writeWithResult(Endpoint.FrameWrite, fr.bytes);
       } catch (ex) {
         return "Error writing shot frame $fr";
@@ -141,6 +145,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     for (var exFrame in profile.shot_exframes) {
       try {
+        log("Write ExtFrame: $exFrame");
         await de1!.writeWithResult(Endpoint.FrameWrite, exFrame.bytes);
       } catch (ex) {
         return "Error writing ex shot frame $exFrame";
@@ -148,11 +153,11 @@ class EspressoMachineService extends ChangeNotifier {
     }
 
     // stop at volume in the profile tail
-    if (profile.shot_header.target_volume > 0.0) {
-      var tailBytes =
-          De1ShotHeaderClass.encodeDe1ShotTail(profile.shot_frames.length, profile.shot_header.target_volume);
+    if (true) {
+      var tailBytes = De1ShotHeaderClass.encodeDe1ShotTail(profile.shot_frames.length, 0);
 
       try {
+        log("Write Tail: $tailBytes");
         await de1!.writeWithResult(Endpoint.FrameWrite, tailBytes);
       } catch (ex) {
         return "Error writing shot frame tail $tailBytes";
@@ -165,6 +170,7 @@ class EspressoMachineService extends ChangeNotifier {
       var bytes = Settings.encodeDe1OtherSetn(settings);
 
       try {
+        log("Write Shot Settings: $bytes");
         await de1!.writeWithResult(Endpoint.ShotSettings, bytes);
       } catch (ex) {
         return "Error writing shot settings $bytes";

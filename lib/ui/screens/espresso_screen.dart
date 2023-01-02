@@ -455,50 +455,24 @@ class _EspressoScreenState extends State<EspressoScreen> {
               Text(profileService.currentProfile!.shot_header.title, style: theme.TextStyles.tabHeading),
             ],
           ),
-          Row(
-            children: [
-              const Text('State: ', style: theme.TextStyles.tabSecondary),
-              Text(machineService.state.coffeeState.name.toString().toUpperCase(), style: theme.TextStyles.tabPrimary),
-            ],
+          const Divider(
+            height: 20,
+            thickness: 5,
+            indent: 0,
+            endIndent: 0,
           ),
-          Row(
-            children: [
-              const Text('Op: ', style: theme.TextStyles.tabSecondary),
-              Text(machineService.state.subState, style: theme.TextStyles.tabPrimary),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Pressure: ', style: theme.TextStyles.tabSecondary),
-              Text('${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar',
-                  style: theme.TextStyles.tabPrimary),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Flow: ', style: theme.TextStyles.tabSecondary),
-              Text('${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s',
-                  style: theme.TextStyles.tabPrimary),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Mix Temp: ', style: theme.TextStyles.tabSecondary),
-              Text('${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C', style: theme.TextStyles.tabPrimary),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Head Temp: ', style: theme.TextStyles.tabSecondary),
-              Text('${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C', style: theme.TextStyles.tabPrimary),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('Water: ', style: theme.TextStyles.tabSecondary),
-              Text('${machineService.state.water?.getLevelPercent()}% / ${machineService.state.water?.waterLevel}',
-                  style: theme.TextStyles.tabPrimary),
-            ],
+          createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
+          createKeyValue("Sub", machineService.state.subState),
+          createKeyValue("Pressure", "${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar"),
+          createKeyValue("Flow", '${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s'),
+          createKeyValue("Mix Temp", '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C'),
+          createKeyValue("Head Temp", '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C'),
+          createKeyValue("Water", '${machineService.state.water?.getLevelPercent()}%'),
+          const Divider(
+            height: 20,
+            thickness: 5,
+            indent: 0,
+            endIndent: 0,
           ),
         ],
       );
@@ -509,8 +483,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
     return insights;
   }
 
-  Row _buildScaleInsight() {
-    return Row(
+  Column _buildScaleInsight() {
+    return Column(
       children: [
         StreamBuilder<WeightMeassurement>(
           stream: scaleService.stream,
@@ -520,46 +494,30 @@ class _EspressoScreenState extends State<EspressoScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                createKeyValue("State", snapshot.data!.state.name),
                 Row(
-                  children: [
-                    const Text('State: ', style: theme.TextStyles.tabSecondary),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: snapshot.data!.state == ScaleState.disconnected
-                          ? [
-                              Text('${snapshot.data!.state.name}', style: theme.TextStyles.tabPrimary),
-                              ElevatedButton(
-                                onPressed: () {
-                                  scaleService.connect();
-                                },
-                                child: const Text(
-                                  "Connect",
-                                ),
-                              ),
-                            ]
-                          : [
-                              Text('${snapshot.data!.state}', style: theme.TextStyles.tabPrimary),
-                            ],
-                    ),
-                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: snapshot.data!.state == ScaleState.disconnected
+                      ? [
+                          ElevatedButton(
+                            onPressed: () {
+                              scaleService.connect();
+                            },
+                            child: const Text(
+                              "Connect",
+                            ),
+                          ),
+                        ]
+                      : [],
                 ),
-                Row(
-                  children: [
-                    const Text('Weight: ', style: theme.TextStyles.tabSecondary),
-                    Text(
-                        profileService.currentProfile != null
-                            ? '${snapshot.data!.weight.toStringAsFixed(1)}g / ${profileService.currentProfile!.shot_header.target_weight}g'
-                            : '',
-                        style: theme.TextStyles.tabPrimary),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text('Flow: ', style: theme.TextStyles.tabSecondary),
-                    Text('${snapshot.data!.flow.toStringAsFixed(1)}g/s', style: theme.TextStyles.tabPrimary)
-                  ],
-                ),
+                createKeyValue("Weight",
+                    profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
+                createKeyValue(
+                    "",
+                    profileService.currentProfile != null
+                        ? '${profileService.currentProfile!.shot_header.target_weight} g'
+                        : '_'),
+                createKeyValue("Flow", '${snapshot.data!.flow} g/s'),
               ],
             );
           },
@@ -657,6 +615,21 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
+  Row createKeyValue(String key, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+            flex: 1, // takes 30% of available width
+            child: Text(key, style: theme.TextStyles.tabHeading)),
+        Expanded(
+            flex: 1, // takes 30% of available width
+            child: Text(value, style: theme.TextStyles.tabPrimary)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> graphs = {};
@@ -675,7 +648,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
               flex: 8, // takes 30% of available width
               child: Column(
                 children: isEmpty
-                    ? [const Text("Loading")]
+                    ? [const Text("No data yet")]
                     : [
                         Expanded(
                           flex: 1,
@@ -692,23 +665,26 @@ class _EspressoScreenState extends State<EspressoScreen> {
                       ],
               ),
             ),
-            SizedBox(
-              width: 200, // takes 30% of available width
-              child: Column(children: [
-                Expanded(
-                  flex: 0,
-                  child: _buildLiveInsights(),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: _buildScaleInsight(),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: StartStopButton(),
-                ),
-                // _buildButtons()
-              ]),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: 230, // takes 30% of available width
+                child: Column(children: [
+                  Expanded(
+                    flex: 0,
+                    child: _buildLiveInsights(),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: _buildScaleInsight(),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: StartStopButton(),
+                  ),
+                  // _buildButtons()
+                ]),
+              ),
             ),
           ],
         ),

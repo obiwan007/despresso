@@ -1,0 +1,94 @@
+{
+  "title": "Advanced spring lever 2",
+  "author": "Decent",
+  "notes": "An advanced spring lever profile by John Weiss that addresses a problem with simple spring lever profiles, by using both pressure and flow control. The last two steps keep pressure\/flow under control as the puck erodes, if the shot has not finished by the end of step 3. Please consider this as a starting point for tweaking.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "infuse",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "6.0",
+      "seconds": "20.0",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "3.0"
+      }
+    },
+    {
+      "name": "rise and hold",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "",
+      "seconds": "10.0",
+      "volume": "100",
+      "weight": "0"
+    },
+    {
+      "name": "decline",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "smooth",
+      "pressure": "4.0",
+      "flow": "",
+      "seconds": "20.0",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "4.0"
+      }
+    },
+    {
+      "name": "pressure limit",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "smooth",
+      "pressure": "4.0",
+      "flow": "1.2",
+      "seconds": "10.0",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "flow",
+        "condition": "over",
+        "value": "1.0"
+      }
+    },
+    {
+      "name": "flow limit",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "smooth",
+      "pressure": "3.0",
+      "flow": "1.0",
+      "seconds": "30.0",
+      "volume": "100",
+      "weight": "0"
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36",
+  "target_volume": "0",
+  "target_volume_count_start": "0",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Advanced spring lever",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

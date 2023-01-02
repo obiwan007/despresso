@@ -19,7 +19,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   int numberOfFrames = 0; // total num frames
   int numberOfPreinfuseFrames = 0; // num preinf frames
   int minimumPressure = 0; // hard-coded, read as {
-  int maximumFlow = 0x60; // hard-coded, read as {
+  double maximumFlow = 6; // hard-coded, read as {
 
   late Uint8List bytes = Uint8List(5);
 
@@ -66,7 +66,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   @override
   String toString() {
-    return "$numberOfFrames($numberOfPreinfuseFrames) P:$minimumPressure F:$maximumFlow";
+    return "FrameNum:$numberOfFrames(PreFrames:$numberOfPreinfuseFrames) MinPres:$minimumPressure MaxFlow:$maximumFlow";
   }
 
   static bool decodeDe1ShotHeader(ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
@@ -78,7 +78,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
       shotHeader.numberOfFrames = data.getUint8(index++);
       shotHeader.numberOfPreinfuseFrames = data.getUint8(index++);
       shotHeader.minimumPressure = data.getUint8(index++);
-      shotHeader.maximumFlow = data.getUint8(index++);
+      shotHeader.maximumFlow = data.getUint8(index++) / 16.0;
 
       if (shotHeader.headerV != 1) {
         return false;
@@ -91,12 +91,16 @@ class De1ShotHeaderClass // proc spec_shotdescheader
           return false;
         }
         for (int i = 0; i < new_bytes.buffer.lengthInBytes; i++) {
-          if (new_bytes[i] != array[i]) return false;
+          if (new_bytes[i] != array[i]) {
+            log("Error in decoding header:${new_bytes[i]} != ${array[i]}");
+            return false;
+          }
         }
       }
 
       return true;
     } catch (ex) {
+      log("Exception in header decode $ex");
       return false;
     }
   }
@@ -113,9 +117,10 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     index++;
     data[index] = shotHeader.minimumPressure;
     index++;
-    data[index] = shotHeader.maximumFlow;
-    index++;
+    data[index] = (0.5 + shotHeader.maximumFlow * 16.0).toInt();
 
+    index++;
+    log('EncodeDe1ShotFrame:$shotHeader ${Helper.toHex(data)}');
     return data;
   }
 
@@ -131,7 +136,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     data[5] = 0;
     data[6] = 0;
     data[7] = 0;
-
+    log('encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
     return data;
   }
 }
@@ -149,8 +154,7 @@ class De1ShotFrameClass // proc spec_shotframe
   String pump = "";
   String sensor = "";
   String transition = "";
-
-  late Uint8List bytes; // to compare bytes
+  Uint8List bytes = Uint8List(8);
 
   De1ShotFrameClass();
 
@@ -173,38 +177,41 @@ class De1ShotFrameClass // proc spec_shotframe
     try {
       int index = 0;
       shot_frame.frameToWrite = data.getUint8(index++);
-      index++;
+
       shot_frame.flag = data.getUint8(index++);
-      index++;
       shot_frame.setVal = data.getUint8(index++) / 16.0;
-      index++;
       shot_frame.temp = data.getUint8(index++) / 2.0;
-      index++;
       shot_frame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
-      index++; // convert_F8_1_7_to_float
       shot_frame.triggerVal = data.getUint8(index++) / 16.0;
-      index++;
       shot_frame.maxVol = Helper.convert_bottom_10_of_U10P0(
           256 * data.getUint8(index++) + data.getUint8(index++)); // convert_bottom_10_of_U10P0
 
       if (check_encoding) {
         var array = data.buffer.asUint8List();
         var new_bytes = EncodeDe1ShotFrame(shot_frame);
-        if (new_bytes.length != array.buffer.lengthInBytes) return false;
+        if (new_bytes.length != array.buffer.lengthInBytes) {
+          log("Error in decoding frame Length not matching");
+          return false;
+        }
+
         for (int i = 0; i < new_bytes.length; i++) {
-          if (new_bytes[i] != array[i]) return false;
+          if (new_bytes[i] != array[i]) {
+            log("Error in decoding frame:${new_bytes[i]} != ${array[i]}");
+            return false;
+          }
         }
       }
 
       return true;
-    } catch (Exception) {
+    } catch (ex) {
+      log("Exception $ex");
       return false;
     }
   }
 
   static Uint8List EncodeDe1ShotFrame(De1ShotFrameClass shot_frame) {
     Uint8List data = Uint8List(8);
-    log('EncodeDe1ShotFrame:${Helper.toHex(data)}');
+
     int index = 0;
     data[index] = shot_frame.frameToWrite;
     index++;
@@ -215,22 +222,40 @@ class De1ShotFrameClass // proc spec_shotframe
     data[index] = (0.5 + shot_frame.temp * 2.0).toInt();
     index++;
     data[index] = Helper.convert_float_to_F8_1_7(shot_frame.frameLen);
+    log("FrameLen ${data[index].toRadixString(16)}");
     index++;
     data[index] = (0.5 + shot_frame.triggerVal * 16.0).toInt();
     index++;
     Helper.convert_float_to_U10P0(shot_frame.maxVol, data, index);
-
+    log('EncodeDe1ShotFrame:$shot_frame ${Helper.toHex(data)}');
     return data;
   }
 
   @override
   String toString() {
+    const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
+    const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+    const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+    const int DC_CompF = 0x08; // Compare Pressure or Flow?
+    const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+    const int Interpolate = 0x20; // Hard jump to target value, or ramp?
+    const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+
+    var flagStr = "";
+    if ((flag & CtrlF) > 0) flagStr += "CtrlF";
+    if ((flag & DoCompare) > 0) flagStr += " DoCompare";
+    if ((flag & DC_GT) > 0) flagStr += " DC_GT";
+    if ((flag & DC_CompF) > 0) flagStr += " DC_CompF";
+    if ((flag & TMixTemp) > 0) flagStr += " TMixTemp";
+    if ((flag & Interpolate) > 0) flagStr += " Interpolate";
+    if ((flag & IgnoreLimit) > 0) flagStr += " IgnoreLimit";
+
     // StringBuilder sb = new StringBuilder();
     var sb = "";
-    // bytes.forEach((b) {
-    //   sb += "${b.toRadixString(16)}-";
-    // });
-    return "$frameToWrite $flag $setVal $temp $frameLen $triggerVal $maxVol $sb";
+    bytes.forEach((b) {
+      sb += "${b.toRadixString(16)}-";
+    });
+    return "Frame:$frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
   }
 }
 
@@ -239,7 +264,8 @@ class De1ShotExtFrameClass // extended frames
   int frameToWrite = 0;
   double limiterValue = 0.0;
   double limiterRange = 0.0;
-  late Uint8List bytes; // to compare bytes
+
+  Uint8List bytes = Uint8List(8);
 
   De1ShotExtFrameClass();
   bool compareBytes(De1ShotExtFrameClass sh) {
@@ -283,7 +309,7 @@ class De1ShotExtFrameClass // extended frames
       sb += "${b.toRadixString(16)}-";
     });
 
-    return "$frameToWrite    $limiterValue    $limiterRange   $sb";
+    return "Frame:$frameToWrite Limiter:$limiterValue LimiterRange:$limiterRange   $sb";
   }
 }
 
@@ -305,15 +331,17 @@ class Helper {
   }
 
   static int convert_float_to_F8_1_7(double x) {
+    var ret = 0;
     if (x >= 12.75) // need to set the high bit on (0x80);
     {
       if (x > 127)
-        return 127 | 0x80;
+        ret = (127 | 0x80);
       else
-        return (0x80 | (0.5 + x).toInt());
+        ret = (0x80 | (0.5 + x).toInt());
     } else {
-      return (0.5 + x * 10).toInt();
+      ret = (0.5 + x * 10).toInt();
     }
+    return ret;
   }
 
   static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
@@ -331,13 +359,18 @@ class Helper {
   }
 
   static convert_float_to_U10P0(double x, Uint8List data, int index) {
-    int ix = x.toInt();
+    Uint8List d = Uint8List(2);
 
-    if (ix > 255) {
-      ix = 255;
-    }
+    int ix = x.toInt() | 1024;
+    d.buffer.asByteData().setInt16(0, ix);
 
-    data[index] = 0;
-    data[index + 1] = ix;
+    // if (ix > 255) {
+    //   ix = 255;
+    // }
+
+    data[index] = d.buffer.asByteData().getUint8(0);
+    data[index + 1] = d.buffer.asByteData().getUint8(1);
+
+    log("Final: $x = ${data[index]} ${data[index + 1]}");
   }
 }
