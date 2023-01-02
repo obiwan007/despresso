@@ -38,7 +38,7 @@ class ProfileService extends ChangeNotifier {
     log('Profiles loaded');
 
     currentProfile = profiles.first;
-    if (profileName!.isNotEmpty) {
+    if (profileName != null && profileName.isNotEmpty) {
       currentProfile = profiles
           .where((element) => element.shot_header.title == profileName)
           .first;
