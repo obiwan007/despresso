@@ -87,6 +87,11 @@ class TextStyles {
     fontSize: 22.0,
     fontWeight: FontWeight.bold,
   );
+  static const TextStyle appBarTitle = TextStyle(
+    color: Colors.primaryColor,
+    fontSize: 16.0,
+    fontWeight: FontWeight.bold,
+  );
 }
 
 class Helper {

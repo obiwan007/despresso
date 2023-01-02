@@ -692,8 +692,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
                       ],
               ),
             ),
-            Expanded(
-              flex: 2, // takes 30% of available width
+            SizedBox(
+              width: 200, // takes 30% of available width
               child: Column(children: [
                 Expanded(
                   flex: 0,
@@ -703,8 +703,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
                   flex: 1,
                   child: _buildScaleInsight(),
                 ),
-                const StartStopButton(),
-                _buildButtons()
+                const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: StartStopButton(),
+                ),
+                // _buildButtons()
               ]),
             ),
           ],

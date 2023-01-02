@@ -87,42 +87,30 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    Widget coffee;
-    var currentCoffee = coffeeSelection.currentCoffee;
-    if (currentCoffee != null) {
-      coffee = Row(children: [
-        const Spacer(
-          flex: 2,
-        ),
-        Text(
-          currentCoffee.roaster,
-          style: theme.TextStyles.tabSecondary,
-        ),
-        const Spacer(
-          flex: 1,
-        ),
-        Text(
-          currentCoffee.name,
-          style: theme.TextStyles.tabSecondary,
-        ),
-        const Spacer(
-          flex: 2,
-        ),
-      ]);
-    } else {
-      coffee = const Text(
-        'No Coffee selected',
-        style: theme.TextStyles.tabSecondary,
-      );
-    }
-    Widget profile;
-    var currentProfile = profileService.currentProfile;
-
     return DefaultTabController(
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title: Text(widget.title, style: theme.TextStyles.appBarTitle),
+            actions: <Widget>[
+              IconButton(
+                iconSize: 40,
+                isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
+                icon: const Icon(Icons.power_settings_new, color: Colors.green),
+                selectedIcon: const Icon(
+                  Icons.power_off,
+                  color: Colors.red,
+                ),
+                tooltip: 'Switch on/off decent de1',
+                onPressed: () {
+                  if (machineService.state.coffeeState == EspressoMachineState.sleep) {
+                    machineService.de1?.switchOn();
+                  } else {
+                    machineService.de1?.switchOff();
+                  }
+                },
+              ),
+            ],
             bottom: TabBar(
               controller: _tabController,
               tabs: [
