@@ -510,14 +510,26 @@ class _EspressoScreenState extends State<EspressoScreen> {
                         ]
                       : [],
                 ),
-                createKeyValue("Weight",
-                    profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
+                Row(
+                  children: [
+                    createKeyValue("Weight",
+                        profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
+                    ElevatedButton(
+                      onPressed: () {
+                        scaleService.tare();
+                      },
+                      child: const Text(
+                        "Tare",
+                      ),
+                    ),
+                  ],
+                ),
                 createKeyValue(
                     "",
                     profileService.currentProfile != null
                         ? '${profileService.currentProfile!.shot_header.target_weight} g'
                         : '_'),
-                createKeyValue("Flow", '${snapshot.data!.flow} g/s'),
+                createKeyValue("Flow", '${snapshot.data!.flow.toStringAsFixed(1)} g/s'),
               ],
             );
           },

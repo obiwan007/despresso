@@ -197,6 +197,41 @@ class AcaiaScale extends ChangeNotifier {
     log('Config payload: ' + encode(0x0c, _configPayload).toString());
   }
 
+  Future<void> writeTare() {
+    // tare command
+    var list = [
+      0xef,
+      0xdd,
+      0x04,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00
+    ];
+    Uint8List payload = Uint8List.fromList(list);
+    return writeToAcaia(payload);
+  }
+
+  Future<void> writeToAcaia(Uint8List payload) async {
+    log("Sending to Acaia");
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
+    return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: payload);
+  }
+
   void _onStateChange(DeviceConnectionState state) async {
     log('SCALE State changed to ' + state.toString());
     _state = state;

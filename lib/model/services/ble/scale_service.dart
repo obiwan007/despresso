@@ -52,13 +52,16 @@ class ScaleService {
     _stream = _controller.stream.asBroadcastStream();
   }
 
+  void tare() {
+    scale?.writeTare();
+  }
+
   void setWeight(double weight) {
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();
     var flow = 0.0;
     if (last != null) {
-      var timeDiff =
-          (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
+      var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
       // log(timeDiff.toStringAsFixed(2));
       flow = (weight - _weight) / timeDiff;
     }
