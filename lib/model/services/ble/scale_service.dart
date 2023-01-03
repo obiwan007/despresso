@@ -35,6 +35,8 @@ class ScaleService {
 
   ScaleState _state = ScaleState.disconnected;
 
+  bool tareInProgress = false;
+
   Stream<WeightMeassurement> get stream => _stream;
 
   double get weight => _weight;
@@ -52,11 +54,20 @@ class ScaleService {
     _stream = _controller.stream.asBroadcastStream();
   }
 
-  void tare() {
-    scale?.writeTare();
+  Future<void> tare() async {
+    if (_state == ScaleState.connected) {
+      setWeight(0);
+      tareInProgress = true;
+      await scale?.writeTare();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        tareInProgress = false;
+        setWeight(0);
+      });
+    }
   }
 
   void setWeight(double weight) {
+    if (tareInProgress) return;
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();
     var flow = 0.0;

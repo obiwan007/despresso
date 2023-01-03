@@ -96,6 +96,10 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setState(EspressoMachineState state) {
     _state.coffeeState = state;
+    if (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water) {
+      scaleService.tare();
+    }
+
     notifyListeners();
   }
 

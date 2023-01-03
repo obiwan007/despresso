@@ -199,30 +199,11 @@ class AcaiaScale extends ChangeNotifier {
 
   Future<void> writeTare() {
     // tare command
-    var list = [
-      0xef,
-      0xdd,
-      0x04,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00
-    ];
-    Uint8List payload = Uint8List.fromList(list);
-    return writeToAcaia(payload);
+    var list = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
+    return flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
   }
 
   Future<void> writeToAcaia(Uint8List payload) async {

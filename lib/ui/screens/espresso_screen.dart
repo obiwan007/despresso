@@ -510,19 +510,15 @@ class _EspressoScreenState extends State<EspressoScreen> {
                         ]
                       : [],
                 ),
-                Row(
-                  children: [
-                    createKeyValue("Weight",
-                        profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
-                    ElevatedButton(
-                      onPressed: () {
-                        scaleService.tare();
-                      },
-                      child: const Text(
-                        "Tare",
-                      ),
-                    ),
-                  ],
+                createKeyValue("Weight",
+                    profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
+                ElevatedButton(
+                  onPressed: () {
+                    scaleService.tare();
+                  },
+                  child: const Text(
+                    "Tare",
+                  ),
                 ),
                 createKeyValue(
                     "",
