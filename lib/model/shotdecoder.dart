@@ -69,7 +69,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     return "FrameNum:$numberOfFrames(PreFrames:$numberOfPreinfuseFrames) MinPres:$minimumPressure MaxFlow:$maximumFlow";
   }
 
-  static bool decodeDe1ShotHeader(ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
+  static bool decodeDe1ShotHeader(
+      ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
     if (data.buffer.lengthInBytes != 5) return false;
 
     try {
@@ -171,7 +172,8 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
-  static bool DecodeDe1ShotFrame(ByteData data, De1ShotFrameClass shot_frame, bool check_encoding) {
+  static bool DecodeDe1ShotFrame(
+      ByteData data, De1ShotFrameClass shot_frame, bool check_encoding) {
     if (data.buffer.lengthInBytes != 8) return false;
     log('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
     try {
@@ -181,10 +183,12 @@ class De1ShotFrameClass // proc spec_shotframe
       shot_frame.flag = data.getUint8(index++);
       shot_frame.setVal = data.getUint8(index++) / 16.0;
       shot_frame.temp = data.getUint8(index++) / 2.0;
-      shot_frame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
+      shot_frame.frameLen =
+          Helper.convert_F8_1_7_to_float(data.getUint8(index++));
       shot_frame.triggerVal = data.getUint8(index++) / 16.0;
       shot_frame.maxVol = Helper.convert_bottom_10_of_U10P0(
-          256 * data.getUint8(index++) + data.getUint8(index++)); // convert_bottom_10_of_U10P0
+          256 * data.getUint8(index++) +
+              data.getUint8(index++)); // convert_bottom_10_of_U10P0
 
       if (check_encoding) {
         var array = data.buffer.asUint8List();
@@ -234,12 +238,16 @@ class De1ShotFrameClass // proc spec_shotframe
   @override
   String toString() {
     const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
-    const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
-    const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+    const int DoCompare =
+        0x02; // Do a compare, early exit current frame if compare true
+    const int DC_GT =
+        0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
     const int DC_CompF = 0x08; // Compare Pressure or Flow?
-    const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+    const int TMixTemp =
+        0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
     const int Interpolate = 0x20; // Hard jump to target value, or ramp?
-    const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+    const int IgnoreLimit =
+        0x40; // Ignore minimum pressure and max flow settings
 
     var flagStr = "";
     if ((flag & CtrlF) > 0) flagStr += "CtrlF";
@@ -255,7 +263,7 @@ class De1ShotFrameClass // proc spec_shotframe
     bytes.forEach((b) {
       sb += "${b.toRadixString(16)}-";
     });
-    return "Frame:$frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
+    return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
   }
 }
 
@@ -282,10 +290,12 @@ class De1ShotExtFrameClass // extended frames
   }
 
   static Uint8List EncodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
-    return EncodeDe1ExtentionFrame2(exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
+    return EncodeDe1ExtentionFrame2(
+        exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
   }
 
-  static Uint8List EncodeDe1ExtentionFrame2(int frameToWrite, double limit_value, double limit_range) {
+  static Uint8List EncodeDe1ExtentionFrame2(
+      int frameToWrite, double limit_value, double limit_range) {
     Uint8List data = Uint8List(8);
 
     data[0] = frameToWrite;
@@ -344,7 +354,8 @@ class Helper {
     return ret;
   }
 
-  static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
+  static void convert_float_to_U10P0_for_tail(
+      double x, Uint8List data, int index) {
     int ix = x.toInt();
 
     if (ix > 255) // lets make life esier and limit x to 255

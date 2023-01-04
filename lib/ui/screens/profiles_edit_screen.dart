@@ -29,11 +29,11 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
 
-  De1ShotProfile? _selectedProfile;
-
   Iterable<RangeAnnotationSegment<double>> phases = [];
 
   De1ShotProfile _profile;
+
+  List<De1ShotFrameClass> preInfusion = [];
 
   _ProfilesEditScreenState(De1ShotProfile this._profile);
 
@@ -45,10 +45,14 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     profileService = getIt<ProfileService>();
 
     profileService.addListener(profileListener);
-    log(profileService.currentProfile.toString());
-    _selectedProfile = profileService.currentProfile;
+
+    _profile.shot_frames.forEach((element) => log("Profile: $element"));
+
     calcProfileGraph();
     phases = _createPhases();
+    preInfusion = _profile.shot_frames
+        .where((element) => (element.name == "preinfusion"))
+        .toList();
   }
 
   @override
@@ -89,53 +93,28 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                     children: [
                       Expanded(
                         flex: 5,
-                        child: Card(
-                          child: Column(
-                            children: [
-                              Text("Preinfuse"),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Column(
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text("Infusion time"),
-                                              SfSlider(
-                                                min: 0.0,
-                                                max: 100.0,
-                                                value: _selectedProfile!
-                                                    .shot_frames[1].frameLen,
-                                                interval: 20,
-                                                showTicks: true,
-                                                showLabels: true,
-                                                enableTooltip: true,
-                                                minorTicksPerInterval: 1,
-                                                onChanged: (dynamic value) {
-                                                  setState(() {
-                                                    _selectedProfile!
-                                                        .shot_frames[1]
-                                                        .frameLen = value;
-                                                    calcProfileGraph();
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 28.0),
-                                            child: Column(
+                        child: Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Text("Preinfuse"),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          children: [
+                                            Column(
                                               children: [
-                                                Text("Max. Flow"),
+                                                Text("Infusion time"),
                                                 SfSlider(
                                                   min: 0.0,
                                                   max: 100.0,
-                                                  value: _selectedProfile!
-                                                      .shot_frames[1].frameLen,
+                                                  value:
+                                                      preInfusion[0].frameLen,
                                                   interval: 20,
                                                   showTicks: true,
                                                   showLabels: true,
@@ -143,51 +122,73 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                                                   minorTicksPerInterval: 1,
                                                   onChanged: (dynamic value) {
                                                     setState(() {
-                                                      _selectedProfile!
-                                                          .shot_frames[1]
-                                                          .frameLen = value;
+                                                      preInfusion[0].frameLen =
+                                                          value;
+                                                      phases = _createPhases();
                                                       calcProfileGraph();
                                                     });
                                                   },
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 28.0),
+                                              child: Column(
+                                                children: [
+                                                  Text("Max. Flow"),
+                                                  SfSlider(
+                                                    min: 0.0,
+                                                    max: 10.0,
+                                                    value: _profile!
+                                                        .shot_frames[1]
+                                                        .frameLen,
+                                                    interval: 1,
+                                                    showTicks: true,
+                                                    showLabels: true,
+                                                    enableTooltip: true,
+                                                    minorTicksPerInterval: 1,
+                                                    onChanged: (dynamic value) {
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 0,
-                                      child: Row(
-                                        children: [
-                                          SfSlider.vertical(
-                                            min: 0.0,
-                                            max: 10.0,
-                                            value: _selectedProfile!
-                                                .shot_frames[1].setVal,
-                                            interval: 2,
-                                            showTicks: true,
-                                            showLabels: true,
-                                            enableTooltip: true,
-                                            minorTicksPerInterval: 1,
-                                            onChanged: (dynamic value) {
-                                              setState(() {
-                                                _selectedProfile!.shot_frames[1]
-                                                    .setVal = value;
-                                                _selectedProfile!.shot_frames[0]
-                                                    .setVal = value;
-                                                calcProfileGraph();
-                                              });
-                                            },
-                                          ),
-                                          Text("Pressure"),
-                                        ],
+                                      Expanded(
+                                        flex: 0,
+                                        child: Row(
+                                          children: [
+                                            SfSlider.vertical(
+                                              min: 0.0,
+                                              max: 10.0,
+                                              value: _profile!
+                                                  .shot_frames[1].setVal,
+                                              interval: 2,
+                                              showTicks: true,
+                                              showLabels: true,
+                                              enableTooltip: true,
+                                              minorTicksPerInterval: 1,
+                                              onChanged: (dynamic value) {
+                                                setState(() {
+                                                  preInfusion[0].setVal = value;
+
+                                                  calcProfileGraph();
+                                                });
+                                              },
+                                            ),
+                                            Text("Pressure"),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -287,7 +288,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
   }
 
   createSteps() {
-    return _selectedProfile!.shot_frames
+    return _profile!.shot_frames
         .map((p) => createKeyValue(
             p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
         .toList();
@@ -295,7 +296,6 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
   void profileListener() {
     log('Profile updated');
-    _selectedProfile = profileService.currentProfile;
   }
 
   List<charts.Series<ShotState, double>> _createSeriesData() {
@@ -368,13 +368,13 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     // String transition = "";
     shotList.clear();
     var time = 0.0;
-    var frame = _selectedProfile!.shot_frames.first;
+    var frame = _profile!.shot_frames.first;
 
     ShotState shotState = ShotState(time, time, 0, 0, frame.temp, frame.temp,
         frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
     shotList.entries.add(shotState);
-    for (var frame in _selectedProfile!.shot_frames) {
+    for (var frame in _profile!.shot_frames) {
       time += frame.frameLen;
       ShotState shotState = ShotState(
           time,
