@@ -9,6 +9,7 @@ import 'package:community_charts_flutter/community_charts_flutter.dart'
     as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 
@@ -83,7 +84,128 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [],
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: Card(
+                          child: Column(
+                            children: [
+                              Text("Preinfuse"),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text("Infusion time"),
+                                              SfSlider(
+                                                min: 0.0,
+                                                max: 100.0,
+                                                value: _selectedProfile!
+                                                    .shot_frames[1].frameLen,
+                                                interval: 20,
+                                                showTicks: true,
+                                                showLabels: true,
+                                                enableTooltip: true,
+                                                minorTicksPerInterval: 1,
+                                                onChanged: (dynamic value) {
+                                                  setState(() {
+                                                    _selectedProfile!
+                                                        .shot_frames[1]
+                                                        .frameLen = value;
+                                                    calcProfileGraph();
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 28.0),
+                                            child: Column(
+                                              children: [
+                                                Text("Max. Flow"),
+                                                SfSlider(
+                                                  min: 0.0,
+                                                  max: 100.0,
+                                                  value: _selectedProfile!
+                                                      .shot_frames[1].frameLen,
+                                                  interval: 20,
+                                                  showTicks: true,
+                                                  showLabels: true,
+                                                  enableTooltip: true,
+                                                  minorTicksPerInterval: 1,
+                                                  onChanged: (dynamic value) {
+                                                    setState(() {
+                                                      _selectedProfile!
+                                                          .shot_frames[1]
+                                                          .frameLen = value;
+                                                      calcProfileGraph();
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 0,
+                                      child: Row(
+                                        children: [
+                                          SfSlider.vertical(
+                                            min: 0.0,
+                                            max: 10.0,
+                                            value: _selectedProfile!
+                                                .shot_frames[1].setVal,
+                                            interval: 2,
+                                            showTicks: true,
+                                            showLabels: true,
+                                            enableTooltip: true,
+                                            minorTicksPerInterval: 1,
+                                            onChanged: (dynamic value) {
+                                              setState(() {
+                                                _selectedProfile!.shot_frames[1]
+                                                    .setVal = value;
+                                                _selectedProfile!.shot_frames[0]
+                                                    .setVal = value;
+                                                calcProfileGraph();
+                                              });
+                                            },
+                                          ),
+                                          Text("Pressure"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5, // takes 30% of available width
+                        child: Card(
+                          child: Text("Rise and hold"),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5, // takes 30% of available width
+                        child: Card(
+                          child: Text("Decline"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
