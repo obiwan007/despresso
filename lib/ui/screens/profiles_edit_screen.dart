@@ -11,16 +11,19 @@ import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
-import './profiles_edit_screen.dart';
 
-class ProfilesScreen extends StatefulWidget {
-  const ProfilesScreen({Key? key}) : super(key: key);
+class ProfilesEditScreen extends StatefulWidget {
+  De1ShotProfile profile;
+
+  ProfilesEditScreen(De1ShotProfile this.profile, {Key? key}) : super(key: key);
 
   @override
-  _ProfilesScreenState createState() => _ProfilesScreenState();
+  _ProfilesEditScreenState createState() {
+    return _ProfilesEditScreenState(profile);
+  }
 }
 
-class _ProfilesScreenState extends State<ProfilesScreen> {
+class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
@@ -28,9 +31,15 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
   De1ShotProfile? _selectedProfile;
 
   Iterable<RangeAnnotationSegment<double>> phases = [];
+
+  De1ShotProfile _profile;
+
+  _ProfilesEditScreenState(De1ShotProfile this._profile);
+
   @override
   void initState() {
     super.initState();
+    log('Init State ${_profile.shot_header.title}');
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
 
@@ -60,136 +69,21 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profiles'),
-        actions: <Widget>[
-          ElevatedButton(
-            child: Text(
-              'Edit',
-            ),
-            onPressed: () {
-              setState(() {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ProfilesEditScreen(_selectedProfile!)),
-                );
-              });
-            },
-          ),
-        ],
+        title: Text('Profile Edit: ${_profile.shot_header.title}'),
       ),
       body: Scaffold(
-        body: Row(
+        body: Column(
           children: [
             Expanded(
-              flex: 4, // takes 30% of available width
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownButton(
-                          isExpanded: true,
-                          alignment: Alignment.centerLeft,
-                          value: _selectedProfile,
-                          items: items,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedProfile = value!;
-                              profileService.setProfile(_selectedProfile!);
-                              calcProfileGraph();
-                              phases = _createPhases();
-                            });
-                          },
-                          hint: const Text("Select item")),
-                      createKeyValue(
-                          "Notes", _selectedProfile!.shot_header.notes),
-                      createKeyValue("Beverage",
-                          _selectedProfile!.shot_header.beverage_type),
-                      createKeyValue(
-                          "Type", _selectedProfile!.shot_header.type),
-                      createKeyValue("Max Flow",
-                          _selectedProfile!.shot_header.maximumFlow.toString()),
-                      createKeyValue(
-                          "Max Pressure",
-                          _selectedProfile!.shot_header.minimumPressure
-                              .toString()),
-                      createKeyValue(
-                          "Target Volume",
-                          _selectedProfile!.shot_header.target_volume
-                              .toString()),
-                      createKeyValue(
-                          "Target Weight",
-                          _selectedProfile!.shot_header.target_weight
-                              .toString()),
-                    ],
-                  ),
-                ),
-              ),
+              flex: 5, // takes 30% of available width
+              child: _buildGraphPressure(),
             ),
             Expanded(
-              flex: 6, // takes 30% of available width
+              flex: 5, // takes 30% of available width
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: _buildGraphPressure(),
-                  ),
-                  Expanded(
-                    flex: 6,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ...createSteps(),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                ElevatedButton.icon(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () async {
-                                    var result = await machineService
-                                        .uploadProfile(_selectedProfile!);
-
-                                    var snackBar = SnackBar(
-                                        content: Text(
-                                            'Profile is selected: $result'),
-                                        action: SnackBarAction(
-                                          label: 'Ok',
-                                          onPressed: () {
-                                            // Some code to undo the change.
-                                          },
-                                        ));
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                  },
-                                  label: const Text(
-                                    "Save to Decent",
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                children: [],
               ),
             ),
           ],
@@ -248,8 +142,8 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
     return Container(
       // height: 100,
-      margin: const EdgeInsets.only(left: 10.0),
-      width: MediaQuery.of(context).size.width - 105,
+      margin: const EdgeInsets.only(left: 0.0),
+      width: MediaQuery.of(context).size.width - 0,
       decoration: BoxDecoration(
         color: theme.Colors.tabColor,
         shape: BoxShape.rectangle,
