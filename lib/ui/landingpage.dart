@@ -24,15 +24,18 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+class _LandingPageState extends State<LandingPage>
+    with SingleTickerProviderStateMixin {
   bool available = false;
+  int currentPageIndex = 0;
 
   late CoffeeService coffeeSelection;
   late ProfileService profileService;
   late EspressoMachineService machineService;
 
   late BLEService bleService;
-  late final _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+  // late final _tabController =
+  //     TabController(length: 4, vsync: this, initialIndex: 0);
 
   EspressoMachineState? lastState;
 
@@ -73,7 +76,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
         padding: const EdgeInsets.all(10.0),
         child: TextButton(
           style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
             backgroundColor: MaterialStateProperty.all<Color>(color),
           ),
           onPressed: onpress,
@@ -90,12 +94,17 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
     return DefaultTabController(
         length: 4,
         child: Scaffold(
+          bottomNavigationBar:
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? createNavbar()
+                  : null,
           appBar: AppBar(
             title: Text(widget.title, style: theme.TextStyles.appBarTitle),
             actions: <Widget>[
               IconButton(
                 iconSize: 40,
-                isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
+                isSelected: machineService.state.coffeeState ==
+                    EspressoMachineState.sleep,
                 icon: const Icon(Icons.power_settings_new, color: Colors.green),
                 selectedIcon: const Icon(
                   Icons.power_off,
@@ -103,7 +112,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                 ),
                 tooltip: 'Switch on/off decent de1',
                 onPressed: () {
-                  if (machineService.state.coffeeState == EspressoMachineState.sleep) {
+                  if (machineService.state.coffeeState ==
+                      EspressoMachineState.sleep) {
                     machineService.de1?.switchOn();
                   } else {
                     machineService.de1?.switchOff();
@@ -111,47 +121,19 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                 },
               ),
             ],
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: [
-                const Tab(
-                  icon: const Icon(Icons.coffee),
-                  child: const Text(
-                    "Espresso",
-                    style: theme.TextStyles.tabLabel,
-                  ),
-                ),
-                const Tab(
-                  icon: Icon(Icons.filter_list),
-                  child: Text(
-                    'Steam',
-                    style: theme.TextStyles.tabLabel,
-                  ),
-                ),
-                const Tab(
-                  icon: Icon(Icons.water),
-                  child: Text(
-                    "Flush",
-                    style: theme.TextStyles.tabLabel,
-                  ),
-                ),
-                const Tab(
-                  icon: Icon(Icons.water_drop),
-                  child: Text(
-                    'Water',
-                    style: theme.TextStyles.tabLabel,
-                  ),
-                )
-              ],
-            ),
           ),
-          body: TabBarView(
-            controller: _tabController,
+          body: Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
-              EspressoScreen(),
-              SteamScreen(),
-              FlushScreen(),
-              WaterScreen(),
+              if (MediaQuery.of(context).orientation == Orientation.landscape)
+                createNavRail(),
+              Expanded(
+                  child: <Widget>[
+                EspressoScreen(),
+                SteamScreen(),
+                FlushScreen(),
+                WaterScreen(),
+              ][currentPageIndex]),
             ],
           ),
           drawer: Drawer(
@@ -166,7 +148,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                   decoration: BoxDecoration(
                     color: Colors.blue,
                   ),
-                  child: Text('Drawer Header'),
+                  child: Text("despresso settings"),
                 ),
                 ListTile(
                   title: const Text('Profiles'),
@@ -177,7 +159,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const ProfilesScreen()),
                     );
                   },
                 ),
@@ -226,6 +209,69 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
         ));
   }
 
+  NavigationBar createNavbar() {
+    return NavigationBar(
+      onDestinationSelected: (int index) {
+        setState(() {
+          currentPageIndex = index;
+        });
+      },
+      selectedIndex: currentPageIndex,
+      destinations: const <Widget>[
+        NavigationDestination(
+          icon: Icon(Icons.coffee),
+          label: 'Espresso',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.filter_list),
+          label: 'Steam',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.water),
+          label: 'Flush',
+        ),
+        NavigationDestination(
+          selectedIcon: Icon(Icons.bookmark),
+          icon: Icon(Icons.water_drop),
+          label: 'Water',
+        ),
+      ],
+    );
+  }
+
+  NavigationRail createNavRail() {
+    return NavigationRail(
+      minExtendedWidth: 100,
+      minWidth: 100,
+      labelType: NavigationRailLabelType.all,
+      onDestinationSelected: (int index) {
+        setState(() {
+          currentPageIndex = index;
+        });
+      },
+      selectedIndex: currentPageIndex,
+      destinations: const <NavigationRailDestination>[
+        NavigationRailDestination(
+          icon: Icon(Icons.coffee),
+          label: Text('Espresso'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.filter_list),
+          label: Text('Steam'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.water),
+          label: Text('Flush'),
+        ),
+        NavigationRailDestination(
+          selectedIcon: Icon(Icons.bookmark),
+          icon: Icon(Icons.water_drop),
+          label: Text('Water'),
+        ),
+      ],
+    );
+  }
+
   void configureCoffee() {
     var snackBar = SnackBar(
         content: const Text('Configure your coffee'),
@@ -245,16 +291,16 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
       setState(() {
         switch (lastState) {
           case EspressoMachineState.espresso:
-            selectedPage = 0;
+            currentPageIndex = 0;
             break;
           case EspressoMachineState.steam:
-            selectedPage = 1;
+            currentPageIndex = 1;
             break;
           case EspressoMachineState.flush:
-            selectedPage = 2;
+            currentPageIndex = 2;
             break;
           case EspressoMachineState.water:
-            selectedPage = 3;
+            currentPageIndex = 3;
             break;
           case EspressoMachineState.idle:
             // TODO: Handle this case.
@@ -272,7 +318,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
             // TODO: Handle this case.
             break;
         }
-        _tabController.index = selectedPage;
+        // _tabController.index = selectedPage;
       });
     }
   }
