@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:despresso/model/profile.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -68,6 +70,47 @@ class ProfileService extends ChangeNotifier {
   save(De1ShotProfile profile) {
     log("Saving as a existing profile to documents region");
     profile.isDefault = false;
+  }
+
+  Future<De1ShotProfile> loadProfileFromDocuments(String fileName) async {
+    try {
+      log("Loading shot: ${fileName}");
+      final directory = await getApplicationDocumentsDirectory();
+      log("LoadingFrom path:${directory.path}");
+      var file = File('${directory.path}/profiles/$fileName');
+      if (await file.exists()) {
+        var json = file.readAsStringSync();
+        log("Loaded: ${json}");
+        Map<String, dynamic> map = jsonDecode(json);
+        var data = De1ShotProfile.fromJson(map);
+
+        log("Loaded Profile: ${data.id}");
+        return data!;
+      } else {
+        log("File $fileName not existing");
+        throw Exception("File not found");
+      }
+    } catch (ex) {
+      log("loading error");
+      Future.error("Error loading filename $ex");
+      rethrow;
+    }
+  }
+
+  Future<File> saveProvileToDocuments(
+      De1ShotProfile profile, String filename) async {
+    log("Storing shot: ${profile.id}");
+
+    final directory = await getApplicationDocumentsDirectory();
+    log("Storing to path:${directory.path}");
+
+    var file = File('${directory.path}/profiles/$filename');
+    if (await file.exists()) {
+      file.delete();
+    }
+    var json = profile.toJson();
+    log("Save json $json");
+    return file.writeAsString(jsonEncode(json));
   }
 
   Future<void> loadAllProfiles() async {

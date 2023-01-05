@@ -3,6 +3,27 @@
 import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:json_annotation/json_annotation.dart';
+
+import 'dart:typed_data';
+
+part "de1shotclasses.g.dart";
+
+class Uint8ListConverter implements JsonConverter<Uint8List, List<int>> {
+  const Uint8ListConverter();
+
+  @override
+  Uint8List fromJson(List<int> json) {
+    return Uint8List.fromList(json);
+  }
+
+  @override
+  List<int> toJson(Uint8List object) {
+    return object.toList();
+  }
+}
+
+@JsonSerializable()
 class De1ShotProfile {
   bool isDefault = false;
 
@@ -13,6 +34,14 @@ class De1ShotProfile {
   De1ShotHeaderClass shotHeader;
   List<De1ShotFrameClass> shotFrames;
   List<De1ShotExtFrameClass> shotExframes;
+
+  factory De1ShotProfile.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotProfileFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$UserToJson`.
+  Map<String, dynamic> toJson() => _$De1ShotProfileToJson(this);
 
   De1ShotProfile clone() {
     var copy = De1ShotProfile(De1ShotHeaderClass(), [], []);
@@ -26,6 +55,7 @@ class De1ShotProfile {
   }
 }
 
+@JsonSerializable()
 class De1ShotHeaderClass // proc spec_shotdescheader
 {
   int headerV = 1; // hard-coded
@@ -34,7 +64,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   int minimumPressure = 0; // hard-coded, read as {
   double maximumFlow = 6; // hard-coded, read as {
 
-  late Uint8List bytes = Uint8List(5);
+  @Uint8ListConverter()
+  Uint8List bytes = Uint8List(5);
 
   int hidden = 0;
 
@@ -63,6 +94,14 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   double targetGroupTemp = 0.0; // to compare bytes
 
   De1ShotHeaderClass();
+
+  factory De1ShotHeaderClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotHeaderClassFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$UserToJson`.
+  Map<String, dynamic> toJson() => _$De1ShotHeaderClassToJson(this);
 
   // bool compareBytes(De1ShotHeaderClass sh) {
   //   if (sh.bytes.buffer.lengthInBytes != bytes.buffer.lengthInBytes) {
@@ -179,6 +218,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   }
 }
 
+@JsonSerializable()
 class De1ShotFrameClass // proc spec_shotframe
 {
   int frameToWrite = 0;
@@ -192,9 +232,18 @@ class De1ShotFrameClass // proc spec_shotframe
   String pump = "";
   String sensor = "";
   String transition = "";
+  @Uint8ListConverter()
   Uint8List bytes = Uint8List(8);
 
   De1ShotFrameClass();
+
+  factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotFrameClassFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$UserToJson`.
+  Map<String, dynamic> toJson() => _$De1ShotFrameClassToJson(this);
 
   De1ShotFrameClass clone() {
     var copy = De1ShotFrameClass();
@@ -328,16 +377,23 @@ class De1ShotFrameClass // proc spec_shotframe
   }
 }
 
+@JsonSerializable()
 class De1ShotExtFrameClass // extended frames
 {
   int frameToWrite = 0;
   double limiterValue = 0.0;
   double limiterRange = 0.0;
-
+  @Uint8ListConverter()
   Uint8List bytes = Uint8List(8);
 
   De1ShotExtFrameClass();
+  factory De1ShotExtFrameClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotExtFrameClassFromJson(json);
 
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$UserToJson`.
+  Map<String, dynamic> toJson() => _$De1ShotExtFrameClassToJson(this);
   De1ShotExtFrameClass clone() {
     var copy = De1ShotExtFrameClass();
     copy.bytes = Uint8List.fromList(bytes);
