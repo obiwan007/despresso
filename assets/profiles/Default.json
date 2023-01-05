@@ -1,8 +1,9 @@
 {
-  "title": "Default 2",
+  "title": "Default",
   "author": "Decent",
   "notes": "This profile is gentle on the coffee puck and not too demanding on the barista.  Produces a very acceptable espresso in a wide variety of settings.",
   "beverage_type": "espresso",
+  "id": "Default",
   "steps": [
     {
       "name": "preinfusion temp boost",

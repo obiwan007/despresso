@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
-import 'package:despresso/model/shotdecoder.dart';
+import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -83,13 +83,14 @@ class DE1 extends ChangeNotifier {
     '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.Calibration
   };
 
-  static Map<Endpoint, String> cuuidLookup =
-      LinkedHashMap.fromEntries(cuuids.entries.map((e) => MapEntry(e.value, e.key)));
+  static Map<Endpoint, String> cuuidLookup = LinkedHashMap.fromEntries(
+      cuuids.entries.map((e) => MapEntry(e.value, e.key)));
 
   static Map states = {
     0x00: 'sleep', // 0 Everything is off
     0x01: 'going_to_sleep', // 1 Going to sleep
-    0x02: 'idle', // 2 Heaters are controlled, tank water will be heated if required.
+    0x02:
+        'idle', // 2 Heaters are controlled, tank water will be heated if required.
     0x03:
         'busy', // 3 Firmware is doing something you can't interrupt (eg. cooling down water heater after a shot, calibrating sensors on startup).
     0x04: 'espresso', // 4 Making espresso
@@ -103,28 +104,36 @@ class DE1 extends ChangeNotifier {
     0x0a: 'descale', // A Descale the whole bang-tooty
     0x0b: 'fatal_error', // B Something has gone horribly wrong
     0x0c: 'init', // C Machine has not been run yet
-    0x0d: 'no_request', // D State for T_RequestedState. Means nothing is specifically requested
-    0x0e: 'skip_to_next', // E In Espresso, skip to next frame. Others, go to Idle if possible
-    0x0f: 'hot_water_rinse', // F Produce hot water at whatever temperature is available
+    0x0d:
+        'no_request', // D State for T_RequestedState. Means nothing is specifically requested
+    0x0e:
+        'skip_to_next', // E In Espresso, skip to next frame. Others, go to Idle if possible
+    0x0f:
+        'hot_water_rinse', // F Produce hot water at whatever temperature is available
     0x10: 'steam_rinse', // 10 Produce a blast of steam
     0x11: 'refill', // 11 Attempting, or needs, a refill.
     0x12: 'clean', // 12 Clean group head
-    0x13: 'in_boot_loader', // 13 The main firmware has not run for some reason. Bootloader is active.
+    0x13:
+        'in_boot_loader', // 13 The main firmware has not run for some reason. Bootloader is active.
     0x14: 'air_purge', // 14 Air purge.
     0x15: 'sched_idle', // 15 Scheduled wake up idle state
   };
 
   static const Map subStates = {
     0x00: 'no_state', // 0 State is not relevant
-    0x01: 'heat_water_tank', // 1 Cold water is not hot enough. Heating hot water tank.
+    0x01:
+        'heat_water_tank', // 1 Cold water is not hot enough. Heating hot water tank.
     0x02: 'heat_water_heater', // 2 Warm up hot water heater for shot.
-    0x03: 'stabilize_mix_temp', // 3 Stabilize mix temp and get entire water path up to temperature.
-    0x04: 'pre_infuse', // 4 Espresso only. Hot Water and Steam will skip this state.
+    0x03:
+        'stabilize_mix_temp', // 3 Stabilize mix temp and get entire water path up to temperature.
+    0x04:
+        'pre_infuse', // 4 Espresso only. Hot Water and Steam will skip this state.
     0x05: 'pour', // 5 Not used in Steam
     0x06: 'flush', // 6 Espresso only, atm
     0x07: 'steaming', // 7 Steam only
     0x08: 'descale_int', // 8 Starting descale
-    0x09: 'descale_fill_group', // 9 get some descaling solution into the group and let it sit
+    0x09:
+        'descale_fill_group', // 9 get some descaling solution into the group and let it sit
     0x0a: 'descale_return', // A descaling internals
     0x0b: 'descale_group', // B descaling group
     0x0c: 'descale_steam', // C descaling steam
@@ -137,9 +146,12 @@ class DE1 extends ChangeNotifier {
 
     200: 'error_nan', // 200 Something died with a NaN
     201: 'error_inf', // 201 Something died with an Inf
-    202: 'error_generic', // 202 An error for which we have no more specific description
-    203: 'error_acc', // 203 ACC not responding, unlocked, or incorrectly programmed
-    204: 'error_tsensor', // 204 We are getting an error that is probably a broken temperature sensor
+    202:
+        'error_generic', // 202 An error for which we have no more specific description
+    203:
+        'error_acc', // 203 ACC not responding, unlocked, or incorrectly programmed
+    204:
+        'error_tsensor', // 204 We are getting an error that is probably a broken temperature sensor
     205: 'error_psensor', // 205 Pressure sensor error
     206: 'error_wlevel', // 206 Water level sensor error
     207: 'error_dip', // 207 DIP switches told us to wait in the error state.
@@ -173,7 +185,9 @@ class DE1 extends ChangeNotifier {
     // });
     // device.connect();
     service.setState(EspressoMachineState.connecting);
-    _connectToDeviceSubscription = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _connectToDeviceSubscription = flutterReactiveBle
+        .connectToDevice(id: device.id)
+        .listen((connectionState) {
       // Handle connection state updates
       log('DE1 Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
@@ -185,10 +199,16 @@ class DE1 extends ChangeNotifier {
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
-    log('enabeling Notification for ' + e.toString() + ' (' + getCharacteristic(e).toString() + ')');
+    log('enabeling Notification for ' +
+        e.toString() +
+        ' (' +
+        getCharacteristic(e).toString() +
+        ')');
 
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
     flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
       // Handle connection state updates
 
@@ -225,25 +245,33 @@ class DE1 extends ChangeNotifier {
   }
 
   Future<List<int>> read(Endpoint e) {
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
     var data = flutterReactiveBle.readCharacteristic(characteristic);
     // return device.readCharacteristic(ServiceUUID, getCharacteristic(e));
     return data;
   }
 
   void write(Endpoint e, Uint8List data) {
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: data);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
+    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
+        value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
 
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
+    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic,
+        value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
@@ -323,7 +351,9 @@ class DE1 extends ChangeNotifier {
     var groupPressure = r.getUint16(2) / (1 << 12);
     var groupFlow = r.getUint16(4) / (1 << 12);
     var mixTemp = r.getUint16(6) / (1 << 8);
-    var headTemp = ((r.getUint8(8) << 16) + (r.getUint8(9) << 8) + (r.getUint8(10))) / (1 << 16);
+    var headTemp =
+        ((r.getUint8(8) << 16) + (r.getUint8(9) << 8) + (r.getUint8(10))) /
+            (1 << 16);
     var setMixTemp = r.getUint16(11) / (1 << 8);
     var setHeadTemp = r.getUint16(13) / (1 << 8);
     var setGroupPressure = r.getUint8(15) / (1 << 4);
@@ -333,8 +363,21 @@ class DE1 extends ChangeNotifier {
 
     sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     // log('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
-    service.setShot(ShotState(sampleTime, 0, groupPressure, groupFlow, mixTemp, headTemp, setMixTemp, setHeadTemp,
-        setGroupPressure, setGroupFlow, frameNumber, steamTemp, 0, ""));
+    service.setShot(ShotState(
+        sampleTime,
+        0,
+        groupPressure,
+        groupFlow,
+        mixTemp,
+        headTemp,
+        setMixTemp,
+        setHeadTemp,
+        setGroupPressure,
+        setGroupFlow,
+        frameNumber,
+        steamTemp,
+        0,
+        ""));
   }
 
   De1ShotHeaderClass parseShotHeaderSettings(ByteData r) {
@@ -382,7 +425,8 @@ class DE1 extends ChangeNotifier {
     log('TargetGroupTemp = ' + targetGroupTemp.toString());
   }
 
-  String toHexString(int number) => '0x${number.toRadixString(16).padLeft(2, '0')}';
+  String toHexString(int number) =>
+      '0x${number.toRadixString(16).padLeft(2, '0')}';
 
   void mmrNotification(ByteData value) {
     var list = value.buffer.asUint8List();
@@ -425,17 +469,25 @@ class DE1 extends ChangeNotifier {
         // await device.discoverAllServicesAndCharacteristics();
         // Enable notification
 
-        parseVersion(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.Versions)))));
-        stateNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.StateInfo)))));
-        waterLevelNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.WaterLevels)))));
-        parseShotSetting(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.ShotSettings)))));
+        parseVersion(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.Versions)))));
+        stateNotification(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.StateInfo)))));
+        waterLevelNotification(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.WaterLevels)))));
+        parseShotSetting(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.ShotSettings)))));
 
         // parseShotMapRequest(ByteData.sublistView(
         //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
-        parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.HeaderWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.FrameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.FrameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.FrameWrite)))));
+        parseShotHeaderSettings(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.HeaderWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.FrameWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.FrameWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.FrameWrite)))));
 
         enableNotification(Endpoint.RequestedState, requestedState);
 

@@ -5,7 +5,8 @@ import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart'
+    as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
@@ -152,7 +153,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   void checkForRefill() {
-    if (refillAnounced == false && machineService.state.coffeeState == EspressoMachineState.refill) {
+    if (refillAnounced == false &&
+        machineService.state.coffeeState == EspressoMachineState.refill) {
       var snackBar = SnackBar(
           content: const Text('Refill the water tank'),
           action: SnackBarAction(
@@ -176,10 +178,13 @@ class _EspressoScreenState extends State<EspressoScreen> {
       return [];
     }
 
-    var stateChanges = machineService.shotList.entries.where((element) => element.subState.isNotEmpty).toList();
+    var stateChanges = machineService.shotList.entries
+        .where((element) => element.subState.isNotEmpty)
+        .toList();
 
     int i = 0;
-    var maxSampleTime = machineService.shotList.entries.last.sampleTimeCorrected;
+    var maxSampleTime =
+        machineService.shotList.entries.last.sampleTimeCorrected;
     return stateChanges.map((from) {
       var toSampleTime = maxSampleTime;
 
@@ -192,13 +197,15 @@ class _EspressoScreenState extends State<EspressoScreen> {
       var col = theme.Colors.statesColors[from.subState];
       var col2 = charts.ColorUtil.fromDartColor(col ?? theme.Colors.goodColor);
       // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
-      return charts.RangeAnnotationSegment(
-          from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
+      return charts.RangeAnnotationSegment(from.sampleTimeCorrected,
+          toSampleTime, charts.RangeAnnotationAxisType.domain,
           labelAnchor: charts.AnnotationLabelAnchor.end,
           color: col2,
           startLabel: from.subState,
-          labelStyleSpec:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelStyleSpec: charts.TextStyleSpec(
+              fontSize: 10,
+              color:
+                  charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log("Phase ${element.subState}");
     });
@@ -210,7 +217,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'Pressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -218,7 +226,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'Flow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -226,7 +235,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'Temp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -234,7 +244,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'Weight [g]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -242,7 +253,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'Flow [g/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.flowWeight,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -250,7 +262,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'SetFlow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setGroupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
         dashPatternFn: (_, __) => [5, 5],
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
@@ -259,7 +272,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'SetPressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setGroupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
         dashPatternFn: (datum, index) => [5, 5],
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
@@ -268,7 +282,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         id: 'SetTemp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setHeadTemp,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) =>
+            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         dashPatternFn: (datum, index) => [5, 5],
         data: machineService.shotList.entries,
@@ -286,7 +301,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
     return {"temp": temp, "flow": flow, "pressure": pressure};
   }
 
-  Widget _buildGraphTemp(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+  Widget _buildGraphTemp(List<Series<ShotState, double>> data,
+      Iterable<RangeAnnotationSegment<double>> ranges) {
     var flowChart = charts.LineChart(
       [data[2], data[7]],
       animate: false,
@@ -305,27 +321,36 @@ class _EspressoScreenState extends State<EspressoScreen> {
       ],
       secondaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color:
+                  charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color:
+                  charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
+        tickProviderSpec:
+            const charts.BasicNumericTickProviderSpec(zeroBound: false),
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
     );
@@ -343,7 +368,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphPressure(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+  Widget _buildGraphPressure(List<Series<ShotState, double>> data,
+      Iterable<RangeAnnotationSegment<double>> ranges) {
     var flowChart = charts.LineChart(
       [data[0], data[6]],
       animate: false,
@@ -362,18 +388,22 @@ class _EspressoScreenState extends State<EspressoScreen> {
       ],
       primaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
     );
@@ -391,11 +421,19 @@ class _EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphFlow(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
-    double maxWeight = (profileService.currentProfile?.shot_header.target_weight ?? 200.0) * 1.5;
+  Widget _buildGraphFlow(List<Series<ShotState, double>> data,
+      Iterable<RangeAnnotationSegment<double>> ranges) {
+    double maxWeight =
+        (profileService.currentProfile?.shotHeader.target_weight ?? 200.0) *
+            1.5;
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var flowChart = charts.LineChart(
-      [data[1], data[5], data[4], data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
+      [
+        data[1],
+        data[5],
+        data[4],
+        data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
+      ],
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
@@ -404,30 +442,38 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       secondaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
+        tickProviderSpec:
+            const charts.BasicNumericTickProviderSpec(zeroBound: false),
         viewport: charts.NumericExtents(0.0, maxWeight),
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
+        tickProviderSpec:
+            const charts.BasicNumericTickProviderSpec(zeroBound: false),
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0,
+              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
     );
@@ -452,7 +498,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
           Row(
             children: [
               // const Text('Profile: ', style: theme.TextStyles.tabSecondary),
-              Text(profileService.currentProfile!.shot_header.title, style: theme.TextStyles.tabHeading),
+              Text(profileService.currentProfile!.shotHeader.title,
+                  style: theme.TextStyles.tabHeading),
             ],
           ),
           const Divider(
@@ -461,13 +508,19 @@ class _EspressoScreenState extends State<EspressoScreen> {
             indent: 0,
             endIndent: 0,
           ),
-          createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
+          createKeyValue("State",
+              machineService.state.coffeeState.name.toString().toUpperCase()),
           createKeyValue("Sub", machineService.state.subState),
-          createKeyValue("Pressure", "${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar"),
-          createKeyValue("Flow", '${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s'),
-          createKeyValue("Mix Temp", '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C'),
-          createKeyValue("Head Temp", '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C'),
-          createKeyValue("Water", '${machineService.state.water?.getLevelPercent()}%'),
+          createKeyValue("Pressure",
+              "${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar"),
+          createKeyValue("Flow",
+              '${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s'),
+          createKeyValue("Mix Temp",
+              '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C'),
+          createKeyValue("Head Temp",
+              '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C'),
+          createKeyValue(
+              "Water", '${machineService.state.water?.getLevelPercent()}%'),
           const Divider(
             height: 20,
             thickness: 5,
@@ -477,7 +530,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ],
       );
     } else {
-      insights = Text("${machineService.state.coffeeState.name} ${machineService.state.subState}",
+      insights = Text(
+          "${machineService.state.coffeeState.name} ${machineService.state.subState}",
           style: theme.TextStyles.tabPrimary);
     }
     return insights;
@@ -489,7 +543,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
         StreamBuilder<WeightMeassurement>(
           stream: scaleService.stream,
           initialData: WeightMeassurement(0, 0, ScaleState.disconnected),
-          builder: (BuildContext context, AsyncSnapshot<WeightMeassurement> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<WeightMeassurement> snapshot) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -510,8 +565,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
                         ]
                       : [],
                 ),
-                createKeyValue("Weight",
-                    profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
+                createKeyValue(
+                    "Weight",
+                    profileService.currentProfile != null
+                        ? '${snapshot.data!.weight.toStringAsFixed(1)} g'
+                        : '_'),
                 ElevatedButton(
                   onPressed: () {
                     scaleService.tare();
@@ -523,9 +581,10 @@ class _EspressoScreenState extends State<EspressoScreen> {
                 createKeyValue(
                     "",
                     profileService.currentProfile != null
-                        ? '${profileService.currentProfile!.shot_header.target_weight} g'
+                        ? '${profileService.currentProfile!.shotHeader.target_weight} g'
                         : '_'),
-                createKeyValue("Flow", '${snapshot.data!.flow.toStringAsFixed(1)} g/s'),
+                createKeyValue(
+                    "Flow", '${snapshot.data!.flow.toStringAsFixed(1)} g/s'),
               ],
             );
           },
@@ -543,7 +602,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
           flex: 1,
           child: IconButton(
             iconSize: 50,
-            isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
+            isSelected:
+                machineService.state.coffeeState == EspressoMachineState.sleep,
             icon: const Icon(Icons.power_settings_new, color: Colors.green),
             selectedIcon: const Icon(
               Icons.power_off,
@@ -551,7 +611,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
             ),
             tooltip: 'Switch on/off decent de1',
             onPressed: () {
-              if (machineService.state.coffeeState == EspressoMachineState.sleep) {
+              if (machineService.state.coffeeState ==
+                  EspressoMachineState.sleep) {
                 machineService.de1?.switchOn();
               } else {
                 machineService.de1?.switchOff();
@@ -645,7 +706,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
     if (!isEmpty) {
       graphs = _buildGraphs();
     }
-    var isSelected = machineService.state.coffeeState == EspressoMachineState.espresso;
+    var isSelected =
+        machineService.state.coffeeState == EspressoMachineState.espresso;
 
     return DefaultTabController(
       length: 3,

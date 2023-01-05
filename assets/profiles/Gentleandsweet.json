@@ -3,6 +3,7 @@
   "author": "Decent",
   "notes": "This is a very easy espresso to successfully make and is suggested if you are having difficulty making good drinks.  The pressure rises to only 6 bar and then slowly descends to 4 bar.  The resulting espresso should be free of channeling, have low acidity and quite pleasant to drink straight or with milk.",
   "beverage_type": "espresso",
+  "id": "Gentle and sweet",
   "steps": [
     {
       "name": "preinfusion",

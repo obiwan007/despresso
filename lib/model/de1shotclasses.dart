@@ -3,14 +3,27 @@
 import 'dart:developer';
 import 'dart:typed_data';
 
-import 'package:json_annotation/json_annotation.dart';
-
 class De1ShotProfile {
-  De1ShotProfile(this.shot_header, this.shot_frames, this.shot_exframes);
+  bool isDefault = false;
 
-  De1ShotHeaderClass shot_header;
-  List<De1ShotFrameClass> shot_frames;
-  List<De1ShotExtFrameClass> shot_exframes;
+  String id = "";
+
+  De1ShotProfile(this.shotHeader, this.shotFrames, this.shotExframes);
+
+  De1ShotHeaderClass shotHeader;
+  List<De1ShotFrameClass> shotFrames;
+  List<De1ShotExtFrameClass> shotExframes;
+
+  De1ShotProfile clone() {
+    var copy = De1ShotProfile(De1ShotHeaderClass(), [], []);
+    copy.id = id;
+    copy.isDefault = isDefault;
+    copy.shotHeader = shotHeader.clone();
+    copy.shotFrames = shotFrames.map((e) => e.clone()).toList();
+    copy.shotExframes = shotExframes.map((e) => e.clone()).toList();
+
+    return copy;
+  }
 }
 
 class De1ShotHeaderClass // proc spec_shotdescheader
@@ -63,6 +76,30 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   //   return true;
   // }
+  De1ShotHeaderClass clone() {
+    var copy = De1ShotHeaderClass();
+    copy.author = author;
+    copy.beverage_type = beverage_type;
+    copy.bytes = Uint8List.fromList(bytes);
+    copy.headerV = headerV;
+    copy.hidden = hidden;
+    copy.lang = lang;
+    copy.legacyProfileType = legacyProfileType;
+    copy.maximumFlow = maximumFlow;
+    copy.minimumPressure = minimumPressure;
+    copy.notes = notes;
+    copy.numberOfFrames = numberOfFrames;
+    copy.numberOfPreinfuseFrames = numberOfPreinfuseFrames;
+    copy.tank_temperature = tank_temperature;
+    copy.targetGroupTemp = targetGroupTemp;
+    copy.target_volume = target_volume;
+    copy.target_volume_count_start = target_volume_count_start;
+    copy.target_weight = target_weight;
+    copy.title = title;
+    copy.type = type;
+
+    return copy;
+  }
 
   @override
   String toString() {
@@ -158,6 +195,30 @@ class De1ShotFrameClass // proc spec_shotframe
   Uint8List bytes = Uint8List(8);
 
   De1ShotFrameClass();
+
+  De1ShotFrameClass clone() {
+    var copy = De1ShotFrameClass();
+    copy.bytes = Uint8List.fromList(bytes);
+    copy.flag = flag;
+    copy.frameLen = frameLen;
+    copy.frameToWrite = frameToWrite;
+    copy.maxVol = maxVol;
+    copy.name = name;
+    copy.pump = pump;
+    copy.sensor = sensor;
+    copy.setVal = setVal;
+    copy.temp = temp;
+    copy.transition = transition;
+    copy.triggerVal = triggerVal;
+
+    return copy;
+  }
+
+  toDeclineProfile() {
+    name = "decline";
+    flag = 0x60;
+    temp = 88;
+  }
 
   // bool compareBytes(De1ShotFrameClass sh) {
   //   if (sh.bytes.buffer.lengthInBytes != bytes.buffer.lengthInBytes) {
@@ -276,6 +337,17 @@ class De1ShotExtFrameClass // extended frames
   Uint8List bytes = Uint8List(8);
 
   De1ShotExtFrameClass();
+
+  De1ShotExtFrameClass clone() {
+    var copy = De1ShotExtFrameClass();
+    copy.bytes = Uint8List.fromList(bytes);
+    copy.frameToWrite = frameToWrite;
+    copy.limiterRange = limiterRange;
+    copy.limiterValue = limiterValue;
+
+    return copy;
+  }
+
   bool compareBytes(De1ShotExtFrameClass sh) {
     if (sh.bytes.buffer.lengthInBytes != bytes.buffer.lengthInBytes) {
       return false;

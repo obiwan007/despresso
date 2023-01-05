@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:despresso/model/services/state/profile_service.dart';
-import 'package:despresso/model/shotdecoder.dart';
+import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
@@ -54,7 +54,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     var items = profileService.profiles
         .map((p) => DropdownMenuItem(
               value: p,
-              child: Text(p.shot_header.title),
+              child: Text(p.shotHeader.title),
             ))
         .toList();
 
@@ -72,7 +72,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          ProfilesEditScreen(_selectedProfile!)),
+                          ProfilesEditScreen(_selectedProfile!.clone())),
                 );
               });
             },
@@ -105,24 +105,23 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                           },
                           hint: const Text("Select item")),
                       createKeyValue(
-                          "Notes", _selectedProfile!.shot_header.notes),
+                          "Notes", _selectedProfile!.shotHeader.notes),
                       createKeyValue("Beverage",
-                          _selectedProfile!.shot_header.beverage_type),
-                      createKeyValue(
-                          "Type", _selectedProfile!.shot_header.type),
+                          _selectedProfile!.shotHeader.beverage_type),
+                      createKeyValue("Type", _selectedProfile!.shotHeader.type),
                       createKeyValue("Max Flow",
-                          _selectedProfile!.shot_header.maximumFlow.toString()),
+                          _selectedProfile!.shotHeader.maximumFlow.toString()),
                       createKeyValue(
                           "Max Pressure",
-                          _selectedProfile!.shot_header.minimumPressure
+                          _selectedProfile!.shotHeader.minimumPressure
                               .toString()),
                       createKeyValue(
                           "Target Volume",
-                          _selectedProfile!.shot_header.target_volume
+                          _selectedProfile!.shotHeader.target_volume
                               .toString()),
                       createKeyValue(
                           "Target Weight",
-                          _selectedProfile!.shot_header.target_weight
+                          _selectedProfile!.shotHeader.target_weight
                               .toString()),
                     ],
                   ),
@@ -271,7 +270,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
   }
 
   createSteps() {
-    return _selectedProfile!.shot_frames
+    return _selectedProfile!.shotFrames
         .map((p) => createKeyValue(
             p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
         .toList();
@@ -352,13 +351,13 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     // String transition = "";
     shotList.clear();
     var time = 0.0;
-    var frame = _selectedProfile!.shot_frames.first;
+    var frame = _selectedProfile!.shotFrames.first;
 
     ShotState shotState = ShotState(time, time, 0, 0, frame.temp, frame.temp,
         frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
     shotList.entries.add(shotState);
-    for (var frame in _selectedProfile!.shot_frames) {
+    for (var frame in _selectedProfile!.shotFrames) {
       time += frame.frameLen;
       ShotState shotState = ShotState(
           time,

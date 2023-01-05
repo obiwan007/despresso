@@ -1,8 +1,9 @@
 {
-  "title": "Classic Italian espresso 2",
+  "title": "Classic Italian espresso",
   "author": "Decent",
   "notes": "This will imitate the espresso style of the majority of cafes around the world. It uses a short preinfusion with a flat 9 bar pressure profile.",
   "beverage_type": "espresso",
+  "id":"Classic Italian espresso",
   "steps": [
     {
       "name": "preinfusion",

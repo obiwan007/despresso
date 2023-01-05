@@ -2,18 +2,22 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:despresso/model/profile.dart';
-import 'package:despresso/model/shotdecoder.dart';
+import 'package:despresso/model/de1shotclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 // FrameFlag of zero and pressure of 0 means end of shot, unless we are at the tenth frame, in which case
 // it's the end of shot no matter what
 const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
-const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
-const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+const int DoCompare =
+    0x02; // Do a compare, early exit current frame if compare true
+const int DC_GT =
+    0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
 const int DC_CompF = 0x08; // Compare Pressure or Flow?
-const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+const int TMixTemp =
+    0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
 const int Interpolate = 0x20; // Hard jump to target value, or ramp?
 const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
@@ -30,14 +34,17 @@ class ProfileService extends ChangeNotifier {
     prefs = await SharedPreferences.getInstance();
     log('Preferences loaded');
 
-    var profileName = prefs.getString("profilename");
+    var profileId = prefs.getString("profilename");
     await loadAllProfiles();
     log('Profiles loaded');
 
     currentProfile = profiles.first;
-    if (profileName != null && profileName.isNotEmpty) {
-      currentProfile = profiles.where((element) => element.shot_header.title == profileName).first;
-      log("Profile ${currentProfile!.shot_header.title} loaded");
+    if (profileId != null && profileId.isNotEmpty) {
+      try {
+        currentProfile =
+            profiles.where((element) => element.id == profileId).first;
+      } catch (_) {}
+      log("Profile ${currentProfile!.shotHeader.title} loaded");
     }
     notifyListeners();
   }
@@ -48,20 +55,32 @@ class ProfileService extends ChangeNotifier {
 
   void setProfile(De1ShotProfile profile) {
     currentProfile = profile;
-    prefs.setString("profilename", profile.shot_header.title);
-    log("Profile selected and saved");
+    prefs.setString("profilename", profile.id);
+    log("Profile selected and saved ${profile.id}");
+  }
+
+  saveAsNew(De1ShotProfile profile) {
+    log("Saving as a new profile");
+    profile.isDefault = false;
+    profile.id = Uuid().toString();
+  }
+
+  save(De1ShotProfile profile) {
+    log("Saving as a existing profile to documents region");
+    profile.isDefault = false;
   }
 
   Future<void> loadAllProfiles() async {
     var assets = await rootBundle.loadString('AssetManifest.json');
     Map jsondata = json.decode(assets);
-    List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
+    List get =
+        jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
       log("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
       try {
-        parseProfile(rawJson);
+        parseProfile(rawJson, true);
       } catch (ex) {
         log("Profile parse error: $ex");
       }
@@ -69,23 +88,25 @@ class ProfileService extends ChangeNotifier {
     log('all profiles loaded');
   }
 
-  String parseProfile(String json_string) {
+  String parseProfile(String json_string, bool isDefault) {
     log("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> ex_frames = <De1ShotExtFrameClass>[];
-    if (!ShotJsonParser(json_string, header, frames, ex_frames))
+    var p = De1ShotProfile(header, frames, ex_frames);
+    if (!ShotJsonParser(json_string, p))
       return "Failed to encode profile " + ", try to load another profile";
-    profiles.add(De1ShotProfile(header, frames, ex_frames));
+
+    p.isDefault = isDefault;
+    profiles.add(p);
     log("$header $frames $ex_frames");
 
     return "";
   }
 
-  static bool ShotJsonParser(String json_string, De1ShotHeaderClass shot_header, List<De1ShotFrameClass> shot_frames,
-      List<De1ShotExtFrameClass> shot_exframes) {
+  static bool ShotJsonParser(String json_string, De1ShotProfile profile) {
     var json_obj = jsonDecode(json_string);
-    return ShotJsonParserAdvanced(json_obj, shot_header, shot_frames, shot_exframes);
+    return ShotJsonParserAdvanced(json_obj, profile);
 
     // return ShotJsonParserAdvanced(json_obj, shot_header, shot_frames, shot_exframes);
   }
@@ -112,18 +133,27 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  static bool ShotJsonParserAdvanced(Map<String, dynamic> json_obj, De1ShotHeaderClass shot_header,
-      List<De1ShotFrameClass> shot_frames, List<De1ShotExtFrameClass> shot_exframes) {
+  static bool ShotJsonParserAdvanced(
+    Map<String, dynamic> json_obj,
+    De1ShotProfile profile,
+  ) {
+    De1ShotHeaderClass shot_header = profile.shotHeader;
+    List<De1ShotFrameClass> shot_frames = profile.shotFrames;
+    List<De1ShotExtFrameClass> shot_exframes = profile.shotExframes;
     if (!json_obj.containsKey("version")) return false;
     if (Dynamic2Double(json_obj["version"]) != 2.0) return false;
 
+    profile.id = Dynamic2String(json_obj["id"]);
     shot_header.hidden = Dynamic2Double(json_obj["hidden"]).toInt();
     shot_header.type = Dynamic2String(json_obj["type"]);
+    shot_header.type = Dynamic2String(json_obj["type"]);
     shot_header.lang = Dynamic2String(json_obj["lang"]);
-    shot_header.legacyProfileType = Dynamic2String(json_obj["legacy_profile_type"]);
+    shot_header.legacyProfileType =
+        Dynamic2String(json_obj["legacy_profile_type"]);
     shot_header.target_weight = Dynamic2Double(json_obj["target_weight"]);
     shot_header.target_volume = Dynamic2Double(json_obj["target_volume"]);
-    shot_header.target_volume_count_start = Dynamic2Double(json_obj["target_volume_count_start"]);
+    shot_header.target_volume_count_start =
+        Dynamic2Double(json_obj["target_volume_count_start"]);
     shot_header.tank_temperature = Dynamic2Double(json_obj["tank_temperature"]);
     shot_header.title = Dynamic2String(json_obj["title"]);
     shot_header.author = Dynamic2String(json_obj["author"]);
@@ -260,9 +290,13 @@ class ProfileService extends ChangeNotifier {
   }
 
   static EncodeHeaderAndFrames(
-      De1ShotHeaderClass shot_header, List<De1ShotFrameClass> shot_frames, List<De1ShotExtFrameClass> shot_exframes) {
+      De1ShotHeaderClass shot_header,
+      List<De1ShotFrameClass> shot_frames,
+      List<De1ShotExtFrameClass> shot_exframes) {
     shot_header.bytes = De1ShotHeaderClass.encodeDe1ShotHeader(shot_header);
-    for (var frame in shot_frames) frame.bytes = De1ShotFrameClass.EncodeDe1ShotFrame(frame);
-    for (var exframe in shot_exframes) exframe.bytes = De1ShotExtFrameClass.EncodeDe1ExtentionFrame(exframe);
+    for (var frame in shot_frames)
+      frame.bytes = De1ShotFrameClass.EncodeDe1ShotFrame(frame);
+    for (var exframe in shot_exframes)
+      exframe.bytes = De1ShotExtFrameClass.EncodeDe1ExtentionFrame(exframe);
   }
 }
