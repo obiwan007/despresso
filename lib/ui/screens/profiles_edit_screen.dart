@@ -5,8 +5,7 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart'
-    as charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -58,22 +57,11 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     declineObject.frameToWrite = _profile.shotFrames.length;
     declineObject.temp = _profile.shotFrames.first.temp;
 
-    preInfusion = _profile.shotFrames
-        .where((element) => (element.name == "preinfusion"))
-        .toList()
-        .first;
+    preInfusion = _profile.shotFrames.where((element) => (element.name == "preinfusion")).toList().first;
 
-    riseAndHold = _profile.shotFrames
-        .where((element) => (element.name == "rise and hold"))
-        .toList()
-        .first;
-    forcedRise = _profile.shotFrames
-        .where((element) => (element.name == "forced rise without limit"))
-        .toList()
-        .first;
-    var declineArray = _profile.shotFrames
-        .where((element) => (element.name == "decline"))
-        .toList();
+    riseAndHold = _profile.shotFrames.where((element) => (element.name == "rise and hold")).toList().first;
+    forcedRise = _profile.shotFrames.where((element) => (element.name == "forced rise without limit")).toList().first;
+    var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
     if (declineArray.isNotEmpty) {
       decline = declineArray.first;
     } else {
@@ -105,9 +93,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
         title: Text('Profile Edit: ${_profile.shotHeader.title}'),
         actions: <Widget>[
           ElevatedButton(
-            child: Text(
-              'Save',
-            ),
+            child: const Text('Save'),
             onPressed: () {
               setState(() {
                 profileService.save(_profile);
@@ -447,46 +433,36 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var data = _createSeriesData();
     var flowChart = charts.LineChart(
-      [
-        data[0],
-        data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
-      ],
+      [data[0], data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
         // Define one domain and two measure annotations configured to render
         // labels in the chart margins.
-        charts.RangeAnnotation([...phases],
-            defaultLabelPosition: charts.AnnotationLabelPosition.margin),
+        charts.RangeAnnotation([...phases], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       primaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle: charts.TextStyleSpec(
-              fontSize: 10,
-              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle: charts.LineStyleSpec(
-              thickness: 0,
-              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle:
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle:
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
       secondaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle: charts.TextStyleSpec(
-              fontSize: 10,
-              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle: charts.LineStyleSpec(
-              thickness: 0,
-              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle:
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle:
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle: charts.TextStyleSpec(
-              fontSize: 10,
-              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
-          lineStyle: charts.LineStyleSpec(
-              thickness: 0,
-              color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          labelStyle:
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+          lineStyle:
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
         ),
       ),
     );
@@ -517,8 +493,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
   createSteps() {
     return _profile!.shotFrames
-        .map((p) => createKeyValue(
-            p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
+        .map((p) => createKeyValue(p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
         .toList();
   }
 
@@ -532,8 +507,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
         id: 'Pressure',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -541,8 +515,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
         id: 'Flow',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -550,8 +523,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
         id: 'Temp',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
-        colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -559,8 +531,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
         id: 'Weight',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
-        colorFn: (_, __) =>
-            charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -598,27 +569,14 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     var time = 0.0;
     var frame = _profile!.shotFrames.first;
 
-    ShotState shotState = ShotState(time, time, 0, 0, frame.temp, frame.temp,
-        frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
+    ShotState shotState = ShotState(
+        time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
     shotList.entries.add(shotState);
     for (var frame in _profile!.shotFrames) {
       time += frame.frameLen;
-      ShotState shotState = ShotState(
-          time,
-          time,
-          frame.setVal,
-          frame.setVal,
-          frame.temp,
-          frame.temp,
-          frame.temp,
-          frame.temp,
-          0,
-          0,
-          0,
-          0,
-          0,
-          frame.name);
+      ShotState shotState = ShotState(time, time, frame.setVal, frame.setVal, frame.temp, frame.temp, frame.temp,
+          frame.temp, 0, 0, 0, 0, 0, frame.name);
       shotList.entries.add(shotState);
     }
   }
@@ -632,9 +590,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     //     log(element.subState + " " + element.sampleTimeCorrected.toString());
     //   }
     // });
-    var stateChanges = shotList.entries
-        .where((element) => element.subState.isNotEmpty)
-        .toList();
+    var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
     // log("Phases= ${stateChanges.length}");
 
     int i = 0;
@@ -648,18 +604,15 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
       }
 
       var col = theme.Colors.statesColors[from.subState];
-      var col2 =
-          charts.ColorUtil.fromDartColor(col ?? theme.Colors.backgroundColor);
+      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.Colors.backgroundColor);
       // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
-      return charts.RangeAnnotationSegment(from.sampleTimeCorrected,
-          toSampleTime, charts.RangeAnnotationAxisType.domain,
+      return charts.RangeAnnotationSegment(
+          from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
           labelAnchor: charts.AnnotationLabelAnchor.end,
           color: col2,
           startLabel: from.subState,
-          labelStyleSpec: charts.TextStyleSpec(
-              fontSize: 10,
-              color:
-                  charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelStyleSpec:
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log("Phase ${element.subState}");
     });

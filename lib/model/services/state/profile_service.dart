@@ -13,13 +13,10 @@ import 'package:uuid/uuid.dart';
 // FrameFlag of zero and pressure of 0 means end of shot, unless we are at the tenth frame, in which case
 // it's the end of shot no matter what
 const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
-const int DoCompare =
-    0x02; // Do a compare, early exit current frame if compare true
-const int DC_GT =
-    0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
 const int DC_CompF = 0x08; // Compare Pressure or Flow?
-const int TMixTemp =
-    0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
 const int Interpolate = 0x20; // Hard jump to target value, or ramp?
 const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
@@ -43,8 +40,7 @@ class ProfileService extends ChangeNotifier {
     currentProfile = profiles.first;
     if (profileId != null && profileId.isNotEmpty) {
       try {
-        currentProfile =
-            profiles.where((element) => element.id == profileId).first;
+        currentProfile = profiles.where((element) => element.id == profileId).first;
       } catch (_) {}
       log("Profile ${currentProfile!.shotHeader.title} loaded");
     }
@@ -70,6 +66,7 @@ class ProfileService extends ChangeNotifier {
   save(De1ShotProfile profile) {
     log("Saving as a existing profile to documents region");
     profile.isDefault = false;
+    saveProvileToDocuments(profile, profile.id);
   }
 
   Future<De1ShotProfile> loadProfileFromDocuments(String fileName) async {
@@ -97,16 +94,21 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  Future<File> saveProvileToDocuments(
-      De1ShotProfile profile, String filename) async {
+  Future<File> saveProvileToDocuments(De1ShotProfile profile, String filename) async {
     log("Storing shot: ${profile.id}");
 
     final directory = await getApplicationDocumentsDirectory();
     log("Storing to path:${directory.path}");
+    final Directory _appDocDirFolder = Directory('${directory.path}/profiles/');
+
+    if (!_appDocDirFolder.existsSync()) {
+      _appDocDirFolder.create(recursive: true);
+    }
 
     var file = File('${directory.path}/profiles/$filename');
     if (await file.exists()) {
-      file.delete();
+      file.deleteSync();
+      await file.create();
     }
     var json = profile.toJson();
     log("Save json $json");
@@ -116,8 +118,7 @@ class ProfileService extends ChangeNotifier {
   Future<void> loadAllProfiles() async {
     var assets = await rootBundle.loadString('AssetManifest.json');
     Map jsondata = json.decode(assets);
-    List get =
-        jsondata.keys.where((element) => element.endsWith(".json")).toList();
+    List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
       log("Parsing profile $file");
@@ -137,8 +138,7 @@ class ProfileService extends ChangeNotifier {
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> ex_frames = <De1ShotExtFrameClass>[];
     var p = De1ShotProfile(header, frames, ex_frames);
-    if (!ShotJsonParser(json_string, p))
-      return "Failed to encode profile " + ", try to load another profile";
+    if (!ShotJsonParser(json_string, p)) return "Failed to encode profile " + ", try to load another profile";
 
     p.isDefault = isDefault;
     profiles.add(p);
@@ -191,12 +191,10 @@ class ProfileService extends ChangeNotifier {
     shot_header.type = Dynamic2String(json_obj["type"]);
     shot_header.type = Dynamic2String(json_obj["type"]);
     shot_header.lang = Dynamic2String(json_obj["lang"]);
-    shot_header.legacyProfileType =
-        Dynamic2String(json_obj["legacy_profile_type"]);
+    shot_header.legacyProfileType = Dynamic2String(json_obj["legacy_profile_type"]);
     shot_header.target_weight = Dynamic2Double(json_obj["target_weight"]);
     shot_header.target_volume = Dynamic2Double(json_obj["target_volume"]);
-    shot_header.target_volume_count_start =
-        Dynamic2Double(json_obj["target_volume_count_start"]);
+    shot_header.target_volume_count_start = Dynamic2Double(json_obj["target_volume_count_start"]);
     shot_header.tank_temperature = Dynamic2Double(json_obj["tank_temperature"]);
     shot_header.title = Dynamic2String(json_obj["title"]);
     shot_header.author = Dynamic2String(json_obj["author"]);
@@ -333,13 +331,9 @@ class ProfileService extends ChangeNotifier {
   }
 
   static EncodeHeaderAndFrames(
-      De1ShotHeaderClass shot_header,
-      List<De1ShotFrameClass> shot_frames,
-      List<De1ShotExtFrameClass> shot_exframes) {
+      De1ShotHeaderClass shot_header, List<De1ShotFrameClass> shot_frames, List<De1ShotExtFrameClass> shot_exframes) {
     shot_header.bytes = De1ShotHeaderClass.encodeDe1ShotHeader(shot_header);
-    for (var frame in shot_frames)
-      frame.bytes = De1ShotFrameClass.EncodeDe1ShotFrame(frame);
-    for (var exframe in shot_exframes)
-      exframe.bytes = De1ShotExtFrameClass.EncodeDe1ExtentionFrame(exframe);
+    for (var frame in shot_frames) frame.bytes = De1ShotFrameClass.EncodeDe1ShotFrame(frame);
+    for (var exframe in shot_exframes) exframe.bytes = De1ShotExtFrameClass.EncodeDe1ExtentionFrame(exframe);
   }
 }
