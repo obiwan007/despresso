@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:despresso/model/profile.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,9 +33,18 @@ class ProfileService extends ChangeNotifier {
     log('Preferences loaded');
 
     var profileId = prefs.getString("profilename");
-    await loadAllProfiles();
+    await loadDefaultAllProfiles();
     log('Profiles loaded');
 
+    try {
+      var dirs = await getDir();
+      // dirs.forEach((element) => {
+      //   loadUserProfile(element.path);
+      // });
+
+    } catch (ex) {
+      log("List files $ex");
+    }
     currentProfile = profiles.first;
     if (profileId != null && profileId.isNotEmpty) {
       try {
@@ -63,10 +71,26 @@ class ProfileService extends ChangeNotifier {
     profile.id = Uuid().toString();
   }
 
-  save(De1ShotProfile profile) {
+  save(De1ShotProfile profile) async {
     log("Saving as a existing profile to documents region");
     profile.isDefault = false;
-    saveProvileToDocuments(profile, profile.id);
+    await saveProvileToDocuments(profile, profile.id);
+    currentProfile = profile;
+    notify();
+  }
+
+  Future<List<FileSystemEntity>> getDir() async {
+    final dir = "${(await getApplicationDocumentsDirectory()).path}/profiles";
+
+    String pdfDirectory = '$dir/';
+
+    final myDir = Directory(pdfDirectory);
+
+    var dirs = myDir.listSync(recursive: true, followLinks: false);
+    dirs.forEach((element) {
+      log("${element.path}");
+    });
+    return dirs;
   }
 
   Future<De1ShotProfile> loadProfileFromDocuments(String fileName) async {
@@ -108,14 +132,14 @@ class ProfileService extends ChangeNotifier {
     var file = File('${directory.path}/profiles/$filename');
     if (await file.exists()) {
       file.deleteSync();
-      await file.create();
     }
+    await file.create();
     var json = profile.toJson();
     log("Save json $json");
     return file.writeAsString(jsonEncode(json));
   }
 
-  Future<void> loadAllProfiles() async {
+  Future<void> loadDefaultAllProfiles() async {
     var assets = await rootBundle.loadString('AssetManifest.json');
     Map jsondata = json.decode(assets);
     List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();

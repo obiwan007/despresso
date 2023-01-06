@@ -160,7 +160,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                     children: [
                       Column(
                         children: [
-                          Text("Infusion time"),
+                          Text("Infusion Time (${preInfusion?.frameLen.round()} s)"),
                           SfSlider(
                             min: 0.0,
                             max: 100.0,
@@ -208,7 +208,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      Text("Pressure"),
+                      Text("Pressure (${preInfusion?.setVal.round()} bar)"),
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
@@ -242,7 +242,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Text("Rise and hold"),
+          Text("Rise and hold (${riseAndHold?.frameLen.round()} s)"),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -253,7 +253,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                     children: [
                       Column(
                         children: [
-                          Text("Time"),
+                          Text("Time (${riseAndHold?.frameLen.round()} s)"),
                           SfSlider(
                             min: 0.0,
                             max: 100.0,
@@ -277,7 +277,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         padding: const EdgeInsets.only(top: 28.0),
                         child: Column(
                           children: [
-                            Text("Limit flow"),
+                            Text("Limit flow (${riseAndHold?.frameLen.round()} ml/s)"),
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
@@ -301,7 +301,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      Text("Pressure"),
+                      Text("Pressure (${riseAndHold?.setVal.round()} bar)"),
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
@@ -348,7 +348,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                     children: [
                       Column(
                         children: [
-                          Text("Time"),
+                          Text("Time (${decline?.frameLen.round()} s)"),
                           SfSlider(
                             min: 0.0,
                             max: 100.0,
@@ -372,7 +372,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         padding: const EdgeInsets.only(top: 28.0),
                         child: Column(
                           children: [
-                            Text("Stop at weight [g]"),
+                            Text("Stop at weight (${_profile.shotHeader.target_weight.round()} g)"),
                             SfSlider(
                               min: 0.0,
                               max: 100.0,
@@ -398,10 +398,10 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      Text("Pressure"),
+                      Text("Pressure (${decline?.setVal.round()} bar)"),
                       SfSlider.vertical(
                         min: 0.0,
-                        max: 10.0,
+                        max: 15.0,
                         value: decline?.setVal,
                         interval: 2,
                         showTicks: true,
