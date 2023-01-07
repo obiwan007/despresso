@@ -63,7 +63,7 @@ class ShotList {
   saveData(String filename) async {
     saving = true;
     log("Storing shot: ${entries.length}");
-    if (entries.length > 0) {
+    if (entries.length > 50) {
       final directory = await getApplicationDocumentsDirectory();
       log("Storing to path:${directory.path}");
       var file = File('${directory.path}/$filename');

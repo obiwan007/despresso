@@ -22,6 +22,8 @@ const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 class ProfileService extends ChangeNotifier {
   De1ShotProfile? currentProfile;
   late SharedPreferences prefs;
+  List<De1ShotProfile> defaultProfiles = <De1ShotProfile>[];
+
   List<De1ShotProfile> profiles = <De1ShotProfile>[];
 
   ProfileService() {
@@ -33,11 +35,29 @@ class ProfileService extends ChangeNotifier {
     log('Preferences loaded');
 
     var profileId = prefs.getString("profilename");
-    await loadDefaultAllProfiles();
+    await loadAllDefaultProfiles();
     log('Profiles loaded');
 
     try {
-      var dirs = await getDir();
+      var dirs = await getSavedProfileFiles();
+
+      for (var element in dirs) {
+        log("${element.path}");
+        var i = element.path.lastIndexOf('/');
+        var file = element.path.substring(i);
+        try {
+          var loaded = await loadProfileFromDocuments(file);
+          log("Saved profile loaded $loaded");
+          var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
+          if (defaultProfile.isNotEmpty) {
+            profiles.add(loaded);
+          } else {
+            // profiles.add(defaultProfile.first);
+          }
+        } catch (ex) {
+          log("Error loading profile $ex");
+        }
+      }
       // dirs.forEach((element) => {
       //   loadUserProfile(element.path);
       // });
@@ -45,6 +65,14 @@ class ProfileService extends ChangeNotifier {
     } catch (ex) {
       log("List files $ex");
     }
+
+// Add defaultprofile if not already modified;
+    for (var prof in defaultProfiles) {
+      if (profiles.where((element) => element.id == prof.id).isEmpty) {
+        profiles.add(prof);
+      }
+    }
+
     currentProfile = profiles.first;
     if (profileId != null && profileId.isNotEmpty) {
       try {
@@ -79,7 +107,7 @@ class ProfileService extends ChangeNotifier {
     notify();
   }
 
-  Future<List<FileSystemEntity>> getDir() async {
+  Future<List<FileSystemEntity>> getSavedProfileFiles() async {
     final dir = "${(await getApplicationDocumentsDirectory()).path}/profiles";
 
     String pdfDirectory = '$dir/';
@@ -87,9 +115,7 @@ class ProfileService extends ChangeNotifier {
     final myDir = Directory(pdfDirectory);
 
     var dirs = myDir.listSync(recursive: true, followLinks: false);
-    dirs.forEach((element) {
-      log("${element.path}");
-    });
+
     return dirs;
   }
 
@@ -106,13 +132,13 @@ class ProfileService extends ChangeNotifier {
         var data = De1ShotProfile.fromJson(map);
 
         log("Loaded Profile: ${data.id}");
-        return data!;
+        return data;
       } else {
         log("File $fileName not existing");
         throw Exception("File not found");
       }
     } catch (ex) {
-      log("loading error");
+      log("loading error $ex");
       Future.error("Error loading filename $ex");
       rethrow;
     }
@@ -139,7 +165,7 @@ class ProfileService extends ChangeNotifier {
     return file.writeAsString(jsonEncode(json));
   }
 
-  Future<void> loadDefaultAllProfiles() async {
+  Future<void> loadAllDefaultProfiles() async {
     var assets = await rootBundle.loadString('AssetManifest.json');
     Map jsondata = json.decode(assets);
     List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
@@ -148,7 +174,7 @@ class ProfileService extends ChangeNotifier {
       log("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
       try {
-        parseProfile(rawJson, true);
+        parseDefaultProfile(rawJson, true);
       } catch (ex) {
         log("Profile parse error: $ex");
       }
@@ -156,7 +182,7 @@ class ProfileService extends ChangeNotifier {
     log('all profiles loaded');
   }
 
-  String parseProfile(String json_string, bool isDefault) {
+  String parseDefaultProfile(String json_string, bool isDefault) {
     log("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
@@ -165,7 +191,7 @@ class ProfileService extends ChangeNotifier {
     if (!ShotJsonParser(json_string, p)) return "Failed to encode profile " + ", try to load another profile";
 
     p.isDefault = isDefault;
-    profiles.add(p);
+    defaultProfiles.add(p);
     log("$header $frames $ex_frames");
 
     return "";
