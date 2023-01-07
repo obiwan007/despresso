@@ -106,11 +106,12 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
         body: Column(
           children: [
             Expanded(
-              flex: 5, // takes 30% of available width
-              child: _buildGraphPressure(),
+              child: IntrinsicHeight(
+                child: _buildGraphPressure(),
+              ),
             ),
-            Expanded(
-              flex: 5, // takes 30% of available width
+            Container(
+              color: Colors.blue,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -119,7 +120,9 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                     children: [
                       Expanded(
                         flex: 5,
-                        child: Card(child: buildPreinfusion()),
+                        child: Card(
+                          child: buildPreinfusion(),
+                        ),
                       ),
                       Expanded(
                         flex: 5, // takes 30% of available width
@@ -144,7 +147,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     );
   }
 
-  Padding buildPreinfusion() {
+  Widget buildPreinfusion() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
