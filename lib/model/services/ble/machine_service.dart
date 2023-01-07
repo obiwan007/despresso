@@ -32,21 +32,10 @@ class MachineState {
   String subState = "";
 }
 
-enum EspressoMachineState {
-  idle,
-  espresso,
-  water,
-  steam,
-  sleep,
-  disconnected,
-  connecting,
-  refill,
-  flush
-}
+enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush }
 
 class EspressoMachineService extends ChangeNotifier {
-  final MachineState _state =
-      MachineState(null, EspressoMachineState.disconnected);
+  final MachineState _state = MachineState(null, EspressoMachineState.disconnected);
 
   DE1? de1;
 
@@ -107,8 +96,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setState(EspressoMachineState state) {
     _state.coffeeState = state;
-    if (_state.coffeeState == EspressoMachineState.espresso ||
-        _state.coffeeState == EspressoMachineState.water) {
+    if (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water) {
       scaleService.tare();
     }
 
@@ -170,8 +158,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     // stop at volume in the profile tail
     if (true) {
-      var tailBytes =
-          De1ShotHeaderClass.encodeDe1ShotTail(profile.shotFrames.length, 0);
+      var tailBytes = De1ShotHeaderClass.encodeDe1ShotTail(profile.shotFrames.length, 0);
 
       try {
         log("Write Tail: $tailBytes");
@@ -232,26 +219,20 @@ class EspressoMachineService extends ChangeNotifier {
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log("basetime $baseTime");
     }
-    if (state.coffeeState == EspressoMachineState.water &&
-        lastSubstate != state.subState &&
-        state.subState == "pour") {
+    if (state.coffeeState == EspressoMachineState.water && lastSubstate != state.subState && state.subState == "pour") {
       log('Startet water pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
       log("basetime $baseTime");
     }
 
-    if (state.coffeeState == EspressoMachineState.steam &&
-        lastSubstate != state.subState &&
-        state.subState == "pour") {
+    if (state.coffeeState == EspressoMachineState.steam && lastSubstate != state.subState && state.subState == "pour") {
       log('Startet steam pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
       log("basetime $baseTime");
     }
-    if (state.coffeeState == EspressoMachineState.flush &&
-        lastSubstate != state.subState &&
-        state.subState == "pour") {
+    if (state.coffeeState == EspressoMachineState.flush && lastSubstate != state.subState && state.subState == "pour") {
       log('Startet flush pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
@@ -275,8 +256,7 @@ class EspressoMachineService extends ChangeNotifier {
         case EspressoMachineState.espresso:
           if (scaleService.state == ScaleState.connected) {
             if (profileService.currentProfile!.shotHeader.target_weight > 1 &&
-                shot.weight + 1 >
-                    profileService.currentProfile!.shotHeader.target_weight) {
+                shot.weight + 1 > profileService.currentProfile!.shotHeader.target_weight) {
               log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.target_weight}");
 
               triggerEndOfShot();
@@ -285,8 +265,7 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.water:
           if (scaleService.state == ScaleState.connected) {
-            if (settings.targetHotWaterWeight > 1 &&
-                scaleService.weight + 1 > settings.targetHotWaterWeight) {
+            if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
               log("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.target_weight}");
 
               triggerEndOfShot();
@@ -312,9 +291,7 @@ class EspressoMachineService extends ChangeNotifier {
 
           break;
         case EspressoMachineState.flush:
-          if (state.subState == "pour" &&
-              settings.targetFlushTime > 1 &&
-              timer.inSeconds > settings.targetFlushTime) {
+          if (state.subState == "pour" && settings.targetFlushTime > 1 && timer.inSeconds > settings.targetFlushTime) {
             log("Flush Timer reached ${timer.inSeconds} > ${settings.targetFlushTime}");
 
             triggerEndOfShot();

@@ -174,7 +174,7 @@ class _SteamScreenState extends State<SteamScreen> {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 15,
                                     value: machineService.state.coffeeState == EspressoMachineState.steam
-                                        ? machineService.timer.inSeconds / settings.targetSteamLength
+                                        ? (machineService.state.shot?.steamTemp ?? 1) / settings.targetSteamTemp
                                         : 0,
                                   ),
                                 ),
@@ -204,9 +204,9 @@ class _SteamScreenState extends State<SteamScreen> {
                             Text("Timer ${settings.targetSteamLength} s", style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetSteamLength.toDouble(),
-                              max: 100,
+                              max: 200,
                               min: 1,
-                              divisions: 100,
+                              divisions: 200,
                               label: "${settings.targetSteamLength} s",
                               onChanged: (double value) {
                                 setState(() {

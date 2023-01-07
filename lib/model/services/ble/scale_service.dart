@@ -37,7 +37,7 @@ class ScaleService {
 
   bool tareInProgress = false;
 
-  double lastFlow = 0;
+  double lastFlow = 1;
 
   Stream<WeightMeassurement> get stream => _stream;
 
@@ -70,7 +70,7 @@ class ScaleService {
 
   void setWeight(double weight) {
     const T = 0.5;
-    const U = 0.8;
+    const U = 0.4;
     if (tareInProgress) return;
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();

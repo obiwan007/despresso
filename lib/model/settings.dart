@@ -6,13 +6,13 @@ part 'settings.g.dart';
 class Settings {
   int steamSettings = 0; // do not know what is this, use always 0
   int targetSteamTemp = 130;
-  int targetSteamLength = 30;
+  int targetSteamLength = 120;
   int targetHotWaterTemp = 85;
   int targetHotWaterVol = 120;
   int targetHotWaterWeight = 120;
   int targetHotWaterLength = 45;
   int targetEspressoVol = 35;
-  int targetFlushTime = 5;
+  int targetFlushTime = 3;
   double targetGroupTemp = 98.0; // taken form the shot data
 
   Settings();

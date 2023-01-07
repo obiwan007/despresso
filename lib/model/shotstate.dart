@@ -68,7 +68,7 @@ class ShotList {
       log("Storing to path:${directory.path}");
       var file = File('${directory.path}/$filename');
       if (await file.exists()) {
-        file.delete();
+        file.deleteSync();
       }
 
       file.writeAsStringSync(jsonEncode(this));
