@@ -37,6 +37,8 @@ class ScaleService {
 
   bool tareInProgress = false;
 
+  double lastFlow = 0;
+
   Stream<WeightMeassurement> get stream => _stream;
 
   double get weight => _weight;
@@ -67,6 +69,8 @@ class ScaleService {
   }
 
   void setWeight(double weight) {
+    const T = 0.5;
+    const U = 0.8;
     if (tareInProgress) return;
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();
@@ -74,7 +78,9 @@ class ScaleService {
     if (last != null) {
       var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
       // log(timeDiff.toStringAsFixed(2));
-      flow = (weight - _weight) / timeDiff;
+      var n = ((weight - _weight) / timeDiff);
+      flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
+      lastFlow = flow;
     }
 
     _controller.add(WeightMeassurement(weight, flow, _state));

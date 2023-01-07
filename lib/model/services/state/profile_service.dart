@@ -91,6 +91,7 @@ class ProfileService extends ChangeNotifier {
     currentProfile = profile;
     prefs.setString("profilename", profile.id);
     log("Profile selected and saved ${profile.id}");
+    notify();
   }
 
   saveAsNew(De1ShotProfile profile) {

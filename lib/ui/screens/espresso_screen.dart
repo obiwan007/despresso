@@ -449,18 +449,18 @@ class _EspressoScreenState extends State<EspressoScreen> {
     if (machineService.state.shot != null) {
       insights = Column(
         children: [
-          Row(
-            children: [
-              // const Text('Profile: ', style: theme.TextStyles.tabSecondary),
-              Text(profileService.currentProfile!.shotHeader.title, style: theme.TextStyles.tabHeading),
-            ],
-          ),
-          const Divider(
-            height: 20,
-            thickness: 5,
-            indent: 0,
-            endIndent: 0,
-          ),
+          // Row(
+          //   children: [
+          //     // const Text('Profile: ', style: theme.TextStyles.tabSecondary),
+          //     Text(profileService.currentProfile!.shotHeader.title, style: theme.TextStyles.tabHeading),
+          //   ],
+          // ),
+          // const Divider(
+          //   height: 20,
+          //   thickness: 5,
+          //   indent: 0,
+          //   endIndent: 0,
+          // ),
           createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
           createKeyValue("Sub", machineService.state.subState),
           createKeyValue("Pressure", "${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar"),

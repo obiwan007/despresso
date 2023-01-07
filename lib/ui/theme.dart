@@ -92,6 +92,11 @@ class TextStyles {
     fontSize: 16.0,
     fontWeight: FontWeight.bold,
   );
+  static const TextStyle appBarTitleProfile = TextStyle(
+    color: Color.fromARGB(255, 206, 206, 206),
+    fontSize: 16.0,
+    fontWeight: FontWeight.normal,
+  );
 }
 
 class Helper {

@@ -37,6 +37,8 @@ class De1ShotProfile {
 
   factory De1ShotProfile.fromJson(Map<String, dynamic> json) => _$De1ShotProfileFromJson(json);
 
+  String get title => shotHeader.title;
+
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.

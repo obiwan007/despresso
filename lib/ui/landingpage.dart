@@ -24,8 +24,7 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage>
-    with SingleTickerProviderStateMixin {
+class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
   bool available = false;
   int currentPageIndex = 0;
 
@@ -52,9 +51,7 @@ class _LandingPageState extends State<LandingPage>
     bleService = getIt<BLEService>();
 
     profileService = getIt<ProfileService>();
-    // profileService.addListener(() {
-    //   setState(() {});
-    // });
+    profileService.addListener(updatedProfile);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
     //   log("Print after 5 seconds");
     //   selectedPage++;
@@ -68,6 +65,7 @@ class _LandingPageState extends State<LandingPage>
     // TODO: implement dispose
     super.dispose();
     machineService.removeListener(updatedMachine);
+    profileService.removeListener(updatedProfile);
   }
 
   Widget _buildButton(child, onpress) {
@@ -76,8 +74,7 @@ class _LandingPageState extends State<LandingPage>
         padding: const EdgeInsets.all(10.0),
         child: TextButton(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
+            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
             backgroundColor: MaterialStateProperty.all<Color>(color),
           ),
           onPressed: onpress,
@@ -94,17 +91,18 @@ class _LandingPageState extends State<LandingPage>
     return DefaultTabController(
         length: 4,
         child: Scaffold(
-          bottomNavigationBar:
-              MediaQuery.of(context).orientation == Orientation.portrait
-                  ? createNavbar()
-                  : null,
+          bottomNavigationBar: MediaQuery.of(context).orientation == Orientation.portrait ? createNavbar() : null,
           appBar: AppBar(
-            title: Text(widget.title, style: theme.TextStyles.appBarTitle),
+            title: Row(
+              children: [
+                Text("${widget.title} ", style: theme.TextStyles.appBarTitle),
+                Text(" ${profileService.currentProfile?.title ?? ''}", style: theme.TextStyles.appBarTitleProfile),
+              ],
+            ),
             actions: <Widget>[
               IconButton(
                 iconSize: 40,
-                isSelected: machineService.state.coffeeState ==
-                    EspressoMachineState.sleep,
+                isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
                 icon: const Icon(Icons.power_settings_new, color: Colors.green),
                 selectedIcon: const Icon(
                   Icons.power_off,
@@ -112,8 +110,7 @@ class _LandingPageState extends State<LandingPage>
                 ),
                 tooltip: 'Switch on/off decent de1',
                 onPressed: () {
-                  if (machineService.state.coffeeState ==
-                      EspressoMachineState.sleep) {
+                  if (machineService.state.coffeeState == EspressoMachineState.sleep) {
                     machineService.de1?.switchOn();
                   } else {
                     machineService.de1?.switchOff();
@@ -125,8 +122,7 @@ class _LandingPageState extends State<LandingPage>
           body: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              if (MediaQuery.of(context).orientation == Orientation.landscape)
-                createNavRail(),
+              if (MediaQuery.of(context).orientation == Orientation.landscape) createNavRail(),
               Expanded(
                   child: <Widget>[
                 EspressoScreen(),
@@ -159,8 +155,7 @@ class _LandingPageState extends State<LandingPage>
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProfilesScreen()),
+                      MaterialPageRoute(builder: (context) => const ProfilesScreen()),
                     );
                   },
                 ),
@@ -282,6 +277,10 @@ class _LandingPageState extends State<LandingPage>
           },
         ));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void updatedProfile() {
+    setState(() {});
   }
 
   void updatedMachine() {
