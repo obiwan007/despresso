@@ -75,6 +75,7 @@ class _FlushScreenState extends State<FlushScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetFlushTime = value.toInt();
+                                  machineService.updateSettings(settings);
                                 });
                               },
                             ),

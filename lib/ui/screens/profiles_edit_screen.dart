@@ -495,7 +495,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
   }
 
   createSteps() {
-    return _profile!.shotFrames
+    return _profile.shotFrames
         .map((p) => createKeyValue(p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
         .toList();
   }
@@ -570,13 +570,13 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
     // String transition = "";
     shotList.clear();
     var time = 0.0;
-    var frame = _profile!.shotFrames.first;
+    var frame = _profile.shotFrames.first;
 
     ShotState shotState = ShotState(
         time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
     shotList.entries.add(shotState);
-    for (var frame in _profile!.shotFrames) {
+    for (var frame in _profile.shotFrames) {
       time += frame.frameLen;
       ShotState shotState = ShotState(time, time, frame.setVal, frame.setVal, frame.temp, frame.temp, frame.temp,
           frame.temp, 0, 0, 0, 0, 0, frame.name);

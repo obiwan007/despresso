@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/settings.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -69,11 +71,21 @@ class EspressoMachineService extends ChangeNotifier {
     scaleService = getIt<ScaleService>();
     prefs = await SharedPreferences.getInstance();
     log('Preferences loaded');
-
-    var settingsString = prefs.getString("de1Setting");
-
+    loadSettings();
     notifyListeners();
     loadShotData();
+  }
+
+  loadSettings() {
+    var settingsString = prefs.getString("de1Setting");
+    if (settingsString != null) {
+      settings = Settings.fromJson((jsonDecode(settingsString)));
+    }
+  }
+
+  saveSettings() {
+    var jsonString = jsonEncode(settings.toJson());
+    prefs.setString("de1Setting", jsonString);
   }
 
   loadShotData() async {
@@ -298,6 +310,16 @@ class EspressoMachineService extends ChangeNotifier {
           }
 
           break;
+        case EspressoMachineState.idle:
+          break;
+        case EspressoMachineState.sleep:
+          break;
+        case EspressoMachineState.disconnected:
+          break;
+        case EspressoMachineState.connecting:
+          break;
+        case EspressoMachineState.refill:
+          break;
       }
 
       //if (profileService.currentProfile.shot_header.target_weight)
@@ -321,5 +343,19 @@ class EspressoMachineService extends ChangeNotifier {
   shotFinished() async {
     log("Save last shot");
     await shotList.saveData("testshot.json");
+  }
+
+  Future<void> updateSettings(Settings settings) async {
+    this.settings = settings;
+    saveSettings();
+    notifyListeners();
+
+    var bytes = Settings.encodeDe1OtherSetn(settings);
+    try {
+      log("Write Shot Settings: $bytes");
+      await de1!.writeWithResult(Endpoint.ShotSettings, bytes);
+    } catch (ex) {
+      log("Error writing shot settings $bytes");
+    }
   }
 }

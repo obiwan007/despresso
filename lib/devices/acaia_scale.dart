@@ -126,10 +126,10 @@ class AcaiaScale extends ChangeNotifier {
       // General Status including battery
       case 8:
         var batteryLevel = commandBuffer[4];
-        log('Got status message, battery= ' + batteryLevel.toString());
+        log('Got status message, battery= $batteryLevel');
         break;
       default:
-        log('Unparsed acaia response: ' + type.toString());
+        log('Unparsed acaia response: $type');
     }
   }
 
@@ -178,7 +178,7 @@ class AcaiaScale extends ChangeNotifier {
 
     // device.writeCharacteristic(
     //     ServiceUUID, CharateristicUUID, encode(0x0b, _identPayload), false);
-    log('Ident payload: ' + encode(0x0b, _identPayload).toString());
+    log('Ident payload: ${encode(0x0b, _identPayload)}');
   }
 
   void _sendConfig() {
@@ -194,7 +194,7 @@ class AcaiaScale extends ChangeNotifier {
 
     // device.writeCharacteristic(
     //     ServiceUUID, CharateristicUUID, encode(0x0c, _configPayload), false);
-    log('Config payload: ' + encode(0x0c, _configPayload).toString());
+    log('Config payload: ${encode(0x0c, _configPayload)}');
   }
 
   Future<void> writeTare() {
@@ -214,7 +214,7 @@ class AcaiaScale extends ChangeNotifier {
   }
 
   void _onStateChange(DeviceConnectionState state) async {
-    log('SCALE State changed to ' + state.toString());
+    log('SCALE State changed to $state');
     _state = state;
 
     switch (state) {

@@ -155,6 +155,7 @@ class _SteamScreenState extends State<SteamScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetSteamTemp = value.toInt();
+                                  machineService.updateSettings(settings);
                                 });
                               },
                             ),
@@ -211,6 +212,7 @@ class _SteamScreenState extends State<SteamScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetSteamLength = value.toInt();
+                                  machineService.updateSettings(settings);
                                 });
                               },
                             ),

@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
-import 'package:despresso/model/services/state/machine_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+
+import '../../model/services/ble/machine_service.dart';
 
 class CoffeeSelection {
   Widget getTabContent() {
@@ -38,22 +39,20 @@ class CoffeeSelectionTab extends StatefulWidget {
 }
 
 class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
-  final TextEditingController _typeAheadRoasterController =
-      TextEditingController();
-  final TextEditingController _typeAheadCoffeeController =
-      TextEditingController();
+  final TextEditingController _typeAheadRoasterController = TextEditingController();
+  final TextEditingController _typeAheadCoffeeController = TextEditingController();
 
   late String _selectedRoaster;
   //String _selectedCoffee;
 
   late CoffeeService coffeeService;
-  late MachineService machineService;
+  late EspressoMachineService machineService;
 
   @override
   void initState() {
     super.initState();
     coffeeService = getIt<CoffeeService>();
-    machineService = getIt<MachineService>();
+    machineService = getIt<EspressoMachineService>();
   }
 
   @override
@@ -65,7 +64,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         children: <Widget>[
           TypeAheadFormField(
             textFieldConfiguration: TextFieldConfiguration(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Roaster',
                 labelStyle: theme.TextStyles.tabLabel,
                 contentPadding: EdgeInsets.zero,
@@ -102,7 +101,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
           ),
           TypeAheadFormField(
             textFieldConfiguration: TextFieldConfiguration(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Coffee',
                   labelStyle: theme.TextStyles.tabLabel,
                   contentPadding: EdgeInsets.zero,
@@ -115,8 +114,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                 controller: _typeAheadCoffeeController,
                 style: theme.TextStyles.tabSecondary),
             suggestionsCallback: (pattern) async {
-              return coffeeService.getCoffeeSuggestions(
-                  pattern, _selectedRoaster);
+              return coffeeService.getCoffeeSuggestions(pattern, _selectedRoaster);
             },
             itemBuilder: (context, suggestion) {
               return ListTile(
@@ -144,13 +142,11 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
               margin: const EdgeInsets.symmetric(vertical: 8.0)),
           Row(
             children: <Widget>[
-              Icon(Icons.location_on,
-                  size: 14.0, color: theme.Colors.goodColor),
-              Text('Dummy Origin', style: theme.TextStyles.tabTertiary),
+              const Icon(Icons.location_on, size: 14.0, color: theme.Colors.goodColor),
+              const Text('Dummy Origin', style: theme.TextStyles.tabTertiary),
               Container(width: 24.0),
-              Icon(Icons.flight_land,
-                  size: 14.0, color: theme.Colors.goodColor),
-              Text('10€', style: theme.TextStyles.tabTertiary),
+              const Icon(Icons.flight_land, size: 14.0, color: theme.Colors.goodColor),
+              const Text('10€', style: theme.TextStyles.tabTertiary),
             ],
           ),
         ],

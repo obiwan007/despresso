@@ -5,8 +5,6 @@ import 'dart:typed_data';
 
 import 'package:json_annotation/json_annotation.dart';
 
-import 'dart:typed_data';
-
 part "de1shotclasses.g.dart";
 
 class Uint8ListConverter implements JsonConverter<Uint8List, List<dynamic>> {

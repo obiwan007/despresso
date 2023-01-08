@@ -302,22 +302,16 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
             currentPageIndex = 3;
             break;
           case EspressoMachineState.idle:
-            // TODO: Handle this case.
             break;
           case EspressoMachineState.sleep:
-            // TODO: Handle this case.
             break;
           case EspressoMachineState.disconnected:
-            // TODO: Handle this case.
             break;
           case EspressoMachineState.refill:
-            // TODO: Handle this case.
             break;
           default:
-            // TODO: Handle this case.
             break;
         }
-        // _tabController.index = selectedPage;
       });
     }
   }
