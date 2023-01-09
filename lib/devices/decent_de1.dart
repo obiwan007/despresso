@@ -330,7 +330,7 @@ class DE1 extends ChangeNotifier {
     var setGroupFlow = r.getUint8(16) / (1 << 4);
     var frameNumber = r.getUint8(17);
     var steamTemp = r.getUint8(18);
-    log("$headTemp $setHeadTemp $mixTemp $setMixTemp");
+    // log("$headTemp $setHeadTemp $mixTemp $setMixTemp");
     sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     // log('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
     service.setShot(ShotState(sampleTime, 0, groupPressure, groupFlow, mixTemp, headTemp, setMixTemp, setHeadTemp,
