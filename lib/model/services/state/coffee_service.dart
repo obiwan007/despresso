@@ -35,14 +35,30 @@ class CoffeeService extends ChangeNotifier {
     return knownCoffees;
   }
 
+  updateRoaster(Roaster roaster) async {
+    var index = knownRoasters.indexWhere((element) => element.id == roaster.id);
+    if (index > -1) {
+      knownRoasters[index] = roaster;
+    }
+
+    await save();
+    notifyListeners();
+  }
+
   addRoaster(Roaster newRoaster) async {
-    knownRoasters.add(newRoaster);
+    knownRoasters.insert(0, newRoaster);
+    await save();
+    notifyListeners();
+  }
+
+  deleteRoaster(Roaster r) async {
+    knownRoasters.removeWhere((element) => element.id == r.id);
     await save();
     notifyListeners();
   }
 
   addCoffee(Coffee newCoffee) async {
-    knownCoffees.add(newCoffee);
+    knownCoffees.insert(0, newCoffee);
     await save();
     notifyListeners();
   }
@@ -102,6 +118,14 @@ class CoffeeService extends ChangeNotifier {
       } else {}
       var encoded = jsonEncode(knownCoffees);
       log("Coffee: $encoded");
+      file.writeAsStringSync(encoded);
+
+      file = File('${directory.path}/db/roasters.json');
+      if (await file.exists()) {
+        file.deleteSync();
+      } else {}
+      encoded = jsonEncode(knownRoasters);
+      log("Roasters: $encoded");
       file.writeAsStringSync(encoded);
     } catch (ex) {
       log("save error $ex");

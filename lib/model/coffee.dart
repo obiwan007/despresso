@@ -43,6 +43,8 @@ class Roaster {
   String imageURL = "";
   String id = "";
   String description = "";
+  String address = "";
+  String homepage = "";
 
   Roaster() {
     id = uuid.Uuid().v4().toString();

@@ -41,11 +41,15 @@ Roaster _$RoasterFromJson(Map<String, dynamic> json) => Roaster()
   ..name = json['name'] as String
   ..imageURL = json['imageURL'] as String
   ..id = json['id'] as String
-  ..description = json['description'] as String;
+  ..description = json['description'] as String
+  ..address = json['address'] as String
+  ..homepage = json['homepage'] as String;
 
 Map<String, dynamic> _$RoasterToJson(Roaster instance) => <String, dynamic>{
       'name': instance.name,
       'imageURL': instance.imageURL,
       'id': instance.id,
       'description': instance.description,
+      'address': instance.address,
+      'homepage': instance.homepage,
     };

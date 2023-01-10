@@ -50,6 +50,7 @@ dependencies:
   copy_with_extension: ^5.0.0
   copy_with_extension_gen: ^5.0.0
   uuid: ^3.0.7
+  reactive_forms: ^14.1.0
   
 
 dev_dependencies:
