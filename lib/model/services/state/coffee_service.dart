@@ -63,6 +63,22 @@ class CoffeeService extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateCoffee(Coffee coffee) async {
+    var index = knownCoffees.indexWhere((element) => element.id == coffee.id);
+    if (index > -1) {
+      knownCoffees[index] = coffee;
+    }
+
+    await save();
+    notifyListeners();
+  }
+
+  deleteCoffee(Coffee r) async {
+    knownCoffees.removeWhere((element) => element.id == r.id);
+    await save();
+    notifyListeners();
+  }
+
   Future load() async {
     try {
       log("Loading coffees");

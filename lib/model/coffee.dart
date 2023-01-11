@@ -14,7 +14,7 @@ class Coffee {
   int grinderSettings = 0;
 
   int acidRating = 3;
-  int intensityRating = 3;
+  double intensityRating = 3;
   int roastLevel = 3;
 
   int arabica = 50;
