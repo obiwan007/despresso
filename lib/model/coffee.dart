@@ -11,11 +11,11 @@ class Coffee {
   String roasterId = "";
   String imageURL = "";
   String id = "";
-  int grinderSettings = 0;
+  double grinderSettings = 0;
 
-  int acidRating = 3;
+  double acidRating = 3;
   double intensityRating = 3;
-  int roastLevel = 3;
+  double roastLevel = 3;
 
   int arabica = 50;
   int robusta = 50;

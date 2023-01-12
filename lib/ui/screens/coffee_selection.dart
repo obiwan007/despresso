@@ -56,8 +56,8 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         'homepage': [''],
         'id': [''],
         'intensityRating': [0.1],
-        'acidRating': [0],
-        'grinderSettings': [0],
+        'acidRating': [0.1],
+        'grinderSettings': [0.1],
       });
 
   _CoffeeSelectionTabState() {
@@ -125,34 +125,36 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                 },
               ),
               _editRosterMode != EditModes.show ? roasterForm(form) : roasterData(form),
-              const Text("Select Coffee"),
-              DropdownButton(
-                isExpanded: true,
-                alignment: Alignment.centerLeft,
-                value: _selectedCoffee,
-                items: coffees,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCoffee = value!;
-                    if (value!.id == "new") {
-                      _editedCoffee = Coffee();
-
-                      form.value = _editedCoffee.toJson();
-                      _editCoffeeMode = EditModes.add;
-                    } else {
-                      if (_selectedRoaster.id != _selectedCoffee.roasterId) {
-                        var found = roasters.where((element) => element.value!.id == _selectedCoffee.roasterId);
-                        if (found.isNotEmpty) {
-                          _selectedRoaster = found.first.value!;
+              if (_editCoffeeMode == EditModes.show) ...[
+                const Text("Select Coffee"),
+                DropdownButton(
+                  isExpanded: true,
+                  alignment: Alignment.centerLeft,
+                  value: _selectedCoffee,
+                  items: coffees,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCoffee = value!;
+                      if (value!.id == "new") {
+                        _editedCoffee = Coffee();
+                        _editedCoffee.name = "";
+                        form.value = _editedCoffee.toJson();
+                        _editCoffeeMode = EditModes.add;
+                      } else {
+                        if (_selectedRoaster.id != _selectedCoffee.roasterId) {
+                          var found = roasters.where((element) => element.value!.id == _selectedCoffee.roasterId);
+                          if (found.isNotEmpty) {
+                            _selectedRoaster = found.first.value!;
+                          }
                         }
                       }
-                    }
-                    // form.value = {"name": _selectedRoaster.name};
-                    // form.control('name').value = 'John';
-                    log("Form ${form.value}");
-                  });
-                },
-              ),
+                      // form.value = {"name": _selectedRoaster.name};
+                      // form.control('name').value = 'John';
+                      log("Form ${form.value}");
+                    });
+                  },
+                ),
+              ],
               _editCoffeeMode != EditModes.show ? coffeeForm(form) : coffeeData(form),
               Container(
                   color: theme.Colors.backgroundColor,
@@ -251,8 +253,28 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         createKeyValue("Name", _selectedCoffee.name),
         if (_selectedCoffee.description.isNotEmpty) createKeyValue("Description", _selectedCoffee.description),
         createKeyValue("Grinder", _selectedCoffee.grinderSettings.toString()),
-        createKeyValue("Acidity", _selectedCoffee.acidRating.toString()),
-        createKeyValue("Intensity", _selectedCoffee.intensityRating.toString()),
+        createKeyValue("Acidity", null),
+        RatingBarIndicator(
+          rating: _selectedCoffee.acidRating,
+          itemBuilder: (context, index) => Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          itemCount: 5,
+          itemSize: 20.0,
+          direction: Axis.horizontal,
+        ),
+        createKeyValue("Intensity", null),
+        RatingBarIndicator(
+          rating: _selectedCoffee.intensityRating,
+          itemBuilder: (context, index) => Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          itemCount: 5,
+          itemSize: 20.0,
+          direction: Axis.horizontal,
+        ),
         ElevatedButton(
           onPressed: () {
             setState(() {
@@ -267,7 +289,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     );
   }
 
-  Widget createKeyValue(String key, String value) {
+  Widget createKeyValue(String key, String? value) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -275,7 +297,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(key, style: theme.TextStyles.tabHeading),
-          Text(value, style: theme.TextStyles.tabPrimary),
+          if (value != null) Text(value, style: theme.TextStyles.tabPrimary),
         ],
       ),
     );
@@ -362,17 +384,23 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
             labelText: 'Description',
           ),
         ),
-        ReactiveTextField<int>(
+        ReactiveTextField<double>(
           formControlName: 'grinderSettings',
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
             labelText: 'Grinder',
           ),
         ),
-        ReactiveTextField<int>(
+        ReactiveRatingBarBuilder<double>(
           formControlName: 'acidRating',
-          decoration: const InputDecoration(
-            labelText: 'Acidity',
+          minRating: 1,
+          direction: Axis.horizontal,
+          allowHalfRating: true,
+          itemCount: 5,
+          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+          itemBuilder: (context, _) => const Icon(
+            Icons.star,
+            color: Colors.amber,
           ),
         ),
         ReactiveRatingBarBuilder<double>(
@@ -385,12 +413,6 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
           itemBuilder: (context, _) => const Icon(
             Icons.star,
             color: Colors.amber,
-          ),
-        ),
-        ReactiveTextField<int>(
-          formControlName: 'intensityRating',
-          decoration: const InputDecoration(
-            labelText: 'Intensity',
           ),
         ),
         ReactiveFormConsumer(
