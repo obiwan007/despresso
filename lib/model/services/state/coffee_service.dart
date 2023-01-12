@@ -16,6 +16,9 @@ class CoffeeService extends ChangeNotifier {
   List<Roaster> knownRoasters = [];
   late SharedPreferences prefs;
 
+  Roaster? selectedRoaster;
+  Coffee? selectedCoffee;
+
   CoffeeService() {
     init();
   }
@@ -92,7 +95,7 @@ class CoffeeService extends ChangeNotifier {
         var data = l.map((value) => Coffee.fromJson(value));
         //knownCoffees = data;
         this.knownCoffees = data.toList();
-        log("Loaded entries: $data");
+        log("Loaded Coffee entries: ${data.length}");
       } else {
         log("File not existing");
       }
@@ -105,12 +108,26 @@ class CoffeeService extends ChangeNotifier {
         var data = l.map((value) => Roaster.fromJson(value));
         //knownCoffees = data;
         this.knownRoasters = data.toList();
-        log("Loaded Roasters: $data");
+        log("Loaded Roasters: ${data.length}");
       } else {
         log("Roasters File not existing");
       }
     } catch (ex) {
       log("loading error");
+    }
+
+    var id = prefs.getString("selectedRoaster");
+    if (id != null) {
+      selectedRoaster = knownRoasters.firstWhere((element) => element.id == id);
+    } else {
+      selectedRoaster = knownRoasters.isNotEmpty ? knownRoasters.first : null;
+    }
+
+    id = prefs.getString("selectedCoffee");
+    if (id != null) {
+      selectedCoffee = knownCoffees.firstWhere((element) => element.id == id);
+    } else {
+      selectedCoffee = knownCoffees.isNotEmpty ? knownCoffees.first : null;
     }
   }
 
@@ -146,5 +163,19 @@ class CoffeeService extends ChangeNotifier {
     } catch (ex) {
       log("save error $ex");
     }
+  }
+
+  void setSelectedRoaster(String id) {
+    prefs.setString("selectedRoaster", id);
+    selectedRoaster = knownRoasters.firstWhere((element) => element.id == id);
+    notifyListeners();
+    log('Roaster Saved');
+  }
+
+  void setSelectedCoffee(String id) {
+    prefs.setString("selectedCoffee", id);
+    selectedCoffee = knownCoffees.firstWhere((element) => element.id == id);
+    notifyListeners();
+    log('Coffee Saved');
   }
 }
