@@ -354,7 +354,11 @@ class EspressoMachineService extends ChangeNotifier {
 
   shotFinished() async {
     log("Save last shot");
-    await shotList.saveData("testshot.json");
+    try {
+      await shotList.saveData("testshot.json");
+    } catch (ex) {
+      log("Error writing file: $ex");
+    }
   }
 
   Future<void> updateSettings(Settings settings) async {

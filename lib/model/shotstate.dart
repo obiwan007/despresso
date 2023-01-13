@@ -61,6 +61,7 @@ class ShotList {
   }
 
   saveData(String filename) async {
+    if (saving) return;
     saving = true;
     log("Storing shot: ${entries.length}");
     if (entries.length > 50) {
@@ -68,10 +69,12 @@ class ShotList {
       log("Storing to path:${directory.path}");
       var file = File('${directory.path}/$filename');
       if (await file.exists()) {
-        file.deleteSync();
+        log("overwrite existing file");
+        // file.deleteSync();
       }
-
-      file.writeAsStringSync(jsonEncode(this));
+      log("Write file");
+      file.writeAsStringSync(jsonEncode(this), mode: FileMode.writeOnly);
+      log("Written file");
     }
     saved = true;
     saving = false;

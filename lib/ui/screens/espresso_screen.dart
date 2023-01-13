@@ -36,6 +36,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
   bool refillAnounced = false;
 
   bool stopTriggered = false;
+
+  double maxTime = 30;
   _EspressoScreenState() {}
 
   @override
@@ -280,6 +282,18 @@ class _EspressoScreenState extends State<EspressoScreen> {
   _buildGraphs() {
     var ranges = _createPhases();
     var data = _createData();
+    var maxData = data[1].data.last;
+    var t = maxData.sampleTimeCorrected;
+
+    if (inShot == true) {
+      var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
+      maxTime = math.max(30, corrected);
+    } else {
+      maxTime = t;
+    }
+
+//     log("Maxtime: $maxTime $corrected A ${(t).toInt()}  ${(t ~/ 5).toInt()}");
+
     var temp = _buildGraphTemp(data, ranges);
     var flow = _buildGraphFlow(data, ranges);
     var pressure = _buildGraphPressure(data, ranges);
@@ -288,9 +302,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   Widget _buildGraphTemp(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
-    var maxData = data[1].data.last;
-    var maxTime = math.max(30, maxData.sampleTimeCorrected);
-
     var flowChart = charts.LineChart(
       [data[2], data[7]],
       animate: false,
@@ -349,8 +360,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   Widget _buildGraphPressure(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
-    var maxData = data[1].data.last;
-    var maxTime = math.max(30, maxData.sampleTimeCorrected);
     var flowChart = charts.LineChart(
       [data[0], data[6]],
       animate: false,
@@ -402,8 +411,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Widget _buildGraphFlow(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
     double maxWeight = (profileService.currentProfile?.shotHeader.target_weight ?? 200.0) * 1.5;
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
-    var maxData = data[1].data.last;
-    var maxTime = math.max(30, maxData.sampleTimeCorrected);
 
     var flowChart = charts.LineChart(
       [data[1], data[5], data[4], data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
