@@ -14,7 +14,11 @@ void main() {
   } on MissingPluginException catch (e) {
     log('Failed to set wakelock: ' + e.toString());
   }
-
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+  // SystemChrome.setEnabledSystemUIOverlays([
+  //   SystemUiOverlay.bottom, //This line is used for showing the bottom bar
+  // ]);
   runApp(MyApp());
 }
 

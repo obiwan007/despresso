@@ -9,6 +9,7 @@ import 'package:despresso/ui/screens/espresso_screen.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
+import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../model/services/ble/ble_service.dart';
@@ -34,8 +35,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   late EspressoMachineService machineService;
 
   late BLEService bleService;
-  // late final _tabController =
-  //     TabController(length: 4, vsync: this, initialIndex: 0);
+  late final _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
 
   EspressoMachineState? lastState;
 
@@ -90,120 +90,268 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 4,
-        child: Scaffold(
-          bottomNavigationBar: MediaQuery.of(context).orientation == Orientation.portrait ? createNavbar() : null,
-          appBar: AppBar(
-            title: Row(
+      length: 4,
+      child: scaffoldNewLayout(context),
+    );
+  }
+
+  Scaffold scaffoldNewLayout(BuildContext context) {
+    return Scaffold(
+      extendBodyBehindAppBar: false,
+
+      // bottomNavigationBar: MediaQuery.of(context).orientation == Orientation.portrait ? createNavbar() : null,
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   // title: Row(
+      //   //   children: [
+      //   //     Text("${widget.title} ", style: theme.TextStyles.appBarTitle),
+      //   //     Text(" ${profileService.currentProfile?.title ?? ''}", style: theme.TextStyles.appBarTitleProfile),
+      //   //   ],
+      //   // ),
+      //   actions: <Widget>[
+      //     IconButton(
+      //       iconSize: 40,
+      //       isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
+      //       icon: const Icon(Icons.power_settings_new, color: Colors.green),
+      //       selectedIcon: const Icon(
+      //         Icons.power_off,
+      //         color: Colors.red,
+      //       ),
+      //       tooltip: 'Switch on/off decent de1',
+      //       onPressed: () {
+      //         if (machineService.state.coffeeState == EspressoMachineState.sleep) {
+      //           machineService.de1?.switchOn();
+      //         } else {
+      //           machineService.de1?.switchOff();
+      //         }
+      //       },
+      //     ),
+      //   ],
+      //   // bottom: createTabBar(),
+      // ),
+      body: SizedBox(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Text("${widget.title} ", style: theme.TextStyles.appBarTitle),
-                Text(" ${profileService.currentProfile?.title ?? ''}", style: theme.TextStyles.appBarTitleProfile),
-              ],
-            ),
-            actions: <Widget>[
-              IconButton(
-                iconSize: 40,
-                isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-                icon: const Icon(Icons.power_settings_new, color: Colors.green),
-                selectedIcon: const Icon(
-                  Icons.power_off,
-                  color: Colors.red,
-                ),
-                tooltip: 'Switch on/off decent de1',
-                onPressed: () {
-                  if (machineService.state.coffeeState == EspressoMachineState.sleep) {
-                    machineService.de1?.switchOn();
-                  } else {
-                    machineService.de1?.switchOff();
-                  }
-                },
-              ),
-            ],
-          ),
-          body: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              if (MediaQuery.of(context).orientation == Orientation.landscape) createNavRail(),
-              Expanded(
-                  child: <Widget>[
-                CoffeeSelectionTab(),
-                EspressoScreen(),
-                SteamScreen(),
-                FlushScreen(),
-                WaterScreen(),
-              ][currentPageIndex]),
-            ],
-          ),
-          drawer: Drawer(
-            // Add a ListView to the drawer. This ensures the user can scroll
-            // through the options in the drawer if there isn't enough vertical
-            // space to fit everything.
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: [
-                const DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                  child: Text("despresso settings"),
-                ),
-                ListTile(
-                  title: const Text('Profiles'),
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    // Then close the drawer
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                SizedBox(
+                  child: Builder(builder: (context) {
+                    return IconButton(
+                      iconSize: 40,
+                      icon: const Icon(Icons.menu, color: Colors.grey),
+                      tooltip: 'Options Menu',
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
                     );
-                  },
+                  }),
                 ),
-                ListTile(
-                  title: const Text('Coffees'),
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    // Then close the drawer
-                    configureCoffee();
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: const Text('Settings'),
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    bleService.startScan();
-                    // Then close the drawer
-                  },
-                ),
-                ListTile(
-                  title: const Text('Exit'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    var snackBar = SnackBar(
-                        content: const Text('Going to sleep'),
-                        action: SnackBarAction(
-                          label: 'Undo',
-                          onPressed: () {
-                            // Some code to undo the change.
-                          },
-                        ));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    machineService.de1?.switchOff();
-                    // Then close the drawer
-                    Future.delayed(const Duration(milliseconds: 2000), () {
-                      SystemNavigator.pop();
-                    });
-                  },
-                ),
+                Expanded(child: createTabBar()),
               ],
             ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  EspressoScreen(),
+                  SteamScreen(),
+                  WaterScreen(),
+                  FlushScreen(),
+                ],
+              ),
+            ),
+            MachineFooter(),
+          ],
+        ),
+      ),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text("despresso settings"),
+            ),
+            ListTile(
+              title: const Text('Profiles'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Coffees'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CoffeeSelectionTab()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Settings'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                bleService.startScan();
+                // Then close the drawer
+              },
+            ),
+            ListTile(
+              title: const Text('Exit'),
+              onTap: () {
+                Navigator.pop(context);
+                var snackBar = SnackBar(
+                    content: const Text('Going to sleep'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                machineService.de1?.switchOff();
+                // Then close the drawer
+                Future.delayed(const Duration(milliseconds: 2000), () {
+                  SystemNavigator.pop();
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Scaffold scaffoldOldLayout(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: MediaQuery.of(context).orientation == Orientation.portrait ? createNavbar() : null,
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text("${widget.title} ", style: theme.TextStyles.appBarTitle),
+            Text(" ${profileService.currentProfile?.title ?? ''}", style: theme.TextStyles.appBarTitleProfile),
+          ],
+        ),
+        actions: <Widget>[
+          IconButton(
+            iconSize: 40,
+            isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
+            icon: const Icon(Icons.power_settings_new, color: Colors.green),
+            selectedIcon: const Icon(
+              Icons.power_off,
+              color: Colors.red,
+            ),
+            tooltip: 'Switch on/off decent de1',
+            onPressed: () {
+              if (machineService.state.coffeeState == EspressoMachineState.sleep) {
+                machineService.de1?.switchOn();
+              } else {
+                machineService.de1?.switchOff();
+              }
+            },
           ),
-        ));
+        ],
+      ),
+      body: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (MediaQuery.of(context).orientation == Orientation.landscape) createNavRail(),
+          Expanded(
+              child: <Widget>[
+            //CoffeeSelectionTab(),
+            EspressoScreen(),
+            SteamScreen(),
+            FlushScreen(),
+            WaterScreen(),
+          ][currentPageIndex]),
+        ],
+      ),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text("despresso settings"),
+            ),
+            ListTile(
+              title: const Text('Profiles'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Coffees'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                configureCoffee();
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Settings'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                bleService.startScan();
+                // Then close the drawer
+              },
+            ),
+            ListTile(
+              title: const Text('Exit'),
+              onTap: () {
+                Navigator.pop(context);
+                var snackBar = SnackBar(
+                    content: const Text('Going to sleep'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                machineService.de1?.switchOff();
+                // Then close the drawer
+                Future.delayed(const Duration(milliseconds: 2000), () {
+                  SystemNavigator.pop();
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   NavigationBar createNavbar() {
@@ -238,6 +386,32 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
         ),
       ],
     );
+  }
+
+  Container createTabBar() {
+    var tb = Container(
+      height: 70,
+      child: const TabBar(
+        indicator: BoxDecoration(color: Colors.brown),
+        // indicator:
+        //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
+        tabs: <Widget>[
+          Tab(
+            child: Text("Espresso"),
+          ),
+          Tab(
+            child: Text("Steam"),
+          ),
+          Tab(
+            child: Text("Water"),
+          ),
+          Tab(
+            child: Text("Flush"),
+          ),
+        ],
+      ),
+    );
+    return tb;
   }
 
   NavigationRail createNavRail() {
@@ -300,16 +474,16 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
       setState(() {
         switch (lastState) {
           case EspressoMachineState.espresso:
-            currentPageIndex = 1;
+            currentPageIndex = 0;
             break;
           case EspressoMachineState.steam:
-            currentPageIndex = 2;
+            currentPageIndex = 1;
             break;
           case EspressoMachineState.flush:
             currentPageIndex = 3;
             break;
           case EspressoMachineState.water:
-            currentPageIndex = 4;
+            currentPageIndex = 2;
             break;
           case EspressoMachineState.idle:
             break;
@@ -322,6 +496,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
           default:
             break;
         }
+        DefaultTabController.of(context)!
+            .animateTo(currentPageIndex, duration: const Duration(milliseconds: 100), curve: Curves.ease);
       });
     }
   }

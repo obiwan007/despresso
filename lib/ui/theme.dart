@@ -96,6 +96,16 @@ class TextStyles {
     fontSize: 16.0,
     fontWeight: FontWeight.normal,
   );
+
+  static const TextStyle headingFooter = TextStyle(
+    color: Colors.primaryColor,
+    fontSize: 22.0,
+    fontWeight: FontWeight.w300,
+  );
+  static const TextStyle subHeadingFooter = TextStyle(
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w100,
+  );
 }
 
 class Helper {

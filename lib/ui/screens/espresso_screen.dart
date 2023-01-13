@@ -281,14 +281,19 @@ class _EspressoScreenState extends State<EspressoScreen> {
   _buildGraphs() {
     var ranges = _createPhases();
     var data = _createData();
-    var maxData = data[1].data.last;
-    var t = maxData.sampleTimeCorrected;
 
-    if (machineService.inShot == true) {
-      var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
-      maxTime = math.max(30, corrected);
-    } else {
-      maxTime = t;
+    try {
+      var maxData = data[1].data.last;
+      var t = maxData.sampleTimeCorrected;
+
+      if (machineService.inShot == true) {
+        var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
+        maxTime = math.max(30, corrected);
+      } else {
+        maxTime = t;
+      }
+    } catch (ex) {
+      maxTime = 0;
     }
 
 //     log("Maxtime: $maxTime $corrected A ${(t).toInt()}  ${(t ~/ 5).toInt()}");
