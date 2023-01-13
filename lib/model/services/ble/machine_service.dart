@@ -62,6 +62,10 @@ class EspressoMachineService extends ChangeNotifier {
 
   Duration timer = const Duration(seconds: 0);
 
+  var _count = 0;
+
+  DateTime t1 = DateTime.now();
+
   EspressoMachineService() {
     init();
   }
@@ -97,6 +101,14 @@ class EspressoMachineService extends ChangeNotifier {
   updateProfile() {}
   void setShot(ShotState shot) {
     _state.shot = shot;
+    _count++;
+    if (_count % 10 == 0) {
+      var t = DateTime.now();
+      var ms = t.difference(t1).inMilliseconds;
+      var hz = 10 / ms * 1000.0;
+      if (_state.coffeeState == EspressoMachineState.espresso || _count & 50 == 0) log("Hz: $ms $hz");
+      t1 = t;
+    }
     handleShotData();
     notifyListeners();
   }

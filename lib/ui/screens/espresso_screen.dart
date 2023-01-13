@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -287,6 +288,9 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   Widget _buildGraphTemp(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+    var maxData = data[1].data.last;
+    var maxTime = math.max(30, maxData.sampleTimeCorrected);
+
     var flowChart = charts.LineChart(
       [data[2], data[7]],
       animate: false,
@@ -321,6 +325,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
+        viewport: NumericExtents(0, maxTime),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
               charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
@@ -344,6 +349,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   Widget _buildGraphPressure(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+    var maxData = data[1].data.last;
+    var maxTime = math.max(30, maxData.sampleTimeCorrected);
     var flowChart = charts.LineChart(
       [data[0], data[6]],
       animate: false,
@@ -369,6 +376,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
+        viewport: NumericExtents(0, maxTime),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
               charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
@@ -394,6 +402,9 @@ class _EspressoScreenState extends State<EspressoScreen> {
   Widget _buildGraphFlow(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
     double maxWeight = (profileService.currentProfile?.shotHeader.target_weight ?? 200.0) * 1.5;
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
+    var maxData = data[1].data.last;
+    var maxTime = math.max(30, maxData.sampleTimeCorrected);
+
     var flowChart = charts.LineChart(
       [data[1], data[5], data[4], data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
       animate: false,
@@ -423,6 +434,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
+        viewport: charts.NumericExtents(0, maxTime),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
               charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),

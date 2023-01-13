@@ -97,7 +97,7 @@ class ProfileService extends ChangeNotifier {
   saveAsNew(De1ShotProfile profile) {
     log("Saving as a new profile");
     profile.isDefault = false;
-    profile.id = Uuid().toString();
+    profile.id = const Uuid().toString();
   }
 
   save(De1ShotProfile profile) async {
@@ -122,13 +122,13 @@ class ProfileService extends ChangeNotifier {
 
   Future<De1ShotProfile> loadProfileFromDocuments(String fileName) async {
     try {
-      log("Loading shot: ${fileName}");
+      log("Loading shot: $fileName");
       final directory = await getApplicationDocumentsDirectory();
       log("LoadingFrom path:${directory.path}");
       var file = File('${directory.path}/profiles/$fileName');
       if (await file.exists()) {
         var json = file.readAsStringSync();
-        log("Loaded: ${json}");
+        log("Loaded: $json");
         Map<String, dynamic> map = jsonDecode(json);
         var data = De1ShotProfile.fromJson(map);
 
@@ -150,10 +150,10 @@ class ProfileService extends ChangeNotifier {
 
     final directory = await getApplicationDocumentsDirectory();
     log("Storing to path:${directory.path}");
-    final Directory _appDocDirFolder = Directory('${directory.path}/profiles/');
+    final Directory appDocDirFolder = Directory('${directory.path}/profiles/');
 
-    if (!_appDocDirFolder.existsSync()) {
-      _appDocDirFolder.create(recursive: true);
+    if (!appDocDirFolder.existsSync()) {
+      appDocDirFolder.create(recursive: true);
     }
 
     var file = File('${directory.path}/profiles/$filename');
@@ -183,30 +183,30 @@ class ProfileService extends ChangeNotifier {
     log('all profiles loaded');
   }
 
-  String parseDefaultProfile(String json_string, bool isDefault) {
+  String parseDefaultProfile(String json, bool isDefault) {
     log("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
-    List<De1ShotExtFrameClass> ex_frames = <De1ShotExtFrameClass>[];
-    var p = De1ShotProfile(header, frames, ex_frames);
-    if (!ShotJsonParser(json_string, p)) return "Failed to encode profile " + ", try to load another profile";
+    List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
+    var p = De1ShotProfile(header, frames, exFrames);
+    if (!shotJsonParser(json, p)) return "Failed to encode profile, try to load another profile";
 
     p.isDefault = isDefault;
     defaultProfiles.add(p);
-    log("$header $frames $ex_frames");
+    log("$header $frames $exFrames");
 
     return "";
   }
 
-  static bool ShotJsonParser(String json_string, De1ShotProfile profile) {
-    var json_obj = jsonDecode(json_string);
-    return ShotJsonParserAdvanced(json_obj, profile);
+  static bool shotJsonParser(String jsonStr, De1ShotProfile profile) {
+    var jsonMap = jsonDecode(jsonStr);
+    return shotJsonParserAdvanced(jsonMap, profile);
 
     // return ShotJsonParserAdvanced(json_obj, shot_header, shot_frames, shot_exframes);
   }
 
-  static double Dynamic2Double(dynamic d_obj) {
-    dynamic d = d_obj;
+  static double dynamic2Double(dynamic dynData) {
+    dynamic d = dynData;
 
     if (d is double || d is int) {
       return d.toDouble();
@@ -217,8 +217,8 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  static String Dynamic2String(dynamic d_obj) {
-    dynamic d = d_obj;
+  static String dynamic2String(dynamic dynData) {
+    dynamic d = dynData;
 
     if (d is String) {
       return d;
@@ -227,157 +227,156 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  static bool ShotJsonParserAdvanced(
-    Map<String, dynamic> json_obj,
+  static bool shotJsonParserAdvanced(
+    Map<String, dynamic> json,
     De1ShotProfile profile,
   ) {
-    De1ShotHeaderClass shot_header = profile.shotHeader;
-    List<De1ShotFrameClass> shot_frames = profile.shotFrames;
-    List<De1ShotExtFrameClass> shot_exframes = profile.shotExframes;
-    if (!json_obj.containsKey("version")) return false;
-    if (Dynamic2Double(json_obj["version"]) != 2.0) return false;
+    De1ShotHeaderClass shotHeader = profile.shotHeader;
+    List<De1ShotFrameClass> shotFrames = profile.shotFrames;
+    List<De1ShotExtFrameClass> shotExframes = profile.shotExframes;
+    if (!json.containsKey("version")) return false;
+    if (dynamic2Double(json["version"]) != 2.0) return false;
 
-    profile.id = Dynamic2String(json_obj["id"]);
-    shot_header.hidden = Dynamic2Double(json_obj["hidden"]).toInt();
-    shot_header.type = Dynamic2String(json_obj["type"]);
-    shot_header.type = Dynamic2String(json_obj["type"]);
-    shot_header.lang = Dynamic2String(json_obj["lang"]);
-    shot_header.legacyProfileType = Dynamic2String(json_obj["legacy_profile_type"]);
-    shot_header.target_weight = Dynamic2Double(json_obj["target_weight"]);
-    shot_header.target_volume = Dynamic2Double(json_obj["target_volume"]);
-    shot_header.target_volume_count_start = Dynamic2Double(json_obj["target_volume_count_start"]);
-    shot_header.tank_temperature = Dynamic2Double(json_obj["tank_temperature"]);
-    shot_header.title = Dynamic2String(json_obj["title"]);
-    shot_header.author = Dynamic2String(json_obj["author"]);
-    shot_header.notes = Dynamic2String(json_obj["notes"]);
-    shot_header.beverage_type = Dynamic2String(json_obj["beverage_type"]);
+    profile.id = dynamic2String(json["id"]);
+    shotHeader.hidden = dynamic2Double(json["hidden"]).toInt();
+    shotHeader.type = dynamic2String(json["type"]);
+    shotHeader.type = dynamic2String(json["type"]);
+    shotHeader.lang = dynamic2String(json["lang"]);
+    shotHeader.legacyProfileType = dynamic2String(json["legacy_profile_type"]);
+    shotHeader.target_weight = dynamic2Double(json["target_weight"]);
+    shotHeader.target_volume = dynamic2Double(json["target_volume"]);
+    shotHeader.target_volume_count_start = dynamic2Double(json["target_volume_count_start"]);
+    shotHeader.tank_temperature = dynamic2Double(json["tank_temperature"]);
+    shotHeader.title = dynamic2String(json["title"]);
+    shotHeader.author = dynamic2String(json["author"]);
+    shotHeader.notes = dynamic2String(json["notes"]);
+    shotHeader.beverage_type = dynamic2String(json["beverage_type"]);
 
-    if (!json_obj.containsKey("steps")) return false;
-    for (Map<String, dynamic> frame_obj in json_obj["steps"]) {
-      if (!frame_obj.containsKey("name")) return false;
+    if (!json.containsKey("steps")) return false;
+    for (Map<String, dynamic> frameData in json["steps"]) {
+      if (!frameData.containsKey("name")) return false;
 
-      De1ShotFrameClass frame = new De1ShotFrameClass();
+      De1ShotFrameClass frame = De1ShotFrameClass();
       var features = IgnoreLimit;
 
-      frame.pump = Dynamic2String(frame_obj["pump"]);
-      frame.name = Dynamic2String(frame_obj["name"]);
+      frame.pump = dynamic2String(frameData["pump"]);
+      frame.name = dynamic2String(frameData["name"]);
 
       // flow control
-      if (!frame_obj.containsKey("pump")) return false;
-      var pump = Dynamic2String(frame_obj["pump"]);
+      if (!frameData.containsKey("pump")) return false;
+      var pump = dynamic2String(frameData["pump"]);
       frame.pump = pump;
 
       if (pump == "") return false;
       if (pump == "flow") {
         features |= CtrlF;
-        if (!frame_obj.containsKey("flow")) return false;
-        var flow = Dynamic2Double(frame_obj["flow"]);
+        if (!frameData.containsKey("flow")) return false;
+        var flow = dynamic2Double(frameData["flow"]);
         if (flow == double.negativeInfinity) return false;
         frame.setVal = flow;
       } else {
-        if (!frame_obj.containsKey("pressure")) return false;
-        var pressure = Dynamic2Double(frame_obj["pressure"]);
+        if (!frameData.containsKey("pressure")) return false;
+        var pressure = dynamic2Double(frameData["pressure"]);
         if (pressure == double.negativeInfinity) return false;
         frame.setVal = pressure;
       }
 
       // use boiler water temperature as the goal
-      if (!frame_obj.containsKey("sensor")) return false;
-      var sensor = Dynamic2String(frame_obj["sensor"]);
+      if (!frameData.containsKey("sensor")) return false;
+      var sensor = dynamic2String(frameData["sensor"]);
       if (sensor == "") return false;
       if (sensor == "water") features |= TMixTemp;
 
-      if (!frame_obj.containsKey("transition")) return false;
-      var transition = Dynamic2String(frame_obj["transition"]);
+      if (!frameData.containsKey("transition")) return false;
+      var transition = dynamic2String(frameData["transition"]);
       if (transition == "") return false;
 
       if (transition == "smooth") features |= Interpolate;
 
       // "move on if...."
-      if (frame_obj.containsKey("exit")) {
-        var exit_obj = frame_obj["exit"];
+      if (frameData.containsKey("exit")) {
+        var exitData = frameData["exit"];
 
-        if (!exit_obj.containsKey("type")) return false;
-        if (!exit_obj.containsKey("condition")) return false;
-        if (!exit_obj.containsKey("value")) return false;
+        if (!exitData.containsKey("type")) return false;
+        if (!exitData.containsKey("condition")) return false;
+        if (!exitData.containsKey("value")) return false;
 
-        var exit_type = Dynamic2String(exit_obj["type"]);
-        var exit_condition = Dynamic2String(exit_obj["condition"]);
-        var exit_value = Dynamic2Double(exit_obj["value"]);
+        var exitType = dynamic2String(exitData["type"]);
+        var exitCondition = dynamic2String(exitData["condition"]);
+        var exitValue = dynamic2Double(exitData["value"]);
 
-        if (exit_type == "pressure" && exit_condition == "under") {
+        if (exitType == "pressure" && exitCondition == "under") {
           features |= DoCompare;
-          frame.triggerVal = exit_value;
-        } else if (exit_type == "pressure" && exit_condition == "over") {
+          frame.triggerVal = exitValue;
+        } else if (exitType == "pressure" && exitCondition == "over") {
           features |= DoCompare | DC_GT;
-          frame.triggerVal = exit_value;
-        } else if (exit_type == "flow" && exit_condition == "under") {
+          frame.triggerVal = exitValue;
+        } else if (exitType == "flow" && exitCondition == "under") {
           features |= DoCompare | DC_CompF;
-          frame.triggerVal = exit_value;
-        } else if (exit_type == "flow" && exit_condition == "over") {
+          frame.triggerVal = exitValue;
+        } else if (exitType == "flow" && exitCondition == "over") {
           features |= DoCompare | DC_GT | DC_CompF;
-          frame.triggerVal = exit_value;
+          frame.triggerVal = exitValue;
         } else {
           return false;
         }
-      } else
-        frame.triggerVal = 0; // no exit condition was checked
+      } else {
+        frame.triggerVal = 0;
+      } // no exit condition was checked
 
       // "limiter...."
-      var limiter_value = double.negativeInfinity;
-      var limiter_range = double.negativeInfinity;
+      var limiterValue = double.negativeInfinity;
+      var limiterRange = double.negativeInfinity;
 
-      if (frame_obj.containsKey("limiter")) {
-        var limiter_obj = frame_obj["limiter"];
+      if (frameData.containsKey("limiter")) {
+        var limiterData = frameData["limiter"];
 
-        if (!limiter_obj.containsKey("value")) return false;
-        if (!limiter_obj.containsKey("range")) return false;
+        if (!limiterData.containsKey("value")) return false;
+        if (!limiterData.containsKey("range")) return false;
 
-        limiter_value = Dynamic2Double(limiter_obj["value"]);
-        limiter_range = Dynamic2Double(limiter_obj["range"]);
+        limiterValue = dynamic2Double(limiterData["value"]);
+        limiterRange = dynamic2Double(limiterData["range"]);
       }
 
-      if (!frame_obj.containsKey("temperature")) return false;
-      if (!frame_obj.containsKey("seconds")) return false;
+      if (!frameData.containsKey("temperature")) return false;
+      if (!frameData.containsKey("seconds")) return false;
 
-      var temperature = Dynamic2Double(frame_obj["temperature"]);
+      var temperature = dynamic2Double(frameData["temperature"]);
       if (temperature == double.negativeInfinity) return false;
-      var seconds = Dynamic2Double(frame_obj["seconds"]);
+      var seconds = dynamic2Double(frameData["seconds"]);
       if (seconds == double.negativeInfinity) return false;
 
-      int frame_counter = shot_frames.length;
+      int frameCounter = shotFrames.length;
 
       // MaxVol for the first frame only
       double input_max_vol = 0.0;
-      if (frame_counter == 0 && frame_obj.containsKey("volume")) {
-        input_max_vol = Dynamic2Double(frame_obj["volume"]);
+      if (frameCounter == 0 && frameData.containsKey("volume")) {
+        input_max_vol = dynamic2Double(frameData["volume"]);
         if (input_max_vol == double.negativeInfinity) input_max_vol = 0.0;
       }
 
-      frame.frameToWrite = frame_counter;
+      frame.frameToWrite = frameCounter;
       frame.flag = features;
       frame.temp = temperature;
       frame.frameLen = seconds;
       frame.maxVol = input_max_vol;
-      shot_frames.add(frame);
+      shotFrames.add(frame);
 
-      if (limiter_value != 0.0 &&
-          limiter_value != double.negativeInfinity &&
-          limiter_range != double.negativeInfinity) {
+      if (limiterValue != 0.0 && limiterValue != double.negativeInfinity && limiterRange != double.negativeInfinity) {
         De1ShotExtFrameClass ex_frame = De1ShotExtFrameClass();
-        ex_frame.frameToWrite = (frame_counter + 32).toInt();
-        ex_frame.limiterValue = limiter_value;
-        ex_frame.limiterRange = limiter_range;
-        shot_exframes.add(ex_frame);
+        ex_frame.frameToWrite = (frameCounter + 32).toInt();
+        ex_frame.limiterValue = limiterValue;
+        ex_frame.limiterRange = limiterRange;
+        shotExframes.add(ex_frame);
       }
     }
 
     // header
-    shot_header.numberOfFrames = shot_frames.length;
-    shot_header.numberOfPreinfuseFrames = 1;
+    shotHeader.numberOfFrames = shotFrames.length;
+    shotHeader.numberOfPreinfuseFrames = 1;
 
     // update the byte array inside shot header and frame, so we are ready to write it to DE
-    EncodeHeaderAndFrames(shot_header, shot_frames, shot_exframes);
+    EncodeHeaderAndFrames(shotHeader, shotFrames, shotExframes);
     return true;
   }
 
