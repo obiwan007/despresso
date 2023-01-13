@@ -26,7 +26,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
   late ProfileService profileService;
   late ScaleService scaleService;
 
-  bool inShot = false;
   double baseTime = 0;
 
   String lastSubstate = '';
@@ -285,7 +284,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
     var maxData = data[1].data.last;
     var t = maxData.sampleTimeCorrected;
 
-    if (inShot == true) {
+    if (machineService.inShot == true) {
       var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
       maxTime = math.max(30, corrected);
     } else {
