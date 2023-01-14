@@ -52,6 +52,7 @@ dependencies:
   uuid: ^3.0.7
   reactive_forms: ^14.1.0
   reactive_flutter_rating_bar: ^0.4.0
+  wakelock: ^0.6.2
   
 
 dev_dependencies:
@@ -63,7 +64,6 @@ dev_dependencies:
   bubble_tab_indicator: '>=0.1.4'
 
   permission_handler: ^10.2.0
-  wakelock: ^0.6.2  
   get_it: ^7.2.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

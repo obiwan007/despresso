@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
+import 'ui/theme.dart' as theme;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,13 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: theme.Colors.backgroundColor,
+        backgroundColor: theme.Colors.backgroundColor,
+        colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
+          primary: theme.Colors.secondaryColor,
+          secondary: Colors.green,
+          // brightness: Brightness.dark,
+        ),
       ),
       home: LandingPage(title: 'despresso'),
     );

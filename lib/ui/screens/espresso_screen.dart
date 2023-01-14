@@ -355,7 +355,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.tabColor,
+        color: theme.Colors.graphBackground,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -404,7 +404,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.tabColor,
+        color: theme.Colors.graphBackground,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -459,7 +459,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.tabColor,
+        color: theme.Colors.graphBackground,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -484,13 +484,17 @@ class _EspressoScreenState extends State<EspressoScreen> {
           //   indent: 0,
           //   endIndent: 0,
           // ),
-          createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
-          createKeyValue("Sub", machineService.state.subState),
-          createKeyValue("Pressure", "${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar"),
-          createKeyValue("Flow", '${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s'),
-          createKeyValue("Mix Temp", '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C'),
-          createKeyValue("Head Temp", '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C'),
-          createKeyValue("Water", '${machineService.state.water?.getLevelPercent()}%'),
+          createKeyValue("Profile", profileService.currentProfile!.title),
+          createKeyValue("Coffee", coffeeSelectionService.selectedCoffee?.name ?? ""),
+          createKeyValue("Target", '${profileService.currentProfile!.shotHeader.target_weight} g'),
+
+          // createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
+          // createKeyValue("Sub", machineService.state.subState),
+          // createKeyValue("Pressure", "${machineService.state.shot!.groupPressure.toStringAsFixed(1)} bar"),
+          // createKeyValue("Flow", '${machineService.state.shot!.groupFlow.toStringAsFixed(2)} ml/s'),
+          // createKeyValue("Mix Temp", '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C'),
+          // createKeyValue("Head Temp", '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C'),
+          // createKeyValue("Water", '${machineService.state.water?.getLevelPercent()}%'),
           const Divider(
             height: 20,
             thickness: 5,
@@ -705,10 +709,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
                     flex: 0,
                     child: _buildLiveInsights(),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildScaleInsight(),
-                  ),
+                  // Expanded(
+                  //   flex: 1,
+                  //   child: _buildScaleInsight(),
+                  // ),
+                  Spacer(),
                   const Padding(
                     padding: EdgeInsets.all(5.0),
                     child: StartStopButton(),

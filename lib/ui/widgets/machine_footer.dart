@@ -59,46 +59,43 @@ class _MachineFooterState extends State<MachineFooter> {
         machineService.state.coffeeState == EspressoMachineState.steam ||
         machineService.state.coffeeState == EspressoMachineState.flush;
 
-    var mainState = machineService.state.coffeeState.name.toUpperCase();
-    var subState = machineService.state.subState;
-    var title = isBusy ? "Stop" : "Start";
     mode = isBusy ? Colors.red : Colors.green;
 
-    switch (subState) {
-      case "no_state":
-        subState = "...";
-        break;
-      case "heat_water_tank":
-        subState = "Heating";
-        title = "Wait";
-        mode = Colors.orange;
-        break;
-    }
-    switch (machineService.state.coffeeState) {
-      case EspressoMachineState.sleep:
-        mode = Colors.blue;
-        title = "on";
-        break;
+    // switch (subState) {
+    //   case "no_state":
+    //     subState = "...";
+    //     break;
+    //   case "heat_water_tank":
+    //     subState = "Heating";
+    //     title = "Wait";
+    //     mode = Colors.orange;
+    //     break;
+    // }
+    // switch (machineService.state.coffeeState) {
+    //   case EspressoMachineState.sleep:
+    //     mode = Colors.blue;
+    //     title = "on";
+    //     break;
 
-      case EspressoMachineState.idle:
-        break;
-      case EspressoMachineState.espresso:
-        break;
-      case EspressoMachineState.water:
-        break;
-      case EspressoMachineState.steam:
-        break;
-      case EspressoMachineState.disconnected:
-        mode = Colors.orange;
-        title = "Reconnect";
-        break;
-      case EspressoMachineState.connecting:
-        break;
-      case EspressoMachineState.refill:
-        break;
-      case EspressoMachineState.flush:
-        break;
-    }
+    //   case EspressoMachineState.idle:
+    //     break;
+    //   case EspressoMachineState.espresso:
+    //     break;
+    //   case EspressoMachineState.water:
+    //     break;
+    //   case EspressoMachineState.steam:
+    //     break;
+    //   case EspressoMachineState.disconnected:
+    //     mode = Colors.orange;
+    //     title = "Reconnect";
+    //     break;
+    //   case EspressoMachineState.connecting:
+    //     break;
+    //   case EspressoMachineState.refill:
+    //     break;
+    //   case EspressoMachineState.flush:
+    //     break;
+    // }
     var isOn = machineService.state.coffeeState != EspressoMachineState.sleep &&
         machineService.state.coffeeState != EspressoMachineState.disconnected;
     var shot = machineService.state.shot ?? ShotState(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
@@ -117,7 +114,7 @@ class _MachineFooterState extends State<MachineFooter> {
                   "${machineService.state.water?.getLevelPercent()}%",
                   style: theme.TextStyles.headingFooter,
                 ),
-                Text(
+                const Text(
                   'Water',
                   style: theme.TextStyles.subHeadingFooter,
                 ),
@@ -125,7 +122,7 @@ class _MachineFooterState extends State<MachineFooter> {
             ),
           ),
           Spacer(),
-          Container(color: Colors.black38, child: ScaleBuilder()),
+          Container(color: Colors.black38, child: _scaleBuilder()),
           Spacer(),
           SizedBox(
             width: 120,
@@ -137,7 +134,7 @@ class _MachineFooterState extends State<MachineFooter> {
                   "${shot.headTemp.toStringAsFixed(1)} °C",
                   style: theme.TextStyles.headingFooter,
                 ),
-                Text(
+                const Text(
                   'Group',
                   style: theme.TextStyles.subHeadingFooter,
                 ),
@@ -154,7 +151,7 @@ class _MachineFooterState extends State<MachineFooter> {
                   "${shot.mixTemp.toStringAsFixed(1)} °C",
                   style: theme.TextStyles.headingFooter,
                 ),
-                Text(
+                const Text(
                   'Mix',
                   style: theme.TextStyles.subHeadingFooter,
                 ),
@@ -171,7 +168,7 @@ class _MachineFooterState extends State<MachineFooter> {
                   "${shot.groupPressure.toStringAsFixed(1)} bar",
                   style: theme.TextStyles.headingFooter,
                 ),
-                Text(
+                const Text(
                   'Pressure',
                   style: theme.TextStyles.subHeadingFooter,
                 ),
@@ -188,7 +185,7 @@ class _MachineFooterState extends State<MachineFooter> {
                   "${shot.groupFlow.toStringAsFixed(1)} ml/s",
                   style: theme.TextStyles.headingFooter,
                 ),
-                Text(
+                const Text(
                   'Flow',
                   style: theme.TextStyles.subHeadingFooter,
                 ),
@@ -212,7 +209,7 @@ class _MachineFooterState extends State<MachineFooter> {
     );
   }
 
-  SizedBox ScaleBuilder() {
+  SizedBox _scaleBuilder() {
     return SizedBox(
       width: 310,
       child: Column(
@@ -242,92 +239,25 @@ class _MachineFooterState extends State<MachineFooter> {
                     machineService.scaleService.state == ScaleState.connected
                         ? "${machineService.scaleService.weight.toStringAsFixed(1)} g"
                         : machineService.scaleService.state.name,
-                    style: theme.TextStyles.headingFooter,
+                    style: machineService.scaleService.state == ScaleState.connected
+                        ? theme.TextStyles.headingFooter
+                        : theme.TextStyles.headingFooterSmall,
                   ),
                 ),
                 if (machineService.scaleService.state == ScaleState.connected)
                   ElevatedButton(
                     onPressed: () => {},
-                    child: Text("To Shot"),
+                    child: const Text("To Shot"),
                   ),
               ],
             ),
           ),
-          Text(
+          const Text(
             'Scale',
             style: theme.TextStyles.subHeadingFooter,
           ),
         ],
       ),
-    );
-  }
-
-  Column RoundButton(bool isBusy, String title, String mainState, String subState, MaterialColor mode) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 180,
-          width: 180,
-          child: ElevatedButton(
-            onPressed: () {
-              if (machineService.state.coffeeState == EspressoMachineState.sleep) {
-                machineService.de1?.switchOn();
-              } else {
-                if (!isBusy) {
-                  log("Start", error: {DateTime.now()});
-                  machineService.de1?.requestState(De1StateEnum.Espresso);
-                } else {
-                  machineService.de1?.setIdleState();
-                }
-              }
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: theme.TextStyles.tabStatusbutton,
-                ),
-                Text(
-                  mainState,
-                  style: theme.TextStyles.tabPrimary,
-                ),
-                Text(
-                  subState,
-                  style: theme.TextStyles.tabPrimary,
-                ),
-              ],
-            ),
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(CircleBorder(side: BorderSide(width: 10, color: mode))),
-              padding: MaterialStateProperty.all(EdgeInsets.all(10)),
-              // backgroundColor: MaterialStateProperty.all(theme.Colors.backgroundColor), // <-- Button color
-              foregroundColor: MaterialStateProperty.all(Colors.black),
-              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(MaterialState.pressed)) return Colors.red; // <-- Splash color
-              }),
-            ),
-          ),
-        ),
-        // IconButton(
-        //     iconSize: 150,
-        //     isSelected: isSelected,
-        //     icon: const Icon(Icons.play_circle),
-        //     selectedIcon: const Icon(Icons.stop),
-        //     tooltip: 'Water',
-        //     onPressed: () {
-        //       if (!isSelected) {
-        //         widget.machineService.de1?.requestState(De1StateEnum.Espresso);
-        //       } else {
-        //         widget.machineService.de1?.setIdleState();
-        //       }
-        //     }),
-        // Text(
-        //   isSelected ? "Stop" : "Start",
-        //   style: theme.TextStyles.tabSecondary,
-        // ),
-      ],
     );
   }
 }

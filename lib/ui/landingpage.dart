@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:wakelock/wakelock.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
@@ -91,6 +92,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    Wakelock.disable();
     return DefaultTabController(
       length: 4,
       child: scaffoldNewLayout(context),
@@ -364,7 +366,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
       height: 70,
       child: TabBar(
         controller: _tabController,
-        indicator: const BoxDecoration(color: Colors.brown),
+
+        indicator: const BoxDecoration(color: Colors.black38),
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
         tabs: const <Widget>[

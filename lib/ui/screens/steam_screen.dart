@@ -69,61 +69,6 @@ class _SteamScreenState extends State<SteamScreen> {
     ];
   }
 
-  Widget _buildWaterControl() {
-    return ButtonBar(
-      children: [
-        Text(
-          'Water:',
-          style: theme.TextStyles.tabPrimary,
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
-          ),
-          child: Text(
-            '-5',
-            style: theme.TextStyles.tabSecondary,
-          ),
-          onPressed: () {
-            setState(() {
-              _currentAmount = _currentAmount - 5;
-            });
-          },
-        ),
-        Slider(
-          value: _currentAmount,
-          min: 0,
-          max: 250,
-          divisions: ((250 - 0) / 5).round(),
-          label: _currentAmount.round().toString(),
-          onChanged: (double value) {
-            setState(() {
-              _currentAmount = value;
-            });
-          },
-        ),
-        ElevatedButton(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor: MaterialStateProperty.all<Color>(theme.Colors.goodColor),
-          ),
-          child: Text(
-            '+5',
-            style: theme.TextStyles.tabSecondary,
-          ),
-          onPressed: () {
-            setState(() {
-              _currentAmount = _currentAmount + 5;
-            });
-          },
-        ),
-      ],
-      alignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-    );
-  }
-
   Widget _buildControls() {
     var settings = machineService.settings;
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart' as material;
+
 class Colors {
   const Colors();
-  static const Color primaryColor = Color(0xFFFFFFFF); //Color(0xFFFFFFFF);
-  static const Color secondaryColor = Color(0xFFF2C230);
+  static const Color primaryColor = Color.fromARGB(255, 255, 255, 255); //Color(0xFFFFFFFF);
+  static const Color secondaryColor = material.Colors.orange;
   static const Color goodColor = Color(0xFF32C2F0);
   static const Color badColor = Color(0xFFF28030);
 
@@ -19,12 +21,16 @@ class Colors {
   static const Color flowColor = Color.fromARGB(255, 58, 157, 244);
   static const Color weightColor = Color.fromARGB(255, 131, 109, 105);
 
-  static const Color backgroundColor = Color(0xFF184059); //0xFFFF4580
+  static const Color backgroundColor = Color.fromARGB(255, 44, 44, 44); //material.Colors.white10; //0xFFFF4580
+  static final Color graphBackground2 = Color.fromARGB(255, 44, 44, 44);
+  static final Color graphBackground =
+      material.Colors.white12; // HSLColor.fromColor(backgroundColor).withLightness(0.1).toColor();
   static const Color tabImageBorder = Color(0xFFFFFFFF); // 0xFFFFD2CF
   static final Color tabImageShadowColor = HSLColor.fromColor(backgroundColor).withLightness(0.7).toColor();
   static final Color tabShadowColor = HSLColor.fromColor(backgroundColor).withLightness(1).toColor();
 
-  static final Color tabColor = HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
+  static final Color tabColor =
+      material.Colors.red; // HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
 
   static final _value = HSVColor.fromColor(backgroundColor).value;
   static final _top = HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
@@ -58,7 +64,7 @@ class TextStyles {
   const TextStyles();
 
   static const TextStyle tabPrimary = TextStyle(
-    color: Colors.primaryColor,
+    color: Colors.secondaryColor,
     fontWeight: FontWeight.w300,
   );
 
@@ -81,10 +87,14 @@ class TextStyles {
     // fontSize: 72.0,
     fontWeight: FontWeight.bold,
   );
-  static const TextStyle tabStatusbutton = TextStyle(
+  static const TextStyle statusbuttonMain = TextStyle(
     color: Colors.primaryColor,
     fontSize: 22.0,
     fontWeight: FontWeight.bold,
+  );
+  static const TextStyle statusButtonSecondary = TextStyle(
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w300,
   );
   static const TextStyle appBarTitle = TextStyle(
     color: Colors.primaryColor,
@@ -100,6 +110,11 @@ class TextStyles {
   static const TextStyle headingFooter = TextStyle(
     color: Colors.primaryColor,
     fontSize: 22.0,
+    fontWeight: FontWeight.w300,
+  );
+  static const TextStyle headingFooterSmall = TextStyle(
+    color: Colors.primaryColor,
+    fontSize: 16.0,
     fontWeight: FontWeight.w300,
   );
   static const TextStyle subHeadingFooter = TextStyle(
