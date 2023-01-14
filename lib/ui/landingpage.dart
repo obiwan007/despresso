@@ -35,15 +35,16 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   late EspressoMachineService machineService;
 
   late BLEService bleService;
-  late final _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
 
   EspressoMachineState? lastState;
 
   int selectedPage = 0;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -65,6 +66,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    _tabController.dispose();
     machineService.removeListener(updatedMachine);
     profileService.removeListener(updatedProfile);
   }
@@ -98,38 +100,6 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   Scaffold scaffoldNewLayout(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-
-      // bottomNavigationBar: MediaQuery.of(context).orientation == Orientation.portrait ? createNavbar() : null,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   // title: Row(
-      //   //   children: [
-      //   //     Text("${widget.title} ", style: theme.TextStyles.appBarTitle),
-      //   //     Text(" ${profileService.currentProfile?.title ?? ''}", style: theme.TextStyles.appBarTitleProfile),
-      //   //   ],
-      //   // ),
-      //   actions: <Widget>[
-      //     IconButton(
-      //       iconSize: 40,
-      //       isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-      //       icon: const Icon(Icons.power_settings_new, color: Colors.green),
-      //       selectedIcon: const Icon(
-      //         Icons.power_off,
-      //         color: Colors.red,
-      //       ),
-      //       tooltip: 'Switch on/off decent de1',
-      //       onPressed: () {
-      //         if (machineService.state.coffeeState == EspressoMachineState.sleep) {
-      //           machineService.de1?.switchOn();
-      //         } else {
-      //           machineService.de1?.switchOff();
-      //         }
-      //       },
-      //     ),
-      //   ],
-      //   // bottom: createTabBar(),
-      // ),
       body: SizedBox(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -154,6 +124,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
             ),
             Expanded(
               child: TabBarView(
+                controller: _tabController,
                 children: [
                   EspressoScreen(),
                   SteamScreen(),
@@ -162,7 +133,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                 ],
               ),
             ),
-            MachineFooter(),
+            const MachineFooter(),
           ],
         ),
       ),
@@ -391,11 +362,12 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
   Container createTabBar() {
     var tb = Container(
       height: 70,
-      child: const TabBar(
-        indicator: BoxDecoration(color: Colors.brown),
+      child: TabBar(
+        controller: _tabController,
+        indicator: const BoxDecoration(color: Colors.brown),
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
-        tabs: <Widget>[
+        tabs: const <Widget>[
           Tab(
             child: Text("Espresso"),
           ),
@@ -496,8 +468,10 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
           default:
             break;
         }
-        DefaultTabController.of(context)!
-            .animateTo(currentPageIndex, duration: const Duration(milliseconds: 100), curve: Curves.ease);
+        log("Switch to $currentPageIndex");
+        _tabController.index = currentPageIndex;
+        // DefaultTabController.of(context)!
+        //     .animateTo(currentPageIndex, duration: const Duration(milliseconds: 100), curve: Curves.ease);
       });
     }
   }

@@ -128,7 +128,7 @@ class ProfileService extends ChangeNotifier {
       var file = File('${directory.path}/profiles/$fileName');
       if (await file.exists()) {
         var json = file.readAsStringSync();
-        log("Loaded: $json");
+
         Map<String, dynamic> map = jsonDecode(json);
         var data = De1ShotProfile.fromJson(map);
 
