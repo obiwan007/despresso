@@ -487,6 +487,13 @@ class _EspressoScreenState extends State<EspressoScreen> {
           createKeyValue("Profile", profileService.currentProfile!.title),
           createKeyValue("Coffee", coffeeSelectionService.selectedCoffee?.name ?? ""),
           createKeyValue("Target", '${profileService.currentProfile!.shotHeader.target_weight} g'),
+          const Divider(
+            height: 20,
+            thickness: 5,
+            indent: 0,
+            endIndent: 0,
+          ),
+          createKeyValue("Timer", '${machineService.lastPourTime.toStringAsFixed(1)} s'),
 
           // createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
           // createKeyValue("Sub", machineService.state.subState),
@@ -495,12 +502,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
           // createKeyValue("Mix Temp", '${machineService.state.shot!.mixTemp.toStringAsFixed(2)} °C'),
           // createKeyValue("Head Temp", '${machineService.state.shot!.headTemp.toStringAsFixed(2)} °C'),
           // createKeyValue("Water", '${machineService.state.water?.getLevelPercent()}%'),
-          const Divider(
-            height: 20,
-            thickness: 5,
-            indent: 0,
-            endIndent: 0,
-          ),
         ],
       );
     } else {

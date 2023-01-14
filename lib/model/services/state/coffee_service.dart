@@ -168,14 +168,14 @@ class CoffeeService extends ChangeNotifier {
   void setSelectedRoaster(String id) {
     prefs.setString("selectedRoaster", id);
     selectedRoaster = knownRoasters.firstWhere((element) => element.id == id);
-    notifyListeners();
+    // notifyListeners();
     log('Roaster Saved');
   }
 
   void setSelectedCoffee(String id) {
     prefs.setString("selectedCoffee", id);
     selectedCoffee = knownCoffees.firstWhere((element) => element.id == id);
-    notifyListeners();
+    // notifyListeners();
     log('Coffee Saved');
   }
 }

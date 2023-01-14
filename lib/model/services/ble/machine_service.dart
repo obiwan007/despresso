@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:despresso/devices/decent_de1.dart';
@@ -66,6 +67,13 @@ class EspressoMachineService extends ChangeNotifier {
 
   DateTime t1 = DateTime.now();
 
+  int idleTime = 0;
+
+  double pourTimeStart = 0;
+  bool isPouring = false;
+
+  double lastPourTime = 0;
+
   EspressoMachineService() {
     init();
   }
@@ -78,6 +86,14 @@ class EspressoMachineService extends ChangeNotifier {
     loadSettings();
     notifyListeners();
     loadShotData();
+    Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (state.coffeeState == EspressoMachineState.idle) {
+        log("Machine is still idle $idleTime");
+        idleTime += 10;
+      } else {
+        idleTime = 0;
+      }
+    });
   }
 
   loadSettings() {
@@ -123,7 +139,7 @@ class EspressoMachineService extends ChangeNotifier {
     if (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water) {
       scaleService.tare();
     }
-
+    if (state == EspressoMachineState.idle) {}
     notifyListeners();
   }
 
@@ -242,7 +258,17 @@ class EspressoMachineService extends ChangeNotifier {
       shotList.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log("basetime $baseTime");
+      lastPourTime = 0;
     }
+    if (state.coffeeState == EspressoMachineState.espresso &&
+        lastSubstate != state.subState &&
+        state.subState == "pour") {
+      pourTimeStart = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      isPouring = true;
+    } else {
+      isPouring = false;
+    }
+
     if (state.coffeeState == EspressoMachineState.water && lastSubstate != state.subState && state.subState == "pour") {
       log('Startet water pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -275,6 +301,10 @@ class EspressoMachineService extends ChangeNotifier {
       shot.weight = scaleService.weight;
       shot.flowWeight = scaleService.flow;
       shot.sampleTimeCorrected = shot.sampleTime - baseTime;
+      if (isPouring) {
+        shot.pourTime = shot.sampleTime - pourTimeStart;
+        lastPourTime = shot.pourTime;
+      }
 
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:

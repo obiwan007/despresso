@@ -103,6 +103,7 @@ class ShotState {
   double weight;
   double sampleTime;
   double sampleTimeCorrected = 0;
+  double pourTime = 0;
   double groupPressure;
   double groupFlow;
   double mixTemp;

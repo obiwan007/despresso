@@ -72,27 +72,8 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
     profileService.removeListener(updatedProfile);
   }
 
-  Widget _buildButton(child, onpress) {
-    var color = theme.Colors.backgroundColor;
-    return Container(
-        padding: const EdgeInsets.all(10.0),
-        child: TextButton(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(theme.Colors.primaryColor),
-            backgroundColor: MaterialStateProperty.all<Color>(color),
-          ),
-          onPressed: onpress,
-          child: Container(
-            height: 50,
-            padding: const EdgeInsets.all(10.0),
-            child: child,
-          ),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
-    Wakelock.disable();
     return DefaultTabController(
       length: 4,
       child: scaffoldNewLayout(context),
