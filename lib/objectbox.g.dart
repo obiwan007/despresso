@@ -24,7 +24,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 5050282589413394899),
       name: 'Shot',
-      lastPropertyId: const IdUid(3, 8622027867479492178),
+      lastPropertyId: const IdUid(6, 3371539309151542209),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -43,7 +43,22 @@ final _entities = <ModelEntity>[
             type: 11,
             flags: 520,
             indexId: const IdUid(3, 6812967169057673456),
-            relationTarget: 'Coffee')
+            relationTarget: 'Coffee'),
+        ModelProperty(
+            id: const IdUid(4, 8755594923067759447),
+            name: 'profileId',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 5926041023112911997),
+            name: 'pourTime',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 3371539309151542209),
+            name: 'pourWeight',
+            type: 8,
+            flags: 0)
       ],
       relations: <ModelRelation>[
         ModelRelation(
@@ -335,10 +350,14 @@ ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (Shot object, fb.Builder fbb) {
-          fbb.startTable(4);
+          final profileIdOffset = fbb.writeString(object.profileId);
+          fbb.startTable(7);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.date.millisecondsSinceEpoch);
           fbb.addInt64(2, object.coffee.targetId);
+          fbb.addOffset(3, profileIdOffset);
+          fbb.addFloat64(4, object.pourTime);
+          fbb.addFloat64(5, object.pourWeight);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -349,7 +368,13 @@ ModelDefinition getObjectBoxModel() {
           final object = Shot()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..date = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0));
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0))
+            ..profileId = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 10, '')
+            ..pourTime =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
+            ..pourWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.coffee.attach(store);
@@ -548,6 +573,17 @@ class Shot_ {
   /// see [Shot.coffee]
   static final coffee =
       QueryRelationToOne<Shot, Coffee>(_entities[0].properties[2]);
+
+  /// see [Shot.profileId]
+  static final profileId =
+      QueryStringProperty<Shot>(_entities[0].properties[3]);
+
+  /// see [Shot.pourTime]
+  static final pourTime = QueryDoubleProperty<Shot>(_entities[0].properties[4]);
+
+  /// see [Shot.pourWeight]
+  static final pourWeight =
+      QueryDoubleProperty<Shot>(_entities[0].properties[5]);
 
   /// see [Shot.shotstates]
   static final shotstates =

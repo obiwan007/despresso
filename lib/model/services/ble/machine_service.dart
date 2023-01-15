@@ -405,10 +405,12 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot.coffee.targetId = coffeeService.selectedCoffee;
       currentShot.shotstates.addAll(shotList.entries);
       currentShot.pourTime = lastPourTime;
+      currentShot.profileId = profileService.currentProfile?.id ?? "";
       currentShot.pourWeight = shotList.entries.last.flowWeight;
       var id = coffeeService.shotBox.put(currentShot);
       await coffeeService.setLastShotId(id);
       shotList.saveData();
+      currentShot = Shot();
     } catch (ex) {
       log("Error writing file: $ex");
     }

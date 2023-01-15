@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "3:5050282589413394899",
-      "lastPropertyId": "3:8622027867479492178",
+      "lastPropertyId": "6:3371539309151542209",
       "name": "Shot",
       "properties": [
         {
@@ -26,6 +26,21 @@
           "flags": 520,
           "indexId": "3:6812967169057673456",
           "relationTarget": "Coffee"
+        },
+        {
+          "id": "4:8755594923067759447",
+          "name": "profileId",
+          "type": 9
+        },
+        {
+          "id": "5:5926041023112911997",
+          "name": "pourTime",
+          "type": 8
+        },
+        {
+          "id": "6:3371539309151542209",
+          "name": "pourWeight",
+          "type": 8
         }
       ],
       "relations": [
