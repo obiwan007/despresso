@@ -53,6 +53,8 @@ dependencies:
   reactive_forms: ^14.1.0
   reactive_flutter_rating_bar: ^0.4.0
   wakelock: ^0.6.2
+  objectbox: ^1.7.0
+  objectbox_flutter_libs: any
   
 
 dev_dependencies:
@@ -71,8 +73,23 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  
+  objectbox_generator: ^1.7.0
 
+# objectbox_generator:generator:
+            #     generate_for:
+            #         - lib/core/auth/model/current_user.dart
+            #         - lib/core/permission/model/permission.dart
+source_gen:combining_builder:
+  generate_for:
+    - lib/**/model/*.dart
+
+# objectbox:
+#   # Writes objectbox-model.json and objectbox.g.dart to lib/custom (and test/custom).
+#   output_dir: objectbox
+  # Or optionally specify the lib and test output folder separately.
+  # output_dir:
+  #   lib: custom
+  #   test: other
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

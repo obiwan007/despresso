@@ -1,0 +1,288 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "3:5050282589413394899",
+      "lastPropertyId": "3:8622027867479492178",
+      "name": "Shot",
+      "properties": [
+        {
+          "id": "1:3409921168948181785",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2023678536313964966",
+          "name": "date",
+          "type": 10
+        },
+        {
+          "id": "3:8622027867479492178",
+          "name": "coffeeId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "3:6812967169057673456",
+          "relationTarget": "Coffee"
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:2516218059471133212",
+          "name": "shotstates",
+          "targetId": "7:7915358336460233027"
+        }
+      ]
+    },
+    {
+      "id": "5:6166132089796684361",
+      "lastPropertyId": "13:8572628874963105062",
+      "name": "Coffee",
+      "properties": [
+        {
+          "id": "1:5615950171516587099",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8472885439572250925",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:5110044840806149074",
+          "name": "roasterId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:3069173701919379915",
+          "relationTarget": "Roaster"
+        },
+        {
+          "id": "4:5457947097987531063",
+          "name": "imageURL",
+          "type": 9
+        },
+        {
+          "id": "5:4303540774085095790",
+          "name": "grinderSettings",
+          "type": 8
+        },
+        {
+          "id": "6:225021759355650432",
+          "name": "acidRating",
+          "type": 8
+        },
+        {
+          "id": "7:6130861246586256372",
+          "name": "intensityRating",
+          "type": 8
+        },
+        {
+          "id": "8:1334308936684528664",
+          "name": "roastLevel",
+          "type": 8
+        },
+        {
+          "id": "9:6520200225208100644",
+          "name": "arabica",
+          "type": 6
+        },
+        {
+          "id": "10:6062984101281118472",
+          "name": "robusta",
+          "type": 6
+        },
+        {
+          "id": "11:5546651948055766963",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "12:1497565644929136769",
+          "name": "origin",
+          "type": 9
+        },
+        {
+          "id": "13:8572628874963105062",
+          "name": "price",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:8881644376576832429",
+      "lastPropertyId": "6:970876983252056704",
+      "name": "Roaster",
+      "properties": [
+        {
+          "id": "1:5991058579053841031",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2492045522554162963",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:109766545405737050",
+          "name": "imageURL",
+          "type": 9
+        },
+        {
+          "id": "4:9028335971533423619",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "5:5316187485168323519",
+          "name": "address",
+          "type": 9
+        },
+        {
+          "id": "6:970876983252056704",
+          "name": "homepage",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "7:7915358336460233027",
+      "lastPropertyId": "17:6151090906092388458",
+      "name": "ShotState",
+      "properties": [
+        {
+          "id": "1:5911801733392743346",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:873810899844548098",
+          "name": "subState",
+          "type": 9
+        },
+        {
+          "id": "3:5430882212744780164",
+          "name": "weight",
+          "type": 8
+        },
+        {
+          "id": "4:7057243266656013589",
+          "name": "sampleTime",
+          "type": 8
+        },
+        {
+          "id": "5:7139045219632015353",
+          "name": "sampleTimeCorrected",
+          "type": 8
+        },
+        {
+          "id": "6:8336035996648567372",
+          "name": "pourTime",
+          "type": 8
+        },
+        {
+          "id": "7:3728387464400538728",
+          "name": "groupPressure",
+          "type": 8
+        },
+        {
+          "id": "8:7163267269115276469",
+          "name": "groupFlow",
+          "type": 8
+        },
+        {
+          "id": "9:3024067366106544243",
+          "name": "mixTemp",
+          "type": 8
+        },
+        {
+          "id": "10:6481804704343187952",
+          "name": "headTemp",
+          "type": 8
+        },
+        {
+          "id": "11:4452444150576753969",
+          "name": "setMixTemp",
+          "type": 8
+        },
+        {
+          "id": "12:5828096454211460982",
+          "name": "setHeadTemp",
+          "type": 8
+        },
+        {
+          "id": "13:6404583577823963796",
+          "name": "setGroupPressure",
+          "type": 8
+        },
+        {
+          "id": "14:953787600600014188",
+          "name": "setGroupFlow",
+          "type": 8
+        },
+        {
+          "id": "15:4614454596637650047",
+          "name": "flowWeight",
+          "type": 8
+        },
+        {
+          "id": "16:8625810897882043509",
+          "name": "frameNumber",
+          "type": 6
+        },
+        {
+          "id": "17:6151090906092388458",
+          "name": "steamTemp",
+          "type": 6
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "7:7915358336460233027",
+  "lastIndexId": "3:6812967169057673456",
+  "lastRelationId": "1:2516218059471133212",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [
+    2372411160892302204,
+    5004946134676291479,
+    6316057013526616538
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    5255554628564942194,
+    4168856612577632112,
+    3658428756522006494,
+    2013349328392287066,
+    9166906492209766753,
+    5231134079281534832,
+    1727902073541153245,
+    1222105438427089261,
+    3645189919220185120,
+    1883480049140865748,
+    4649133190255639234,
+    2790985158327310841,
+    8906507704897213981,
+    4326142425280702554,
+    2470357611331815358,
+    4175497157621930327,
+    5263902387495551329,
+    262288466734433874,
+    6341762800821505123,
+    6441265075855571922,
+    7453959482162594558,
+    4587334211713455012
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}

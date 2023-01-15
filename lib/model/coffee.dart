@@ -1,16 +1,18 @@
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'package:uuid/uuid.dart' as uuid;
-
+import 'package:objectbox/objectbox.dart';
 part 'coffee.g.dart';
 
+@Entity()
 @JsonSerializable()
 class Coffee {
+  Coffee();
+
+  int id = 0;
   String name = "";
-  String roasterId = "";
+
+  final roaster = ToOne<Roaster>();
+
   String imageURL = "";
-  String id = "";
   double grinderSettings = 0;
 
   double acidRating = 3;
@@ -24,36 +26,26 @@ class Coffee {
   String origin = "";
 
   String price = "";
-
-  Coffee() {
-    id = uuid.Uuid().v4().toString();
-  }
-
-  factory Coffee.fromJson(Map<String, dynamic> json) => _$CoffeeFromJson(json);
-
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$CoffeeToJson(this);
+  factory Coffee.fromJson(Map<String, dynamic> json) => _$CoffeeFromJson(json);
 }
 
+@Entity()
 @JsonSerializable()
 class Roaster {
+  Roaster();
+
+  int id = 0;
+
+  @Backlink('roaster')
+  final coffees = ToMany<Coffee>();
+
   String name = "";
   String imageURL = "";
-  String id = "";
   String description = "";
   String address = "";
   String homepage = "";
 
-  Roaster() {
-    id = uuid.Uuid().v4().toString();
-  }
-
-  factory Roaster.fromJson(Map<String, dynamic> json) => _$RoasterFromJson(json);
-
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$RoasterToJson(this);
+  factory Roaster.fromJson(Map<String, dynamic> json) => _$RoasterFromJson(json);
 }

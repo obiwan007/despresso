@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:despresso/model/coffee.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:objectbox/objectbox.dart';
 import 'dart:developer';
 
 import 'package:path_provider/path_provider.dart';
@@ -39,48 +41,49 @@ class ShotList {
   }
 
   Future load(String s) async {
-    try {
-      saved = true;
-      log("Loading shot: ${s}");
-      final directory = await getApplicationDocumentsDirectory();
-      log("Storing to path:${directory.path}");
-      var file = File('${directory.path}/$s');
-      if (await file.exists()) {
-        var json = file.readAsStringSync();
-        log("Loaded: ${json}");
-        Map<String, dynamic> map = jsonDecode(json);
-        var data = ShotList.fromJson(map);
-        entries = data.entries;
-        log("Loaded entries: ${entries.length}");
-      } else {
-        log("File $s not existing");
-      }
-    } catch (ex) {
-      log("loading error");
-    }
+    // try {
+    //   saved = true;
+    //   log("Loading shot: ${s}");
+    //   final directory = await getApplicationDocumentsDirectory();
+    //   log("Storing to path:${directory.path}");
+    //   var file = File('${directory.path}/$s');
+    //   if (await file.exists()) {
+    //     var json = file.readAsStringSync();
+    //     log("Loaded: ${json}");
+    //     Map<String, dynamic> map = jsonDecode(json);
+    //     var data = ShotList.fromJson(map);
+    //     entries = data.entries;
+    //     log("Loaded entries: ${entries.length}");
+    //   } else {
+    //     log("File $s not existing");
+    //   }
+    // } catch (ex) {
+    //   log("loading error");
+    // }
   }
 
-  saveData(String filename) async {
-    if (saving) return;
-    saving = true;
-    log("Storing shot: ${entries.length}");
-    if (entries.length > 50) {
-      final directory = await getApplicationDocumentsDirectory();
-      log("Storing to path:${directory.path}");
-      var file = File('${directory.path}/$filename');
-      if (await file.exists()) {
-        log("overwrite existing file");
-        // file.deleteSync();
-      }
-      log("Write file");
-      file.writeAsStringSync(jsonEncode(this), mode: FileMode.writeOnly);
-      log("Written file");
-    }
+  saveData() async {
+    // if (saving) return;
+    // saving = true;
+    // log("Storing shot: ${entries.length}");
+    // if (entries.length > 50) {
+    //   final directory = await getApplicationDocumentsDirectory();
+    //   log("Storing to path:${directory.path}");
+    //   var file = File('${directory.path}/$filename');
+    //   if (await file.exists()) {
+    //     log("overwrite existing file");
+    //     // file.deleteSync();
+    //   }
+    //   log("Write file");
+    //   file.writeAsStringSync(jsonEncode(this), mode: FileMode.writeOnly);
+    //   log("Written file");
+    // }
     saved = true;
     saving = false;
   }
 }
 
+@Entity()
 @JsonSerializable()
 class ShotState {
   ShotState(
@@ -98,7 +101,8 @@ class ShotState {
       this.steamTemp,
       this.weight,
       this.subState);
-
+  @Id()
+  int id = 0;
   String subState;
   double weight;
   double sampleTime;

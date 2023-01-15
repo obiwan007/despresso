@@ -7,10 +7,9 @@ part of 'coffee.dart';
 // **************************************************************************
 
 Coffee _$CoffeeFromJson(Map<String, dynamic> json) => Coffee()
+  ..id = json['id'] as int
   ..name = json['name'] as String
-  ..roasterId = json['roasterId'] as String
   ..imageURL = json['imageURL'] as String
-  ..id = json['id'] as String
   ..grinderSettings = (json['grinderSettings'] as num).toDouble()
   ..acidRating = (json['acidRating'] as num).toDouble()
   ..intensityRating = (json['intensityRating'] as num).toDouble()
@@ -22,10 +21,9 @@ Coffee _$CoffeeFromJson(Map<String, dynamic> json) => Coffee()
   ..price = json['price'] as String;
 
 Map<String, dynamic> _$CoffeeToJson(Coffee instance) => <String, dynamic>{
-      'name': instance.name,
-      'roasterId': instance.roasterId,
-      'imageURL': instance.imageURL,
       'id': instance.id,
+      'name': instance.name,
+      'imageURL': instance.imageURL,
       'grinderSettings': instance.grinderSettings,
       'acidRating': instance.acidRating,
       'intensityRating': instance.intensityRating,
@@ -38,17 +36,17 @@ Map<String, dynamic> _$CoffeeToJson(Coffee instance) => <String, dynamic>{
     };
 
 Roaster _$RoasterFromJson(Map<String, dynamic> json) => Roaster()
+  ..id = json['id'] as int
   ..name = json['name'] as String
   ..imageURL = json['imageURL'] as String
-  ..id = json['id'] as String
   ..description = json['description'] as String
   ..address = json['address'] as String
   ..homepage = json['homepage'] as String;
 
 Map<String, dynamic> _$RoasterToJson(Roaster instance) => <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'imageURL': instance.imageURL,
-      'id': instance.id,
       'description': instance.description,
       'address': instance.address,
       'homepage': instance.homepage,

@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/settings.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
+import 'package:objectbox/src/native/box.dart';
 import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../service_locator.dart';
+import '../../shot.dart';
 import '../../shotstate.dart';
 import '../state/profile_service.dart';
 import 'scale_service.dart';
@@ -55,6 +59,7 @@ class EspressoMachineService extends ChangeNotifier {
   String lastSubstate = "";
 
   late ScaleService scaleService;
+  late CoffeeService coffeeService;
 
   ShotList shotList = ShotList([]);
   double baseTime = 0;
@@ -73,15 +78,21 @@ class EspressoMachineService extends ChangeNotifier {
   bool isPouring = false;
 
   double lastPourTime = 0;
+  late ObjectBox objectBox;
+
+  Shot currentShot = Shot();
 
   EspressoMachineService() {
     init();
   }
   void init() async {
     profileService = getIt<ProfileService>();
+    objectBox = getIt<ObjectBox>();
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
+    coffeeService = getIt<CoffeeService>();
     prefs = await SharedPreferences.getInstance();
+
     log('Preferences loaded');
     loadSettings();
     notifyListeners();
@@ -109,12 +120,15 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   loadShotData() async {
-    await shotList.load("testshot.json");
+    currentShot = coffeeService.getLastShot() ?? Shot();
+    shotList.entries = currentShot.shotstates;
+    // await shotList.load("testshot.json");
     log("Lastshot loaded ${shotList.entries.length}");
     notifyListeners();
   }
 
   updateProfile() {}
+
   void setShot(ShotState shot) {
     _state.shot = shot;
     _count++;
@@ -255,6 +269,7 @@ class EspressoMachineService extends ChangeNotifier {
     if (!inShot && state.coffeeState == EspressoMachineState.espresso) {
       log('Not Idle and not in Shot');
       inShot = true;
+      isPouring = false;
       shotList.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log("basetime $baseTime");
@@ -265,7 +280,9 @@ class EspressoMachineService extends ChangeNotifier {
         state.subState == "pour") {
       pourTimeStart = DateTime.now().millisecondsSinceEpoch / 1000.0;
       isPouring = true;
-    } else {
+    } else if (state.coffeeState == EspressoMachineState.espresso &&
+        lastSubstate != state.subState &&
+        state.subState != "pour") {
       isPouring = false;
     }
 
@@ -385,7 +402,13 @@ class EspressoMachineService extends ChangeNotifier {
   shotFinished() async {
     log("Save last shot");
     try {
-      await shotList.saveData("testshot.json");
+      currentShot.coffee.targetId = coffeeService.selectedCoffee;
+      currentShot.shotstates.addAll(shotList.entries);
+      currentShot.pourTime = lastPourTime;
+      currentShot.pourWeight = shotList.entries.last.flowWeight;
+      var id = coffeeService.shotBox.put(currentShot);
+      await coffeeService.setLastShotId(id);
+      shotList.saveData();
     } catch (ex) {
       log("Error writing file: $ex");
     }

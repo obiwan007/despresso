@@ -63,6 +63,17 @@ class Dimens {
 class TextStyles {
   const TextStyles();
 
+  static const TextStyle h1 = TextStyle(
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w300,
+    fontSize: 18,
+  );
+  static const TextStyle h2 = TextStyle(
+    color: Colors.primaryColor,
+    fontWeight: FontWeight.w300,
+    fontSize: 16,
+  );
+
   static const TextStyle tabPrimary = TextStyle(
     color: Colors.secondaryColor,
     fontWeight: FontWeight.w300,

@@ -3,12 +3,16 @@ import 'dart:developer';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'objectbox.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
 import 'ui/theme.dart' as theme;
 
-void main() {
+late ObjectBox objectbox;
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  objectbox = await ObjectBox.create();
 
   try {
     Wakelock.enable();
@@ -25,6 +29,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   MyApp() {
+    getIt.registerSingleton<ObjectBox>(objectbox, signalsReady: false);
     setupServices();
   }
 

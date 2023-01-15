@@ -485,7 +485,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
           //   endIndent: 0,
           // ),
           createKeyValue("Profile", profileService.currentProfile!.title),
-          createKeyValue("Coffee", coffeeSelectionService.selectedCoffee?.name ?? ""),
+          createKeyValue(
+              "Coffee", coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""),
           createKeyValue("Target", '${profileService.currentProfile!.shotHeader.target_weight} g'),
           const Divider(
             height: 20,
@@ -494,6 +495,8 @@ class _EspressoScreenState extends State<EspressoScreen> {
             endIndent: 0,
           ),
           createKeyValue("Timer", '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+          createKeyValue("Pouring", '${machineService.isPouring} '),
+          createKeyValue("LastSubstate", '${machineService.lastSubstate} '),
 
           // createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
           // createKeyValue("Sub", machineService.state.subState),

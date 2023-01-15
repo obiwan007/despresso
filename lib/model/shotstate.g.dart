@@ -36,10 +36,12 @@ ShotState _$ShotStateFromJson(Map<String, dynamic> json) => ShotState(
       (json['weight'] as num).toDouble(),
       json['subState'] as String,
     )
+      ..id = json['id'] as int
       ..pourTime = (json['pourTime'] as num).toDouble()
       ..flowWeight = (json['flowWeight'] as num).toDouble();
 
 Map<String, dynamic> _$ShotStateToJson(ShotState instance) => <String, dynamic>{
+      'id': instance.id,
       'subState': instance.subState,
       'weight': instance.weight,
       'sampleTime': instance.sampleTime,
