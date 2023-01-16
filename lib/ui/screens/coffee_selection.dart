@@ -52,18 +52,6 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   Roaster _editedRoaster = Roaster();
   Coffee _editedCoffee = Coffee();
 
-  FormGroup get form => fb.group(<String, Object>{
-        'name': ['', Validators.required],
-        'description': [''],
-        'address': [''],
-        'homepage': [''],
-        'id': [0],
-        'intensityRating': [0.1],
-        'acidRating': [0.1],
-        'grinderSettings': [0.1],
-        'roastLevel': [0.1],
-      });
-
   _CoffeeSelectionTabState() {
     newRoaster.name = "<new roaster>";
     newRoaster.id = 0;
@@ -158,9 +146,6 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                             coffeeService.setSelectedRoaster(_selectedRoasterId);
                             coffeeService.setSelectedCoffee(_selectedCoffeeId);
                           }
-                          // form.value = {"name": _selectedRoaster.name};
-                          // form.control('name').value = 'John';
-                          log("Form ${form.value}");
                         });
                       },
                     ),
@@ -210,8 +195,6 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     c.roaster.target = r;
     c.name = "Bärige Mischung";
     c.acidRating = 5;
-    c.arabica = 50;
-    c.robusta = 50;
     c.grinderSettings = 10;
     c.description = "Cheap supermarket coffee";
     c.intensityRating = 5;
@@ -261,6 +244,8 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
       children: [
         createKeyValue("Name", coffee.name),
         if (coffee.description.isNotEmpty) createKeyValue("Description", coffee.description),
+        createKeyValue("Tasting", coffee.taste),
+        createKeyValue("Type of Beans", coffee.type),
         createKeyValue("Grinder", coffee.grinderSettings.toString()),
         createKeyValue("Acidity", null),
         RatingBarIndicator(

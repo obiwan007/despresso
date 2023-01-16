@@ -9,21 +9,25 @@ class Coffee {
 
   int id = 0;
   String name = "";
-
+  String description = "";
+  String type = "";
+  String taste = "";
   final roaster = ToOne<Roaster>();
 
   String imageURL = "";
+
   double grinderSettings = 0;
+
+  double grinderDoseWeight = 35;
 
   double acidRating = 3;
   double intensityRating = 3;
   double roastLevel = 3;
 
-  int arabica = 50;
-  int robusta = 50;
-
-  String description = "";
   String origin = "";
+
+  @Property(type: PropertyType.date)
+  DateTime roastDate = DateTime.now();
 
   String price = "";
   Map<String, dynamic> toJson() => _$CoffeeToJson(this);

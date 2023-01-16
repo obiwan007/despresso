@@ -9,29 +9,33 @@ part of 'coffee.dart';
 Coffee _$CoffeeFromJson(Map<String, dynamic> json) => Coffee()
   ..id = json['id'] as int
   ..name = json['name'] as String
+  ..description = json['description'] as String
+  ..type = json['type'] as String
+  ..taste = json['taste'] as String
   ..imageURL = json['imageURL'] as String
   ..grinderSettings = (json['grinderSettings'] as num).toDouble()
+  ..grinderDoseWeight = (json['grinderDoseWeight'] as num).toDouble()
   ..acidRating = (json['acidRating'] as num).toDouble()
   ..intensityRating = (json['intensityRating'] as num).toDouble()
   ..roastLevel = (json['roastLevel'] as num).toDouble()
-  ..arabica = json['arabica'] as int
-  ..robusta = json['robusta'] as int
-  ..description = json['description'] as String
   ..origin = json['origin'] as String
+  ..roastDate = DateTime.parse(json['roastDate'] as String)
   ..price = json['price'] as String;
 
 Map<String, dynamic> _$CoffeeToJson(Coffee instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'description': instance.description,
+      'type': instance.type,
+      'taste': instance.taste,
       'imageURL': instance.imageURL,
       'grinderSettings': instance.grinderSettings,
+      'grinderDoseWeight': instance.grinderDoseWeight,
       'acidRating': instance.acidRating,
       'intensityRating': instance.intensityRating,
       'roastLevel': instance.roastLevel,
-      'arabica': instance.arabica,
-      'robusta': instance.robusta,
-      'description': instance.description,
       'origin': instance.origin,
+      'roastDate': instance.roastDate.toIso8601String(),
       'price': instance.price,
     };
 

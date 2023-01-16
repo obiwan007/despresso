@@ -70,7 +70,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(5, 6166132089796684361),
       name: 'Coffee',
-      lastPropertyId: const IdUid(13, 8572628874963105062),
+      lastPropertyId: const IdUid(17, 3180181574963034735),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -116,16 +116,6 @@ final _entities = <ModelEntity>[
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(9, 6520200225208100644),
-            name: 'arabica',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 6062984101281118472),
-            name: 'robusta',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(11, 5546651948055766963),
             name: 'description',
             type: 9,
@@ -139,6 +129,26 @@ final _entities = <ModelEntity>[
             id: const IdUid(13, 8572628874963105062),
             name: 'price',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 7230184989598744286),
+            name: 'type',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 6441439649929911062),
+            name: 'taste',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 3584125557140279811),
+            name: 'grinderDoseWeight',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 3180181574963034735),
+            name: 'roastDate',
+            type: 10,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -332,7 +342,9 @@ ModelDefinition getObjectBoxModel() {
         6341762800821505123,
         6441265075855571922,
         7453959482162594558,
-        4587334211713455012
+        4587334211713455012,
+        6520200225208100644,
+        6062984101281118472
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -396,7 +408,9 @@ ModelDefinition getObjectBoxModel() {
           final descriptionOffset = fbb.writeString(object.description);
           final originOffset = fbb.writeString(object.origin);
           final priceOffset = fbb.writeString(object.price);
-          fbb.startTable(14);
+          final typeOffset = fbb.writeString(object.type);
+          final tasteOffset = fbb.writeString(object.taste);
+          fbb.startTable(18);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addInt64(2, object.roaster.targetId);
@@ -405,11 +419,13 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(5, object.acidRating);
           fbb.addFloat64(6, object.intensityRating);
           fbb.addFloat64(7, object.roastLevel);
-          fbb.addInt64(8, object.arabica);
-          fbb.addInt64(9, object.robusta);
           fbb.addOffset(10, descriptionOffset);
           fbb.addOffset(11, originOffset);
           fbb.addOffset(12, priceOffset);
+          fbb.addOffset(13, typeOffset);
+          fbb.addOffset(14, tasteOffset);
+          fbb.addFloat64(15, object.grinderDoseWeight);
+          fbb.addInt64(16, object.roastDate.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -431,16 +447,20 @@ ModelDefinition getObjectBoxModel() {
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0)
             ..roastLevel =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
-            ..arabica =
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0)
-            ..robusta =
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0)
             ..description = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 24, '')
             ..origin = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 26, '')
             ..price = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 28, '');
+                .vTableGet(buffer, rootOffset, 28, '')
+            ..type = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 30, '')
+            ..taste = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 32, '')
+            ..grinderDoseWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0)
+            ..roastDate = DateTime.fromMillisecondsSinceEpoch(
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0));
           object.roaster.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.roaster.attach(store);
@@ -622,24 +642,29 @@ class Coffee_ {
   static final roastLevel =
       QueryDoubleProperty<Coffee>(_entities[1].properties[7]);
 
-  /// see [Coffee.arabica]
-  static final arabica =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[8]);
-
-  /// see [Coffee.robusta]
-  static final robusta =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[9]);
-
   /// see [Coffee.description]
   static final description =
-      QueryStringProperty<Coffee>(_entities[1].properties[10]);
+      QueryStringProperty<Coffee>(_entities[1].properties[8]);
 
   /// see [Coffee.origin]
-  static final origin =
-      QueryStringProperty<Coffee>(_entities[1].properties[11]);
+  static final origin = QueryStringProperty<Coffee>(_entities[1].properties[9]);
 
   /// see [Coffee.price]
-  static final price = QueryStringProperty<Coffee>(_entities[1].properties[12]);
+  static final price = QueryStringProperty<Coffee>(_entities[1].properties[10]);
+
+  /// see [Coffee.type]
+  static final type = QueryStringProperty<Coffee>(_entities[1].properties[11]);
+
+  /// see [Coffee.taste]
+  static final taste = QueryStringProperty<Coffee>(_entities[1].properties[12]);
+
+  /// see [Coffee.grinderDoseWeight]
+  static final grinderDoseWeight =
+      QueryDoubleProperty<Coffee>(_entities[1].properties[13]);
+
+  /// see [Coffee.roastDate]
+  static final roastDate =
+      QueryIntegerProperty<Coffee>(_entities[1].properties[14]);
 }
 
 /// [Roaster] entity fields to define ObjectBox queries.

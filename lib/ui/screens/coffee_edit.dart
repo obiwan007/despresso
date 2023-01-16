@@ -34,6 +34,10 @@ class _CoffeeEditState extends State<CoffeeEdit> {
   FormGroup get theForm2 => fb.group(<String, Object>{
         'name': ['test', Validators.required],
         'description': [''],
+        'type': [''],
+        'price': [''],
+        'taste': [''],
+        'origin': [''],
         'intensityRating': [0.1],
         'acidRating': [0.1],
         'grinderSettings': [0.1],
@@ -60,6 +64,10 @@ class _CoffeeEditState extends State<CoffeeEdit> {
     theForm = fb.group(<String, Object>{
       'name': [_editedCoffee.name, Validators.required],
       'description': [_editedCoffee.description],
+      'type': [_editedCoffee.type],
+      'price': [_editedCoffee.price],
+      'taste': [_editedCoffee.taste],
+      'origin': [_editedCoffee.origin],
       'intensityRating': [_editedCoffee.intensityRating],
       'acidRating': [_editedCoffee.acidRating],
       'grinderSettings': [_editedCoffee.grinderSettings],
@@ -78,7 +86,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Roaster'),
+        title: const Text('Edit Coffee Beans'),
         actions: <Widget>[
           ElevatedButton(
             child: Text(
@@ -116,6 +124,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
       children: [
         ReactiveTextField<String>(
           formControlName: 'name',
+          keyboardType: TextInputType.text,
           decoration: const InputDecoration(
             labelText: 'Name',
           ),
@@ -124,9 +133,38 @@ class _CoffeeEditState extends State<CoffeeEdit> {
           },
         ),
         ReactiveTextField<String>(
+          keyboardType: TextInputType.text,
           formControlName: 'description',
           decoration: const InputDecoration(
             labelText: 'Description',
+          ),
+        ),
+        ReactiveTextField<String>(
+          formControlName: 'taste',
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            labelText: 'Taste of Beans',
+          ),
+        ),
+        ReactiveTextField<String>(
+          formControlName: 'type',
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            labelText: 'Type of Beans',
+          ),
+        ),
+        ReactiveTextField<String>(
+          formControlName: 'origin',
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            labelText: 'Origin',
+          ),
+        ),
+        ReactiveTextField<String>(
+          formControlName: 'price',
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Price/package',
           ),
         ),
         ReactiveTextField<double>(
@@ -218,6 +256,11 @@ class _CoffeeEditState extends State<CoffeeEdit> {
 
   void saveFormData(FormGroup form) {
     _editedCoffee.name = form.value["name"] as String;
+    _editedCoffee.type = form.value["type"] as String;
+    _editedCoffee.price = form.value["price"] as String;
+    _editedCoffee.taste = form.value["taste"] as String;
+    _editedCoffee.origin = form.value["origin"] as String;
+
     _editedCoffee.intensityRating = form.value["intensityRating"] as double;
     _editedCoffee.acidRating = form.value["acidRating"] as double;
     _editedCoffee.grinderSettings = form.value["grinderSettings"] as double;

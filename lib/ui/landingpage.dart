@@ -261,6 +261,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
           case EspressoMachineState.idle:
             break;
           case EspressoMachineState.sleep:
+            currentPageIndex = 0;
             break;
           case EspressoMachineState.disconnected:
             break;
