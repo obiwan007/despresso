@@ -67,6 +67,7 @@ class RecipeScreenState extends State<RecipeScreen> {
               children: [
                 Row(
                   children: [
+                    Text("Recipe"),
                     Expanded(
                       flex: 1,
                       child: Column(

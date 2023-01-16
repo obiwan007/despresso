@@ -49,7 +49,11 @@ class CoffeeService extends ChangeNotifier {
   Shot? getLastShot() {
     var allshots = shotBox.getAll();
     log("Number of stored shots: ${allshots.length}");
-    return shotBox.get(selectedShot);
+    if (selectedShot > 0) {
+      return shotBox.get(selectedShot);
+    } else {
+      return Shot();
+    }
   }
 
   addRoaster(Roaster newRoaster) async {

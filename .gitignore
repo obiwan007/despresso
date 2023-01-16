@@ -8,7 +8,7 @@
 .pub-cache/
 .pub/
 build/
-
+keys/
 
 # Android Studio will place build artifacts here
 android/app/debug

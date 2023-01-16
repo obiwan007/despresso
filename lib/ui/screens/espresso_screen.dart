@@ -486,8 +486,11 @@ class _EspressoScreenState extends State<EspressoScreen> {
           // ),
           createKeyValue("Profile", profileService.currentProfile!.title),
           createKeyValue(
-              "Coffee", coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""),
-          createKeyValue("Target", '${profileService.currentProfile!.shotHeader.target_weight} g'),
+              "Coffee",
+              coffeeSelectionService.selectedCoffee > 0
+                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""
+                  : "No Beans"),
+          createKeyValue("Target", '${profileService.currentProfile?.shotHeader.target_weight} g'),
           const Divider(
             height: 20,
             thickness: 5,

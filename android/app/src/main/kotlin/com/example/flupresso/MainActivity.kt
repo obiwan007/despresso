@@ -1,4 +1,4 @@
-package com.example.despresso
+package com.mmmedia.despresso
 
 import io.flutter.embedding.android.FlutterActivity
 

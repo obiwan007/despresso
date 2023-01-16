@@ -30,7 +30,7 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
   bool available = false;
-  int currentPageIndex = 0;
+  int currentPageIndex = 1;
 
   late CoffeeService coffeeSelection;
   late ProfileService profileService;
@@ -40,13 +40,12 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
   EspressoMachineState? lastState;
 
-  int selectedPage = 0;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -194,160 +193,6 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
     );
   }
 
-  Scaffold scaffoldOldLayout(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: MediaQuery.of(context).orientation == Orientation.portrait ? createNavbar() : null,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text("${widget.title} ", style: theme.TextStyles.appBarTitle),
-            Text(" ${profileService.currentProfile?.title ?? ''}", style: theme.TextStyles.appBarTitleProfile),
-          ],
-        ),
-        actions: <Widget>[
-          IconButton(
-            iconSize: 40,
-            isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-            icon: const Icon(Icons.power_settings_new, color: Colors.green),
-            selectedIcon: const Icon(
-              Icons.power_off,
-              color: Colors.red,
-            ),
-            tooltip: 'Switch on/off decent de1',
-            onPressed: () {
-              if (machineService.state.coffeeState == EspressoMachineState.sleep) {
-                machineService.de1?.switchOn();
-              } else {
-                machineService.de1?.switchOff();
-              }
-            },
-          ),
-        ],
-      ),
-      body: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          if (MediaQuery.of(context).orientation == Orientation.landscape) createNavRail(),
-          Expanded(
-              child: <Widget>[
-            //CoffeeSelectionTab(),
-            EspressoScreen(),
-            SteamScreen(),
-            FlushScreen(),
-            WaterScreen(),
-          ][currentPageIndex]),
-        ],
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text("despresso settings"),
-            ),
-            ListTile(
-              title: const Text('Profiles'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilesScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Coffees'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                configureCoffee();
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                bleService.startScan();
-                // Then close the drawer
-              },
-            ),
-            ListTile(
-              title: const Text('Exit'),
-              onTap: () {
-                Navigator.pop(context);
-                var snackBar = SnackBar(
-                    content: const Text('Going to sleep'),
-                    action: SnackBarAction(
-                      label: 'Undo',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                machineService.de1?.switchOff();
-                // Then close the drawer
-                Future.delayed(const Duration(milliseconds: 2000), () {
-                  SystemNavigator.pop();
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  NavigationBar createNavbar() {
-    return NavigationBar(
-      onDestinationSelected: (int index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-      },
-      selectedIndex: currentPageIndex,
-      destinations: const <Widget>[
-        NavigationDestination(
-          icon: Icon(Icons.coffee),
-          label: 'Recipe',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.coffee),
-          label: 'Coffee',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.coffee),
-          label: 'Espresso',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.filter_list),
-          label: 'Steam',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.water),
-          label: 'Flush',
-        ),
-        NavigationDestination(
-          selectedIcon: Icon(Icons.bookmark),
-          icon: Icon(Icons.water_drop),
-          label: 'Water',
-        ),
-      ],
-    );
-  }
-
   Container createTabBar() {
     var tb = Container(
       height: 70,
@@ -379,43 +224,6 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
     return tb;
   }
 
-  NavigationRail createNavRail() {
-    return NavigationRail(
-      minExtendedWidth: 100,
-      minWidth: 100,
-      labelType: NavigationRailLabelType.all,
-      onDestinationSelected: (int index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-      },
-      selectedIndex: currentPageIndex,
-      destinations: const <NavigationRailDestination>[
-        NavigationRailDestination(
-          icon: Icon(Icons.coffee),
-          label: Text('Coffee'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.coffee),
-          label: Text('Espresso'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.filter_list),
-          label: Text('Steam'),
-        ),
-        NavigationRailDestination(
-          icon: Icon(Icons.water),
-          label: Text('Flush'),
-        ),
-        NavigationRailDestination(
-          selectedIcon: Icon(Icons.bookmark),
-          icon: Icon(Icons.water_drop),
-          label: Text('Water'),
-        ),
-      ],
-    );
-  }
-
   void configureCoffee() {
     var snackBar = SnackBar(
         content: const Text('Configure your coffee'),
@@ -445,10 +253,10 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
             currentPageIndex = 2;
             break;
           case EspressoMachineState.flush:
-            currentPageIndex = 3;
+            currentPageIndex = 4;
             break;
           case EspressoMachineState.water:
-            currentPageIndex = 4;
+            currentPageIndex = 3;
             break;
           case EspressoMachineState.idle:
             break;
