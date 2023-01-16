@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/ui/screens/recipe_screen.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
@@ -109,6 +110,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
               child: TabBarView(
                 controller: _tabController,
                 children: [
+                  RecipeScreen(),
                   EspressoScreen(),
                   SteamScreen(),
                   WaterScreen(),
@@ -319,6 +321,10 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
       destinations: const <Widget>[
         NavigationDestination(
           icon: Icon(Icons.coffee),
+          label: 'Recipe',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.coffee),
           label: 'Coffee',
         ),
         NavigationDestination(
@@ -352,6 +358,9 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
         tabs: const <Widget>[
+          Tab(
+            child: Text("Recipe"),
+          ),
           Tab(
             child: Text("Espresso"),
           ),
@@ -430,16 +439,16 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
       setState(() {
         switch (lastState) {
           case EspressoMachineState.espresso:
-            currentPageIndex = 0;
+            currentPageIndex = 1;
             break;
           case EspressoMachineState.steam:
-            currentPageIndex = 1;
+            currentPageIndex = 2;
             break;
           case EspressoMachineState.flush:
             currentPageIndex = 3;
             break;
           case EspressoMachineState.water:
-            currentPageIndex = 2;
+            currentPageIndex = 4;
             break;
           case EspressoMachineState.idle:
             break;
