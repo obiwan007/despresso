@@ -402,16 +402,23 @@ class EspressoMachineService extends ChangeNotifier {
   shotFinished() async {
     log("Save last shot");
     try {
+      currentShot = Shot();
       currentShot.coffee.targetId = coffeeService.selectedCoffee;
+      log("AddAll");
       currentShot.shotstates.addAll(shotList.entries);
+      log("AddAll done");
       currentShot.pourTime = lastPourTime;
       currentShot.profileId = profileService.currentProfile?.id ?? "";
       currentShot.pourWeight = shotList.entries.last.flowWeight;
+      log("Putting shot to db");
       var id = coffeeService.shotBox.put(currentShot);
+      log("Sent shot to db");
       await coffeeService.setLastShotId(id);
+      log("Cleaning cache");
       shotList.saveData();
-      currentShot = Shot();
+      // currentShot = Shot();
     } catch (ex) {
+      log("Error writing file: $ex");
       log("Error writing file: $ex");
     }
   }

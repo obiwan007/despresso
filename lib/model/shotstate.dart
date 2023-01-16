@@ -78,6 +78,10 @@ class ShotList {
     //   file.writeAsStringSync(jsonEncode(this), mode: FileMode.writeOnly);
     //   log("Written file");
     // }
+    log("Clean shot data cache");
+    entries.forEach((element) {
+      element.id = 0;
+    });
     saved = true;
     saving = false;
   }

@@ -48,7 +48,7 @@ class CoffeeService extends ChangeNotifier {
 
   Shot? getLastShot() {
     var allshots = shotBox.getAll();
-
+    log("Number of stored shots: ${allshots.length}");
     return shotBox.get(selectedShot);
   }
 
