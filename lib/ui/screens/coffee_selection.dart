@@ -103,75 +103,72 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         child: const Icon(Icons.add),
       ),
       body: SingleChildScrollView(
-        child: ReactiveFormBuilder(
-          form: () => form,
-          builder: (context, form, child) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: [
-                    Expanded(flex: 2, child: const Text("Select Roaster", style: theme.TextStyles.h1)),
-                    Expanded(
-                      flex: 8,
-                      child: DropdownButton(
-                        isExpanded: true,
-                        alignment: Alignment.centerLeft,
-                        value: _selectedRoasterId,
-                        items: roasters,
-                        onChanged: (value) async {
-                          _selectedRoasterId = value!;
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: [
+                  Expanded(flex: 2, child: const Text("Select Roaster", style: theme.TextStyles.h1)),
+                  Expanded(
+                    flex: 8,
+                    child: DropdownButton(
+                      isExpanded: true,
+                      alignment: Alignment.centerLeft,
+                      value: _selectedRoasterId,
+                      items: roasters,
+                      onChanged: (value) async {
+                        _selectedRoasterId = value!;
+                        if (value! == 0) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RoasterEdit(0)),
+                          );
+                        } else {
+                          coffeeService.setSelectedRoaster(_selectedRoasterId);
+                        }
+                        // setState(() {});
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              if (_selectedRoasterId > 0) roasterData(),
+              Divider(),
+              Row(
+                children: [
+                  Expanded(flex: 2, child: const Text("Select Coffee", style: theme.TextStyles.h1)),
+                  Expanded(
+                    flex: 8,
+                    child: DropdownButton(
+                      isExpanded: true,
+                      alignment: Alignment.centerLeft,
+                      value: _selectedCoffeeId,
+                      items: coffees,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedCoffeeId = value!;
                           if (value! == 0) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => RoasterEdit(0)),
+                              MaterialPageRoute(builder: (context) => CoffeeEdit(0)),
                             );
                           } else {
                             coffeeService.setSelectedRoaster(_selectedRoasterId);
+                            coffeeService.setSelectedCoffee(_selectedCoffeeId);
                           }
-                          // setState(() {});
-                        },
-                      ),
+                          // form.value = {"name": _selectedRoaster.name};
+                          // form.control('name').value = 'John';
+                          log("Form ${form.value}");
+                        });
+                      },
                     ),
-                  ],
-                ),
-                roasterData(form),
-                Divider(),
-                Row(
-                  children: [
-                    Expanded(flex: 2, child: const Text("Select Coffee", style: theme.TextStyles.h1)),
-                    Expanded(
-                      flex: 8,
-                      child: DropdownButton(
-                        isExpanded: true,
-                        alignment: Alignment.centerLeft,
-                        value: _selectedCoffeeId,
-                        items: coffees,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCoffeeId = value!;
-                            if (value! == 0) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => CoffeeEdit(0)),
-                              );
-                            } else {
-                              coffeeService.setSelectedRoaster(_selectedRoasterId);
-                              coffeeService.setSelectedCoffee(_selectedCoffeeId);
-                            }
-                            // form.value = {"name": _selectedRoaster.name};
-                            // form.control('name').value = 'John';
-                            log("Form ${form.value}");
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                coffeeData(form),
-              ],
-            ),
+                  ),
+                ],
+              ),
+              if (_selectedCoffeeId > 0) coffeeData(),
+            ],
           ),
         ),
       ),
@@ -224,7 +221,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     await coffeeService.addCoffee(c);
   }
 
-  roasterData(FormGroup form) {
+  roasterData() {
     if (_selectedRoasterId == 0) return;
 
     var roaster = coffeeService.roasterBox.get(_selectedRoasterId)!;
@@ -255,7 +252,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     );
   }
 
-  coffeeData(FormGroup form) {
+  coffeeData() {
     if (_selectedCoffeeId == 0) return;
 
     var coffee = coffeeService.coffeeBox.get(_selectedCoffeeId)!;
