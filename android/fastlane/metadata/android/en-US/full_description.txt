@@ -1,0 +1,1 @@
+The decent de1 espresso machine comes with the stock Android tablet. This app now is using a newer UI approach and is able to run independantly from the stock tablet.

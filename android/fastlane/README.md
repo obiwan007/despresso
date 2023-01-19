@@ -13,6 +13,25 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### increment_vc
+
+```sh
+[bundle exec] fastlane increment_vc
+```
+
+Increment version code
+
+### beta
+
+```sh
+[bundle exec] fastlane beta
+```
+
+
+
+----
+
+
 ## Android
 
 ### android test

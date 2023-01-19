@@ -13,7 +13,18 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+# Fastfile
+
 default_platform(:android)
+
+
+# upload_to_play_store(
+#      track: 'internal',
+#      # apk: '../build/app/outputs/apk/release/app-release.apk',
+#      skip_upload_changelogs: true,
+#      skip_upload_images: true,
+#      skip_upload_screenshots: true,
+#     )
 
 platform :android do
   desc "Runs all the tests"
@@ -24,7 +35,7 @@ platform :android do
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
     gradle(task: "clean assembleRelease")
-    crashlytics
+    # crashlytics
   
     # sh "your_script.sh"
     # You can also use other beta testing services here
@@ -36,3 +47,23 @@ platform :android do
     upload_to_play_store
   end
 end
+
+desc "Increment version code"
+lane :increment_vc do
+ increment_version_code(
+       gradle_file_path: "./app/build.gradle",
+
+ )
+end
+
+lane :beta do
+    # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+
+    # gradle(task: "clean assembleRelease")    
+    gradle(task: "clean bundleRelease")    
+    
+    upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'Closed Beta')
+    supply(track: 'Closed Beta', version_code: 2)    
+  
+    # ...
+  end
