@@ -64,7 +64,7 @@ dev_dependencies:
   transparent_image: ^2.0.0  
   shared_preferences: '>=0.5.10'
   bubble_tab_indicator: '>=0.1.4'
-
+  flutter_launcher_icons: ^0.11.0  
   permission_handler: ^10.2.0
   get_it: ^7.2.0
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -133,3 +133,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  image_path: 'assets/icon.png'
+  android: true
+  ios: true

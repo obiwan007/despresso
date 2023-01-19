@@ -5,6 +5,8 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
+import 'package:despresso/ui/screens/coffee_selection.dart';
+import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
@@ -33,18 +35,20 @@ class RecipeScreenState extends State<RecipeScreen> {
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
-    machineService.addListener(machineStateListener);
 
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
     profileService = getIt<ProfileService>();
     coffeeService = getIt<CoffeeService>();
+    coffeeService.addListener(coffeeServiceListener);
+    profileService.addListener(profileServiceListener);
   }
 
   @override
   void dispose() {
     super.dispose();
-    machineService.removeListener(machineStateListener);
+    coffeeService.removeListener(coffeeServiceListener);
+    profileService.removeListener(profileServiceListener);
   }
 
   machineStateListener() {
@@ -65,162 +69,84 @@ class RecipeScreenState extends State<RecipeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Text("Recipe"),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          Text("Temperatur ${settings.targetHotWaterTemp}°C", style: theme.TextStyles.tabHeading),
-                          Slider(
-                            value: settings.targetHotWaterTemp.toDouble(),
-                            max: 100,
-                            min: 30,
-                            divisions: 100,
-                            label: "${settings.targetHotWaterTemp} °C",
-                            onChanged: (double value) {
-                              setState(() {
-                                settings.targetHotWaterTemp = value.toInt();
-                                machineService.updateSettings(settings);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Stack(
-                        children: <Widget>[
-                          if (machineService.state.coffeeState == EspressoMachineState.water) ...[
-                            Center(
-                              child: Container(
-                                width: 200,
-                                height: 200,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 15,
-                                  value: machineService.state.shot?.mixTemp ?? 0 / settings.targetHotWaterTemp,
-                                ),
-                              ),
-                            ),
-                            Center(child: Text("${machineService.state.shot?.mixTemp.toStringAsFixed(0)} °C")),
-                          ]
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 5,
-                  indent: 20,
-                  endIndent: 0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
+                Text("Current Shot Recipe"),
+                Expanded(
+                  flex: 1,
+                  child: Column(
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Text("Timer ${settings.targetHotWaterLength} s", style: theme.TextStyles.tabHeading),
-                            Slider(
-                              value: settings.targetHotWaterLength.toDouble(),
-                              max: 100,
-                              min: 5,
-                              divisions: 200,
-                              label: "${settings.targetHotWaterLength} s",
-                              onChanged: (double value) {
-                                setState(() {
-                                  settings.targetHotWaterLength = value.toInt();
-                                  machineService.updateSettings(settings);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: <Widget>[
-                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
-                              Center(
-                                child: Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 15,
-                                    value: machineService.state.coffeeState == EspressoMachineState.water
-                                        ? machineService.timer.inSeconds / settings.targetHotWaterLength
-                                        : 0,
-                                  ),
+                      Container(
+                        color: Colors.black38,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(child: Text("Selected Base Profile")),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                                              );
+                                            },
+                                            child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
+                                          ),
+                                          Text(
+                                              "Stop weight: ${profileService.currentProfile?.shotHeader.target_weight.toStringAsFixed(1)} g")
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)}s")),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 5,
-                  indent: 20,
-                  endIndent: 0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Text("Weight ${settings.targetHotWaterWeight} g", style: theme.TextStyles.tabHeading),
-                            Slider(
-                              value: settings.targetHotWaterWeight.toDouble(),
-                              max: 200,
-                              min: 10,
-                              divisions: 200,
-                              label: "${settings.targetHotWaterWeight} g",
-                              onChanged: (double value) {
-                                setState(() {
-                                  settings.targetHotWaterWeight = value.toInt();
-                                  machineService.updateSettings(settings);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: <Widget>[
-                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
-                              Center(
-                                child: Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 15,
-                                    value: machineService.scaleService.weight / settings.targetHotWaterWeight,
-                                  ),
+                                // Row(
+                                //   children: [
+                                //     Expanded(child: Text("Dial In Layer")),
+                                //     Expanded(
+                                //       child: ElevatedButton(
+                                //         onPressed: () {},
+                                //         child: Text("Reduced Flow"),
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                Divider(),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(child: Text("Selected Bean")),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => CoffeeSelectionTab()),
+                                              );
+                                            },
+                                            child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
+                                          ),
+                                          Text(
+                                              "Dose: ${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
+                                          Text("Grind Settings: ${coffeeService.currentCoffee?.grinderSettings ?? ''}"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Center(child: Text("${machineService.scaleService.weight.toStringAsFixed(0)} g")),
-                            ]
-                          ],
+                                Divider(),
+                              ]),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -229,13 +155,38 @@ class RecipeScreenState extends State<RecipeScreen> {
           ),
         ),
         Expanded(
-          flex: 1,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const StartStopButton(),
-            ],
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("Details"),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(flex: 6, child: Text("Graph")),
+                        Expanded(
+                            flex: 4,
+                            child: Column(
+                              children: [
+                                Text("Description"),
+                                Text(profileService.currentProfile?.shotHeader.notes ?? ""),
+                                Text(coffeeService.currentCoffee?.description ?? ""),
+                              ],
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -247,5 +198,13 @@ class RecipeScreenState extends State<RecipeScreen> {
     return Container(
       child: _buildControls(),
     );
+  }
+
+  void coffeeServiceListener() {
+    setState(() {});
+  }
+
+  void profileServiceListener() {
+    setState(() {});
   }
 }

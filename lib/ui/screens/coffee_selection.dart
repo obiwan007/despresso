@@ -247,6 +247,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         createKeyValue("Tasting", coffee.taste),
         createKeyValue("Type of Beans", coffee.type),
         createKeyValue("Grinder", coffee.grinderSettings.toString()),
+        createKeyValue("Dose", coffee.grinderDoseWeight.toString()),
         createKeyValue("Acidity", null),
         RatingBarIndicator(
           rating: coffee.acidRating,

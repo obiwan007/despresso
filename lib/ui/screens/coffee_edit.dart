@@ -42,6 +42,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
         'acidRating': [0.1],
         'grinderSettings': [0.1],
         'roastLevel': [0.1],
+        'grinderDoseWeight': [0.1],
       });
 
   late FormGroup theForm;
@@ -72,6 +73,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
       'acidRating': [_editedCoffee.acidRating],
       'grinderSettings': [_editedCoffee.grinderSettings],
       'roastLevel': [_editedCoffee.roastLevel],
+      'grinderDoseWeight': [_editedCoffee.grinderDoseWeight],
     });
   }
 
@@ -174,6 +176,13 @@ class _CoffeeEditState extends State<CoffeeEdit> {
             labelText: 'Grinder',
           ),
         ),
+        ReactiveTextField<double>(
+          formControlName: 'grinderDoseWeight',
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Dose',
+          ),
+        ),
         createKeyValue("Acidity", null),
         ReactiveRatingBarBuilder<double>(
           formControlName: 'acidRating',
@@ -265,6 +274,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.acidRating = form.value["acidRating"] as double;
     _editedCoffee.grinderSettings = form.value["grinderSettings"] as double;
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
+    _editedCoffee.grinderDoseWeight = form.value["grinderDoseWeight"] as double;
     coffeeService.addCoffee(_editedCoffee);
     selectedCoffeeId = _editedCoffee.id;
     coffeeService.setSelectedCoffee(selectedCoffeeId);

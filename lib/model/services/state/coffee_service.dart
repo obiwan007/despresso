@@ -194,4 +194,9 @@ class CoffeeService extends ChangeNotifier {
     selectedShot = id;
     await prefs.setInt("lastShot", id);
   }
+
+  Coffee? get currentCoffee {
+    return coffeeBox.get(selectedCoffee);
+// code to return members
+  }
 }
