@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/settings.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
@@ -59,6 +60,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   late ScaleService scaleService;
   late CoffeeService coffeeService;
+  late SettingsService settingsService;
 
   ShotList shotList = ShotList([]);
   double baseTime = 0;
@@ -86,6 +88,7 @@ class EspressoMachineService extends ChangeNotifier {
   }
   void init() async {
     profileService = getIt<ProfileService>();
+    settingsService = getIt<SettingsService>();
     objectBox = getIt<ObjectBox>();
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
@@ -150,7 +153,9 @@ class EspressoMachineService extends ChangeNotifier {
   void setState(EspressoMachineState state) {
     _state.coffeeState = state;
     if (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water) {
-      scaleService.tare();
+      if (settingsService.shotAutoTare) {
+        scaleService.tare();
+      }
     }
     if (state == EspressoMachineState.idle) {}
     notifyListeners();
@@ -329,7 +334,9 @@ class EspressoMachineService extends ChangeNotifier {
                 shot.weight + 1 > profileService.currentProfile!.shotHeader.targetWeight) {
               log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
-              triggerEndOfShot();
+              if (settingsService.shotStopOnWeight) {
+                triggerEndOfShot();
+              }
             }
           }
           break;
@@ -338,7 +345,9 @@ class EspressoMachineService extends ChangeNotifier {
             if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
               log("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
-              triggerEndOfShot();
+              if (settingsService.shotStopOnWeight) {
+                triggerEndOfShot();
+              }
             }
           }
           if (state.subState == "pour" &&
@@ -417,7 +426,6 @@ class EspressoMachineService extends ChangeNotifier {
       shotList.saveData();
       // currentShot = Shot();
     } catch (ex) {
-      log("Error writing file: $ex");
       log("Error writing file: $ex");
     }
   }

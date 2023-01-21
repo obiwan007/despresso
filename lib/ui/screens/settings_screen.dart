@@ -84,7 +84,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           title: 'Shot Settings',
           children: <Widget>[
             SwitchSettingsTile(
-              settingKey: 'ShotStopOnWeight',
+              settingKey: SettingKeys.shotStopOnWeight.name,
               title: 'Stop on Weight if scale detected',
               subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
               enabledLabel: 'Enabled',
@@ -94,7 +94,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               },
             ),
             SwitchSettingsTile(
-              settingKey: 'ShotAutoTare',
+              settingKey: SettingKeys.shotAutoTare.name,
               title: 'Auto Tare',
               subtitle: 'If a shot is starting, auto-tare the scale',
               enabledLabel: 'Enabled',
@@ -115,7 +115,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 children: <Widget>[
                   SwitchSettingsTile(
                     leading: const Icon(Icons.usb),
-                    settingKey: 'VizualizerUpload',
+                    settingKey: SettingKeys.vizualizerUpload.name,
                     title: 'Upload Shots to Vizualizer',
                     onChange: (value) {
                       debugPrint('USB Debugging: $value');
@@ -123,7 +123,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   ),
                   TextInputSettingsTile(
                     title: 'User Name/email',
-                    settingKey: 'VizualizerUser',
+                    settingKey: SettingKeys.vizualizerUser.name,
                     initialValue: 'admin',
                     validator: (String? username) {
                       if (username != null && username.length > 3) {
@@ -136,7 +136,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   ),
                   TextInputSettingsTile(
                     title: 'password',
-                    settingKey: 'VizualizerPwd',
+                    settingKey: SettingKeys.vizualizerPwd.name,
                     obscureText: true,
                     validator: (String? password) {
                       if (password != null && password.length > 6) {
