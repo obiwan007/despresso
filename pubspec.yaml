@@ -55,6 +55,7 @@ dependencies:
   wakelock: ^0.6.2
   objectbox: ^1.7.0
   objectbox_flutter_libs: any
+  flutter_settings_screens: ^0.3.3-null-safety+2
   
 
 dev_dependencies:

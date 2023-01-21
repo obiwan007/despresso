@@ -18,6 +18,8 @@ class BLEService extends ChangeNotifier {
 
   StreamSubscription<DiscoveredDevice>? _subscription;
 
+  bool isScanning = false;
+
   BLEService() {
     init();
   }
@@ -36,8 +38,12 @@ class BLEService extends ChangeNotifier {
   // }
 
   void startScan() {
-    _devicesList.clear();
+    if (isScanning) return;
+    isScanning = true;
+    // _devicesList.clear();
     _subscription?.cancel();
+    notifyListeners();
+
     _subscription = flutterReactiveBle.scanForDevices(withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
       //code for handling results
       // print('Scanned Peripheral ${device.name}, RSSI ${device.rssi}');
@@ -49,6 +55,8 @@ class BLEService extends ChangeNotifier {
 
     Timer(const Duration(seconds: 10), () {
       _subscription?.cancel();
+      isScanning = false;
+      notifyListeners();
     });
 
     // var _scanSubscription =
@@ -80,12 +88,14 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('ACAIA')) {
           log('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
         }
         if (device.name.startsWith('DE1')) {
           log('Creating DE1 machine!');
           DE1(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
         }
-        _devicesList.add(device);
+
         notifyListeners();
       } else {
         print('Ignoring existing device: ${device.name}');

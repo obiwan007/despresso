@@ -57,13 +57,29 @@ lane :increment_vc do
 end
 
 lane :beta do
+    # supply(track: 'internal', version_code: 5)
     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
 
     # gradle(task: "clean assembleRelease")    
     gradle(task: "clean bundleRelease")    
     
     upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'Closed Beta')
-    supply(track: 'Closed Beta', version_code: 2)    
+    # supply(track: 'Closed Beta', version_code: 2)    
+    #     
+  
+    # ...
+  end
+
+  lane :internal do
+    # supply(track: 'internal', version_code: 5)
+    # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+
+    # gradle(task: "clean assembleRelease")    
+    gradle(task: "clean bundleRelease")    
+    
+    upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'internal')
+    # supply(track: 'Closed Beta', version_code: 2)    
+    #     
   
     # ...
   end

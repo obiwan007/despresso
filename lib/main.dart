@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+
 import 'objectbox.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
@@ -24,7 +27,15 @@ Future<void> main() async {
   // SystemChrome.setEnabledSystemUIOverlays([
   //   SystemUiOverlay.bottom, //This line is used for showing the bottom bar
   // ]);
-  runApp(MyApp());
+  initSettings().then((_) {
+    runApp(MyApp());
+  });
+}
+
+Future<void> initSettings() async {
+  await Settings.init(
+    cacheProvider: SharePreferenceCache(),
+  );
 }
 
 class MyApp extends StatelessWidget {

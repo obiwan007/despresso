@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
+import 'package:despresso/ui/screens/settings_screen.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
@@ -161,9 +162,11 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
             ListTile(
               title: const Text('Settings'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                bleService.startScan();
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AppSettingsScreen()),
+                );
                 // Then close the drawer
               },
             ),

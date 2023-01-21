@@ -29,6 +29,14 @@ Increment version code
 
 
 
+### internal
+
+```sh
+[bundle exec] fastlane internal
+```
+
+
+
 ----
 
 
