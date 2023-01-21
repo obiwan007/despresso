@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:despresso/model/services/state/profile_service.dart';
@@ -16,10 +15,10 @@ class ProfilesScreen extends StatefulWidget {
   const ProfilesScreen({Key? key}) : super(key: key);
 
   @override
-  _ProfilesScreenState createState() => _ProfilesScreenState();
+  ProfilesScreenState createState() => ProfilesScreenState();
 }
 
-class _ProfilesScreenState extends State<ProfilesScreen> {
+class ProfilesScreenState extends State<ProfilesScreen> {
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
@@ -53,7 +52,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
     var items = profileService.profiles
         .map((p) => DropdownMenuItem(
               value: p,
-              child: Text("${p.shotHeader.title}" + "${p.isDefault ? '' : ' *'}"),
+              child: Text("${p.shotHeader.title} ${p.isDefault ? '' : ' *'}"),
             ))
         .toList();
 
@@ -62,7 +61,7 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
         title: const Text('Profiles'),
         actions: <Widget>[
           ElevatedButton(
-            child: Text(
+            child: const Text(
               'Edit',
             ),
             onPressed: () {
@@ -102,12 +101,12 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
                           },
                           hint: const Text("Select item")),
                       createKeyValue("Notes", _selectedProfile!.shotHeader.notes),
-                      createKeyValue("Beverage", _selectedProfile!.shotHeader.beverage_type),
+                      createKeyValue("Beverage", _selectedProfile!.shotHeader.beverageType),
                       createKeyValue("Type", _selectedProfile!.shotHeader.type),
                       createKeyValue("Max Flow", _selectedProfile!.shotHeader.maximumFlow.toString()),
                       createKeyValue("Max Pressure", _selectedProfile!.shotHeader.minimumPressure.toString()),
-                      createKeyValue("Target Volume", _selectedProfile!.shotHeader.target_volume.toString()),
-                      createKeyValue("Target Weight", _selectedProfile!.shotHeader.target_weight.toString()),
+                      createKeyValue("Target Volume", _selectedProfile!.shotHeader.targetVolume.toString()),
+                      createKeyValue("Target Weight", _selectedProfile!.shotHeader.targetWeight.toString()),
                     ],
                   ),
                 ),

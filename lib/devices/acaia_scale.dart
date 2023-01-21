@@ -9,11 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class AcaiaScale extends ChangeNotifier {
+  // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('00001820-0000-1000-8000-00805f9b34fb');
+  // ignore: non_constant_identifier_names
   static Uuid CharateristicUUID = Uuid.parse('00002a80-0000-1000-8000-00805f9b34fb');
   late ScaleService scaleService;
 
-  static const _heartbeat_time = Duration(seconds: 3);
+  static const _heartbeatTime = Duration(seconds: 3);
   static const List<int> _heartbeatPayload = [0x02, 0x00];
   static const List<int> _identPayload = [
     0x30,
@@ -44,8 +46,8 @@ class AcaiaScale extends ChangeNotifier {
     4 // setting
   ];
 
-  static const int HEADER1 = 0xef;
-  static const int HEADER2 = 0xdd;
+  static const int header1 = 0xef;
+  static const int header2 = 0xdd;
 
   final DiscoveredDevice device;
 
@@ -85,8 +87,8 @@ class AcaiaScale extends ChangeNotifier {
     var cksum1 = 0;
     var cksum2 = 0;
     var buffer = <int>[];
-    buffer.add(HEADER1);
-    buffer.add(HEADER2);
+    buffer.add(header1);
+    buffer.add(header2);
     buffer.add(msgType);
 
     payload.asMap().forEach((index, value) => {
@@ -138,7 +140,7 @@ class AcaiaScale extends ChangeNotifier {
     commandBuffer.addAll(notification);
 
     // remove broken half commands
-    if (commandBuffer.length > 2 && (commandBuffer[0] != HEADER1 || commandBuffer[1] != HEADER2)) {
+    if (commandBuffer.length > 2 && (commandBuffer[0] != header1 || commandBuffer[1] != header2)) {
       commandBuffer.clear();
       return;
     }
@@ -243,10 +245,10 @@ class AcaiaScale extends ChangeNotifier {
         //     .monitorCharacteristic(ServiceUUID, CharateristicUUID)
         //     .listen(_notificationCallback);
 
-        Timer(Duration(seconds: 1), _sendIdent);
-        Timer(Duration(seconds: 2), _sendConfig);
+        Timer(const Duration(seconds: 1), _sendIdent);
+        Timer(const Duration(seconds: 2), _sendConfig);
 
-        _heartBeatTimer = Timer.periodic(_heartbeat_time, (Timer t) => _sendHeatbeat());
+        _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);

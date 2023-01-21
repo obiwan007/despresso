@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:despresso/devices/acaia_scale.dart';
-import 'package:reactive_ble_platform_interface/src/model/connection_state_update.dart';
 
 import '../../../service_locator.dart';
 import 'ble_service.dart';
@@ -75,13 +74,11 @@ class ScaleService {
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();
     var flow = 0.0;
-    if (last != null) {
-      var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
-      // log(timeDiff.toStringAsFixed(2));
-      var n = ((weight - _weight) / timeDiff);
-      flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
-      lastFlow = flow;
-    }
+    var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
+    // log(timeDiff.toStringAsFixed(2));
+    var n = ((weight - _weight) / timeDiff);
+    flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
+    lastFlow = flow;
 
     _controller.add(WeightMeassurement(weight, flow, _state));
     _weight = weight;

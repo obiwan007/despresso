@@ -3,10 +3,11 @@ import 'dart:developer';
 // import 'dart:html';
 // import 'dart:html';
 
+import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
-import 'package:flutter/material.dart';
+
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
@@ -45,11 +46,9 @@ class BLEService extends ChangeNotifier {
     notifyListeners();
 
     _subscription = flutterReactiveBle.scanForDevices(withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
-      //code for handling results
-      // print('Scanned Peripheral ${device.name}, RSSI ${device.rssi}');
       deviceScanListener(device);
     }, onError: (err) {
-      //code for handling error
+      // ignore: prefer_interpolation_to_compose_strings
       log('Scanner Error:' + err?.message?.message);
     });
 
@@ -66,7 +65,9 @@ class BLEService extends ChangeNotifier {
   }
 
   void deviceScanListener(DiscoveredDevice result) {
-    print('Scanned Peripheral ${result..name}, RSSI ${result.rssi}');
+    if (kDebugMode) {
+      print('Scanned Peripheral ${result..name}, RSSI ${result.rssi}');
+    }
     _addDeviceTolist(result);
   }
 
@@ -98,7 +99,9 @@ class BLEService extends ChangeNotifier {
 
         notifyListeners();
       } else {
-        print('Ignoring existing device: ${device.name}');
+        if (kDebugMode) {
+          print('Ignoring existing device: ${device.name}');
+        }
       }
     }
   }

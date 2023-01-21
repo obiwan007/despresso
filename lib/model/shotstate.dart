@@ -1,12 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:despresso/model/coffee.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'dart:developer';
-
-import 'package:path_provider/path_provider.dart';
 
 /// This allows the `User` class to access private members in
 /// the generated file. The value for this is *.g.dart, where

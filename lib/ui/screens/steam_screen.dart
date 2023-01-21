@@ -1,8 +1,6 @@
-import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
@@ -13,17 +11,13 @@ class SteamScreen extends StatefulWidget {
   const SteamScreen({super.key});
 
   @override
-  _SteamScreenState createState() => _SteamScreenState();
+  SteamScreenState createState() => SteamScreenState();
 }
 
-class _SteamScreenState extends State<SteamScreen> {
+class SteamScreenState extends State<SteamScreen> {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
 
-  double _currentTemperature = 60;
-  double _currentAmount = 100;
-  double _currentSteamAutoOff = 45;
-  double _currentFlushAutoOff = 15;
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
 
@@ -46,27 +40,6 @@ class _SteamScreenState extends State<SteamScreen> {
   machineStateListener() {
     setState(() => {currentState = machineService.state.coffeeState});
     // machineService.de1?.setIdleState();
-  }
-
-  List<charts.Series<ShotState, double>> _createData() {
-    return [
-      charts.Series<ShotState, double>(
-        id: 'Pressure',
-        domainFn: (ShotState point, _) => point.sampleTime,
-        measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.backgroundColor),
-        strokeWidthPxFn: (_, __) => 3,
-        data: dataPoints,
-      ),
-      charts.Series<ShotState, double>(
-        id: 'Flow',
-        domainFn: (ShotState point, _) => point.sampleTime,
-        measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor),
-        strokeWidthPxFn: (_, __) => 3,
-        data: dataPoints,
-      ),
-    ];
   }
 
   Widget _buildControls() {
@@ -114,7 +87,7 @@ class _SteamScreenState extends State<SteamScreen> {
                           children: <Widget>[
                             if (machineService.state.coffeeState == EspressoMachineState.steam) ...[
                               Center(
-                                child: Container(
+                                child: SizedBox(
                                   width: 200,
                                   height: 200,
                                   child: CircularProgressIndicator(
@@ -171,7 +144,7 @@ class _SteamScreenState extends State<SteamScreen> {
                           children: <Widget>[
                             if (machineService.state.coffeeState == EspressoMachineState.steam) ...[
                               Center(
-                                child: Container(
+                                child: SizedBox(
                                   width: 200,
                                   height: 200,
                                   child: CircularProgressIndicator(
@@ -199,8 +172,8 @@ class _SteamScreenState extends State<SteamScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const StartStopButton(),
+            children: const [
+              StartStopButton(),
             ],
           ),
         ),

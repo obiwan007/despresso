@@ -1,19 +1,17 @@
-import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 
 import '../../model/shotstate.dart';
-import '../widgets/start_stop_button.dart';
 
 class RecipeScreen extends StatefulWidget {
+  const RecipeScreen({super.key});
+
   @override
   RecipeScreenState createState() => RecipeScreenState();
 }
@@ -24,10 +22,6 @@ class RecipeScreenState extends State<RecipeScreen> {
   late CoffeeService coffeeService;
   late ScaleService scaleService;
 
-  double _currentTemperature = 60;
-  double _currentAmount = 100;
-  double _currentSteamAutoOff = 45;
-  double _currentFlushAutoOff = 15;
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
 
@@ -57,8 +51,6 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 
   Widget _buildControls() {
-    var settings = machineService.settings;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,7 +61,7 @@ class RecipeScreenState extends State<RecipeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Text("Current Shot Recipe"),
+                const Text("Current Shot Recipe"),
                 Expanded(
                   flex: 1,
                   child: Column(
@@ -85,7 +77,7 @@ class RecipeScreenState extends State<RecipeScreen> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(child: Text("Selected Base Profile")),
+                                    const Expanded(child: Text("Selected Base Profile")),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +92,7 @@ class RecipeScreenState extends State<RecipeScreen> {
                                             child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
                                           ),
                                           Text(
-                                              "Stop weight: ${profileService.currentProfile?.shotHeader.target_weight.toStringAsFixed(1)} g")
+                                              "Stop weight: ${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g")
                                         ],
                                       ),
                                     ),
@@ -117,11 +109,11 @@ class RecipeScreenState extends State<RecipeScreen> {
                                 //     ),
                                 //   ],
                                 // ),
-                                Divider(),
+                                const Divider(),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(child: Text("Selected Bean")),
+                                    const Expanded(child: Text("Selected Bean")),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +122,7 @@ class RecipeScreenState extends State<RecipeScreen> {
                                             onPressed: () {
                                               Navigator.push(
                                                 context,
-                                                MaterialPageRoute(builder: (context) => CoffeeSelectionTab()),
+                                                MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
                                               );
                                             },
                                             child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
@@ -143,7 +135,7 @@ class RecipeScreenState extends State<RecipeScreen> {
                                     ),
                                   ],
                                 ),
-                                Divider(),
+                                const Divider(),
                               ]),
                         ),
                       )
@@ -166,17 +158,17 @@ class RecipeScreenState extends State<RecipeScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Details"),
+                    const Text("Details"),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(flex: 6, child: Text("Graph")),
+                        const Expanded(flex: 6, child: Text("Graph")),
                         Expanded(
                             flex: 4,
                             child: Column(
                               children: [
-                                Text("Description"),
+                                const Text("Description"),
                                 Text(profileService.currentProfile?.shotHeader.notes ?? ""),
                                 Text(coffeeService.currentCoffee?.description ?? ""),
                               ],

@@ -1,8 +1,6 @@
-import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
@@ -10,18 +8,16 @@ import '../../model/shotstate.dart';
 import '../widgets/start_stop_button.dart';
 
 class WaterScreen extends StatefulWidget {
+  const WaterScreen({super.key});
+
   @override
-  _WaterScreenState createState() => _WaterScreenState();
+  WaterScreenState createState() => WaterScreenState();
 }
 
-class _WaterScreenState extends State<WaterScreen> {
+class WaterScreenState extends State<WaterScreen> {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
 
-  double _currentTemperature = 60;
-  double _currentAmount = 100;
-  double _currentSteamAutoOff = 45;
-  double _currentFlushAutoOff = 15;
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
 
@@ -89,7 +85,7 @@ class _WaterScreenState extends State<WaterScreen> {
                         children: <Widget>[
                           if (machineService.state.coffeeState == EspressoMachineState.water) ...[
                             Center(
-                              child: Container(
+                              child: SizedBox(
                                 width: 200,
                                 height: 200,
                                 child: CircularProgressIndicator(
@@ -143,7 +139,7 @@ class _WaterScreenState extends State<WaterScreen> {
                           children: <Widget>[
                             if (machineService.state.coffeeState == EspressoMachineState.water) ...[
                               Center(
-                                child: Container(
+                                child: SizedBox(
                                   width: 200,
                                   height: 200,
                                   child: CircularProgressIndicator(
@@ -200,7 +196,7 @@ class _WaterScreenState extends State<WaterScreen> {
                           children: <Widget>[
                             if (machineService.state.coffeeState == EspressoMachineState.water) ...[
                               Center(
-                                child: Container(
+                                child: SizedBox(
                                   width: 200,
                                   height: 200,
                                   child: CircularProgressIndicator(
@@ -226,8 +222,8 @@ class _WaterScreenState extends State<WaterScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const StartStopButton(),
+            children: const [
+              StartStopButton(),
             ],
           ),
         ),

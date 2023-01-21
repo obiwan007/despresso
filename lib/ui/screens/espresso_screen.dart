@@ -146,7 +146,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   void triggerEndOfShot() {
     log("Idle mode initiated because of weight", error: {DateTime.now()});
 
-    machineService.de1?.requestState(De1StateEnum.Idle);
+    machineService.de1?.requestState(De1StateEnum.idle);
     // Future.delayed(const Duration(milliseconds: 5000), () {
     //   log("Idle mode initiated finished", error: {DateTime.now()});
     //   stopTriggered = false;
@@ -413,7 +413,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   }
 
   Widget _buildGraphFlow(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
-    double maxWeight = (profileService.currentProfile?.shotHeader.target_weight ?? 200.0) * 1.5;
+    double maxWeight = (profileService.currentProfile?.shotHeader.targetWeight ?? 200.0) * 1.5;
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
 
     var flowChart = charts.LineChart(
@@ -490,7 +490,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
               coffeeSelectionService.selectedCoffee > 0
                   ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""
                   : "No Beans"),
-          createKeyValue("Target", '${profileService.currentProfile?.shotHeader.target_weight} g'),
+          createKeyValue("Target", '${profileService.currentProfile?.shotHeader.targetWeight} g'),
           const Divider(
             height: 20,
             thickness: 5,
@@ -557,7 +557,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
                 createKeyValue(
                     "",
                     profileService.currentProfile != null
-                        ? '${profileService.currentProfile!.shotHeader.target_weight} g'
+                        ? '${profileService.currentProfile!.shotHeader.targetWeight} g'
                         : '_'),
                 createKeyValue("Flow", '${snapshot.data!.flow.toStringAsFixed(1)} g/s'),
               ],

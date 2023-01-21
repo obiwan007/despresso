@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -8,32 +7,26 @@ import 'package:despresso/ui/screens/coffee_edit.dart';
 import 'package:despresso/ui/screens/roaster_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
-import 'package:reactive_forms/reactive_forms.dart';
-
-import '../../model/coffee.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeSelection {
   Widget getTabContent() {
-    return CoffeeSelectionTab();
+    return const CoffeeSelectionTab();
   }
 }
 
 class CoffeeSelectionTab extends StatefulWidget {
+  const CoffeeSelectionTab({super.key});
+
   @override
-  _CoffeeSelectionTabState createState() => _CoffeeSelectionTabState();
+  CoffeeSelectionTabState createState() => CoffeeSelectionTabState();
 }
 
 enum EditModes { show, add, edit }
 
-class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
-  final _formKeyRoaster = GlobalKey<FormState>();
-  final TextEditingController _typeAheadRoasterController = TextEditingController();
-  final TextEditingController _typeAheadCoffeeController = TextEditingController();
-
+class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   Roaster newRoaster = Roaster();
   Coffee newCoffee = Coffee();
   int _selectedRoasterId = 0;
@@ -43,16 +36,13 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;
 
-  EditModes _editRosterMode = EditModes.show;
-  EditModes _editCoffeeMode = EditModes.show;
+  final EditModes _editRosterMode = EditModes.show;
+  final EditModes _editCoffeeMode = EditModes.show;
 
   List<DropdownMenuItem<int>> roasters = [];
   List<DropdownMenuItem<int>> coffees = [];
 
-  Roaster _editedRoaster = Roaster();
-  Coffee _editedCoffee = Coffee();
-
-  _CoffeeSelectionTabState() {
+  CoffeeSelectionTabState() {
     newRoaster.name = "<new roaster>";
     newRoaster.id = 0;
     _selectedRoasterId = 0;
@@ -98,7 +88,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
             children: <Widget>[
               Row(
                 children: [
-                  Expanded(flex: 2, child: const Text("Select Roaster", style: theme.TextStyles.h1)),
+                  const Expanded(flex: 2, child: Text("Select Roaster", style: theme.TextStyles.h1)),
                   Expanded(
                     flex: 8,
                     child: DropdownButton(
@@ -108,7 +98,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                       items: roasters,
                       onChanged: (value) async {
                         _selectedRoasterId = value!;
-                        if (value! == 0) {
+                        if (value == 0) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => RoasterEdit(0)),
@@ -123,10 +113,10 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                 ],
               ),
               if (_selectedRoasterId > 0) roasterData(),
-              Divider(),
+              const Divider(),
               Row(
                 children: [
-                  Expanded(flex: 2, child: const Text("Select Coffee", style: theme.TextStyles.h1)),
+                  const Expanded(flex: 2, child: Text("Select Coffee", style: theme.TextStyles.h1)),
                   Expanded(
                     flex: 8,
                     child: DropdownButton(
@@ -137,7 +127,7 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                       onChanged: (value) {
                         setState(() {
                           _selectedCoffeeId = value!;
-                          if (value! == 0) {
+                          if (value == 0) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => CoffeeEdit(0)),
@@ -165,10 +155,10 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         .getAll()
         .map((p) => DropdownMenuItem(
               value: p.id,
-              child: Text("${p.name}"),
+              child: Text(p.name),
             ))
         .toList();
-    roasters.insert(0, DropdownMenuItem(value: 0, child: Text("${newRoaster.name}")));
+    roasters.insert(0, DropdownMenuItem(value: 0, child: Text(newRoaster.name)));
     return roasters;
   }
 
@@ -177,10 +167,10 @@ class _CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         .getAll()
         .map((p) => DropdownMenuItem(
               value: p.id,
-              child: Text("${p.name}"),
+              child: Text(p.name),
             ))
         .toList();
-    coffees.insert(0, DropdownMenuItem(value: 0, child: Text("${newCoffee.name}")));
+    coffees.insert(0, DropdownMenuItem(value: 0, child: Text(newCoffee.name)));
     return coffees;
   }
 

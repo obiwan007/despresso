@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:despresso/model/services/state/profile_service.dart';
@@ -15,29 +14,29 @@ import '../../service_locator.dart';
 class ProfilesEditScreen extends StatefulWidget {
   De1ShotProfile profile;
 
-  ProfilesEditScreen(De1ShotProfile this.profile, {Key? key}) : super(key: key);
+  ProfilesEditScreen(this.profile, {Key? key}) : super(key: key);
 
   @override
-  _ProfilesEditScreenState createState() {
-    return _ProfilesEditScreenState(profile);
+  ProfilesEditScreenState createState() {
+    return ProfilesEditScreenState(profile);
   }
 }
 
-class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
+class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
 
   Iterable<RangeAnnotationSegment<double>> phases = [];
 
-  De1ShotProfile _profile;
+  final De1ShotProfile _profile;
 
   De1ShotFrameClass? preInfusion;
   De1ShotFrameClass? forcedRise;
   De1ShotFrameClass? riseAndHold;
   De1ShotFrameClass? decline;
 
-  _ProfilesEditScreenState(De1ShotProfile this._profile);
+  ProfilesEditScreenState(this._profile);
 
   @override
   void initState() {
@@ -48,7 +47,9 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
     profileService.addListener(profileListener);
 
-    _profile.shotFrames.forEach((element) => log("Profile: $element"));
+    for (var element in _profile.shotFrames) {
+      log("Profile: $element");
+    }
 
     calcProfileGraph();
     phases = _createPhases();
@@ -81,12 +82,12 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var items = profileService.profiles
-        .map((p) => DropdownMenuItem(
-              value: p,
-              child: Text(p.shotHeader.title),
-            ))
-        .toList();
+    // var items = profileService.profiles
+    //     .map((p) => DropdownMenuItem(
+    //           value: p,
+    //           child: Text(p.shotHeader.title),
+    //         ))
+    //     .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -152,7 +153,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Text("Preinfuse"),
+          const Text("Preinfuse"),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -187,7 +188,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         padding: const EdgeInsets.only(top: 28.0),
                         child: Column(
                           children: [
-                            Text("Max. Flow"),
+                            const Text("Max. Flow"),
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
@@ -340,7 +341,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Text("Decline"),
+          const Text("Decline"),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -375,11 +376,11 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         padding: const EdgeInsets.only(top: 28.0),
                         child: Column(
                           children: [
-                            Text("Stop at weight (${_profile.shotHeader.target_weight.round()} g)"),
+                            Text("Stop at weight (${_profile.shotHeader.targetWeight.round()} g)"),
                             SfSlider(
                               min: 0.0,
                               max: 100.0,
-                              value: _profile.shotHeader.target_weight,
+                              value: _profile.shotHeader.targetWeight,
                               interval: 20,
                               showTicks: false,
                               showLabels: true,
@@ -387,7 +388,7 @@ class _ProfilesEditScreenState extends State<ProfilesEditScreen> {
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
                                 setState(() {
-                                  _profile.shotHeader.target_weight = value;
+                                  _profile.shotHeader.targetWeight = value;
                                 });
                               },
                             ),

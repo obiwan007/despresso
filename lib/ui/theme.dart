@@ -22,14 +22,14 @@ class Colors {
   static const Color weightColor = Color.fromARGB(255, 131, 109, 105);
 
   static const Color backgroundColor = Color.fromARGB(255, 44, 44, 44); //material.Colors.white10; //0xFFFF4580
-  static final Color graphBackground2 = Color.fromARGB(255, 44, 44, 44);
-  static final Color graphBackground =
+  static const Color graphBackground2 = Color.fromARGB(255, 44, 44, 44);
+  static const Color graphBackground =
       material.Colors.white12; // HSLColor.fromColor(backgroundColor).withLightness(0.1).toColor();
   static const Color tabImageBorder = Color(0xFFFFFFFF); // 0xFFFFD2CF
   static final Color tabImageShadowColor = HSLColor.fromColor(backgroundColor).withLightness(0.7).toColor();
   static final Color tabShadowColor = HSLColor.fromColor(backgroundColor).withLightness(1).toColor();
 
-  static final Color tabColor =
+  static const Color tabColor =
       material.Colors.red; // HSVColor.fromColor(backgroundColor).withValue(_value - .05).toColor();
 
   static final _value = HSVColor.fromColor(backgroundColor).value;
@@ -45,7 +45,7 @@ class Colors {
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    stops: [0.0, 0.15, 0.4, 1.0],
+    stops: const [0.0, 0.15, 0.4, 1.0],
     tileMode: TileMode.clamp,
   );
 }

@@ -1,30 +1,27 @@
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../model/coffee.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeEdit extends StatefulWidget {
-  CoffeeEdit(int this.selectedCoffeeId);
+  CoffeeEdit(this.selectedCoffeeId, {super.key});
   int selectedCoffeeId;
 
   @override
-  _CoffeeEditState createState() => _CoffeeEditState(selectedCoffeeId);
+  CoffeeEditState createState() => CoffeeEditState(selectedCoffeeId);
 }
 
 enum EditModes { show, add, edit }
 
-class _CoffeeEditState extends State<CoffeeEdit> {
+class CoffeeEditState extends State<CoffeeEdit> {
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;
 
@@ -47,7 +44,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
 
   late FormGroup theForm;
 
-  _CoffeeEditState(this.selectedCoffeeId);
+  CoffeeEditState(this.selectedCoffeeId);
 
   @override
   void initState() {
@@ -91,7 +88,7 @@ class _CoffeeEditState extends State<CoffeeEdit> {
         title: const Text('Edit Coffee Beans'),
         actions: <Widget>[
           ElevatedButton(
-            child: Text(
+            child: const Text(
               'Save',
             ),
             onPressed: () {

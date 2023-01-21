@@ -7,7 +7,6 @@ import 'package:despresso/model/settings.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
-import 'package:objectbox/src/native/box.dart';
 import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../service_locator.dart';
@@ -186,7 +185,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     try {
       log("Write Header: $header");
-      await de1!.writeWithResult(Endpoint.HeaderWrite, header.bytes);
+      await de1!.writeWithResult(Endpoint.headerWrite, header.bytes);
     } catch (ex) {
       log("Save profile $profile");
       return "Error writing profile header $ex";
@@ -195,7 +194,7 @@ class EspressoMachineService extends ChangeNotifier {
     for (var fr in profile.shotFrames) {
       try {
         log("Write Frame: $fr");
-        await de1!.writeWithResult(Endpoint.FrameWrite, fr.bytes);
+        await de1!.writeWithResult(Endpoint.frameWrite, fr.bytes);
       } catch (ex) {
         return "Error writing shot frame $fr";
       }
@@ -204,7 +203,7 @@ class EspressoMachineService extends ChangeNotifier {
     for (var exFrame in profile.shotExframes) {
       try {
         log("Write ExtFrame: $exFrame");
-        await de1!.writeWithResult(Endpoint.FrameWrite, exFrame.bytes);
+        await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
       } catch (ex) {
         return "Error writing ex shot frame $exFrame";
       }
@@ -216,7 +215,7 @@ class EspressoMachineService extends ChangeNotifier {
 
       try {
         log("Write Tail: $tailBytes");
-        await de1!.writeWithResult(Endpoint.FrameWrite, tailBytes);
+        await de1!.writeWithResult(Endpoint.frameWrite, tailBytes);
       } catch (ex) {
         return "Error writing shot frame tail $tailBytes";
       }
@@ -229,7 +228,7 @@ class EspressoMachineService extends ChangeNotifier {
 
       try {
         log("Write Shot Settings: $bytes");
-        await de1!.writeWithResult(Endpoint.ShotSettings, bytes);
+        await de1!.writeWithResult(Endpoint.shotSettings, bytes);
       } catch (ex) {
         return "Error writing shot settings $bytes";
       }
@@ -326,9 +325,9 @@ class EspressoMachineService extends ChangeNotifier {
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
           if (scaleService.state == ScaleState.connected) {
-            if (profileService.currentProfile!.shotHeader.target_weight > 1 &&
-                shot.weight + 1 > profileService.currentProfile!.shotHeader.target_weight) {
-              log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.target_weight}");
+            if (profileService.currentProfile!.shotHeader.targetWeight > 1 &&
+                shot.weight + 1 > profileService.currentProfile!.shotHeader.targetWeight) {
+              log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
               triggerEndOfShot();
             }
@@ -337,7 +336,7 @@ class EspressoMachineService extends ChangeNotifier {
         case EspressoMachineState.water:
           if (scaleService.state == ScaleState.connected) {
             if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
-              log("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.target_weight}");
+              log("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
               triggerEndOfShot();
             }
@@ -392,7 +391,7 @@ class EspressoMachineService extends ChangeNotifier {
   void triggerEndOfShot() {
     log("Idle mode initiated because of weight", error: {DateTime.now()});
 
-    de1?.requestState(De1StateEnum.Idle);
+    de1?.requestState(De1StateEnum.idle);
     // Future.delayed(const Duration(milliseconds: 5000), () {
     //   log("Idle mode initiated finished", error: {DateTime.now()});
     //   stopTriggered = false;
@@ -431,7 +430,7 @@ class EspressoMachineService extends ChangeNotifier {
     var bytes = Settings.encodeDe1OtherSetn(settings);
     try {
       log("Write Shot Settings: $bytes");
-      await de1!.writeWithResult(Endpoint.ShotSettings, bytes);
+      await de1!.writeWithResult(Endpoint.shotSettings, bytes);
     } catch (ex) {
       log("Error writing shot settings $bytes");
     }

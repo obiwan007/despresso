@@ -74,13 +74,13 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   String legacyProfileType = "";
 
-  double target_weight = 0;
+  double targetWeight = 0;
 
-  double target_volume = 0;
+  double targetVolume = 0;
 
-  double target_volume_count_start = 0;
+  double targetVolumeCountStart = 0;
 
-  double tank_temperature = 0;
+  double tankTemperature = 0;
 
   String title = "";
 
@@ -88,7 +88,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   String notes = "";
 
-  String beverage_type = "";
+  String beverageType = "";
 
   double targetGroupTemp = 0.0; // to compare bytes
 
@@ -116,7 +116,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   De1ShotHeaderClass clone() {
     var copy = De1ShotHeaderClass();
     copy.author = author;
-    copy.beverage_type = beverage_type;
+    copy.beverageType = beverageType;
     copy.bytes = Uint8List.fromList(bytes);
     copy.headerV = headerV;
     copy.hidden = hidden;
@@ -127,11 +127,11 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     copy.notes = notes;
     copy.numberOfFrames = numberOfFrames;
     copy.numberOfPreinfuseFrames = numberOfPreinfuseFrames;
-    copy.tank_temperature = tank_temperature;
+    copy.tankTemperature = tankTemperature;
     copy.targetGroupTemp = targetGroupTemp;
-    copy.target_volume = target_volume;
-    copy.target_volume_count_start = target_volume_count_start;
-    copy.target_weight = target_weight;
+    copy.targetVolume = targetVolume;
+    copy.targetVolumeCountStart = targetVolumeCountStart;
+    copy.targetWeight = targetWeight;
     copy.title = title;
     copy.type = type;
 
@@ -160,13 +160,13 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
       if (checkEncoding) {
         var array = data.buffer.asUint8List();
-        var new_bytes = encodeDe1ShotHeader(shotHeader);
-        if (new_bytes.buffer.lengthInBytes != data.buffer.lengthInBytes) {
+        var newBytes = encodeDe1ShotHeader(shotHeader);
+        if (newBytes.buffer.lengthInBytes != data.buffer.lengthInBytes) {
           return false;
         }
-        for (int i = 0; i < new_bytes.buffer.lengthInBytes; i++) {
-          if (new_bytes[i] != array[i]) {
-            log("Error in decoding header:${new_bytes[i]} != ${array[i]}");
+        for (int i = 0; i < newBytes.buffer.lengthInBytes; i++) {
+          if (newBytes[i] != array[i]) {
+            log("Error in decoding header:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }
@@ -278,32 +278,32 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
-  static bool DecodeDe1ShotFrame(ByteData data, De1ShotFrameClass shot_frame, bool check_encoding) {
+  static bool decodeDe1ShotFrame(ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
     if (data.buffer.lengthInBytes != 8) return false;
     log('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
     try {
       int index = 0;
-      shot_frame.frameToWrite = data.getUint8(index++);
+      shotFrame.frameToWrite = data.getUint8(index++);
 
-      shot_frame.flag = data.getUint8(index++);
-      shot_frame.setVal = data.getUint8(index++) / 16.0;
-      shot_frame.temp = data.getUint8(index++) / 2.0;
-      shot_frame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
-      shot_frame.triggerVal = data.getUint8(index++) / 16.0;
-      shot_frame.maxVol = Helper.convert_bottom_10_of_U10P0(
+      shotFrame.flag = data.getUint8(index++);
+      shotFrame.setVal = data.getUint8(index++) / 16.0;
+      shotFrame.temp = data.getUint8(index++) / 2.0;
+      shotFrame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
+      shotFrame.triggerVal = data.getUint8(index++) / 16.0;
+      shotFrame.maxVol = Helper.convert_bottom_10_of_U10P0(
           256 * data.getUint8(index++) + data.getUint8(index++)); // convert_bottom_10_of_U10P0
 
-      if (check_encoding) {
+      if (checkEncoding) {
         var array = data.buffer.asUint8List();
-        var new_bytes = EncodeDe1ShotFrame(shot_frame);
-        if (new_bytes.length != array.buffer.lengthInBytes) {
+        var newBytes = encodeDe1ShotFrame(shotFrame);
+        if (newBytes.length != array.buffer.lengthInBytes) {
           log("Error in decoding frame Length not matching");
           return false;
         }
 
-        for (int i = 0; i < new_bytes.length; i++) {
-          if (new_bytes[i] != array[i]) {
-            log("Error in decoding frame:${new_bytes[i]} != ${array[i]}");
+        for (int i = 0; i < newBytes.length; i++) {
+          if (newBytes[i] != array[i]) {
+            log("Error in decoding frame:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }
@@ -316,36 +316,43 @@ class De1ShotFrameClass // proc spec_shotframe
     }
   }
 
-  static Uint8List EncodeDe1ShotFrame(De1ShotFrameClass shot_frame) {
+  static Uint8List encodeDe1ShotFrame(De1ShotFrameClass shotFrame) {
     Uint8List data = Uint8List(8);
 
     int index = 0;
-    data[index] = shot_frame.frameToWrite;
+    data[index] = shotFrame.frameToWrite;
     index++;
-    data[index] = shot_frame.flag;
+    data[index] = shotFrame.flag;
     index++;
-    data[index] = (0.5 + shot_frame.setVal * 16.0).toInt();
+    data[index] = (0.5 + shotFrame.setVal * 16.0).toInt();
     index++; // note to add 0.5, as "round" is used, not truncate
-    data[index] = (0.5 + shot_frame.temp * 2.0).toInt();
+    data[index] = (0.5 + shotFrame.temp * 2.0).toInt();
     index++;
-    data[index] = Helper.convert_float_to_F8_1_7(shot_frame.frameLen);
+    data[index] = Helper.convert_float_to_F8_1_7(shotFrame.frameLen);
     log("FrameLen ${data[index].toRadixString(16)}");
     index++;
-    data[index] = (0.5 + shot_frame.triggerVal * 16.0).toInt();
+    data[index] = (0.5 + shotFrame.triggerVal * 16.0).toInt();
     index++;
-    Helper.convert_float_to_U10P0(shot_frame.maxVol, data, index);
-    log('EncodeDe1ShotFrame:$shot_frame ${Helper.toHex(data)}');
+    Helper.convert_float_to_U10P0(shotFrame.maxVol, data, index);
+    log('EncodeDe1ShotFrame:$shotFrame ${Helper.toHex(data)}');
     return data;
   }
 
   @override
   String toString() {
+    // ignore: constant_identifier_names
     const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
+    // ignore: constant_identifier_names
     const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+    // ignore: constant_identifier_names
     const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+    // ignore: constant_identifier_names
     const int DC_CompF = 0x08; // Compare Pressure or Flow?
+    // ignore: constant_identifier_names
     const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
-    const int Interpolate = 0x20; // Hard jump to target value, or ramp?
+    // ignore: constant_identifier_names
+// Hard jump to target value, or ramp?
+    // ignore: constant_identifier_names
     const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
     var flagStr = "";
@@ -354,14 +361,14 @@ class De1ShotFrameClass // proc spec_shotframe
     if ((flag & DC_GT) > 0) flagStr += " DC_GT";
     if ((flag & DC_CompF) > 0) flagStr += " DC_CompF";
     if ((flag & TMixTemp) > 0) flagStr += " TMixTemp";
-    if ((flag & Interpolate) > 0) flagStr += " Interpolate";
+    if ((flag & 0x20) > 0) flagStr += " Interpolate";
     if ((flag & IgnoreLimit) > 0) flagStr += " IgnoreLimit";
 
     // StringBuilder sb = new StringBuilder();
     var sb = "";
-    bytes.forEach((b) {
+    for (var b in bytes) {
       sb += "${b.toRadixString(16)}-";
-    });
+    }
     return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
   }
 }
@@ -405,17 +412,17 @@ class De1ShotExtFrameClass // extended frames
     return true;
   }
 
-  static Uint8List EncodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
-    return EncodeDe1ExtentionFrame2(exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
+  static Uint8List encodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
+    return encodeDe1ExtentionFrame2(exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
   }
 
-  static Uint8List EncodeDe1ExtentionFrame2(int frameToWrite, double limit_value, double limit_range) {
+  static Uint8List encodeDe1ExtentionFrame2(int frameToWrite, double limitValue, double limitRange) {
     Uint8List data = Uint8List(8);
 
     data[0] = frameToWrite;
 
-    data[1] = (0.5 + limit_value * 16.0).toInt();
-    data[2] = (0.5 + limit_range * 16.0).toInt();
+    data[1] = (0.5 + limitValue * 16.0).toInt();
+    data[2] = (0.5 + limitRange * 16.0).toInt();
 
     data[3] = 0;
     data[4] = 0;
@@ -429,9 +436,9 @@ class De1ShotExtFrameClass // extended frames
   @override
   String toString() {
     var sb = "";
-    bytes.forEach((b) {
+    for (var b in bytes) {
       sb += "${b.toRadixString(16)}-";
-    });
+    }
 
     return "Frame:$frameToWrite Limiter:$limiterValue LimiterRange:$limiterRange   $sb";
   }
@@ -440,12 +447,13 @@ class De1ShotExtFrameClass // extended frames
 class Helper {
   static String toHex(Uint8List data) {
     var sb = "";
-    data.forEach((b) {
+    for (var b in data) {
       sb += "${b.toRadixString(16)}-";
-    });
+    }
     return sb;
   }
 
+  // ignore: non_constant_identifier_names
   static double convert_F8_1_7_to_float(int x) {
     if ((x & 128) == 0) {
       return x / 10.0;
@@ -454,34 +462,40 @@ class Helper {
     }
   }
 
+  // ignore: non_constant_identifier_names
   static int convert_float_to_F8_1_7(double x) {
     var ret = 0;
     if (x >= 12.75) // need to set the high bit on (0x80);
     {
-      if (x > 127)
+      if (x > 127) {
         ret = (127 | 0x80);
-      else
+      } else {
         ret = (0x80 | (0.5 + x).toInt());
+      }
     } else {
       ret = (0.5 + x * 10).toInt();
     }
     return ret;
   }
 
+  // ignore: non_constant_identifier_names
   static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
     int ix = x.toInt();
 
-    if (ix > 255) // lets make life esier and limit x to 255
+    if (ix > 255) {
       ix = 255;
+    }
 
     data[index] = 0x4; // take PI into account
     data[index + 1] = ix;
   }
 
+  // ignore: non_constant_identifier_names
   static double convert_bottom_10_of_U10P0(int x) {
     return (x & 1023).toDouble();
   }
 
+  // ignore: non_constant_identifier_names
   static convert_float_to_U10P0(double x, Uint8List data, int index) {
     Uint8List d = Uint8List(2);
 

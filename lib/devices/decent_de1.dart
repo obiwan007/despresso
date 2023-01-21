@@ -1,86 +1,86 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import '../model/shotstate.dart';
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 enum Endpoint {
-  Versions,
-  RequestedState,
-  SetTime,
-  ShotDirectory,
-  ReadFromMMR,
-  WriteToMMR,
-  ShotMapRequest,
-  DeleteShotRange,
-  FWMapRequest,
-  Temperatures,
-  ShotSettings,
-  DeprecatedShotDesc,
-  ShotSample,
-  StateInfo,
-  HeaderWrite,
-  FrameWrite,
-  WaterLevels,
-  Calibration
+  versions,
+  requestedState,
+  setTime,
+  shotDirectory,
+  readFromMMR,
+  writeToMMR,
+  shotMapRequest,
+  deleteShotRange,
+  fwMapRequest,
+  temperatures,
+  shotSettings,
+  deprecatedShotDesc,
+  shotSample,
+  stateInfo,
+  headerWrite,
+  frameWrite,
+  waterLevels,
+  calibration
 }
 
 enum De1StateEnum {
-  Sleep, // 0x0  Everything is off
-  GoingToSleep, // 0x1
-  Idle, // 0x2  Heaters are controlled, tank water will be heated if required.
-  Busy, // 0x3  Firmware is doing something you can't interrupt (eg. cooling down water heater after a shot, calibrating sensors on startup).
-  Espresso, // 0x4  Making espresso
-  Steam, // 0x5  Making steam
-  HotWater, // 0x6  Making hot water
-  ShortCal, // 0x7  Running a short calibration
-  SelfTest, // 0x8  Checking as much as possible within the firmware. Probably only used during manufacture or repair.
-  LongCal, // 0x9  Long and involved calibration, possibly involving user interaction. (See substates below, for cases like that).
-  Descale, // 0xA  Descale the whole bang-tooty
-  FatalError, // 0xB  Something has gone horribly wrong
-  Init, // 0xC  Machine has not been run yet
-  NoRequest, // 0xD  State for T_RequestedState. Means nothing is specifically requested
-  SkipToNext, // 0xE  In Espresso, skip to next frame. Others, go to Idle if possible
-  HotWaterRinse, // 0xF  Produce hot water at whatever temperature is available
-  SteamRinse, // 0x10 Produce a blast of steam
-  Refill, // 0x11 Attempting, or needs, a refill.
-  Clean, // 0x12 Clean group head
-  InBootLoader, // 0x13 The main firmware has not run for some reason. Bootloader is active.
-  AirPurge, // 0x14 Air purge.
-  SchedIdle, // 0x15 Scheduled wake up idle state
-  Unknown
+  sleep, // 0x0  Everything is off
+  goingToSleep, // 0x1
+  idle, // 0x2  Heaters are controlled, tank water will be heated if required.
+  busy, // 0x3  Firmware is doing something you can't interrupt (eg. cooling down water heater after a shot, calibrating sensors on startup).
+  espresso, // 0x4  Making espresso
+  steam, // 0x5  Making steam
+  hotWater, // 0x6  Making hot water
+  shortCal, // 0x7  Running a short calibration
+  selfTest, // 0x8  Checking as much as possible within the firmware. Probably only used during manufacture or repair.
+  longCal, // 0x9  Long and involved calibration, possibly involving user interaction. (See substates below, for cases like that).
+  descale, // 0xA  Descale the whole bang-tooty
+  fatalError, // 0xB  Something has gone horribly wrong
+  init, // 0xC  Machine has not been run yet
+  noRequest, // 0xD  State for T_RequestedState. Means nothing is specifically requested
+  skipToNext, // 0xE  In Espresso, skip to next frame. Others, go to Idle if possible
+  hotWaterRinse, // 0xF  Produce hot water at whatever temperature is available
+  steamRinse, // 0x10 Produce a blast of steam
+  refill, // 0x11 Attempting, or needs, a refill.
+  clean, // 0x12 Clean group head
+  inBootLoader, // 0x13 The main firmware has not run for some reason. Bootloader is active.
+  airPurge, // 0x14 Air purge.
+  schedIdle, // 0x15 Scheduled wake up idle state
+  unknown
 }
 
 class DE1 extends ChangeNotifier {
+  // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
 
   static var cuuids = {
-    '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.Versions,
-    '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.RequestedState,
-    '0000A003-0000-1000-8000-00805F9B34FB': Endpoint.SetTime,
-    '0000A004-0000-1000-8000-00805F9B34FB': Endpoint.ShotDirectory,
-    '0000A005-0000-1000-8000-00805F9B34FB': Endpoint.ReadFromMMR,
-    '0000A006-0000-1000-8000-00805F9B34FB': Endpoint.WriteToMMR,
-    '0000A007-0000-1000-8000-00805F9B34FB': Endpoint.ShotMapRequest,
-    '0000A008-0000-1000-8000-00805F9B34FB': Endpoint.DeleteShotRange,
-    '0000A009-0000-1000-8000-00805F9B34FB': Endpoint.FWMapRequest,
-    '0000A00A-0000-1000-8000-00805F9B34FB': Endpoint.Temperatures,
-    '0000A00B-0000-1000-8000-00805F9B34FB': Endpoint.ShotSettings,
-    '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.DeprecatedShotDesc,
-    '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.ShotSample,
-    '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.StateInfo,
-    '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.HeaderWrite,
-    '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.FrameWrite,
-    '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.WaterLevels,
-    '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.Calibration
+    '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
+    '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,
+    '0000A003-0000-1000-8000-00805F9B34FB': Endpoint.setTime,
+    '0000A004-0000-1000-8000-00805F9B34FB': Endpoint.shotDirectory,
+    '0000A005-0000-1000-8000-00805F9B34FB': Endpoint.readFromMMR,
+    '0000A006-0000-1000-8000-00805F9B34FB': Endpoint.writeToMMR,
+    '0000A007-0000-1000-8000-00805F9B34FB': Endpoint.shotMapRequest,
+    '0000A008-0000-1000-8000-00805F9B34FB': Endpoint.deleteShotRange,
+    '0000A009-0000-1000-8000-00805F9B34FB': Endpoint.fwMapRequest,
+    '0000A00A-0000-1000-8000-00805F9B34FB': Endpoint.temperatures,
+    '0000A00B-0000-1000-8000-00805F9B34FB': Endpoint.shotSettings,
+    '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
+    '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
+    '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
+    '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
+    '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
+    '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
+    '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
   };
 
   static Map<Endpoint, String> cuuidLookup =
@@ -153,9 +153,6 @@ class DE1 extends ChangeNotifier {
 
   final DiscoveredDevice device;
 
-  //TODO do connection tracking
-  //PeripheralConnectionState _state;
-
   EspressoMachineService service = getIt<EspressoMachineService>();
   final flutterReactiveBle = FlutterReactiveBle();
 
@@ -185,7 +182,7 @@ class DE1 extends ChangeNotifier {
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
-    log('enabeling Notification for ' + e.toString() + ' (' + getCharacteristic(e).toString() + ')');
+    log('enabeling Notification for $e (${getCharacteristic(e)})');
 
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
@@ -206,22 +203,22 @@ class DE1 extends ChangeNotifier {
   }
 
   setIdleState() {
-    requestState(De1StateEnum.Idle);
+    requestState(De1StateEnum.idle);
     log('idleState Requested');
   }
 
   switchOn() {
-    requestState(De1StateEnum.Idle);
+    requestState(De1StateEnum.idle);
     log('SwitchOn Requested');
   }
 
   switchOff() {
-    requestState(De1StateEnum.Sleep);
+    requestState(De1StateEnum.sleep);
     log('SwitchOff Requested');
   }
 
   requestState(De1StateEnum state) {
-    write(Endpoint.RequestedState, Uint8List.fromList([state.index]));
+    write(Endpoint.requestedState, Uint8List.fromList([state.index]));
   }
 
   Future<List<int>> read(Endpoint e) {
@@ -253,7 +250,7 @@ class DE1 extends ChangeNotifier {
     var state = value.getUint8(0);
     var subState = value.getUint8(1);
 
-    log("DE1 is in state: ${states[state]} ${state} substate: ${subStates[subState]}");
+    log("DE1 is in state: ${states[state]} $state substate: ${subStates[subState]}");
     service.setSubState(subStates[subState]);
 
     switch (state) {
@@ -284,7 +281,7 @@ class DE1 extends ChangeNotifier {
   void requestedState(ByteData value) {
     var state = value.getUint8(0);
 
-    log('DE1 is in requested state: ' + states[state]);
+    log('DE1 is in requested state: ${states[state]}');
   }
 
   void waterLevelNotification(ByteData value) {
@@ -306,16 +303,16 @@ class DE1 extends ChangeNotifier {
     var fwChanges = value.getUint8(13);
     var fwSHA = value.getUint32(14);
 
-    log('bleAPIVersion = ' + bleAPIVersion.toRadixString(16));
-    log('bleRelease = ' + bleRelease.toRadixString(16));
-    log('bleCommits = ' + bleCommits.toRadixString(16));
-    log('bleChanges = ' + bleChanges.toRadixString(16));
-    log('bleSHA = ' + bleSHA.toRadixString(16));
-    log('fwAPIVersion = ' + fwAPIVersion.toRadixString(16));
-    log('fwRelease = ' + fwRelease.toRadixString(16));
-    log('fwCommits = ' + fwCommits.toRadixString(16));
-    log('fwChanges = ' + fwChanges.toRadixString(16));
-    log('fwSHA = ' + fwSHA.toRadixString(16));
+    log('bleAPIVersion = ${bleAPIVersion.toRadixString(16)}');
+    log('bleRelease = ${bleRelease.toRadixString(16)}');
+    log('bleCommits = ${bleCommits.toRadixString(16)}');
+    log('bleChanges = ${bleChanges.toRadixString(16)}');
+    log('bleSHA = ${bleSHA.toRadixString(16)}');
+    log('fwAPIVersion = ${fwAPIVersion.toRadixString(16)}');
+    log('fwRelease = ${fwRelease.toRadixString(16)}');
+    log('fwCommits = ${fwCommits.toRadixString(16)}');
+    log('fwChanges = ${fwChanges.toRadixString(16)}');
+    log('fwSHA = ${fwSHA.toRadixString(16)}');
   }
 
   void shotSampleNotification(ByteData r) {
@@ -355,10 +352,10 @@ class DE1 extends ChangeNotifier {
 
   void parseFrameWrite(ByteData r) {
     var sh = De1ShotFrameClass();
-    if (De1ShotFrameClass.DecodeDe1ShotFrame(r, sh, true) == false) {
+    if (De1ShotFrameClass.decodeDe1ShotFrame(r, sh, true) == false) {
       log("Error decoding shot frame");
     }
-    ;
+
     service.setShotFrame(sh);
   }
 
@@ -386,7 +383,9 @@ class DE1 extends ChangeNotifier {
 
   void mmrNotification(ByteData value) {
     var list = value.buffer.asUint8List();
-    print(list.map(toHexString).toList());
+    if (kDebugMode) {
+      print(list.map(toHexString).toList());
+    }
     log('mmr received');
   }
 
@@ -413,11 +412,11 @@ class DE1 extends ChangeNotifier {
     buffer[2] = (address) % 0xFF;
     buffer[3] = (length % 0xFF);
 
-    write(Endpoint.ReadFromMMR, Uint8List.fromList(buffer));
+    write(Endpoint.readFromMMR, Uint8List.fromList(buffer));
   }
 
   Future<void> _onStateChange(DeviceConnectionState state) async {
-    log('State changed to ' + state.toString());
+    log('State changed to $state');
     //_state = state;
 
     switch (state) {
@@ -425,33 +424,33 @@ class DE1 extends ChangeNotifier {
         // await device.discoverAllServicesAndCharacteristics();
         // Enable notification
 
-        parseVersion(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.Versions)))));
-        stateNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.StateInfo)))));
-        waterLevelNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.WaterLevels)))));
-        parseShotSetting(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.ShotSettings)))));
+        parseVersion(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.versions)))));
+        stateNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.stateInfo)))));
+        waterLevelNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.waterLevels)))));
+        parseShotSetting(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.shotSettings)))));
 
         // parseShotMapRequest(ByteData.sublistView(
         //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
-        parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.HeaderWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.FrameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.FrameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.FrameWrite)))));
+        parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
+        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
 
-        enableNotification(Endpoint.RequestedState, requestedState);
+        enableNotification(Endpoint.requestedState, requestedState);
 
-        enableNotification(Endpoint.Temperatures, tempatureNotification);
-        enableNotification(Endpoint.WaterLevels, waterLevelNotification);
-        enableNotification(Endpoint.StateInfo, stateNotification);
+        enableNotification(Endpoint.temperatures, tempatureNotification);
+        enableNotification(Endpoint.waterLevels, waterLevelNotification);
+        enableNotification(Endpoint.stateInfo, stateNotification);
 
-        enableNotification(Endpoint.ShotSample, shotSampleNotification);
-        enableNotification(Endpoint.ShotSettings, parseShotSetting);
+        enableNotification(Endpoint.shotSample, shotSampleNotification);
+        enableNotification(Endpoint.shotSettings, parseShotSetting);
 
-        enableNotification(Endpoint.ShotMapRequest, parseShotMapRequest);
-        enableNotification(Endpoint.HeaderWrite, parseShotHeaderSettings);
-        enableNotification(Endpoint.FrameWrite, parseFrameWrite);
+        enableNotification(Endpoint.shotMapRequest, parseShotMapRequest);
+        enableNotification(Endpoint.headerWrite, parseShotHeaderSettings);
+        enableNotification(Endpoint.frameWrite, parseFrameWrite);
 
-        enableNotification(Endpoint.ReadFromMMR, mmrNotification);
-        enableNotification(Endpoint.WriteToMMR, mmrNotification);
+        enableNotification(Endpoint.readFromMMR, mmrNotification);
+        enableNotification(Endpoint.writeToMMR, mmrNotification);
 
         ghcInstalled();
 

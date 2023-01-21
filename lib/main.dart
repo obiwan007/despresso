@@ -20,7 +20,7 @@ Future<void> main() async {
   try {
     Wakelock.enable();
   } on MissingPluginException catch (e) {
-    log('Failed to set wakelock: ' + e.toString());
+    log('Failed to set wakelock: $e');
   }
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
@@ -39,7 +39,7 @@ Future<void> initSettings() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp() {
+  MyApp({super.key}) {
     getIt.registerSingleton<ObjectBox>(objectbox, signalsReady: false);
     setupServices();
   }

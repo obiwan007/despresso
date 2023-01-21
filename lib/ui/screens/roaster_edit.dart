@@ -1,36 +1,29 @@
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../model/coffee.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class RoasterEdit extends StatefulWidget {
-  RoasterEdit(int this.selectedRoasterId);
+  RoasterEdit(this.selectedRoasterId, {super.key});
   int selectedRoasterId;
 
   @override
-  _RoasterEditState createState() => _RoasterEditState(selectedRoasterId);
+  RoasterEditState createState() => RoasterEditState(selectedRoasterId);
 }
 
 enum EditModes { show, add, edit }
 
-class _RoasterEditState extends State<RoasterEdit> {
+class RoasterEditState extends State<RoasterEdit> {
   int _selectedRoasterId = 0;
 
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;
-
-  EditModes _editRosterMode = EditModes.show;
 
   Roaster _editedRoaster = Roaster();
   int selectedRoasterId;
@@ -45,7 +38,7 @@ class _RoasterEditState extends State<RoasterEdit> {
 
   late FormGroup theForm;
 
-  _RoasterEditState(this.selectedRoasterId);
+  RoasterEditState(this.selectedRoasterId);
 
   @override
   void initState() {

@@ -11,12 +11,19 @@ import 'package:uuid/uuid.dart';
 
 // FrameFlag of zero and pressure of 0 means end of shot, unless we are at the tenth frame, in which case
 // it's the end of shot no matter what
+// ignore: constant_identifier_names
 const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
+// ignore: constant_identifier_names
 const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+// ignore: constant_identifier_names
 const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+// ignore: constant_identifier_names
 const int DC_CompF = 0x08; // Compare Pressure or Flow?
+// ignore: constant_identifier_names
 const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+// ignore: constant_identifier_names
 const int Interpolate = 0x20; // Hard jump to target value, or ramp?
+// ignore: constant_identifier_names
 const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
 class ProfileService extends ChangeNotifier {
@@ -42,7 +49,7 @@ class ProfileService extends ChangeNotifier {
       var dirs = await getSavedProfileFiles();
 
       for (var element in dirs) {
-        log("${element.path}");
+        log(element.path);
         var i = element.path.lastIndexOf('/');
         var file = element.path.substring(i);
         try {
@@ -243,14 +250,14 @@ class ProfileService extends ChangeNotifier {
     shotHeader.type = dynamic2String(json["type"]);
     shotHeader.lang = dynamic2String(json["lang"]);
     shotHeader.legacyProfileType = dynamic2String(json["legacy_profile_type"]);
-    shotHeader.target_weight = dynamic2Double(json["target_weight"]);
-    shotHeader.target_volume = dynamic2Double(json["target_volume"]);
-    shotHeader.target_volume_count_start = dynamic2Double(json["target_volume_count_start"]);
-    shotHeader.tank_temperature = dynamic2Double(json["tank_temperature"]);
+    shotHeader.targetWeight = dynamic2Double(json["target_weight"]);
+    shotHeader.targetVolume = dynamic2Double(json["target_volume"]);
+    shotHeader.targetVolumeCountStart = dynamic2Double(json["target_volume_count_start"]);
+    shotHeader.tankTemperature = dynamic2Double(json["tank_temperature"]);
     shotHeader.title = dynamic2String(json["title"]);
     shotHeader.author = dynamic2String(json["author"]);
     shotHeader.notes = dynamic2String(json["notes"]);
-    shotHeader.beverage_type = dynamic2String(json["beverage_type"]);
+    shotHeader.beverageType = dynamic2String(json["beverage_type"]);
 
     if (!json.containsKey("steps")) return false;
     for (Map<String, dynamic> frameData in json["steps"]) {
@@ -349,25 +356,25 @@ class ProfileService extends ChangeNotifier {
       int frameCounter = shotFrames.length;
 
       // MaxVol for the first frame only
-      double input_max_vol = 0.0;
+      double inputMaxVol = 0.0;
       if (frameCounter == 0 && frameData.containsKey("volume")) {
-        input_max_vol = dynamic2Double(frameData["volume"]);
-        if (input_max_vol == double.negativeInfinity) input_max_vol = 0.0;
+        inputMaxVol = dynamic2Double(frameData["volume"]);
+        if (inputMaxVol == double.negativeInfinity) inputMaxVol = 0.0;
       }
 
       frame.frameToWrite = frameCounter;
       frame.flag = features;
       frame.temp = temperature;
       frame.frameLen = seconds;
-      frame.maxVol = input_max_vol;
+      frame.maxVol = inputMaxVol;
       shotFrames.add(frame);
 
       if (limiterValue != 0.0 && limiterValue != double.negativeInfinity && limiterRange != double.negativeInfinity) {
-        De1ShotExtFrameClass ex_frame = De1ShotExtFrameClass();
-        ex_frame.frameToWrite = (frameCounter + 32).toInt();
-        ex_frame.limiterValue = limiterValue;
-        ex_frame.limiterRange = limiterRange;
-        shotExframes.add(ex_frame);
+        De1ShotExtFrameClass exFrame = De1ShotExtFrameClass();
+        exFrame.frameToWrite = (frameCounter + 32).toInt();
+        exFrame.limiterValue = limiterValue;
+        exFrame.limiterRange = limiterRange;
+        shotExframes.add(exFrame);
       }
     }
 
@@ -376,14 +383,18 @@ class ProfileService extends ChangeNotifier {
     shotHeader.numberOfPreinfuseFrames = 1;
 
     // update the byte array inside shot header and frame, so we are ready to write it to DE
-    EncodeHeaderAndFrames(shotHeader, shotFrames, shotExframes);
+    encodeHeaderAndFrames(shotHeader, shotFrames, shotExframes);
     return true;
   }
 
-  static EncodeHeaderAndFrames(
-      De1ShotHeaderClass shot_header, List<De1ShotFrameClass> shot_frames, List<De1ShotExtFrameClass> shot_exframes) {
-    shot_header.bytes = De1ShotHeaderClass.encodeDe1ShotHeader(shot_header);
-    for (var frame in shot_frames) frame.bytes = De1ShotFrameClass.EncodeDe1ShotFrame(frame);
-    for (var exframe in shot_exframes) exframe.bytes = De1ShotExtFrameClass.EncodeDe1ExtentionFrame(exframe);
+  static encodeHeaderAndFrames(
+      De1ShotHeaderClass shotHeader, List<De1ShotFrameClass> shotFrames, List<De1ShotExtFrameClass> shotExframes) {
+    shotHeader.bytes = De1ShotHeaderClass.encodeDe1ShotHeader(shotHeader);
+    for (var frame in shotFrames) {
+      frame.bytes = De1ShotFrameClass.encodeDe1ShotFrame(frame);
+    }
+    for (var exframe in shotExframes) {
+      exframe.bytes = De1ShotExtFrameClass.encodeDe1ExtentionFrame(exframe);
+    }
   }
 }

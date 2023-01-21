@@ -7,9 +7,7 @@ class Profile {
   factory Profile.fromJson(dynamic json) {
     return Profile(
       json['name'] as String,
-      List.from(json['frames'])
-          .map((frame) => ProfileFrame.fromJson(frame))
-          .toList(),
+      List.from(json['frames']).map((frame) => ProfileFrame.fromJson(frame)).toList(),
     );
   }
 }
@@ -21,8 +19,7 @@ class ProfileFrame {
   int duration;
   ProfileTarget target;
 
-  ProfileFrame(this.name, this.frameNumber, this.temperature, this.duration,
-      this.target);
+  ProfileFrame(this.name, this.frameNumber, this.temperature, this.duration, this.target);
 
   factory ProfileFrame.fromJson(dynamic json) {
     return ProfileFrame(
@@ -36,20 +33,16 @@ class ProfileFrame {
 }
 
 enum ProfileType {
-  FLOW,
-  PRESSURE,
+  flow,
+  pressure,
 }
 
-const _$ProfileType = <ProfileType, dynamic>{
-  ProfileType.FLOW: 'flow',
-  ProfileType.PRESSURE: 'pressure'
-};
+const _$ProfileType = <ProfileType, dynamic>{ProfileType.flow: 'flow', ProfileType.pressure: 'pressure'};
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
   return enumValues.entries
       .singleWhere((e) => e.value == source,
-          orElse: () => throw ArgumentError(
-              '`$source` is not one of the supported values: '
+          orElse: () => throw ArgumentError('`$source` is not one of the supported values: '
               '${enumValues.values.join(', ')}'))
       .key;
 }
@@ -71,7 +64,9 @@ class ProfileTarget {
 }
 
 enum ProfileTriggerType {
+  // ignore: constant_identifier_names
   GREATER_THAN,
+  // ignore: constant_identifier_names
   LESSN_THAN,
 }
 

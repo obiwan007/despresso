@@ -5,7 +5,6 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
 import 'package:despresso/ui/screens/settings_screen.dart';
-import 'package:wakelock/wakelock.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
@@ -18,18 +17,17 @@ import 'package:flutter/services.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
 import 'screens/flush_screen.dart';
-import 'theme.dart' as theme;
 
 class LandingPage extends StatefulWidget {
-  LandingPage({Key? key, required this.title}) : super(key: key);
+  const LandingPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _LandingPageState createState() => _LandingPageState();
+  LandingPageState createState() => LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+class LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
   bool available = false;
   int currentPageIndex = 1;
 
@@ -66,7 +64,6 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _tabController.dispose();
     machineService.removeListener(updatedMachine);
@@ -112,9 +109,9 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                 children: [
                   RecipeScreen(),
                   EspressoScreen(),
-                  SteamScreen(),
+                  const SteamScreen(),
                   WaterScreen(),
-                  FlushScreen(),
+                  const FlushScreen(),
                 ],
               ),
             ),
@@ -155,7 +152,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CoffeeSelectionTab()),
+                  MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
                 );
               },
             ),
@@ -165,7 +162,7 @@ class _LandingPageState extends State<LandingPage> with SingleTickerProviderStat
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AppSettingsScreen()),
+                  MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
                 );
                 // Then close the drawer
               },

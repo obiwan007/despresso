@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
-import '../../devices/decent_de1.dart';
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 
@@ -53,14 +50,6 @@ class _MachineFooterState extends State<MachineFooter> {
 
   @override
   Widget build(BuildContext context) {
-    var mode = Colors.green;
-    var isBusy = machineService.state.coffeeState == EspressoMachineState.espresso ||
-        machineService.state.coffeeState == EspressoMachineState.water ||
-        machineService.state.coffeeState == EspressoMachineState.steam ||
-        machineService.state.coffeeState == EspressoMachineState.flush;
-
-    mode = isBusy ? Colors.red : Colors.green;
-
     // switch (subState) {
     //   case "no_state":
     //     subState = "...";
@@ -121,9 +110,9 @@ class _MachineFooterState extends State<MachineFooter> {
               ],
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Container(color: Colors.black38, child: _scaleBuilder()),
-          Spacer(),
+          const Spacer(),
           SizedBox(
             width: 120,
             child: Column(
@@ -192,7 +181,7 @@ class _MachineFooterState extends State<MachineFooter> {
               ],
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Row(
             children: [
               Text(isOn ? 'On' : 'Off'),
@@ -226,7 +215,6 @@ class _MachineFooterState extends State<MachineFooter> {
                     machineService.scaleService.state == ScaleState.connected
                         ? machineService.scaleService.tare()
                         : machineService.scaleService.connect();
-                    ;
                   },
                   child: Text(
                     machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",

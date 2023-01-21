@@ -36,6 +36,7 @@ class _StartStopButtonState extends State<StartStopButton> {
     // scaleService = getIt<ScaleService>();
   }
 
+  @override
   void dispose() {
     super.dispose();
     machineService.removeListener(updateMachine);
@@ -108,12 +109,22 @@ class _StartStopButtonState extends State<StartStopButton> {
               } else {
                 if (!isBusy) {
                   log("Start", error: {DateTime.now()});
-                  machineService.de1?.requestState(De1StateEnum.Espresso);
+                  machineService.de1?.requestState(De1StateEnum.espresso);
                 } else {
                   machineService.de1?.setIdleState();
                 }
               }
             },
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all(CircleBorder(side: BorderSide(width: 10, color: mode))),
+              padding: MaterialStateProperty.all(const EdgeInsets.all(10)),
+              // backgroundColor: MaterialStateProperty.all(theme.Colors.backgroundColor), // <-- Button color
+              foregroundColor: MaterialStateProperty.all(Colors.black),
+              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(MaterialState.pressed)) return Colors.red;
+                return null; // <-- Splash color
+              }),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -131,15 +142,6 @@ class _StartStopButtonState extends State<StartStopButton> {
                   style: theme.TextStyles.statusButtonSecondary,
                 ),
               ],
-            ),
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(CircleBorder(side: BorderSide(width: 10, color: mode))),
-              padding: MaterialStateProperty.all(EdgeInsets.all(10)),
-              // backgroundColor: MaterialStateProperty.all(theme.Colors.backgroundColor), // <-- Button color
-              foregroundColor: MaterialStateProperty.all(Colors.black),
-              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(MaterialState.pressed)) return Colors.red; // <-- Splash color
-              }),
             ),
           ),
         ),
