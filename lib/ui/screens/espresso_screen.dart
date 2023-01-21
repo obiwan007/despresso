@@ -16,11 +16,13 @@ import '../../model/shotstate.dart';
 import '../widgets/start_stop_button.dart';
 
 class EspressoScreen extends StatefulWidget {
+  const EspressoScreen({super.key});
+
   @override
-  _EspressoScreenState createState() => _EspressoScreenState();
+  EspressoScreenState createState() => EspressoScreenState();
 }
 
-class _EspressoScreenState extends State<EspressoScreen> {
+class EspressoScreenState extends State<EspressoScreen> {
   late CoffeeService coffeeSelectionService;
   late EspressoMachineService machineService;
   late ProfileService profileService;
@@ -37,7 +39,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
   bool stopTriggered = false;
 
   double maxTime = 30;
-  _EspressoScreenState() {}
+  EspressoScreenState();
 
   @override
   void dispose() {
@@ -189,7 +191,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
         i++;
         toSampleTime = stateChanges[i].sampleTimeCorrected;
       }
-      var to = stateChanges[i];
 
       var col = theme.Colors.statesColors[from.subState];
       var col2 = charts.ColorUtil.fromDartColor(col ?? theme.Colors.goodColor);
@@ -517,145 +518,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
     return insights;
   }
 
-  Column _buildScaleInsight() {
-    return Column(
-      children: [
-        StreamBuilder<WeightMeassurement>(
-          stream: scaleService.stream,
-          initialData: WeightMeassurement(0, 0, ScaleState.disconnected),
-          builder: (BuildContext context, AsyncSnapshot<WeightMeassurement> snapshot) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                createKeyValue("State", snapshot.data!.state.name),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: snapshot.data!.state == ScaleState.disconnected
-                      ? [
-                          ElevatedButton(
-                            onPressed: () {
-                              scaleService.connect();
-                            },
-                            child: const Text(
-                              "Connect",
-                            ),
-                          ),
-                        ]
-                      : [],
-                ),
-                createKeyValue("Weight",
-                    profileService.currentProfile != null ? '${snapshot.data!.weight.toStringAsFixed(1)} g' : '_'),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     scaleService.tare();
-                //   },
-                //   child: const Text(
-                //     "Tare",
-                //   ),
-                // ),
-                createKeyValue(
-                    "",
-                    profileService.currentProfile != null
-                        ? '${profileService.currentProfile!.shotHeader.targetWeight} g'
-                        : '_'),
-                createKeyValue("Flow", '${snapshot.data!.flow.toStringAsFixed(1)} g/s'),
-              ],
-            );
-          },
-        ),
-        const Spacer(),
-      ],
-    );
-  }
-
-  Row _buildButtons() {
-    return Row(
-      children: [
-        Spacer(flex: 1),
-        Expanded(
-          flex: 1,
-          child: IconButton(
-            iconSize: 50,
-            isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-            icon: const Icon(Icons.power_settings_new, color: Colors.green),
-            selectedIcon: const Icon(
-              Icons.power_off,
-              color: Colors.red,
-            ),
-            tooltip: 'Switch on/off decent de1',
-            onPressed: () {
-              if (machineService.state.coffeeState == EspressoMachineState.sleep) {
-                machineService.de1?.switchOn();
-              } else {
-                machineService.de1?.switchOff();
-              }
-            },
-          ),
-        ),
-        // Expanded(
-        //   flex: 1,
-        //   child: IconButton(
-        //     iconSize: 50,
-        //     isSelected: machineService.state.coffeeState == EspressoMachineState.sleep,
-        //     icon: const Icon(Icons.power_off),
-        //     selectedIcon: const Icon(Icons.power_settings_new),
-        //     tooltip: 'Test',
-        //     onPressed: () {
-        //       _displayDialog(context);
-        //     },
-        //   ),
-        // ),
-      ],
-    );
-  }
-
   var pressAttention = true;
-
-  _displayDialog(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      transitionDuration: const Duration(milliseconds: 500),
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: ScaleTransition(
-            scale: animation,
-            child: child,
-          ),
-        );
-      },
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return SafeArea(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            padding: const EdgeInsets.all(20),
-            color: Colors.white,
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Text(
-                    'Hai This Is Full Screen Dialog',
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      "DISMISS",
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Row createKeyValue(String key, String value) {
     return Row(
@@ -679,7 +542,6 @@ class _EspressoScreenState extends State<EspressoScreen> {
     if (!isEmpty) {
       graphs = _buildGraphs();
     }
-    var isSelected = machineService.state.coffeeState == EspressoMachineState.espresso;
 
     return DefaultTabController(
       length: 3,
@@ -720,7 +582,7 @@ class _EspressoScreenState extends State<EspressoScreen> {
                   //   flex: 1,
                   //   child: _buildScaleInsight(),
                   // ),
-                  Spacer(),
+                  const Spacer(),
                   const Padding(
                     padding: EdgeInsets.all(5.0),
                     child: StartStopButton(),

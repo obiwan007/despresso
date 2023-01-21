@@ -198,7 +198,10 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Coffee? get currentCoffee {
-    return coffeeBox.get(selectedCoffee);
+    if (selectedCoffee > 0) {
+      return coffeeBox.get(selectedCoffee);
+    }
+    return null;
 // code to return members
   }
 }

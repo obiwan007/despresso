@@ -24,28 +24,28 @@ class Settings {
   /// helper method `_$UserToJson`.
   Map<String, dynamic> toJson() => _$SettingsToJson(this);
 
-  static Uint8List encodeDe1OtherSetn(Settings other_setn) {
+  static Uint8List encodeDe1OtherSetn(Settings otherSetn) {
     Uint8List data = Uint8List(9);
 
     int index = 0;
-    data[index] = other_setn.steamSettings;
+    data[index] = otherSetn.steamSettings;
     index++;
-    data[index] = other_setn.targetSteamTemp;
+    data[index] = otherSetn.targetSteamTemp;
     index++;
-    data[index] = other_setn.targetSteamLength;
+    data[index] = otherSetn.targetSteamLength;
     index++;
-    data[index] = other_setn.targetHotWaterTemp;
+    data[index] = otherSetn.targetHotWaterTemp;
     index++;
-    data[index] = other_setn.targetHotWaterVol;
+    data[index] = otherSetn.targetHotWaterVol;
     index++;
-    data[index] = other_setn.targetHotWaterLength;
+    data[index] = otherSetn.targetHotWaterLength;
     index++;
-    data[index] = other_setn.targetEspressoVol;
+    data[index] = otherSetn.targetEspressoVol;
     index++;
 
-    data[index] = other_setn.targetGroupTemp.toInt();
+    data[index] = otherSetn.targetGroupTemp.toInt();
     index++;
-    data[index] = ((other_setn.targetGroupTemp - other_setn.targetGroupTemp.floor()) * 256.0).toInt();
+    data[index] = ((otherSetn.targetGroupTemp - otherSetn.targetGroupTemp.floor()) * 256.0).toInt();
     index++;
 
     return data;

@@ -112,7 +112,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
               ),
             ),
             Container(
-              color: Colors.blue,
+              color: Colors.white10,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -476,7 +476,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
       margin: const EdgeInsets.only(left: 0.0),
       width: MediaQuery.of(context).size.width - 0,
       decoration: BoxDecoration(
-        color: theme.Colors.tabColor,
+        color: Colors.black12,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),

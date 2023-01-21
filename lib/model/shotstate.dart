@@ -73,9 +73,9 @@ class ShotList {
     //   log("Written file");
     // }
     log("Clean shot data cache");
-    entries.forEach((element) {
+    for (var element in entries) {
       element.id = 0;
-    });
+    }
     saved = true;
     saving = false;
   }

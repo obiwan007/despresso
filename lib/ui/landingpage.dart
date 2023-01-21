@@ -107,10 +107,10 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  RecipeScreen(),
+                  const RecipeScreen(),
                   EspressoScreen(),
                   const SteamScreen(),
-                  WaterScreen(),
+                  const WaterScreen(),
                   const FlushScreen(),
                 ],
               ),

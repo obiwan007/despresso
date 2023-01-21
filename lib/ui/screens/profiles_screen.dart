@@ -221,7 +221,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.tabColor,
+        color: Colors.black12,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),

@@ -85,6 +85,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           children: <Widget>[
             SwitchSettingsTile(
               settingKey: SettingKeys.shotStopOnWeight.name,
+              defaultValue: true,
               title: 'Stop on Weight if scale detected',
               subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
               enabledLabel: 'Enabled',
@@ -95,6 +96,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
             SwitchSettingsTile(
               settingKey: SettingKeys.shotAutoTare.name,
+              defaultValue: true,
               title: 'Auto Tare',
               subtitle: 'If a shot is starting, auto-tare the scale',
               enabledLabel: 'Enabled',
@@ -116,6 +118,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   SwitchSettingsTile(
                     leading: const Icon(Icons.usb),
                     settingKey: SettingKeys.vizualizerUpload.name,
+                    defaultValue: false,
                     title: 'Upload Shots to Vizualizer',
                     onChange: (value) {
                       debugPrint('USB Debugging: $value');

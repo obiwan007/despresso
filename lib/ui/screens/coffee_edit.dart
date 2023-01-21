@@ -266,6 +266,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.price = form.value["price"] as String;
     _editedCoffee.taste = form.value["taste"] as String;
     _editedCoffee.origin = form.value["origin"] as String;
+    _editedCoffee.description = form.value["description"] as String;
 
     _editedCoffee.intensityRating = form.value["intensityRating"] as double;
     _editedCoffee.acidRating = form.value["acidRating"] as double;

@@ -11,10 +11,10 @@ class FlushScreen extends StatefulWidget {
   const FlushScreen({super.key});
 
   @override
-  _FlushScreenState createState() => _FlushScreenState();
+  FlushScreenState createState() => FlushScreenState();
 }
 
-class _FlushScreenState extends State<FlushScreen> {
+class FlushScreenState extends State<FlushScreen> {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
 
@@ -87,7 +87,7 @@ class _FlushScreenState extends State<FlushScreen> {
                           children: <Widget>[
                             if (machineService.state.coffeeState == EspressoMachineState.flush) ...[
                               Center(
-                                child: Container(
+                                child: SizedBox(
                                   width: 200,
                                   height: 200,
                                   child: CircularProgressIndicator(

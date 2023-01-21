@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
           // brightness: Brightness.dark,
         ),
       ),
-      home: LandingPage(title: 'despresso'),
+      home: const LandingPage(title: 'despresso'),
     );
   }
 }
