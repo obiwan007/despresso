@@ -1,5 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mmmedia.despresso">
+<queries>
+  <!-- If your app checks for SMS support -->
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="https" />
+  </intent>
+  <!-- If your app checks for call support -->
+</queries>
+
     <supports-screens android:smallScreens="false"
                       android:normalScreens="false"
                       android:largeScreens="true"

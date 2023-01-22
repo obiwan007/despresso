@@ -51,7 +51,7 @@ class _MachineFooterState extends State<MachineFooter> {
     setState(() {});
   }
 
-  bool isOn(EspressoMachineState state) {
+  bool isOn(EspressoMachineState? state) {
     return state != EspressoMachineState.sleep && state != EspressoMachineState.disconnected;
   }
 
@@ -65,13 +65,16 @@ class _MachineFooterState extends State<MachineFooter> {
           StreamBuilder<WaterLevel>(
               stream: machineService.streamWaterLevel,
               builder: (context, snapshot) {
+                ;
                 return Row(
-                  children: [
-                    FooterValue(
-                        value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
-                        label: "Water",
-                        width: 200),
-                  ],
+                  children: snapshot.data != null
+                      ? [
+                          FooterValue(
+                              value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
+                              label: "Water",
+                              width: 200),
+                        ]
+                      : [],
                 );
               }),
           const Spacer(),
@@ -81,22 +84,27 @@ class _MachineFooterState extends State<MachineFooter> {
               stream: machineService.streamShotState,
               builder: (context, snapshot) {
                 return Row(
-                  children: [
-                    FooterValue(value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C", label: "Group"),
-                    FooterValue(value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar", label: "Pressure"),
-                    FooterValue(value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s", label: "Flow"),
-                  ],
+                  children: snapshot.data != null
+                      ? [
+                          FooterValue(value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C", label: "Group"),
+                          if (machineService.currentFullState.state != EspressoMachineState.idle)
+                            FooterValue(
+                                value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar", label: "Pressure"),
+                          if (machineService.currentFullState.state != EspressoMachineState.idle)
+                            FooterValue(value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s", label: "Flow"),
+                        ]
+                      : [],
                 );
               }),
           const Spacer(),
-          StreamBuilder<EspressoMachineState>(
+          StreamBuilder<EspressoMachineFullState>(
               stream: machineService.streamState,
               builder: (context, snapshot) {
                 return Row(
                   children: [
-                    Text(isOn(snapshot.data!) ? 'On' : 'Off'),
+                    Text(isOn(snapshot.data?.state) ? 'On' : 'Off'),
                     Switch(
-                      value: isOn(snapshot.data!), //set true to enable switch by default
+                      value: isOn(snapshot.data?.state), //set true to enable switch by default
                       onChanged: (bool value) {
                         value ? machineService.de1!.switchOn() : machineService.de1!.switchOff();
                       },

@@ -146,6 +146,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                 ElevatedButton.icon(
                                   icon: const Icon(Icons.add),
                                   onPressed: () async {
+                                    var messenger = ScaffoldMessenger.of(context);
                                     var result = await machineService.uploadProfile(_selectedProfile!);
 
                                     var snackBar = SnackBar(
@@ -156,7 +157,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                             // Some code to undo the change.
                                           },
                                         ));
-                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                                    messenger.showSnackBar(snackBar);
                                   },
                                   label: const Text(
                                     "Save to Decent",

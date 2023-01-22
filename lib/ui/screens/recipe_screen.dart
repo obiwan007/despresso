@@ -6,7 +6,6 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 import '../../model/shotstate.dart';
 

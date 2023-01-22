@@ -46,6 +46,11 @@ class MachineState {
 
 enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush }
 
+class EspressoMachineFullState {
+  EspressoMachineState state = EspressoMachineState.idle;
+  String subState = "";
+}
+
 class EspressoMachineService extends ChangeNotifier {
   final MachineState _state = MachineState(null, EspressoMachineState.disconnected);
 
@@ -96,15 +101,17 @@ class EspressoMachineService extends ChangeNotifier {
   late Stream<WaterLevel> _streamWaterLevel;
   Stream<WaterLevel> get streamWaterLevel => _streamWaterLevel;
 
-  late StreamController<EspressoMachineState> _controllerEspressoMachineState;
-  late Stream<EspressoMachineState> _streamState;
-  Stream<EspressoMachineState> get streamState => _streamState;
+  late StreamController<EspressoMachineFullState> _controllerEspressoMachineState;
+  late Stream<EspressoMachineFullState> _streamState;
+  Stream<EspressoMachineFullState> get streamState => _streamState;
+
+  EspressoMachineFullState currentFullState = EspressoMachineFullState();
 
   EspressoMachineService() {
     _controllerShotState = StreamController<ShotState>();
     _streamShotState = _controllerShotState.stream.asBroadcastStream();
 
-    _controllerEspressoMachineState = StreamController<EspressoMachineState>();
+    _controllerEspressoMachineState = StreamController<EspressoMachineFullState>();
     _streamState = _controllerEspressoMachineState.stream.asBroadcastStream();
 
     _controllerWaterLevel = StreamController<WaterLevel>();
@@ -187,12 +194,15 @@ class EspressoMachineService extends ChangeNotifier {
     }
     if (state == EspressoMachineState.idle) {}
     notifyListeners();
-    _controllerEspressoMachineState.add(state);
+    currentFullState.state = state;
+    _controllerEspressoMachineState.add(currentFullState);
   }
 
   void setSubState(String state) {
     _state.subState = state;
     notifyListeners();
+    currentFullState.subState = state;
+    _controllerEspressoMachineState.add(currentFullState);
   }
 
   MachineState get state => _state;

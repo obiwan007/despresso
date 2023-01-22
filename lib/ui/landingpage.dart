@@ -14,6 +14,7 @@ import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
 import 'screens/flush_screen.dart';
@@ -79,6 +80,22 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
   }
 
   Scaffold scaffoldNewLayout(BuildContext context) {
+    final List<Widget> aboutBoxChildren = <Widget>[
+      const SizedBox(height: 24),
+      RichText(
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+                text: "Flutter is Google's UI toolkit for building beautiful, "
+                    'natively compiled applications for mobile, web, and desktop '
+                    'from a single codebase. Learn more about Flutter at '),
+            TextSpan(text: 'https://flutter.dev'),
+            TextSpan(text: '.'),
+          ],
+        ),
+      ),
+    ];
+
     return Scaffold(
       extendBodyBehindAppBar: false,
       body: SizedBox(
@@ -187,14 +204,34 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 });
               },
             ),
+            ListTile(
+              title: const Text('Privacy'),
+              onTap: () async {
+                Navigator.pop(context);
+                final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else
+                  // can't launch url, there is some error
+                  throw "Could not launch $url";
+              },
+            ),
+            const AboutListTile(
+              icon: Icon(Icons.info),
+              applicationIcon: FlutterLogo(),
+              applicationName: 'About despresso',
+              applicationVersion: 'August 2023',
+              applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
+              // aboutBoxChildren: aboutBoxChildren,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Container createTabBar() {
-    var tb = Container(
+  SizedBox createTabBar() {
+    var tb = SizedBox(
       height: 70,
       child: TabBar(
         controller: _tabController,

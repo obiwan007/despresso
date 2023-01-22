@@ -25,7 +25,7 @@ class _StartStopButtonState extends State<StartStopButton> {
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
-    machineService.addListener(updateMachine);
+    // machineService.addListener(updateMachine);
 
     // profileService = getIt<ProfileService>();
     // profileService.addListener(updateProfile);
@@ -39,7 +39,7 @@ class _StartStopButtonState extends State<StartStopButton> {
   @override
   void dispose() {
     super.dispose();
-    machineService.removeListener(updateMachine);
+    // machineService.removeListener(updateMachine);
     // profileService.removeListener(updateProfile);
     // coffeeSelectionService.removeListener(updateCoffeeSelection);
     // log('Disposed espresso');
@@ -52,117 +52,126 @@ class _StartStopButtonState extends State<StartStopButton> {
   @override
   Widget build(BuildContext context) {
     var mode = Colors.green;
-    var isBusy = machineService.state.coffeeState == EspressoMachineState.espresso ||
-        machineService.state.coffeeState == EspressoMachineState.water ||
-        machineService.state.coffeeState == EspressoMachineState.steam ||
-        machineService.state.coffeeState == EspressoMachineState.flush;
 
-    var mainState = machineService.state.coffeeState.name.toUpperCase();
-    var subState = machineService.state.subState;
-    var title = isBusy ? "Stop" : "Start";
-    mode = isBusy ? Colors.red : Colors.green;
+    return StreamBuilder<EspressoMachineFullState>(
+        stream: machineService.streamState,
+        initialData: machineService.currentFullState,
+        builder: (context, snapshot) {
+          var isBusy = snapshot.data?.state == EspressoMachineState.espresso ||
+              snapshot.data?.state == EspressoMachineState.water ||
+              snapshot.data?.state == EspressoMachineState.steam ||
+              snapshot.data?.state == EspressoMachineState.flush;
 
-    switch (subState) {
-      case "no_state":
-        subState = "...";
-        break;
-      case "heat_water_tank":
-        subState = "Heating";
-        title = "Wait";
-        mode = Colors.orange;
-        break;
-    }
-    switch (machineService.state.coffeeState) {
-      case EspressoMachineState.sleep:
-        mode = Colors.blue;
-        title = "Switch on";
-        break;
+          var mainState = snapshot.data?.state.name.toUpperCase() ?? "disconnected";
+          var subState = snapshot.data?.subState ?? '';
+          var title = isBusy ? "Stop" : "Start";
+          mode = isBusy ? Colors.red : Colors.green;
 
-      case EspressoMachineState.idle:
-        break;
-      case EspressoMachineState.espresso:
-        break;
-      case EspressoMachineState.water:
-        break;
-      case EspressoMachineState.steam:
-        break;
-      case EspressoMachineState.disconnected:
-        mode = Colors.orange;
-        title = "Reconnect";
-        break;
-      case EspressoMachineState.connecting:
-        break;
-      case EspressoMachineState.refill:
-        break;
-      case EspressoMachineState.flush:
-        break;
-    }
-    return Column(
-      children: [
-        SizedBox(
-          height: 180,
-          width: 180,
-          child: ElevatedButton(
-            onPressed: () {
-              if (machineService.state.coffeeState == EspressoMachineState.sleep) {
-                machineService.de1?.switchOn();
-              } else {
-                if (!isBusy) {
-                  log("Start", error: {DateTime.now()});
-                  machineService.de1?.requestState(De1StateEnum.espresso);
-                } else {
-                  machineService.de1?.setIdleState();
-                }
-              }
-            },
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(CircleBorder(side: BorderSide(width: 10, color: mode))),
-              padding: MaterialStateProperty.all(const EdgeInsets.all(10)),
-              // backgroundColor: MaterialStateProperty.all(theme.Colors.backgroundColor), // <-- Button color
-              foregroundColor: MaterialStateProperty.all(Colors.black),
-              overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                if (states.contains(MaterialState.pressed)) return Colors.red;
-                return null; // <-- Splash color
-              }),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: theme.TextStyles.statusbuttonMain,
+          switch (subState) {
+            case "no_state":
+              subState = "...";
+              break;
+            case "heat_water_tank":
+              subState = "Heating";
+              title = "Wait";
+              mode = Colors.orange;
+              break;
+          }
+          switch (snapshot.data?.state) {
+            case EspressoMachineState.sleep:
+              mode = Colors.blue;
+              title = "Switch on";
+              break;
+
+            case EspressoMachineState.idle:
+              break;
+            case EspressoMachineState.espresso:
+              break;
+            case EspressoMachineState.water:
+              break;
+            case EspressoMachineState.steam:
+              break;
+            case EspressoMachineState.disconnected:
+              mode = Colors.orange;
+              title = "Reconnect";
+              break;
+            case EspressoMachineState.connecting:
+              break;
+            case EspressoMachineState.refill:
+              break;
+            case EspressoMachineState.flush:
+              break;
+            case null:
+              break;
+          }
+
+          return Column(
+            children: [
+              SizedBox(
+                height: 180,
+                width: 180,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (snapshot.data?.state == EspressoMachineState.sleep) {
+                      machineService.de1?.switchOn();
+                    } else {
+                      if (!isBusy) {
+                        log("Start", error: {DateTime.now()});
+                        machineService.de1?.requestState(De1StateEnum.espresso);
+                      } else {
+                        machineService.de1?.setIdleState();
+                      }
+                    }
+                  },
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(CircleBorder(side: BorderSide(width: 10, color: mode))),
+                    padding: MaterialStateProperty.all(const EdgeInsets.all(10)),
+                    // backgroundColor: MaterialStateProperty.all(theme.Colors.backgroundColor), // <-- Button color
+                    foregroundColor: MaterialStateProperty.all(Colors.black),
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                      if (states.contains(MaterialState.pressed)) return Colors.red;
+                      return null; // <-- Splash color
+                    }),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.TextStyles.statusbuttonMain,
+                      ),
+                      Text(
+                        mainState,
+                        style: theme.TextStyles.statusButtonSecondary,
+                      ),
+                      Text(
+                        subState,
+                        style: theme.TextStyles.statusButtonSecondary,
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  mainState,
-                  style: theme.TextStyles.statusButtonSecondary,
-                ),
-                Text(
-                  subState,
-                  style: theme.TextStyles.statusButtonSecondary,
-                ),
-              ],
-            ),
-          ),
-        ),
-        // IconButton(
-        //     iconSize: 150,
-        //     isSelected: isSelected,
-        //     icon: const Icon(Icons.play_circle),
-        //     selectedIcon: const Icon(Icons.stop),
-        //     tooltip: 'Water',
-        //     onPressed: () {
-        //       if (!isSelected) {
-        //         widget.machineService.de1?.requestState(De1StateEnum.Espresso);
-        //       } else {
-        //         widget.machineService.de1?.setIdleState();
-        //       }
-        //     }),
-        // Text(
-        //   isSelected ? "Stop" : "Start",
-        //   style: theme.TextStyles.tabSecondary,
-        // ),
-      ],
-    );
+              ),
+              // IconButton(
+              //     iconSize: 150,
+              //     isSelected: isSelected,
+              //     icon: const Icon(Icons.play_circle),
+              //     selectedIcon: const Icon(Icons.stop),
+              //     tooltip: 'Water',
+              //     onPressed: () {
+              //       if (!isSelected) {
+              //         widget.machineService.de1?.requestState(De1StateEnum.Espresso);
+              //       } else {
+              //         widget.machineService.de1?.setIdleState();
+              //       }
+              //     }),
+              // Text(
+              //   isSelected ? "Stop" : "Start",
+              //   style: theme.TextStyles.tabSecondary,
+              // ),
+            ],
+          );
+        });
   }
 }
