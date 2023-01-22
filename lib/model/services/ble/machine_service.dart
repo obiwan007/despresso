@@ -26,6 +26,11 @@ class WaterLevel {
     var l = waterLevel - waterLimit;
     return l * 100 ~/ 8300;
   }
+
+  int getLevelML() {
+    var l = waterLevel - waterLimit;
+    return (l / 10.0).round();
+  }
 }
 
 class MachineState {
@@ -83,7 +88,28 @@ class EspressoMachineService extends ChangeNotifier {
 
   Shot currentShot = Shot();
 
+  late StreamController<ShotState> _controllerShotState;
+  late Stream<ShotState> _streamShotState;
+  Stream<ShotState> get streamShotState => _streamShotState;
+
+  late StreamController<WaterLevel> _controllerWaterLevel;
+  late Stream<WaterLevel> _streamWaterLevel;
+  Stream<WaterLevel> get streamWaterLevel => _streamWaterLevel;
+
+  late StreamController<EspressoMachineState> _controllerEspressoMachineState;
+  late Stream<EspressoMachineState> _streamState;
+  Stream<EspressoMachineState> get streamState => _streamState;
+
   EspressoMachineService() {
+    _controllerShotState = StreamController<ShotState>();
+    _streamShotState = _controllerShotState.stream.asBroadcastStream();
+
+    _controllerEspressoMachineState = StreamController<EspressoMachineState>();
+    _streamState = _controllerEspressoMachineState.stream.asBroadcastStream();
+
+    _controllerWaterLevel = StreamController<WaterLevel>();
+    _streamWaterLevel = _controllerWaterLevel.stream.asBroadcastStream();
+
     init();
   }
   void init() async {
@@ -143,11 +169,13 @@ class EspressoMachineService extends ChangeNotifier {
     }
     handleShotData();
     notifyListeners();
+    _controllerShotState.add(shot);
   }
 
   void setWaterLevel(WaterLevel water) {
     _state.water = water;
     notifyListeners();
+    _controllerWaterLevel.add(water);
   }
 
   void setState(EspressoMachineState state) {
@@ -159,6 +187,7 @@ class EspressoMachineService extends ChangeNotifier {
     }
     if (state == EspressoMachineState.idle) {}
     notifyListeners();
+    _controllerEspressoMachineState.add(state);
   }
 
   void setSubState(String state) {

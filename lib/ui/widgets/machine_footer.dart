@@ -17,14 +17,16 @@ class MachineFooter extends StatefulWidget {
 
 class _MachineFooterState extends State<MachineFooter> {
   late EspressoMachineService machineService;
-
+  late ScaleService scaleService;
   _MachineFooterState();
 
   @override
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
-    machineService.addListener(updateMachine);
+    scaleService = getIt<ScaleService>();
+    // machineService.addListener(updateMachine);
+    // scaleService.addListener(updateMachine);
 
     // profileService = getIt<ProfileService>();
     // profileService.addListener(updateProfile);
@@ -38,7 +40,8 @@ class _MachineFooterState extends State<MachineFooter> {
   @override
   void dispose() {
     super.dispose();
-    machineService.removeListener(updateMachine);
+    // machineService.removeListener(updateMachine);
+    // scaleService.removeListener(updateMachine);
     // profileService.removeListener(updateProfile);
     // coffeeSelectionService.removeListener(updateCoffeeSelection);
     // log('Disposed espresso');
@@ -48,157 +51,75 @@ class _MachineFooterState extends State<MachineFooter> {
     setState(() {});
   }
 
+  bool isOn(EspressoMachineState state) {
+    return state != EspressoMachineState.sleep && state != EspressoMachineState.disconnected;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // switch (subState) {
-    //   case "no_state":
-    //     subState = "...";
-    //     break;
-    //   case "heat_water_tank":
-    //     subState = "Heating";
-    //     title = "Wait";
-    //     mode = Colors.orange;
-    //     break;
-    // }
-    // switch (machineService.state.coffeeState) {
-    //   case EspressoMachineState.sleep:
-    //     mode = Colors.blue;
-    //     title = "on";
-    //     break;
-
-    //   case EspressoMachineState.idle:
-    //     break;
-    //   case EspressoMachineState.espresso:
-    //     break;
-    //   case EspressoMachineState.water:
-    //     break;
-    //   case EspressoMachineState.steam:
-    //     break;
-    //   case EspressoMachineState.disconnected:
-    //     mode = Colors.orange;
-    //     title = "Reconnect";
-    //     break;
-    //   case EspressoMachineState.connecting:
-    //     break;
-    //   case EspressoMachineState.refill:
-    //     break;
-    //   case EspressoMachineState.flush:
-    //     break;
-    // }
-    var isOn = machineService.state.coffeeState != EspressoMachineState.sleep &&
-        machineService.state.coffeeState != EspressoMachineState.disconnected;
-    var shot = machineService.state.shot ?? ShotState(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "");
     return Container(
       height: 70,
       color: Colors.white10,
       child: Row(
         children: [
-          SizedBox(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "${machineService.state.water?.getLevelPercent()}%",
-                  style: theme.TextStyles.headingFooter,
-                ),
-                const Text(
-                  'Water',
-                  style: theme.TextStyles.subHeadingFooter,
-                ),
-              ],
-            ),
-          ),
+          StreamBuilder<WaterLevel>(
+              stream: machineService.streamWaterLevel,
+              builder: (context, snapshot) {
+                return Row(
+                  children: [
+                    FooterValue(
+                        value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
+                        label: "Water",
+                        width: 200),
+                  ],
+                );
+              }),
           const Spacer(),
-          Container(color: Colors.black38, child: _scaleBuilder()),
+          Container(color: Colors.black38, child: ScaleFooter(machineService: machineService)),
           const Spacer(),
-          SizedBox(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "${shot.headTemp.toStringAsFixed(1)} °C",
-                  style: theme.TextStyles.headingFooter,
-                ),
-                const Text(
-                  'Group',
-                  style: theme.TextStyles.subHeadingFooter,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "${shot.mixTemp.toStringAsFixed(1)} °C",
-                  style: theme.TextStyles.headingFooter,
-                ),
-                const Text(
-                  'Mix',
-                  style: theme.TextStyles.subHeadingFooter,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "${shot.groupPressure.toStringAsFixed(1)} bar",
-                  style: theme.TextStyles.headingFooter,
-                ),
-                const Text(
-                  'Pressure',
-                  style: theme.TextStyles.subHeadingFooter,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "${shot.groupFlow.toStringAsFixed(1)} ml/s",
-                  style: theme.TextStyles.headingFooter,
-                ),
-                const Text(
-                  'Flow',
-                  style: theme.TextStyles.subHeadingFooter,
-                ),
-              ],
-            ),
-          ),
+          StreamBuilder<ShotState>(
+              stream: machineService.streamShotState,
+              builder: (context, snapshot) {
+                return Row(
+                  children: [
+                    FooterValue(value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C", label: "Group"),
+                    FooterValue(value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar", label: "Pressure"),
+                    FooterValue(value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s", label: "Flow"),
+                  ],
+                );
+              }),
           const Spacer(),
-          Row(
-            children: [
-              Text(isOn ? 'On' : 'Off'),
-              Switch(
-                value: isOn, //set true to enable switch by default
-                onChanged: (bool value) {
-                  value ? machineService.de1!.switchOn() : machineService.de1!.switchOff();
-                },
-              ),
-            ],
-          ),
+          StreamBuilder<EspressoMachineState>(
+              stream: machineService.streamState,
+              builder: (context, snapshot) {
+                return Row(
+                  children: [
+                    Text(isOn(snapshot.data!) ? 'On' : 'Off'),
+                    Switch(
+                      value: isOn(snapshot.data!), //set true to enable switch by default
+                      onChanged: (bool value) {
+                        value ? machineService.de1!.switchOn() : machineService.de1!.switchOff();
+                      },
+                    ),
+                  ],
+                );
+              }),
         ],
       ),
     );
   }
+}
 
-  SizedBox _scaleBuilder() {
+class ScaleFooter extends StatelessWidget {
+  const ScaleFooter({
+    Key? key,
+    required this.machineService,
+  }) : super(key: key);
+
+  final EspressoMachineService machineService;
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       width: 310,
       child: Column(
@@ -207,41 +128,74 @@ class _MachineFooterState extends State<MachineFooter> {
         children: [
           SizedBox(
             height: 36,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    machineService.scaleService.state == ScaleState.connected
-                        ? machineService.scaleService.tare()
-                        : machineService.scaleService.connect();
-                  },
-                  child: Text(
-                    machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
-                  ),
-                ),
-                SizedBox(
-                  width: 130,
-                  child: Text(
-                    textAlign: TextAlign.right,
-                    machineService.scaleService.state == ScaleState.connected
-                        ? "${machineService.scaleService.weight.toStringAsFixed(1)} g"
-                        : machineService.scaleService.state.name,
-                    style: machineService.scaleService.state == ScaleState.connected
-                        ? theme.TextStyles.headingFooter
-                        : theme.TextStyles.headingFooterSmall,
-                  ),
-                ),
-                if (machineService.scaleService.state == ScaleState.connected)
-                  ElevatedButton(
-                    onPressed: () => {},
-                    child: const Text("To Shot"),
-                  ),
-              ],
-            ),
+            child: StreamBuilder<WeightMeassurement>(
+                stream: machineService.scaleService.stream,
+                builder: (context, snapshot) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          machineService.scaleService.state == ScaleState.connected
+                              ? machineService.scaleService.tare()
+                              : machineService.scaleService.connect();
+                        },
+                        child: Text(
+                          machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
+                        ),
+                      ),
+                      SizedBox(
+                        width: 130,
+                        child: Text(
+                          textAlign: TextAlign.right,
+                          machineService.scaleService.state == ScaleState.connected
+                              ? "${snapshot.data?.weight.toStringAsFixed(1)} g"
+                              : machineService.scaleService.state.name,
+                          style: machineService.scaleService.state == ScaleState.connected
+                              ? theme.TextStyles.headingFooter
+                              : theme.TextStyles.headingFooterSmall,
+                        ),
+                      ),
+                      if (machineService.scaleService.state == ScaleState.connected)
+                        ElevatedButton(
+                          onPressed: () => {},
+                          child: const Text("To Shot"),
+                        ),
+                    ],
+                  );
+                }),
           ),
           const Text(
             'Scale',
+            style: theme.TextStyles.subHeadingFooter,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FooterValue extends StatelessWidget {
+  const FooterValue({Key? key, required this.value, required this.label, this.width = 120}) : super(key: key);
+
+  final String value;
+  final String label;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: theme.TextStyles.headingFooter,
+          ),
+          Text(
+            label,
             style: theme.TextStyles.subHeadingFooter,
           ),
         ],

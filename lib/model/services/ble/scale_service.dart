@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:despresso/devices/acaia_scale.dart';
+import 'package:flutter/material.dart';
 
 import '../../../service_locator.dart';
 import 'ble_service.dart';
@@ -27,7 +28,7 @@ class WeightMeassurement {
   WeightMeassurement(this.weight, this.flow, this.state);
 }
 
-class ScaleService {
+class ScaleService extends ChangeNotifier {
   double _weight = 0.0;
   double _flow = 0.0;
   DateTime last = DateTime.now();
@@ -37,6 +38,10 @@ class ScaleService {
   bool tareInProgress = false;
 
   double lastFlow = 1;
+
+  var _count = 0;
+
+  DateTime t1 = DateTime.now();
 
   Stream<WeightMeassurement> get stream => _stream;
 
@@ -80,10 +85,21 @@ class ScaleService {
     flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
     lastFlow = flow;
 
-    _controller.add(WeightMeassurement(weight, flow, _state));
     _weight = weight;
     _flow = flow;
     last = now;
+    _controller.add(WeightMeassurement(weight, flow, _state));
+
+    notifyListeners();
+
+    _count++;
+    if (_count % 10 == 0) {
+      var t = DateTime.now();
+      var ms = t.difference(t1).inMilliseconds;
+      var hz = 10 / ms * 1000.0;
+      if (_count & 50 == 0) log("Weight Hz: $ms $hz");
+      t1 = t;
+    }
   }
 
   void setScaleInstance(AcaiaScale acaiaScale) {
