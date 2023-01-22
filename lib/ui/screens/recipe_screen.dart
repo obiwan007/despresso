@@ -51,7 +51,7 @@ class RecipeScreenState extends State<RecipeScreen> {
     // machineService.de1?.setIdleState();
   }
 
-  Widget _buildControls() {
+  Widget _buildControls(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -191,7 +191,7 @@ class RecipeScreenState extends State<RecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _buildControls(),
+      child: _buildControls(context),
     );
   }
 
