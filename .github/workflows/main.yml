@@ -20,12 +20,12 @@ jobs:
            
       - name: Decode secrets.properties file
         env:
-          SECRETS_PROPERTIES: ${{ secrets.KEYSTORE }}
+          KEYSTORE: ${{ secrets.KEYSTORE }}
         run: echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
 
       - name: bash
         env:
-          SECRETS_PROPERTIES: ${{ secrets.KEYPROPERTIES }}
+          KEYPROPERTIES: ${{ secrets.KEYPROPERTIES }}
         run: echo "$KEYPROPERTIES" > android/key.properties        
 
       - run: ls -l android
