@@ -107,6 +107,32 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
+        SettingsGroup(title: "Sleep Timer", children: [
+          SliderSettingsTile(
+            title: 'Switch Off After',
+            settingKey: SettingKeys.sleepTimer.name,
+            defaultValue: 120,
+            min: 0,
+            max: 240,
+            step: 5,
+            leading: const Icon(Icons.volume_up),
+            onChange: (value) {
+              debugPrint('key-slider-volume: $value');
+            },
+          ),
+          SliderSettingsTile(
+            title: 'Screen Lock',
+            settingKey: SettingKeys.screenLockTimer.name,
+            defaultValue: 120,
+            min: 0,
+            max: 240,
+            step: 5,
+            leading: const Icon(Icons.volume_up),
+            onChange: (value) {
+              debugPrint('key-slider-volume: $value');
+            },
+          )
+        ]),
         SettingsGroup(
           title: "Cloud Services",
           children: [

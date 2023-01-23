@@ -11,6 +11,8 @@ enum SettingKeys {
   vizualizerUpload,
   vizualizerUser,
   vizualizerPwd,
+  sleepTimer,
+  screenLockTimer,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -41,4 +43,7 @@ class SettingsService extends ChangeNotifier {
   bool get vizualizerUpload => Settings.getValue(SettingKeys.vizualizerUpload.name) ?? false;
   String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name);
   String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name);
+
+  double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 120;
+  double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
 }

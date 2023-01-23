@@ -8,8 +8,10 @@ import 'package:despresso/model/settings.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock/wakelock.dart';
 import '../../../service_locator.dart';
 import '../../shot.dart';
 import '../../shotstate.dart';
@@ -84,6 +86,7 @@ class EspressoMachineService extends ChangeNotifier {
   DateTime t1 = DateTime.now();
 
   int idleTime = 0;
+  int sleepTime = 0;
 
   double pourTimeStart = 0;
   bool isPouring = false;
@@ -132,10 +135,50 @@ class EspressoMachineService extends ChangeNotifier {
     loadSettings();
     notifyListeners();
     loadShotData();
-    Timer.periodic(const Duration(seconds: 10), (timer) {
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (state.coffeeState == EspressoMachineState.sleep) {
+        try {
+          log("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
+          sleepTime += 10;
+
+          if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
+            try {
+              if (await Wakelock.enabled) {
+                log('Disable WakeLock');
+                Wakelock.disable();
+              }
+            } on MissingPluginException catch (e) {
+              log('Failed to set wakelock: $e');
+            }
+          }
+        } catch (e) {
+          log("Error $e");
+        }
+      } else {
+        sleepTime = 0;
+        try {
+          if ((await Wakelock.enabled) == false) {
+            log('enable WakeLock');
+            Wakelock.enable();
+          } else {
+            // log('is enabled WakeLock');
+          }
+        } on MissingPluginException catch (e) {
+          log('Failed to set wakelock enable: $e');
+        }
+      }
+
       if (state.coffeeState == EspressoMachineState.idle) {
-        log("Machine is still idle $idleTime");
-        idleTime += 10;
+        try {
+          log("Machine is still idle $idleTime ${settingsService.sleepTimer * 60}");
+          idleTime += 10;
+
+          if (idleTime > settingsService.sleepTimer * 60 && settingsService.sleepTimer > 0.1) {
+            de1?.switchOff();
+          }
+        } catch (e) {
+          log("Error $e");
+        }
       } else {
         idleTime = 0;
       }
