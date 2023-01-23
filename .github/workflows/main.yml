@@ -29,8 +29,6 @@ jobs:
         run: echo "$KEYPROPERTIES" > android/key.properties        
 
       - run: ls -l android
-      - run: cat android/key.properties
-      - run: cat android/upload-keystore.jks
 
       - name: JavaSetup
         uses: actions/setup-java@v2
@@ -44,11 +42,11 @@ jobs:
       - name: Version
         run: flutter --version
 
+      - name: Build iOS  
+        run: flutter build ios --release --no-codesign
+
       - name: Build APK  
         run: flutter build appbundle
-      
-      - name: Build iOS  
-        run: flutter build ios
 
       - name: Upload Android app
         uses: actions/upload-artifact@v2
