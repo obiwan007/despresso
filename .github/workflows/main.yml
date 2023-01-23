@@ -17,7 +17,19 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-       
+           
+      - name: Decode secrets.properties file
+        env:
+          SECRETS_PROPERTIES: ${{ secrets.KEYSTORE }}
+        run: echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
+
+      - name: bash
+        env:
+          SECRETS_PROPERTIES: ${{ secrets.KEYPROPERTIES }}
+        run: cat "$KEYPROPERTIES" > android/key.properties        
+
+      - run: ls android
+
       - name: JavaSetup
         uses: actions/setup-java@v2
         with:
@@ -35,4 +47,10 @@ jobs:
       
       - name: Build iOS  
         run: flutter build ios
-      
+
+      - name: Upload Android app
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Android
+          path: build/outputs/bundle/release/*
