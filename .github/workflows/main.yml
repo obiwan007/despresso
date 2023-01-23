@@ -28,7 +28,8 @@ jobs:
           SECRETS_PROPERTIES: ${{ secrets.KEYPROPERTIES }}
         run: echo "$KEYPROPERTIES" > android/key.properties        
 
-      - run: ls android
+      - run: cat android/key.properties
+      - run: cat android/upload-keystore.jks
 
       - name: JavaSetup
         uses: actions/setup-java@v2
