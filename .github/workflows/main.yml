@@ -26,5 +26,8 @@ jobs:
         run: flutter --version
 
       - name: Build APK  
-        run: flutter run appbundle
+        run: flutter build appbundle
+      
+      - name: Build iOS  
+        run: flutter build ios
       
