@@ -15,9 +15,16 @@ jobs:
   installflutter:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - name checkout
+        uses: actions/checkout@v3
+        
+      - name InstallFlutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable' # or: 'beta', 'dev' or 'master'
-      - run: flutter --version
+      - name Version
+        run: flutter --version
+
+      - name Build APK  
+        run: flutter run appbundle
       
