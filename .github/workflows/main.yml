@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:  
-  installflutter:
+  buildall:
     runs-on: macos-latest
     steps:
       - name: checkout

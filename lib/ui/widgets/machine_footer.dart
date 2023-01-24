@@ -65,9 +65,12 @@ class _MachineFooterState extends State<MachineFooter> {
           StreamBuilder<WaterLevel>(
               stream: machineService.streamWaterLevel,
               builder: (context, snapshot) {
-                ;
                 return Row(
-                  children: snapshot.data != null
+                  children: snapshot.data != null &&
+                          machineService.currentFullState.state != EspressoMachineState.espresso &&
+                          machineService.currentFullState.state != EspressoMachineState.water &&
+                          machineService.currentFullState.state != EspressoMachineState.steam &&
+                          machineService.currentFullState.state != EspressoMachineState.sleep
                       ? [
                           FooterValue(
                               value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
@@ -84,7 +87,7 @@ class _MachineFooterState extends State<MachineFooter> {
               stream: machineService.streamShotState,
               builder: (context, snapshot) {
                 return Row(
-                  children: snapshot.data != null
+                  children: snapshot.data != null && machineService.currentFullState.state != EspressoMachineState.sleep
                       ? [
                           FooterValue(value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C", label: "Group"),
                           if (machineService.currentFullState.state != EspressoMachineState.idle)

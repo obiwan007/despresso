@@ -270,10 +270,74 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "8:1087044828506445333",
+      "lastPropertyId": "2:6993582572867488081",
+      "name": "Favorite",
+      "properties": [
+        {
+          "id": "1:9118758589013466597",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6993582572867488081",
+          "name": "recipeId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "4:2795591998313105007",
+          "relationTarget": "Recipe"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "9:7693652674048295668",
+      "lastPropertyId": "6:3891072045656880456",
+      "name": "Recipe",
+      "properties": [
+        {
+          "id": "1:4913052187613295020",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7810214585185210043",
+          "name": "coffeeId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "5:7106111853969068341",
+          "relationTarget": "Coffee"
+        },
+        {
+          "id": "3:1845236010514477562",
+          "name": "adjustedWeight",
+          "type": 8
+        },
+        {
+          "id": "4:8386295331633147748",
+          "name": "adjustedPressure",
+          "type": 8
+        },
+        {
+          "id": "5:4533756232448450794",
+          "name": "adjustedTemp",
+          "type": 8
+        },
+        {
+          "id": "6:3891072045656880456",
+          "name": "name",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "7:7915358336460233027",
-  "lastIndexId": "3:6812967169057673456",
+  "lastEntityId": "9:7693652674048295668",
+  "lastIndexId": "5:7106111853969068341",
   "lastRelationId": "1:2516218059471133212",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

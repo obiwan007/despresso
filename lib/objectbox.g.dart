@@ -15,6 +15,8 @@ import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'model/coffee.dart';
+import 'model/favorite.dart';
+import 'model/recipe.dart';
 import 'model/shot.dart';
 import 'model/shotstate.dart';
 
@@ -287,6 +289,68 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(8, 1087044828506445333),
+      name: 'Favorite',
+      lastPropertyId: const IdUid(2, 6993582572867488081),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 9118758589013466597),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 6993582572867488081),
+            name: 'recipeId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(4, 2795591998313105007),
+            relationTarget: 'Recipe')
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(9, 7693652674048295668),
+      name: 'Recipe',
+      lastPropertyId: const IdUid(6, 3891072045656880456),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 4913052187613295020),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 7810214585185210043),
+            name: 'coffeeId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(5, 7106111853969068341),
+            relationTarget: 'Coffee'),
+        ModelProperty(
+            id: const IdUid(3, 1845236010514477562),
+            name: 'adjustedWeight',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 8386295331633147748),
+            name: 'adjustedPressure',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 4533756232448450794),
+            name: 'adjustedTemp',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 3891072045656880456),
+            name: 'name',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -310,8 +374,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(7, 7915358336460233027),
-      lastIndexId: const IdUid(3, 6812967169057673456),
+      lastEntityId: const IdUid(9, 7693652674048295668),
+      lastIndexId: const IdUid(5, 7106111853969068341),
       lastRelationId: const IdUid(1, 2516218059471133212),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -576,6 +640,71 @@ ModelDefinition getObjectBoxModel() {
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 32, 0);
 
           return object;
+        }),
+    Favorite: EntityDefinition<Favorite>(
+        model: _entities[4],
+        toOneRelations: (Favorite object) => [object.recipe],
+        toManyRelations: (Favorite object) => {},
+        getId: (Favorite object) => object.id,
+        setId: (Favorite object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Favorite object, fb.Builder fbb) {
+          fbb.startTable(3);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.recipe.targetId);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = Favorite()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          object.recipe.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          object.recipe.attach(store);
+          return object;
+        }),
+    Recipe: EntityDefinition<Recipe>(
+        model: _entities[5],
+        toOneRelations: (Recipe object) => [object.coffee],
+        toManyRelations: (Recipe object) => {},
+        getId: (Recipe object) => object.id,
+        setId: (Recipe object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Recipe object, fb.Builder fbb) {
+          final nameOffset = fbb.writeString(object.name);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.coffee.targetId);
+          fbb.addFloat64(2, object.adjustedWeight);
+          fbb.addFloat64(3, object.adjustedPressure);
+          fbb.addFloat64(4, object.adjustedTemp);
+          fbb.addOffset(5, nameOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = Recipe()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..adjustedWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0)
+            ..adjustedPressure =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0)
+            ..adjustedTemp =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
+            ..name = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 14, '');
+          object.coffee.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          object.coffee.attach(store);
+          return object;
         })
   };
 
@@ -760,4 +889,39 @@ class ShotState_ {
   /// see [ShotState.steamTemp]
   static final steamTemp =
       QueryIntegerProperty<ShotState>(_entities[3].properties[16]);
+}
+
+/// [Favorite] entity fields to define ObjectBox queries.
+class Favorite_ {
+  /// see [Favorite.id]
+  static final id = QueryIntegerProperty<Favorite>(_entities[4].properties[0]);
+
+  /// see [Favorite.recipe]
+  static final recipe =
+      QueryRelationToOne<Favorite, Recipe>(_entities[4].properties[1]);
+}
+
+/// [Recipe] entity fields to define ObjectBox queries.
+class Recipe_ {
+  /// see [Recipe.id]
+  static final id = QueryIntegerProperty<Recipe>(_entities[5].properties[0]);
+
+  /// see [Recipe.coffee]
+  static final coffee =
+      QueryRelationToOne<Recipe, Coffee>(_entities[5].properties[1]);
+
+  /// see [Recipe.adjustedWeight]
+  static final adjustedWeight =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[2]);
+
+  /// see [Recipe.adjustedPressure]
+  static final adjustedPressure =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[3]);
+
+  /// see [Recipe.adjustedTemp]
+  static final adjustedTemp =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[4]);
+
+  /// see [Recipe.name]
+  static final name = QueryStringProperty<Recipe>(_entities[5].properties[5]);
 }

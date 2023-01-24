@@ -1,9 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
-part 'coffee.g.dart';
 
 @Entity()
-@JsonSerializable()
 class Coffee {
   Coffee();
 
@@ -30,12 +27,9 @@ class Coffee {
   DateTime roastDate = DateTime.now();
 
   String price = "";
-  Map<String, dynamic> toJson() => _$CoffeeToJson(this);
-  factory Coffee.fromJson(Map<String, dynamic> json) => _$CoffeeFromJson(json);
 }
 
 @Entity()
-@JsonSerializable()
 class Roaster {
   Roaster();
 
@@ -49,7 +43,4 @@ class Roaster {
   String description = "";
   String address = "";
   String homepage = "";
-
-  Map<String, dynamic> toJson() => _$RoasterToJson(this);
-  factory Roaster.fromJson(Map<String, dynamic> json) => _$RoasterFromJson(json);
 }

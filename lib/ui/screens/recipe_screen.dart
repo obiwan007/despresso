@@ -59,91 +59,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                const Text("Current Shot Recipe"),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Container(
-                        color: Colors.black38,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Expanded(child: Text("Selected Base Profile")),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => const ProfilesScreen()),
-                                              );
-                                            },
-                                            child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
-                                          ),
-                                          Text(
-                                              "Stop weight: ${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g")
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // Row(
-                                //   children: [
-                                //     Expanded(child: Text("Dial In Layer")),
-                                //     Expanded(
-                                //       child: ElevatedButton(
-                                //         onPressed: () {},
-                                //         child: Text("Reduced Flow"),
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                const Divider(),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Expanded(child: Text("Selected Bean")),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
-                                              );
-                                            },
-                                            child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
-                                          ),
-                                          Text(
-                                              "Dose: ${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
-                                          Text("Grind Settings: ${coffeeService.currentCoffee?.grinderSettings ?? ''}"),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Divider(),
-                              ]),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: RecipeDetails(profileService: profileService, coffeeService: coffeeService),
           ),
         ),
         Expanded(
@@ -200,5 +116,112 @@ class RecipeScreenState extends State<RecipeScreen> {
 
   void profileServiceListener() {
     setState(() {});
+  }
+}
+
+class RecipeDetails extends StatelessWidget {
+  const RecipeDetails({
+    Key? key,
+    required this.profileService,
+    required this.coffeeService,
+  }) : super(key: key);
+
+  final ProfileService profileService;
+  final CoffeeService coffeeService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text("Current Shot Recipe"),
+        Expanded(
+          flex: 1,
+          child: Column(
+            children: [
+              Container(
+                color: Colors.black38,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(child: Text("Selected Base Profile")),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                                      );
+                                    },
+                                    child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
+                                  ),
+                                  Text(
+                                      "Stop weight: ${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g")
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   children: [
+                        //     Expanded(child: Text("Dial In Layer")),
+                        //     Expanded(
+                        //       child: ElevatedButton(
+                        //         onPressed: () {},
+                        //         child: Text("Reduced Flow"),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        const Divider(),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(child: Text("Selected Bean")),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
+                                      );
+                                    },
+                                    child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
+                                  ),
+                                  Text("Dose: ${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
+                                  Text("Grind Settings: ${coffeeService.currentCoffee?.grinderSettings ?? ''}"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: Text("Add as Favorite"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: Text("Save Recipe"),
+                        ),
+                      ]),
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
