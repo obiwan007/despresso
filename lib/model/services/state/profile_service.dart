@@ -94,6 +94,13 @@ class ProfileService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setProfileFromId(String profileId) {
+    var found = profiles.where((element) => profileId == element.id);
+    if (found.isNotEmpty) {
+      setProfile(found.first);
+    }
+  }
+
   void setProfile(De1ShotProfile profile) {
     currentProfile = profile;
     prefs.setString("profilename", profile.id);

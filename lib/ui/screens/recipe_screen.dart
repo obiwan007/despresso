@@ -60,16 +60,19 @@ class RecipeScreenState extends State<RecipeScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: StreamBuilder<List<Recipe>>(
-                stream: coffeeService.streamRecipe,
-                initialData: coffeeService.getRecipes(),
-                builder: (context, snapshot) {
-                  return ListView.builder(
-                    padding: EdgeInsets.all(10.0),
-                    itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
-                    itemCount: snapshot.data?.length ?? 0,
-                  );
-                }),
+            child: Container(
+              color: Colors.white10,
+              child: StreamBuilder<List<Recipe>>(
+                  stream: coffeeService.streamRecipe,
+                  initialData: coffeeService.getRecipes(),
+                  builder: (context, snapshot) {
+                    return ListView.builder(
+                      padding: EdgeInsets.all(10.0),
+                      itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
+                      itemCount: snapshot.data?.length ?? 0,
+                    );
+                  }),
+            ),
           ),
         ),
         Expanded(
@@ -139,6 +142,11 @@ class RecipeScreenState extends State<RecipeScreen> {
     return ListTile(
       title: Text(data?.name ?? "noname"),
       subtitle: Text(data.profileId + " " + data.coffee.target!.name),
+      selected: coffeeService.selectedRecipe == data.id,
+      selectedColor: Colors.amber,
+      onTap: () {
+        coffeeService.setSelectedRecipe(data.id);
+      },
     );
     return Container(
       height: 50,
