@@ -147,6 +147,11 @@ class RecipeScreenState extends State<RecipeScreen> {
       onTap: () {
         coffeeService.setSelectedRecipe(data.id);
       },
+      trailing: ElevatedButton(
+          onPressed: () {
+            coffeeService.removeRecipe(data.id);
+          },
+          child: Icon(Icons.delete_forever)),
     );
     return Container(
       height: 50,

@@ -249,4 +249,10 @@ class CoffeeService extends ChangeNotifier {
   List<Recipe> getRecipes() {
     return recipeBox.getAll();
   }
+
+  void removeRecipe(int id) {
+    recipeBox.remove(id);
+    notifyListeners();
+    _controllerRecipe.add(getRecipes());
+  }
 }
