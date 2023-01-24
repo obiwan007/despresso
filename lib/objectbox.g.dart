@@ -314,7 +314,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 7693652674048295668),
       name: 'Recipe',
-      lastPropertyId: const IdUid(6, 3891072045656880456),
+      lastPropertyId: const IdUid(7, 647131839827812853),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -347,6 +347,11 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(6, 3891072045656880456),
             name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 647131839827812853),
+            name: 'profileId',
             type: 9,
             flags: 0)
       ],
@@ -677,13 +682,15 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Recipe object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
-          fbb.startTable(7);
+          final profileIdOffset = fbb.writeString(object.profileId);
+          fbb.startTable(8);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.coffee.targetId);
           fbb.addFloat64(2, object.adjustedWeight);
           fbb.addFloat64(3, object.adjustedPressure);
           fbb.addFloat64(4, object.adjustedTemp);
           fbb.addOffset(5, nameOffset);
+          fbb.addOffset(6, profileIdOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -700,7 +707,9 @@ ModelDefinition getObjectBoxModel() {
             ..adjustedTemp =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
             ..name = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 14, '');
+                .vTableGet(buffer, rootOffset, 14, '')
+            ..profileId = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 16, '');
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
@@ -924,4 +933,8 @@ class Recipe_ {
 
   /// see [Recipe.name]
   static final name = QueryStringProperty<Recipe>(_entities[5].properties[5]);
+
+  /// see [Recipe.profileId]
+  static final profileId =
+      QueryStringProperty<Recipe>(_entities[5].properties[6]);
 }

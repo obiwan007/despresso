@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:despresso/model/coffee.dart';
+import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
@@ -27,21 +28,30 @@ class CoffeeService extends ChangeNotifier {
 
   late Box<Coffee> coffeeBox;
   late Box<Roaster> roasterBox;
+  late Box<Recipe> recipeBox;
   late Box<Shot> shotBox;
 
   int selectedRoaster = 0;
   int selectedCoffee = 0;
   int selectedShot = 0;
 
+  late StreamController<List<Recipe>> _controllerRecipe;
+  late Stream<List<Recipe>> _streamRecipe;
+  Stream<List<Recipe>> get streamRecipe => _streamRecipe;
+
   CoffeeService() {
     init();
   }
 
   void init() async {
+    _controllerRecipe = StreamController<List<Recipe>>();
+    _streamRecipe = _controllerRecipe.stream.asBroadcastStream();
+
     objectBox = getIt<ObjectBox>();
     coffeeBox = objectBox.store.box<Coffee>();
     roasterBox = objectBox.store.box<Roaster>();
     shotBox = objectBox.store.box<Shot>();
+    recipeBox = objectBox.store.box<Recipe>();
 
     prefs = await SharedPreferences.getInstance();
     await load();
@@ -203,5 +213,19 @@ class CoffeeService extends ChangeNotifier {
     }
     return null;
 // code to return members
+  }
+
+  void addRecipe({required String name, required int coffeeId, required String profileId}) {
+    var recipe = Recipe();
+    recipe.name = name;
+    recipe.coffee.targetId = coffeeId;
+    recipe.profileId = profileId;
+    recipeBox.put(recipe);
+    notifyListeners();
+    _controllerRecipe.add(getRecipes());
+  }
+
+  List<Recipe> getRecipes() {
+    return recipeBox.getAll();
   }
 }

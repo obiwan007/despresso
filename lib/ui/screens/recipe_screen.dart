@@ -1,3 +1,4 @@
+import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -59,6 +60,22 @@ class RecipeScreenState extends State<RecipeScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
+            child: StreamBuilder<List<Recipe>>(
+                stream: coffeeService.streamRecipe,
+                initialData: coffeeService.getRecipes(),
+                builder: (context, snapshot) {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(10.0),
+                    itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
+                    itemCount: snapshot.data?.length ?? 0,
+                  );
+                }),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: RecipeDetails(profileService: profileService, coffeeService: coffeeService),
           ),
         ),
@@ -116,6 +133,18 @@ class RecipeScreenState extends State<RecipeScreen> {
 
   void profileServiceListener() {
     setState(() {});
+  }
+
+  buildItem(BuildContext context, Recipe data) {
+    return ListTile(
+      title: Text(data?.name ?? "noname"),
+      subtitle: Text(data.profileId + " " + data.coffee.target!.name),
+    );
+    return Container(
+      height: 50,
+      color: Colors.black38,
+      child: Center(child: Text(data?.name ?? "noname")),
+    );
   }
 }
 
@@ -212,7 +241,12 @@ class RecipeDetails extends StatelessWidget {
                           child: Text("Add as Favorite"),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            coffeeService.addRecipe(
+                                name: profileService.currentProfile!.title + "/" + coffeeService.currentCoffee!.name,
+                                coffeeId: coffeeService.selectedCoffee,
+                                profileId: profileService.currentProfile!.id);
+                          },
                           child: Text("Save Recipe"),
                         ),
                       ]),

@@ -8,7 +8,7 @@ class Recipe {
   int id = 0;
 
   final coffee = ToOne<Coffee>();
-  final profileId = "";
+  String profileId = "";
 
   double adjustedWeight = 0;
   double adjustedPressure = 0;
