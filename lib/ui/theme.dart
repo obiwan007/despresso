@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart' as material;
 
-class Colors {
-  const Colors();
+class ThemeColors {
+  const ThemeColors();
   static const Color primaryColor = Color.fromARGB(255, 255, 255, 255); //Color(0xFFFFFFFF);
   static const Color secondaryColor = material.Colors.orange;
   static const Color goodColor = Color(0xFF32C2F0);
@@ -64,51 +64,51 @@ class TextStyles {
   const TextStyles();
 
   static const TextStyle h1 = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontWeight: FontWeight.w300,
     fontSize: 18,
   );
   static const TextStyle h2 = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontWeight: FontWeight.w300,
     fontSize: 16,
   );
 
   static const TextStyle tabPrimary = TextStyle(
-    color: Colors.secondaryColor,
+    color: ThemeColors.secondaryColor,
     fontWeight: FontWeight.w300,
   );
 
   static const TextStyle tabSecondary = TextStyle(
-    color: Colors.secondaryColor,
+    color: ThemeColors.secondaryColor,
     fontWeight: FontWeight.w100,
   );
 
   static const TextStyle tabTertiary = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontWeight: FontWeight.w300,
   );
 
   static const TextStyle tabLabel = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontWeight: FontWeight.w300,
   );
   static const TextStyle tabHeading = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     // fontSize: 72.0,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle statusbuttonMain = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontSize: 22.0,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle statusButtonSecondary = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontWeight: FontWeight.w300,
   );
   static const TextStyle appBarTitle = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontSize: 16.0,
     fontWeight: FontWeight.bold,
   );
@@ -119,17 +119,17 @@ class TextStyles {
   );
 
   static const TextStyle headingFooter = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontSize: 22.0,
     fontWeight: FontWeight.w300,
   );
   static const TextStyle headingFooterSmall = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontSize: 16.0,
     fontWeight: FontWeight.w300,
   );
   static const TextStyle subHeadingFooter = TextStyle(
-    color: Colors.primaryColor,
+    color: ThemeColors.primaryColor,
     fontWeight: FontWeight.w100,
   );
 }
@@ -137,7 +137,7 @@ class TextStyles {
 class Helper {
   static Widget horizontalBorder() {
     return Container(
-      color: Colors.secondaryColor,
+      color: ThemeColors.secondaryColor,
       width: 38.0,
       height: 1.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),

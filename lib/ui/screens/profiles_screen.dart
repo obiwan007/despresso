@@ -5,7 +5,6 @@ import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
-import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
@@ -25,7 +24,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
   De1ShotProfile? _selectedProfile;
 
-  Iterable<RangeAnnotationSegment<double>> phases = [];
+  Iterable<charts.RangeAnnotationSegment<double>> phases = [];
   @override
   void initState() {
     super.initState();
@@ -195,25 +194,25 @@ class ProfilesScreenState extends State<ProfilesScreen> {
       primaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor)),
         ),
       ),
       secondaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor)),
         ),
       ),
     );
@@ -236,8 +235,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(key, style: theme.TextStyles.tabHeading),
-        Text(value, style: theme.TextStyles.tabPrimary),
+        Text(key, style: Theme.of(context).textTheme.labelLarge),
+        Text(value, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }
@@ -259,7 +258,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         id: 'Pressure',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.pressureColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -267,7 +266,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         id: 'Flow',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.flowColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -275,7 +274,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         id: 'Temp',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -283,7 +282,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         id: 'Weight',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         data: shotList.entries,
       ),
@@ -333,7 +332,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     }
   }
 
-  Iterable<RangeAnnotationSegment<double>> _createPhases() {
+  Iterable<charts.RangeAnnotationSegment<double>> _createPhases() {
     if (shotList.entries.isEmpty) {
       return [];
     }
@@ -355,16 +354,18 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         toSampleTime = stateChanges[i].sampleTimeCorrected;
       }
 
-      var col = theme.Colors.statesColors[from.subState];
-      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.Colors.backgroundColor);
+      var col = theme.ThemeColors.statesColors[from.subState];
+      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.ThemeColors.backgroundColor);
       // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
       return charts.RangeAnnotationSegment(
           from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
           labelAnchor: charts.AnnotationLabelAnchor.end,
           color: col2,
           startLabel: from.subState,
-          labelStyleSpec:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelStyleSpec: charts.TextStyleSpec(
+              fontSize: 10,
+              // color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
+              color: charts.ColorUtil.fromDartColor(Color(0xFFD0BCFF))),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log("Phase ${element.subState}");
     });

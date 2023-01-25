@@ -10,6 +10,7 @@ import 'objectbox.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
 import 'ui/theme.dart' as theme;
+import 'color_schemes.g.dart';
 
 late ObjectBox objectbox;
 
@@ -49,22 +50,41 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'despresso',
-      themeMode: ThemeMode.dark,
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.light,
+        colorScheme: lightColorScheme,
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+          bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: theme.Colors.backgroundColor,
-        backgroundColor: theme.Colors.backgroundColor,
-        colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
-          primary: theme.Colors.secondaryColor,
-          secondary: Colors.green,
-          // brightness: Brightness.dark,
-        ),
+        colorScheme: darkColorScheme,
+        textTheme: const TextTheme(
+            // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+            // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+            // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+            ),
       ),
+      themeMode: ThemeMode.dark,
+
+      // theme: ThemeData(
+      //   useMaterial3: true,
+      //   brightness: Brightness.light,
+      // ),
+      // darkTheme: ThemeData(
+      //   useMaterial3: true,
+      //   brightness: Brightness.dark,
+      //   scaffoldBackgroundColor: theme.Colors.backgroundColor,
+      //   backgroundColor: theme.Colors.backgroundColor,
+      //   colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
+      //     primary: theme.Colors.secondaryColor,
+      //     secondary: Colors.green,
+      //     // brightness: Brightness.dark,
+      //   ),
+
       home: const LandingPage(title: 'despresso'),
     );
   }

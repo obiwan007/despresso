@@ -61,7 +61,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              color: Colors.white10,
+              color: Theme.of(context).listTileTheme.tileColor,
               child: StreamBuilder<List<Recipe>>(
                   stream: coffeeService.streamRecipe,
                   initialData: coffeeService.getRecipes(),
@@ -94,20 +94,35 @@ class RecipeScreenState extends State<RecipeScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text("Details"),
+                    Text(
+                      "Details",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Expanded(flex: 6, child: Text("Graph")),
+                        Expanded(
+                            flex: 6,
+                            child: Text(
+                              "Graph",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            )),
                         Expanded(
                             flex: 4,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Description"),
+                                Text(
+                                  "Description",
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
                                 Text(profileService.currentProfile?.shotHeader.notes ?? ""),
-                                const Text("Coffee notes"),
+                                if (coffeeService.currentCoffee?.description.isNotEmpty == true)
+                                  Text(
+                                    "Coffee notes",
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 Text(coffeeService.currentCoffee?.description ?? ""),
                               ],
                             )),
@@ -140,10 +155,13 @@ class RecipeScreenState extends State<RecipeScreen> {
 
   buildItem(BuildContext context, Recipe data) {
     return ListTile(
-      title: Text(data?.name ?? "noname"),
-      subtitle: Text(data.profileId + " " + data.coffee.target!.name),
+      title: Text(
+        data.name ?? "noname",
+      ),
+      subtitle: Text(
+        data.profileId + " " + data.coffee.target!.name,
+      ),
       selected: coffeeService.selectedRecipe == data.id,
-      selectedColor: Colors.amber,
       onTap: () {
         coffeeService.setSelectedRecipe(data.id);
       },
@@ -152,11 +170,6 @@ class RecipeScreenState extends State<RecipeScreen> {
             coffeeService.removeRecipe(data.id);
           },
           child: Icon(Icons.delete_forever)),
-    );
-    return Container(
-      height: 50,
-      color: Colors.black38,
-      child: Center(child: Text(data?.name ?? "noname")),
     );
   }
 }
@@ -175,7 +188,10 @@ class RecipeDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text("Current Shot Recipe"),
+        Text(
+          "Current Shot Recipe",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Expanded(
           flex: 1,
           child: Column(

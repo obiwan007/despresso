@@ -298,8 +298,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(key, style: theme.TextStyles.tabHeading),
-          if (value != null) Text(value, style: theme.TextStyles.tabPrimary),
+          Text(key, style: Theme.of(context).textTheme.labelLarge),
+          if (value != null) Text(value, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
     );

@@ -192,16 +192,16 @@ class EspressoScreenState extends State<EspressoScreen> {
         toSampleTime = stateChanges[i].sampleTimeCorrected;
       }
 
-      var col = theme.Colors.statesColors[from.subState];
-      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.Colors.goodColor);
+      var col = theme.ThemeColors.statesColors[from.subState];
+      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.ThemeColors.goodColor);
       // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
       return charts.RangeAnnotationSegment(
           from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
           labelAnchor: charts.AnnotationLabelAnchor.end,
           color: col2,
           startLabel: from.subState,
-          labelStyleSpec:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelStyleSpec: charts.TextStyleSpec(
+              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log("Phase ${element.subState}");
     });
@@ -213,7 +213,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'Pressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.pressureColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -221,7 +221,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'Flow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.flowColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -229,7 +229,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'Temp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -237,7 +237,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'Weight [g]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -245,7 +245,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'Flow [g/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.flowWeight,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.weightColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.weightColor),
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
@@ -253,7 +253,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'SetFlow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setGroupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.flowColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.flowColor),
         dashPatternFn: (_, __) => [5, 5],
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
@@ -262,7 +262,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'SetPressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setGroupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.pressureColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.pressureColor),
         dashPatternFn: (datum, index) => [5, 5],
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
@@ -271,7 +271,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         id: 'SetTemp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setHeadTemp,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.Colors.tempColor),
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
         strokeWidthPxFn: (_, __) => 3,
         dashPatternFn: (datum, index) => [5, 5],
         data: machineService.shotList.entries,
@@ -325,28 +325,28 @@ class EspressoScreenState extends State<EspressoScreen> {
       ],
       secondaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.secondaryColor)),
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
         tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         viewport: NumericExtents(0, maxTime),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
     );
@@ -356,7 +356,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.graphBackground,
+        color: theme.ThemeColors.graphBackground,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -384,18 +384,18 @@ class EspressoScreenState extends State<EspressoScreen> {
       primaryMeasureAxis: charts.NumericAxisSpec(
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         viewport: NumericExtents(0, maxTime),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
     );
@@ -405,7 +405,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.graphBackground,
+        color: theme.ThemeColors.graphBackground,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
@@ -431,27 +431,27 @@ class EspressoScreenState extends State<EspressoScreen> {
         viewport: charts.NumericExtents(0.0, maxWeight),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
       primaryMeasureAxis: charts.NumericAxisSpec(
         tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
       domainAxis: charts.NumericAxisSpec(
         viewport: charts.NumericExtents(0, maxTime),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
           lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.Colors.primaryColor)),
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
         ),
       ),
     );
@@ -460,7 +460,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       margin: const EdgeInsets.only(left: 10.0),
       width: MediaQuery.of(context).size.width - 105,
       decoration: BoxDecoration(
-        color: theme.Colors.graphBackground,
+        color: theme.ThemeColors.graphBackground,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
