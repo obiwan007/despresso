@@ -232,28 +232,33 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   SizedBox createTabBar() {
     var tb = SizedBox(
-      height: 70,
+      height: 75,
       child: TabBar(
         controller: _tabController,
 
-        indicator: const BoxDecoration(color: Colors.black38),
+        // indicator: const BoxDecoration(color: Colors.black38),
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
         tabs: const <Widget>[
           Tab(
             child: Text("Recipe"),
+            icon: Icon(Icons.document_scanner),
           ),
           Tab(
             child: Text("Espresso"),
+            icon: Icon(Icons.coffee),
           ),
           Tab(
             child: Text("Steam"),
+            icon: Icon(Icons.stream),
           ),
           Tab(
             child: Text("Water"),
+            icon: Icon(Icons.water_drop),
           ),
           Tab(
             child: Text("Flush"),
+            icon: Icon(Icons.water),
           ),
         ],
       ),
