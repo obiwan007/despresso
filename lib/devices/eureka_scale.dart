@@ -9,16 +9,19 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-class AcaiaScale extends ChangeNotifier implements AbstractScale {
+class EurekaScale extends ChangeNotifier implements AbstractScale {
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Uuid.parse('00001820-0000-1000-8000-00805f9b34fb');
+  static Uuid ServiceUUID = Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb');
   // ignore: non_constant_identifier_names
   static Uuid CharateristicUUID =
-      Uuid.parse('00002a80-0000-1000-8000-00805f9b34fb');
+      Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb');
+
+  static Uuid CommandUUID = Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb');
+
   late ScaleService scaleService;
 
-  static const _heartbeatTime = Duration(seconds: 3);
-  static const List<int> _heartbeatPayload = [0x02, 0x00];
+  // static const _heartbeatTime = Duration(seconds: 3);
+  // static const List<int> _heartbeatPayload = [0x02, 0x00];
   static const List<int> _identPayload = [
     0x30,
     0x31,
@@ -48,25 +51,31 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     4 // setting
   ];
 
-  static const int header1 = 0xef;
-  static const int header2 = 0xdd;
+  // static const int header1 = 0xef;
+  // static const int header2 = 0xdd;
+
+  static const cmdHeader = 0xAA;
+  static const cmdBase = 0x02;
+  static const cmdStartTimer = 0x33;
+  static const cmdStopTimer = 0x34;
+  static const cmdResetTimer = 0x35;
+  static const cmdTare = 0x31;
 
   final DiscoveredDevice device;
 
   late DeviceConnectionState _state;
 
   List<int> commandBuffer = [];
-  late Timer _heartBeatTimer;
   final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
-  AcaiaScale(this.device) {
+  EurekaScale(this.device) {
     scaleService = getIt<ScaleService>();
     log("Connect to Acaia");
-    scaleService.setScaleInstance(this);
+    // scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
         (connectionState) {
       // Handle connection state updates
@@ -75,23 +84,14 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     }, onError: (Object error) {
       // Handle a possible error
     });
-
-    // device
-    //     .observeConnectionState(
-    //         emitCurrentValue: false, completeOnDisconnect: true)
-    //     .listen((connectionState) {
-    //   log('Peripheral ${device.identifier} connection state is $connectionState');
-    //   _onStateChange(connectionState);
-    // });
-    // device.connect();
   }
 
   Uint8List encode(int msgType, List<int> payload) {
     var cksum1 = 0;
     var cksum2 = 0;
     var buffer = <int>[];
-    buffer.add(header1);
-    buffer.add(header2);
+    // buffer.add(header1);
+    // buffer.add(header2);
     buffer.add(msgType);
 
     payload.asMap().forEach((index, value) => {
@@ -105,73 +105,75 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     return Uint8List.fromList(buffer);
   }
 
-  void parsePayload(int type, List<int> payload) {
-    switch (type) {
-      case 12:
-        var subType = payload[0];
-        if (subType == 5) {
-          var temp = ((payload[4] & 0xff) << 24) +
-              ((payload[3] & 0xff) << 16) +
-              ((payload[2] & 0xff) << 8) +
-              (payload[1] & 0xff);
-          var unit = payload[5] & 0xFF;
+  void parsePayload(List<int> payload) {
+    // h1 h2 h3 timer_running timer sign weight ...
+    // 170 9 65 - seem to be constant
+    // [170, 9, 65, 1, 33, 0, 0, 0, 0, 0, 99]
+    // [170, 9, 65, 0, 98, 0, 1, 86, 2, 0, 252]
+    var isNeg = (payload[5] == 0 ? false : true);
+    var weight = payload[6] + (payload[7] << 8);
 
-          var value = temp / pow(10, unit);
-          if ((payload[6] & 0x02) != 0) {
-            value *= -1.0;
-          }
-          scaleService.setWeight(value);
+    weight = isNeg ? weight * -1 : weight;
+    scaleService.setWeight((weight / 10).toDouble());
 
-          break;
-        }
-        //log("Unparsed acaia event subtype: " + subType.toString());
-        //log("Payload: " + payload.toString());
+    //   var subType = payload[0];
+    //   if (subType == 5) {
+    //     var temp = ((payload[4] & 0xff) << 24) +
+    //         ((payload[3] & 0xff) << 16) +
+    //         ((payload[2] & 0xff) << 8) +
+    //         (payload[1] & 0xff);
+    //     var unit = payload[5] & 0xFF;
 
-        break;
-      // General Status including battery
-      case 8:
-        var batteryLevel = commandBuffer[4];
-        log('Got status message, battery= $batteryLevel');
-        break;
-      default:
-        log('Unparsed acaia response: $type');
-    }
+    //     var value = temp / pow(10, unit);
+    //     if ((payload[6] & 0x02) != 0) {
+    //       value *= -1.0;
+    //     }
+    //     scaleService.setWeight(value);
+
+    //     break;
+    //   }
+    //   //log("Unparsed acaia event subtype: " + subType.toString());
+    //   //log("Payload: " + payload.toString());
+
+    //   break;
+    // // General Status including battery
   }
 
   void _notificationCallback(List<int> data) {
     var notification = data;
+
     commandBuffer.addAll(notification);
 
     // remove broken half commands
-    if (commandBuffer.length > 2 &&
-        (commandBuffer[0] != header1 || commandBuffer[1] != header2)) {
-      commandBuffer.clear();
-      return;
-    }
+    // if (commandBuffer.length > 2 &&
+    //     (commandBuffer[0] != header1 || commandBuffer[1] != header2)) {
+    //   commandBuffer.clear();
+    //   return;
+    // }
     if (commandBuffer.length > 4) {
-      var type = commandBuffer[2];
-      parsePayload(type, commandBuffer.sublist(4));
+      // var type = commandBuffer[2];
+      parsePayload(commandBuffer.sublist(4));
       commandBuffer.clear();
     }
   }
 
-  void _sendHeatbeat() {
-    if (_state != DeviceConnectionState.connected) {
-      log('Disconnected from acaia scale. Not sending heartbeat');
+  // void _sendHeatbeat() {
+  //   if (_state != DeviceConnectionState.connected) {
+  //     log('Disconnected from acaia scale. Not sending heartbeat');
 
-      scaleService.setState(ScaleState.disconnected);
-      return;
-    }
-    final characteristic = QualifiedCharacteristic(
-        serviceId: ServiceUUID,
-        characteristicId: CharateristicUUID,
-        deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: encode(0x00, _heartbeatPayload));
+  //     scaleService.setState(ScaleState.disconnected);
+  //     return;
+  //   }
+  //   final characteristic = QualifiedCharacteristic(
+  //       serviceId: ServiceUUID,
+  //       characteristicId: CharateristicUUID,
+  //       deviceId: device.id);
+  //   flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
+  //       value: encode(0x00, _heartbeatPayload));
 
-    // device.writeCharacteristic(
-    //     ServiceUUID, CharateristicUUID, encode(0x00, _heartbeatPayload), false);
-  }
+  //   // device.writeCharacteristic(
+  //   //     ServiceUUID, CharateristicUUID, encode(0x00, _heartbeatPayload), false);
+  // }
 
   void _sendIdent() {
     if (_state != DeviceConnectionState.connected) {
@@ -242,7 +244,15 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         value: encode(0x04, list));
   }
 
-  Future<void> writeToAcaia(Uint8List payload) async {
+  // Future<void> startTimer() {
+  //   writeToEureka(Uint8List.fromList(
+  //       [CMD_HEADER, CMD_BASE, CMD_START_TIMER, CMD_START_TIMER]));
+  // }
+
+  // Future<void> stopTimer() {}
+  // Future<void> resetTimer() {}
+
+  Future<void> writeToEureka(Uint8List payload) async {
     log("Sending to Acaia");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID,
@@ -289,15 +299,15 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         Timer(const Duration(seconds: 1), _sendIdent);
         Timer(const Duration(seconds: 2), _sendConfig);
 
-        _heartBeatTimer =
-            Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+        // _heartBeatTimer =
+        //     Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
         log('Acaia Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
-        _heartBeatTimer.cancel();
+        // _heartBeatTimer.cancel();
         _deviceListener.cancel();
         notifyListeners();
         return;

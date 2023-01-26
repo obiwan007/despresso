@@ -6,7 +6,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
-// import 'package:despresso/devices/eureka_scale.dart';
+import 'package:despresso/devices/eureka_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
@@ -94,11 +94,11 @@ class BLEService extends ChangeNotifier {
           AcaiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
-        // if (device.name.startsWith('CFS-9002')) {
-        //   log('eureka scale found');
-        //   EurekaScale(device).addListener(() => _checkdevice(device));
-        //   _devicesList.add(device);
-        // }
+        if (device.name.startsWith('CFS-9002')) {
+          log('eureka scale found');
+          EurekaScale(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
         if (device.name.startsWith('DE1')) {
           log('Creating DE1 machine!');
           DE1(device).addListener(() => _checkdevice(device));
