@@ -24,7 +24,8 @@ Future<void> main() async {
     log('Failed to set wakelock: $e');
   }
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
+
   // SystemChrome.setEnabledSystemUIOverlays([
   //   SystemUiOverlay.bottom, //This line is used for showing the bottom bar
   // ]);
