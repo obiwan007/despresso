@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:despresso/devices/acaia_scale.dart';
+import 'package:despresso/devices/eureka_scale.dart';
 import 'package:flutter/material.dart';
 
 import '../../../service_locator.dart';
@@ -79,7 +80,8 @@ class ScaleService extends ChangeNotifier {
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();
     var flow = 0.0;
-    var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
+    var timeDiff =
+        (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
     // log(timeDiff.toStringAsFixed(2));
     var n = ((weight - _weight) / timeDiff);
     flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
