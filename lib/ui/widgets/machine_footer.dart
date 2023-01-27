@@ -145,16 +145,17 @@ class ScaleFooter extends StatelessWidget {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          machineService.scaleService.state == ScaleState.connected
-                              ? machineService.scaleService.tare()
-                              : machineService.scaleService.connect();
-                        },
-                        child: Text(
-                          machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
+                      if (machineService.scaleService.state != ScaleState.connecting)
+                        ElevatedButton(
+                          onPressed: () {
+                            machineService.scaleService.state == ScaleState.connected
+                                ? machineService.scaleService.tare()
+                                : machineService.scaleService.connect();
+                          },
+                          child: Text(
+                            machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
+                          ),
                         ),
-                      ),
                       SizedBox(
                         width: 170,
                         child: Row(
@@ -168,7 +169,7 @@ class ScaleFooter extends StatelessWidget {
                                     : machineService.scaleService.state.name,
                                 style: machineService.scaleService.state == ScaleState.connected
                                     ? theme.TextStyles.headingFooter
-                                    : theme.TextStyles.headingFooterSmall,
+                                    : Theme.of(context).textTheme.labelSmall,
                               ),
                             ),
                             SizedBox(
@@ -177,10 +178,8 @@ class ScaleFooter extends StatelessWidget {
                                 textAlign: TextAlign.right,
                                 machineService.scaleService.state == ScaleState.connected
                                     ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
-                                    : machineService.scaleService.state.name,
-                                style: machineService.scaleService.state == ScaleState.connected
-                                    ? theme.TextStyles.headingFooterSmall
-                                    : theme.TextStyles.headingFooterSmall,
+                                    : "",
+                                style: theme.TextStyles.headingFooterSmall,
                               ),
                             ),
                           ],
