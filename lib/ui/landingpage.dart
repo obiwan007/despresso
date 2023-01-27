@@ -83,7 +83,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     final List<Widget> aboutBoxChildren = <Widget>[
       const SizedBox(height: 24),
       RichText(
-        text: TextSpan(
+        text: const TextSpan(
           children: <TextSpan>[
             TextSpan(
                 text: "Flutter is Google's UI toolkit for building beautiful, "
@@ -241,24 +241,24 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
         tabs: const <Widget>[
           Tab(
-            child: Text("Recipe"),
             icon: Icon(Icons.document_scanner),
+            child: Text("Recipe"),
           ),
           Tab(
-            child: Text("Espresso"),
             icon: Icon(Icons.coffee),
+            child: Text("Espresso"),
           ),
           Tab(
-            child: Text("Steam"),
             icon: Icon(Icons.stream),
+            child: Text("Steam"),
           ),
           Tab(
-            child: Text("Water"),
             icon: Icon(Icons.water_drop),
+            child: Text("Water"),
           ),
           Tab(
-            child: Text("Flush"),
             icon: Icon(Icons.water),
+            child: Text("Flush"),
           ),
         ],
       ),
