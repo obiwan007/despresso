@@ -13,6 +13,7 @@ enum SettingKeys {
   vizualizerPwd,
   sleepTimer,
   screenLockTimer,
+  graphSingle,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -46,4 +47,6 @@ class SettingsService extends ChangeNotifier {
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 120;
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
+
+  bool get graphSingle => Settings.getValue<bool>(SettingKeys.graphSingle.name) ?? false;
 }

@@ -156,22 +156,41 @@ class ScaleFooter extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 130,
-                        child: Text(
-                          textAlign: TextAlign.right,
-                          machineService.scaleService.state == ScaleState.connected
-                              ? "${snapshot.data?.weight.toStringAsFixed(1)} g"
-                              : machineService.scaleService.state.name,
-                          style: machineService.scaleService.state == ScaleState.connected
-                              ? theme.TextStyles.headingFooter
-                              : theme.TextStyles.headingFooterSmall,
+                        width: 170,
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 80,
+                              child: Text(
+                                textAlign: TextAlign.right,
+                                machineService.scaleService.state == ScaleState.connected
+                                    ? "${snapshot.data?.weight.toStringAsFixed(1)} g"
+                                    : machineService.scaleService.state.name,
+                                style: machineService.scaleService.state == ScaleState.connected
+                                    ? theme.TextStyles.headingFooter
+                                    : theme.TextStyles.headingFooterSmall,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 90,
+                              child: Text(
+                                textAlign: TextAlign.right,
+                                machineService.scaleService.state == ScaleState.connected
+                                    ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
+                                    : machineService.scaleService.state.name,
+                                style: machineService.scaleService.state == ScaleState.connected
+                                    ? theme.TextStyles.headingFooterSmall
+                                    : theme.TextStyles.headingFooterSmall,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      if (machineService.scaleService.state == ScaleState.connected)
-                        ElevatedButton(
-                          onPressed: () => {},
-                          child: const Text("To Shot"),
-                        ),
+                      // if (machineService.scaleService.state == ScaleState.connected)
+                      //   ElevatedButton(
+                      //     onPressed: () => {},
+                      //     child: const Text("To Shot"),
+                      //   ),
                     ],
                   );
                 }),

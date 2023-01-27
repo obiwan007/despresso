@@ -5,6 +5,7 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
@@ -27,6 +28,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   late EspressoMachineService machineService;
   late ProfileService profileService;
   late ScaleService scaleService;
+  late SettingsService settingsService;
 
   double baseTime = 0;
 
@@ -39,6 +41,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   bool stopTriggered = false;
 
   double maxTime = 30;
+
   EspressoScreenState();
 
   @override
@@ -67,6 +70,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   @override
   initState() {
     super.initState();
+    settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
     machineService.addListener(updateMachine);
 
@@ -86,73 +90,11 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   void updateCoffee() => setState(() {
         checkForRefill();
-
-        // if (machineService.state.coffeeState == EspressoMachineState.sleep ||
-        //     machineService.state.coffeeState == EspressoMachineState.disconnected ||
-        //     machineService.state.coffeeState == EspressoMachineState.refill) {
-        //   return;
-        // }
-        // var shot = machineService.state.shot;
-        // // if (machineService.state.subState.isNotEmpty) {
-        // //   subState = machineService.state.subState;
-        // // }
-        // if (shot == null) {
-        //   log('Shot null');
-        //   return;
-        // }
-        // if (machineService.state.coffeeState == EspressoMachineState.idle) {
-        //   refillAnounced = false;
-        //   inShot = false;
-        //   if (shotList.saved == false &&
-        //       shotList.entries.isNotEmpty &&
-        //       shotList.saving == false &&
-        //       shotList.saved == false) {
-        //     shotFinished();
-        //   }
-
-        //   return;
-        // }
-        // if (!inShot && machineService.state.coffeeState == EspressoMachineState.espresso) {
-        //   log('Not Idle and not in Shot');
-        //   inShot = true;
-        //   shotList.clear();
-        //   baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-        //   log("basetime $baseTime");
-        // }
-
-        // subState = machineService.state.subState;
-
-        // if (!(shot.sampleTimeCorrected > 0 && inShot == true)) {
-        //   if (lastSubstate != subState && subState.isNotEmpty) {
-        //     log("SubState: $subState");
-        //     lastSubstate = machineService.state.subState;
-        //     shot.subState = lastSubstate;
-        //   }
-
-        //   shot.weight = scaleService.weight;
-        //   shot.flowWeight = scaleService.flow;
-        //   shot.sampleTimeCorrected = shot.sampleTime - baseTime;
-
-        //   if (scaleService.state == ScaleState.connected &&
-        //       profileService.currentProfile!.shot_header.target_weight > 1 &&
-        //       shot.weight + 1 > profileService.currentProfile!.shot_header.target_weight) {
-        //     log("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shot_header.target_weight}");
-
-        //     triggerEndOfShot();
-        //   }
-        //   //if (profileService.currentProfile.shot_header.target_weight)
-        //   // log("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
-        //   shotList.add(shot);
-        // }
       });
   void triggerEndOfShot() {
     log("Idle mode initiated because of weight", error: {DateTime.now()});
 
     machineService.de1?.requestState(De1StateEnum.idle);
-    // Future.delayed(const Duration(milliseconds: 5000), () {
-    //   log("Idle mode initiated finished", error: {DateTime.now()});
-    //   stopTriggered = false;
-    // });
   }
 
   void checkForRefill() {
@@ -169,11 +111,6 @@ class EspressoScreenState extends State<EspressoScreen> {
       refillAnounced = true;
     }
   }
-
-  // shotFinished() async {
-  //   log("Save last shot");
-  //   await shotList.saveData("testshot.json");
-  // }
 
   Iterable<charts.RangeAnnotationSegment<double>> _createPhases() {
     if (machineService.shotList.entries.isEmpty) {
@@ -201,15 +138,15 @@ class EspressoScreenState extends State<EspressoScreen> {
           color: col2,
           startLabel: from.subState,
           labelStyleSpec: charts.TextStyleSpec(
-              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
+              fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log("Phase ${element.subState}");
     });
   }
 
-  List<charts.Series<ShotState, double>> _createData() {
-    return [
-      charts.Series<ShotState, double>(
+  Map<String, charts.Series<ShotState, double>> _createData() {
+    return {
+      "pressure": charts.Series<ShotState, double>(
         id: 'Pressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupPressure,
@@ -217,7 +154,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "flow": charts.Series<ShotState, double>(
         id: 'Flow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.groupFlow,
@@ -225,7 +162,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "temp": charts.Series<ShotState, double>(
         id: 'Temp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.headTemp,
@@ -233,7 +170,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "weight": charts.Series<ShotState, double>(
         id: 'Weight [g]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.weight,
@@ -241,7 +178,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "flowG": charts.Series<ShotState, double>(
         id: 'Flow [g/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.flowWeight,
@@ -249,7 +186,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "flowSet": charts.Series<ShotState, double>(
         id: 'SetFlow [ml/s]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setGroupFlow,
@@ -258,7 +195,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "pressureSet": charts.Series<ShotState, double>(
         id: 'SetPressure [bar]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setGroupPressure,
@@ -267,7 +204,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         strokeWidthPxFn: (_, __) => 3,
         data: machineService.shotList.entries,
       ),
-      charts.Series<ShotState, double>(
+      "tempSet": charts.Series<ShotState, double>(
         id: 'SetTemp [°C]',
         domainFn: (ShotState point, _) => point.sampleTimeCorrected,
         measureFn: (ShotState point, _) => point.setHeadTemp,
@@ -276,7 +213,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         dashPatternFn: (datum, index) => [5, 5],
         data: machineService.shotList.entries,
       ),
-    ];
+    };
   }
 
   _buildGraphs() {
@@ -284,7 +221,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     var data = _createData();
 
     try {
-      var maxData = data[1].data.last;
+      var maxData = data["flow"]!.data.last;
       var t = maxData.sampleTimeCorrected;
 
       if (machineService.inShot == true) {
@@ -298,17 +235,21 @@ class EspressoScreenState extends State<EspressoScreen> {
     }
 
 //     log("Maxtime: $maxTime $corrected A ${(t).toInt()}  ${(t ~/ 5).toInt()}");
+    if (settingsService.graphSingle == false) {
+      var temp = _buildGraphTemp(data, ranges);
+      var flow = _buildGraphFlow(data, ranges);
+      var pressure = _buildGraphPressure(data, ranges);
 
-    var temp = _buildGraphTemp(data, ranges);
-    var flow = _buildGraphFlow(data, ranges);
-    var pressure = _buildGraphPressure(data, ranges);
-
-    return {"temp": temp, "flow": flow, "pressure": pressure};
+      return {"temp": temp, "flow": flow, "pressure": pressure};
+    } else {
+      var single = _buildGraphSingle(data, ranges);
+      return {"single": single};
+    }
   }
 
-  Widget _buildGraphTemp(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+  Widget _buildGraphTemp(Map<String, Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
     var flowChart = charts.LineChart(
-      [data[2], data[7]],
+      [data["temp"]!, data["tempSet"]!],
       animate: false,
       behaviors: [
         // Define one domain and two measure annotations configured to render
@@ -364,9 +305,81 @@ class EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphPressure(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+  Widget _buildGraphSingle(
+      Map<String, Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var flowChart = charts.LineChart(
-      [data[0], data[6]],
+      [
+        data["pressure"]!,
+        data["pressureSet"]!,
+        data["temp"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId), // temp axis,
+        data["tempSet"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId), // temp axis
+        data["flowSet"]!,
+        data["flow"]!,
+        data["flowG"]!,
+        data["weight"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId), // temp axis,
+      ],
+      animate: false,
+      behaviors: [
+        // Define one domain and two measure annotations configured to render
+        // labels in the chart margins.
+        charts.SeriesLegend(
+          position: BehaviorPosition.end,
+        ),
+        charts.RangeAnnotation([
+          ...ranges,
+          // charts.RangeAnnotationSegment(
+          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
+          //     labelAnchor: charts.AnnotationLabelAnchor.end,
+          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
+          //     labelDirection: charts.AnnotationLabelDirection.vertical),
+        ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
+      ],
+      secondaryMeasureAxis: charts.NumericAxisSpec(
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle: charts.TextStyleSpec(
+              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
+          lineStyle: charts.LineStyleSpec(
+              thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
+        ),
+      ),
+      primaryMeasureAxis: charts.NumericAxisSpec(
+        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle:
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
+          lineStyle:
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
+        ),
+      ),
+      domainAxis: charts.NumericAxisSpec(
+        viewport: NumericExtents(0, maxTime),
+        renderSpec: charts.GridlineRendererSpec(
+          labelStyle:
+              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
+          lineStyle:
+              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
+        ),
+      ),
+    );
+
+    return Container(
+      height: 300,
+      margin: const EdgeInsets.only(left: 10.0),
+      width: MediaQuery.of(context).size.width - 105,
+      decoration: BoxDecoration(
+        color: theme.ThemeColors.graphBackground,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: flowChart,
+    );
+  }
+
+  Widget _buildGraphPressure(
+      Map<String, Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+    var flowChart = charts.LineChart(
+      [data["pressure"]!, data["pressureSet"]!],
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
@@ -413,12 +426,17 @@ class EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphFlow(List<Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
+  Widget _buildGraphFlow(Map<String, Series<ShotState, double>> data, Iterable<RangeAnnotationSegment<double>> ranges) {
     double maxWeight = (profileService.currentProfile?.shotHeader.targetWeight ?? 200.0) * 1.5;
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
 
     var flowChart = charts.LineChart(
-      [data[1], data[5], data[4], data[3]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
+      [
+        data["flow"]!,
+        data["flowSet"]!,
+        data["flowG"]!,
+        data["weight"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
+      ],
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
@@ -473,34 +491,21 @@ class EspressoScreenState extends State<EspressoScreen> {
     if (machineService.state.shot != null) {
       insights = Column(
         children: [
-          // Row(
-          //   children: [
-          //     // const Text('Profile: ', style: theme.TextStyles.tabSecondary),
-          //     Text(profileService.currentProfile!.shotHeader.title, style: theme.TextStyles.tabHeading),
-          //   ],
-          // ),
-          // const Divider(
-          //   height: 20,
-          //   thickness: 5,
-          //   indent: 0,
-          //   endIndent: 0,
-          // ),
-          createKeyValue("Profile", profileService.currentProfile!.title),
-          createKeyValue(
-              "Coffee",
-              coffeeSelectionService.selectedCoffee > 0
+          KeyValueWidget(label: "Profile", value: profileService.currentProfile!.title),
+          KeyValueWidget(
+              label: "Coffee",
+              value: coffeeSelectionService.selectedCoffee > 0
                   ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""
                   : "No Beans"),
-          createKeyValue("Target", '${profileService.currentProfile?.shotHeader.targetWeight} g'),
+          KeyValueWidget(label: "Target", value: '${profileService.currentProfile?.shotHeader.targetWeight} g'),
           const Divider(
             height: 20,
             thickness: 5,
             indent: 0,
             endIndent: 0,
           ),
-          createKeyValue("Timer", '${machineService.lastPourTime.toStringAsFixed(1)} s'),
-          createKeyValue("Pouring", '${machineService.isPouring} '),
-          createKeyValue("LastSubstate", '${machineService.lastSubstate} '),
+          KeyValueWidget(label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+          // createKeyValue("LastSubstate", '${machineService.lastSubstate} '),
 
           // createKeyValue("State", machineService.state.coffeeState.name.toString().toUpperCase()),
           // createKeyValue("Sub", machineService.state.subState),
@@ -520,21 +525,6 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   var pressAttention = true;
 
-  Row createKeyValue(String key, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Expanded(
-            flex: 1, // takes 30% of available width
-            child: Text(key, style: theme.TextStyles.tabHeading)),
-        Expanded(
-            flex: 1, // takes 30% of available width
-            child: Text(value, style: theme.TextStyles.tabPrimary)),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> graphs = {};
@@ -553,20 +543,27 @@ class EspressoScreenState extends State<EspressoScreen> {
               child: Column(
                 children: isEmpty
                     ? [const Text("No data yet")]
-                    : [
-                        Expanded(
-                          flex: 1,
-                          child: graphs["pressure"],
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: graphs["flow"],
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: graphs["temp"],
-                        ),
-                      ],
+                    : settingsService.graphSingle
+                        ? [
+                            Expanded(
+                              flex: 1,
+                              child: graphs["single"],
+                            ),
+                          ]
+                        : [
+                            Expanded(
+                              flex: 1,
+                              child: graphs["pressure"],
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: graphs["flow"],
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: graphs["temp"],
+                            ),
+                          ],
               ),
             ),
             Padding(
@@ -594,6 +591,33 @@ class EspressoScreenState extends State<EspressoScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class KeyValueWidget extends StatelessWidget {
+  const KeyValueWidget({
+    super.key,
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+            flex: 1, // takes 30% of available width
+            child: Text(label, style: Theme.of(context).textTheme.labelMedium)),
+        Expanded(
+            flex: 1, // takes 30% of available width
+            child: Text(value, style: Theme.of(context).textTheme.bodyMedium)),
+      ],
     );
   }
 }

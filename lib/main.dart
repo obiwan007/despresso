@@ -9,7 +9,6 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'objectbox.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
-import 'ui/theme.dart' as theme;
 import 'color_schemes.g.dart';
 
 late ObjectBox objectbox;
