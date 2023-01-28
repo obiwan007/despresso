@@ -73,15 +73,15 @@ class ScaleService extends ChangeNotifier {
   }
 
   void setWeight(double weight) {
-    const T = 0.5;
-    const U = 0.4;
+    const T = 1.7;
+    const U = 1.5;
     if (tareInProgress) return;
     // log('Weight: ' + weight.toString());
     var now = DateTime.now();
     var flow = 0.0;
     var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
-    // log(timeDiff.toStringAsFixed(2));
-    var n = ((weight - _weight) / timeDiff);
+    // log(_flow.toStringAsFixed(2));
+    var n = ((weight - _weight).abs() / timeDiff);
     flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
     lastFlow = flow;
 
