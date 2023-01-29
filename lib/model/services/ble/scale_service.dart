@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:flutter/material.dart';
 
+import '../../../devices/abstract_scale.dart';
 import '../../../service_locator.dart';
 import 'ble_service.dart';
 
@@ -54,10 +55,12 @@ class ScaleService extends ChangeNotifier {
   late StreamController<WeightMeassurement> _controller;
   late Stream<WeightMeassurement> _stream;
 
+  AbstractScale? scale;
+
   late StreamController<int> _controllerBattery;
   late Stream<int> _streamBattery;
 
-  AcaiaScale? scale;
+
 
   List<double> averaging = [];
 
@@ -119,8 +122,8 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
-  void setScaleInstance(AcaiaScale acaiaScale) {
-    scale = acaiaScale;
+  void setScaleInstance(AbstractScale abstractScale) {
+    scale = abstractScale;
   }
 
   void setState(ScaleState state) {
