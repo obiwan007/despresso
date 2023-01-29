@@ -198,6 +198,17 @@ class ScaleFooter extends StatelessWidget {
             'Scale',
             style: theme.TextStyles.subHeadingFooter,
           ),
+          StreamBuilder<Object>(
+              stream: machineService.scaleService.streamBattery,
+              builder: (context, snapshot) {
+                var bat = snapshot.hasData ? (snapshot.data as int) / 100.0 : 0.0;
+                return LinearProgressIndicator(
+                  backgroundColor: Colors.black38,
+                  color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
+                  value: bat,
+                  semanticsLabel: 'Battery',
+                );
+              }),
         ],
       ),
     );

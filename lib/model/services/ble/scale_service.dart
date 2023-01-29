@@ -31,6 +31,7 @@ class WeightMeassurement {
 class ScaleService extends ChangeNotifier {
   double _weight = 0.0;
   double _flow = 0.0;
+  int _battery = 0;
   DateTime last = DateTime.now();
 
   ScaleState _state = ScaleState.disconnected;
@@ -44,20 +45,28 @@ class ScaleService extends ChangeNotifier {
   DateTime t1 = DateTime.now();
 
   Stream<WeightMeassurement> get stream => _stream;
+  Stream<int> get streamBattery => _streamBattery;
 
   double get weight => _weight;
   double get flow => _flow;
+  int get battery => _battery;
 
   ScaleState get state => _state;
 
   late StreamController<WeightMeassurement> _controller;
   late Stream<WeightMeassurement> _stream;
 
+  late StreamController<int> _controllerBattery;
+  late Stream<int> _streamBattery;
+
   AcaiaScale? scale;
 
   ScaleService() {
     _controller = StreamController<WeightMeassurement>();
     _stream = _controller.stream.asBroadcastStream();
+
+    _controllerBattery = StreamController<int>();
+    _streamBattery = _controllerBattery.stream.asBroadcastStream();
   }
 
   Future<void> tare() async {
@@ -115,5 +124,11 @@ class ScaleService extends ChangeNotifier {
   void connect() {
     var bleService = getIt<BLEService>();
     bleService.startScan();
+  }
+
+  void setBattery(int batteryLevel) {
+    if (batteryLevel == _battery) return;
+    _battery = batteryLevel;
+    _controllerBattery.add(_battery);
   }
 }
