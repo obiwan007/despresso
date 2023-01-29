@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:math' show pow;
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -15,51 +14,17 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   // ignore: non_constant_identifier_names
   static Uuid CharateristicUUID =
       Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb');
-
+  // ignore: non_constant_identifier_names
   static Uuid CommandUUID = Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb');
 
   late ScaleService scaleService;
 
-  // static const _heartbeatTime = Duration(seconds: 3);
-  // static const List<int> _heartbeatPayload = [0x02, 0x00];
-  static const List<int> _identPayload = [
-    0x30,
-    0x31,
-    0x32,
-    0x33,
-    0x34,
-    0x35,
-    0x36,
-    0x37,
-    0x38,
-    0x39,
-    0x30,
-    0x31,
-    0x32,
-    0x33,
-    0x34
-  ];
-  static const List<int> _configPayload = [
-    9, // length
-    0, // weight
-    1, // weight argument
-    1, // battery
-    2, // battery argument
-    2, // timer
-    5, // timer argument
-    3, // key
-    4 // setting
-  ];
-
-  // static const int header1 = 0xef;
-  // static const int header2 = 0xdd;
-
-  static const cmdHeader = 0xAA;
-  static const cmdBase = 0x02;
-  static const cmdStartTimer = 0x33;
-  static const cmdStopTimer = 0x34;
-  static const cmdResetTimer = 0x35;
-  static const cmdTare = 0x31;
+  static const int cmdHeader = 0xAA;
+  static const int cmdBase = 0x02;
+  static const int cmdStartTimer = 0x33;
+  static const int cmdStopTimer = 0x34;
+  static const int cmdResetTimer = 0x35;
+  static const int cmdTare = 0x31;
 
   final DiscoveredDevice device;
 
@@ -75,7 +40,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   EurekaScale(this.device) {
     scaleService = getIt<ScaleService>();
     log("Connect to Acaia");
-    // scaleService.setScaleInstance(this);
+    scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
         (connectionState) {
       // Handle connection state updates
@@ -86,180 +51,39 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
     });
   }
 
-  Uint8List encode(int msgType, List<int> payload) {
-    var cksum1 = 0;
-    var cksum2 = 0;
-    var buffer = <int>[];
-    // buffer.add(header1);
-    // buffer.add(header2);
-    buffer.add(msgType);
-
-    payload.asMap().forEach((index, value) => {
-          if (index % 2 == 0) {cksum1 += value} else {cksum2 += value},
-          buffer.add(value)
-        });
-
-    buffer.add(cksum1 & 0xFF);
-    buffer.add(cksum2 & 0xFF);
-
-    return Uint8List.fromList(buffer);
-  }
-
-  void parsePayload(List<int> payload) {
-    // h1 h2 h3 timer_running timer sign weight ...
-    // 170 9 65 - seem to be constant
-    // [170, 9, 65, 1, 33, 0, 0, 0, 0, 0, 99]
-    // [170, 9, 65, 0, 98, 0, 1, 86, 2, 0, 252]
-    var isNeg = (payload[5] == 0 ? false : true);
-    var weight = payload[6] + (payload[7] << 8);
+  void _notificationCallback(List<int> data) {
+    var isNeg = (data[6] == 0 ? false : true);
+    var weight = (data[7] + (data[8] << 8));
 
     weight = isNeg ? weight * -1 : weight;
     scaleService.setWeight((weight / 10).toDouble());
-
-    //   var subType = payload[0];
-    //   if (subType == 5) {
-    //     var temp = ((payload[4] & 0xff) << 24) +
-    //         ((payload[3] & 0xff) << 16) +
-    //         ((payload[2] & 0xff) << 8) +
-    //         (payload[1] & 0xff);
-    //     var unit = payload[5] & 0xFF;
-
-    //     var value = temp / pow(10, unit);
-    //     if ((payload[6] & 0x02) != 0) {
-    //       value *= -1.0;
-    //     }
-    //     scaleService.setWeight(value);
-
-    //     break;
-    //   }
-    //   //log("Unparsed acaia event subtype: " + subType.toString());
-    //   //log("Payload: " + payload.toString());
-
-    //   break;
-    // // General Status including battery
-  }
-
-  void _notificationCallback(List<int> data) {
-    var notification = data;
-
-    commandBuffer.addAll(notification);
-
-    // remove broken half commands
-    // if (commandBuffer.length > 2 &&
-    //     (commandBuffer[0] != header1 || commandBuffer[1] != header2)) {
-    //   commandBuffer.clear();
-    //   return;
-    // }
-    if (commandBuffer.length > 4) {
-      // var type = commandBuffer[2];
-      parsePayload(commandBuffer.sublist(4));
-      commandBuffer.clear();
-    }
-  }
-
-  // void _sendHeatbeat() {
-  //   if (_state != DeviceConnectionState.connected) {
-  //     log('Disconnected from acaia scale. Not sending heartbeat');
-
-  //     scaleService.setState(ScaleState.disconnected);
-  //     return;
-  //   }
-  //   final characteristic = QualifiedCharacteristic(
-  //       serviceId: ServiceUUID,
-  //       characteristicId: CharateristicUUID,
-  //       deviceId: device.id);
-  //   flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-  //       value: encode(0x00, _heartbeatPayload));
-
-  //   // device.writeCharacteristic(
-  //   //     ServiceUUID, CharateristicUUID, encode(0x00, _heartbeatPayload), false);
-  // }
-
-  void _sendIdent() {
-    if (_state != DeviceConnectionState.connected) {
-      log('Disconnected from acaia scale. Not sending ident');
-
-      scaleService.setState(ScaleState.disconnected);
-      return;
-    }
-
-    final characteristic = QualifiedCharacteristic(
-        serviceId: ServiceUUID,
-        characteristicId: CharateristicUUID,
-        deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: encode(0x0b, _identPayload));
-
-    // device.writeCharacteristic(
-    //     ServiceUUID, CharateristicUUID, encode(0x0b, _identPayload), false);
-    log('Ident payload: ${encode(0x0b, _identPayload)}');
-  }
-
-  void _sendConfig() {
-    if (_state != DeviceConnectionState.connected) {
-      log('Disconnected from acaia scale. Not sending config');
-      scaleService.setState(ScaleState.disconnected);
-      return;
-    }
-
-    final characteristic = QualifiedCharacteristic(
-        serviceId: ServiceUUID,
-        characteristicId: CharateristicUUID,
-        deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: encode(0x0c, _configPayload));
-
-    // device.writeCharacteristic(
-    //     ServiceUUID, CharateristicUUID, encode(0x0c, _configPayload), false);
-    log('Config payload: ${encode(0x0c, _configPayload)}');
   }
 
   writeTare() {
-    // tare command
-    var list = [
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00,
-      0x00
-    ];
-
-    final characteristic = QualifiedCharacteristic(
-        serviceId: ServiceUUID,
-        characteristicId: CharateristicUUID,
-        deviceId: device.id);
-    return flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: encode(0x04, list));
+    return writeToEureka([cmdHeader, cmdBase, cmdTare, cmdTare]);
   }
 
-  // Future<void> startTimer() {
-  //   writeToEureka(Uint8List.fromList(
-  //       [CMD_HEADER, CMD_BASE, CMD_START_TIMER, CMD_START_TIMER]));
-  // }
+  Future<void> startTimer() {
+    return writeToEureka([cmdHeader, cmdBase, cmdStartTimer, cmdStartTimer]);
+  }
 
-  // Future<void> stopTimer() {}
-  // Future<void> resetTimer() {}
+  Future<void> stopTimer() {
+    return writeToEureka([cmdHeader, cmdBase, cmdStopTimer, cmdStopTimer]);
+  }
 
-  Future<void> writeToEureka(Uint8List payload) async {
-    log("Sending to Acaia");
+  Future<void> resetTimer() {
+    return writeToEureka([cmdHeader, cmdBase, cmdResetTimer, cmdResetTimer]);
+  }
+
+  Future<void> writeToEureka(List<int> payload) async {
+    log("Sending to Eureka");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID,
-        characteristicId: CharateristicUUID,
+        characteristicId: CommandUUID,
         deviceId: device.id);
-    return await flutterReactiveBle
-        .writeCharacteristicWithResponse(characteristic, value: payload);
+    return await flutterReactiveBle.writeCharacteristicWithoutResponse(
+        characteristic,
+        value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -281,9 +105,6 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
             characteristicId: CharateristicUUID,
             deviceId: device.id);
 
-        // flutterReactiveBle
-        //     .subscribeToCharacteristic(characteristic)
-        //     .listen(_notificationCallback);
         _characteristicsSubscription = flutterReactiveBle
             .subscribeToCharacteristic(characteristic)
             .listen((data) {
@@ -292,22 +113,14 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         }, onError: (dynamic error) {
           // code to handle errors
         });
-        // device
-        //     .monitorCharacteristic(ServiceUUID, CharateristicUUID)
-        //     .listen(_notificationCallback);
 
-        Timer(const Duration(seconds: 1), _sendIdent);
-        Timer(const Duration(seconds: 2), _sendConfig);
-
-        // _heartBeatTimer =
-        //     Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
-        log('Acaia Scale disconnected. Destroying');
+        log('Eureka Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
-        // _heartBeatTimer.cancel();
+
         _deviceListener.cancel();
         notifyListeners();
         return;
