@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +38,6 @@ class ScaleService extends ChangeNotifier {
   ScaleState _state = ScaleState.disconnected;
 
   bool tareInProgress = false;
-
-  double lastFlow = 1;
-
   var _count = 0;
 
   DateTime t1 = DateTime.now();
@@ -61,6 +59,8 @@ class ScaleService extends ChangeNotifier {
 
   AcaiaScale? scale;
 
+  List<double> averaging = [];
+
   ScaleService() {
     _controller = StreamController<WeightMeassurement>();
     _stream = _controller.stream.asBroadcastStream();
@@ -81,24 +81,32 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
+  void setTara() {
+    log("Tara done");
+    averaging.clear();
+  }
+
   void setWeight(double weight) {
-    const T = 1.7;
-    const U = 1.5;
     if (tareInProgress) return;
-    // log('Weight: ' + weight.toString());
+
     var now = DateTime.now();
     var flow = 0.0;
     var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
-    // log(_flow.toStringAsFixed(2));
-    var n = ((weight - _weight).abs() / timeDiff);
-    flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
-    lastFlow = flow;
 
+    // calc flow, cap on 10g/s
+    var n = math.min(10.0, (weight - _weight).abs() / timeDiff);
+
+    averaging.add(n);
+
+    flow = averaging.average;
+
+    if (averaging.length > 10) {
+      averaging.removeAt(0);
+    }
     _weight = weight;
     _flow = flow;
     last = now;
     _controller.add(WeightMeassurement(weight, flow, _state));
-
     notifyListeners();
 
     _count++;

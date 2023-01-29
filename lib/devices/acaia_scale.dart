@@ -117,6 +117,11 @@ class AcaiaScale extends ChangeNotifier {
           break;
         }
 
+        if (subType == 8) {
+          scaleService.setTara();
+          break;
+        }
+
         // if (subType == 7) {
         //   double time = decodeTime(payload.sublist(2));
         //   log("Time Response:  $time");

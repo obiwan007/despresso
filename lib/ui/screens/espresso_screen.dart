@@ -475,7 +475,6 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   Widget _buildGraphSingleFlCharts(
       Map<String, List<FlSpot>> data, double maxTime, Iterable<VerticalRangeAnnotation> ranges) {
-    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var flowChart1 = LineChart(
       LineChartData(
         minY: 0,
@@ -493,6 +492,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           sinLine(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor),
           sinLine(data["flow"]!, 4, theme.ThemeColors.flowColor),
           sinLine(data["flowSet"]!, 2, theme.ThemeColors.flowColor),
+          sinLine(data["flowG"]!, 2, theme.ThemeColors.weightColor),
         ],
         rangeAnnotations: RangeAnnotations(
           verticalRangeAnnotations: [
