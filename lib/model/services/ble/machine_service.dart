@@ -98,6 +98,8 @@ class EspressoMachineService extends ChangeNotifier {
 
   late StreamController<ShotState> _controllerShotState;
   late Stream<ShotState> _streamShotState;
+
+  EspressoMachineState lastState = EspressoMachineState.disconnected;
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -230,7 +232,9 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setState(EspressoMachineState state) {
     _state.coffeeState = state;
-    if (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water) {
+
+    if (lastState != state &&
+        (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water)) {
       if (settingsService.shotAutoTare) {
         scaleService.tare();
       }
@@ -239,6 +243,7 @@ class EspressoMachineService extends ChangeNotifier {
     notifyListeners();
     currentFullState.state = state;
     _controllerEspressoMachineState.add(currentFullState);
+    lastState = state;
   }
 
   void setSubState(String state) {

@@ -106,24 +106,40 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
   }
 
   void parsePayload(int type, List<int> payload) {
+    if (type != 12) log('Acaia: $type');
     switch (type) {
       case 12:
         var subType = payload[0];
+        if (subType != 5) {
+          log('Acaia: 12 Subtype $subType');
+        }
         if (subType == 5) {
-          var temp = ((payload[4] & 0xff) << 24) +
-              ((payload[3] & 0xff) << 16) +
-              ((payload[2] & 0xff) << 8) +
-              (payload[1] & 0xff);
-          var unit = payload[5] & 0xFF;
-
-          var value = temp / pow(10, unit);
-          if ((payload[6] & 0x02) != 0) {
-            value *= -1.0;
-          }
-          scaleService.setWeight(value);
+          double weight = decodeWeight(payload);
+          scaleService.setWeight(weight);
 
           break;
         }
+
+        if (subType == 8) {
+          scaleService.setTara();
+          break;
+        }
+
+        // if (subType == 7) {
+        //   double time = decodeTime(payload.sublist(2));
+        //   log("Time Response:  $time");
+        // }
+
+        // if (subType == 11) {
+        //   var weight = 0.0;
+        //   var time = 0.0;
+
+        //   if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
+        //   if (payload[3] == 7) time = decodeTime(payload.sublist(3));
+        //   // scaleService.setWeight(weight);
+        //   log("Heartbeat Response: $weight $time");
+        //   break;
+        // }
         //log("Unparsed acaia event subtype: " + subType.toString());
         //log("Payload: " + payload.toString());
 
@@ -132,10 +148,30 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       case 8:
         var batteryLevel = commandBuffer[4];
         log('Got status message, battery= $batteryLevel');
+        scaleService.setBattery(batteryLevel);
         break;
       default:
         log('Unparsed acaia response: $type');
     }
+  }
+
+  double decodeTime(List<int> payload) {
+    double value = (payload[0] & 0xff) * 60;
+    value = value + (payload[1]);
+    value = value + (payload[2] / 10.0);
+    return value;
+  }
+
+  double decodeWeight(List<int> payload) {
+    var temp =
+        ((payload[4] & 0xff) << 24) + ((payload[3] & 0xff) << 16) + ((payload[2] & 0xff) << 8) + (payload[1] & 0xff);
+    var unit = payload[5] & 0xFF;
+
+    var weight = temp / pow(10, unit);
+    if ((payload[6] & 0x02) != 0) {
+      weight *= -1.0;
+    }
+    return weight;
   }
 
   void _notificationCallback(List<int> data) {
