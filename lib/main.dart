@@ -52,21 +52,23 @@ class MyApp extends StatelessWidget {
       title: 'despresso',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: lightColorScheme,
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
-          bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-        ),
+        colorSchemeSeed: Colors.green,
+        // colorScheme: lightColorScheme,
+        // textTheme: const TextTheme(
+        //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+        //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+        //   bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        // ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
+        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, brightness: Brightness.dark),
         colorScheme: darkColorScheme,
-        textTheme: const TextTheme(
-            // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-            // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
-            // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-            ),
+        // textTheme: const TextTheme(
+        //     // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+        //     // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+        //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        //     ),
       ),
       themeMode: ThemeMode.dark,
 
