@@ -273,9 +273,13 @@ class DE1 extends ChangeNotifier {
   late StreamController<List<int>> _controllerMmrStream;
   late Stream<List<int>> _streamMMR;
 
-  int ghcVersion = 0;
+  int ghcInfo = 0;
 
   int ghcMode = 0;
+
+  int machineSerial = 0;
+
+  int firmware = 0;
 
   DE1(this.device) {
     // device
@@ -511,30 +515,52 @@ class DE1 extends ChangeNotifier {
 
   Future<int> getGhcMode() async {
     log('Reading group head control mode');
-    var data = await mmrRead(mmrAddrLookup[MMRAddrEnum.PrefGHCMCI]!, 0);
-    log("ghc controll mode: ${data.map(toHexString).toList()}");
-    return data[0];
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.PrefGHCMCI]!, 0));
+    log("ghc controll mode: ${toHexString(data)}");
+    return data;
   }
 
   Future<int> getGhcInfo() async {
     log('Reading whether the group head controller is installed or not');
-    var data = await mmrRead(mmrAddrLookup[MMRAddrEnum.GHCInfo]!, 0);
-    log("ghc: ${data.map(toHexString).toList()}");
-    return data[0];
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.GHCInfo]!, 0));
+    log("ghc Info: ${toHexString(data)}");
+    return data;
   }
 
-  Future<int> getSerialInfo() async {
+  Future<int> getSerialNumber() async {
     log('Reading whether the group head controller is installed or not');
-    var data = await mmrRead(mmrAddrLookup[MMRAddrEnum.SerialN]!, 0);
-    log("SerialNo: ${data.map(toHexString).toList()}");
-    return data[0];
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.SerialN]!, 0));
+    log("SerialNo: $data ${toHexString(data)}");
+    return data;
+  }
+
+  Future<int> getFirmwareBuild() async {
+    log('Reading whether the group head controller is installed or not');
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CPUFirmwareBuild]!, 0));
+    log("Firmware Version: $data ${toHexString(data)}");
+    return data;
+  }
+
+  Future<int> getFanThreshhold() async {
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, 0));
+    log("getFanThreshold: $data ${toHexString(data)}");
+    return data;
+  }
+
+  int getInt(List<int> buffer) {
+    ByteData bytes = ByteData(20);
+    var i = 0;
+    var list = bytes.buffer.asUint8List();
+    list.forEach((element) {
+      list[i] = buffer[i++];
+    });
+    return bytes.getInt32(4, Endian.little);
   }
 
   Future<List<int>> mmrRead(int address, int length) async {
-    log("MMR READ REQUEST ${toHexString(address)} Len: $length");
     for (var element in mmrList) {
       if (element[0] == address) {
-        log("MMR Read ${element[1]} : ${element[3]}");
+        log("MMR Read  ${toHexString(address)} = ${element[1]} : ${element[3]}");
         break;
       }
     }
@@ -542,14 +568,14 @@ class DE1 extends ChangeNotifier {
       log('Unable to mmr_read because MMR not available');
       throw ("Error in mmr");
     }
-    // 16 byte 00000000000000000000000000000000
-    var buffer = List<int>.filled(20, 0, growable: true);
+
+    ByteData bytes = ByteData(20);
+    bytes.setInt32(0, address, Endian.big);
+    var buffer = bytes.buffer.asUint8List();
     buffer[0] = (length % 0xFF);
-    buffer[1] = (address >> 16) % 0xFF;
-    buffer[2] = (address >> 8) % 0xFF;
-    buffer[3] = (address) % 0xFF;
 
     if (kDebugMode) {
+      // log("MMR READ: ${byteData.buffer.asUint8List().map(toHexString).toList()}");
       log("MMR READ: ${buffer.map(toHexString).toList()}");
     }
 
@@ -557,7 +583,7 @@ class DE1 extends ChangeNotifier {
 
     var result = await _streamMMR.firstWhere(
       (element) {
-        log("listen where event  ${element.map(toHexString).toList()}");
+        // log("listen where event  ${element.map(toHexString).toList()}");
 
         if (buffer[1] == element[1] && buffer[2] == element[2] && buffer[3] == element[3]) {
           return true;
@@ -567,8 +593,14 @@ class DE1 extends ChangeNotifier {
       },
       orElse: () => [],
     );
-    log("listen where event Result:  ${result.map(toHexString).toList()}");
+    log("listen event Result:  ${result.map(toHexString).toList()}");
     return result;
+  }
+
+  setFanThreshhold(int t) {
+    ByteData bytes = ByteData(4);
+    bytes.setUint32(0, t, Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
   }
 
   void mmrWrite(int address, List<int> bufferData) {
@@ -577,13 +609,16 @@ class DE1 extends ChangeNotifier {
       log('Unable to mmr_read because MMR not available');
       return;
     }
-    // 16 byte 00000000000000000000000000000000
-    var buffer = List<int>.filled(20, 0, growable: true);
-    buffer[0] = (address >> 16) % 0xFF;
-    buffer[1] = (address >> 8) % 0xFF;
-    buffer[2] = (address) % 0xFF;
-    buffer.addAll(bufferData);
 
+    ByteData bytes = ByteData(20);
+    bytes.setInt32(0, address, Endian.big);
+    var buffer = bytes.buffer.asUint8List();
+    buffer[0] = (bufferData.length % 0xFF);
+    var i = 0;
+    bufferData.forEach((element) {
+      buffer[i + 4] = bufferData[i++];
+    });
+    log("MMR WRITE: ${buffer.map(toHexString).toList()}");
     write(Endpoint.writeToMMR, Uint8List.fromList(buffer));
   }
 
@@ -624,12 +659,16 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.readFromMMR, mmrNotification);
         enableNotification(Endpoint.writeToMMR, mmrNotification);
 
-        ghcVersion = await getGhcInfo();
+        ghcInfo = await getGhcInfo();
         ghcMode = await getGhcMode();
 
-        await getSerialInfo();
+        machineSerial = await getSerialNumber();
 
-        log("GHC: $ghcVersion $ghcMode");
+        firmware = await getFirmwareBuild();
+        var fan = await getFanThreshhold();
+        if (fan < 50) setFanThreshhold(50);
+
+        log("Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
 
         return;
       case DeviceConnectionState.disconnected:
