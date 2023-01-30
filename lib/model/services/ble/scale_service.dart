@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
-
+import 'dart:math' as math;
+import 'package:collection/collection.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:flutter/material.dart';
 
+import '../../../devices/abstract_scale.dart';
 import '../../../service_locator.dart';
 import 'ble_service.dart';
 
@@ -31,33 +33,43 @@ class WeightMeassurement {
 class ScaleService extends ChangeNotifier {
   double _weight = 0.0;
   double _flow = 0.0;
+  int _battery = 0;
   DateTime last = DateTime.now();
 
   ScaleState _state = ScaleState.disconnected;
 
   bool tareInProgress = false;
-
-  double lastFlow = 1;
-
   var _count = 0;
 
   DateTime t1 = DateTime.now();
 
   Stream<WeightMeassurement> get stream => _stream;
+  Stream<int> get streamBattery => _streamBattery;
 
   double get weight => _weight;
   double get flow => _flow;
+  int get battery => _battery;
 
   ScaleState get state => _state;
 
   late StreamController<WeightMeassurement> _controller;
   late Stream<WeightMeassurement> _stream;
 
-  AcaiaScale? scale;
+  AbstractScale? scale;
+
+  late StreamController<int> _controllerBattery;
+  late Stream<int> _streamBattery;
+
+
+
+  List<double> averaging = [];
 
   ScaleService() {
     _controller = StreamController<WeightMeassurement>();
     _stream = _controller.stream.asBroadcastStream();
+
+    _controllerBattery = StreamController<int>();
+    _streamBattery = _controllerBattery.stream.asBroadcastStream();
   }
 
   Future<void> tare() async {
@@ -72,24 +84,32 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
+  void setTara() {
+    log("Tara done");
+    averaging.clear();
+  }
+
   void setWeight(double weight) {
-    const T = 0.5;
-    const U = 0.4;
     if (tareInProgress) return;
-    // log('Weight: ' + weight.toString());
+
     var now = DateTime.now();
     var flow = 0.0;
     var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
-    // log(timeDiff.toStringAsFixed(2));
-    var n = ((weight - _weight) / timeDiff);
-    flow = (n - lastFlow) * (2 * T - U) / (2 * T + U) + lastFlow;
-    lastFlow = flow;
 
+    // calc flow, cap on 10g/s
+    var n = math.min(10.0, (weight - _weight).abs() / timeDiff);
+
+    averaging.add(n);
+
+    flow = averaging.average;
+
+    if (averaging.length > 10) {
+      averaging.removeAt(0);
+    }
     _weight = weight;
     _flow = flow;
     last = now;
     _controller.add(WeightMeassurement(weight, flow, _state));
-
     notifyListeners();
 
     _count++;
@@ -102,8 +122,8 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
-  void setScaleInstance(AcaiaScale acaiaScale) {
-    scale = acaiaScale;
+  void setScaleInstance(AbstractScale abstractScale) {
+    scale = abstractScale;
   }
 
   void setState(ScaleState state) {
@@ -115,5 +135,11 @@ class ScaleService extends ChangeNotifier {
   void connect() {
     var bleService = getIt<BLEService>();
     bleService.startScan();
+  }
+
+  void setBattery(int batteryLevel) {
+    if (batteryLevel == _battery) return;
+    _battery = batteryLevel;
+    _controllerBattery.add(_battery);
   }
 }
