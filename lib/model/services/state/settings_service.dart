@@ -17,6 +17,8 @@ enum SettingKeys {
   mqttEnabled,
   mqttServer,
   mqttPort,
+  mqttUser,
+  mqttPassword,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -66,4 +68,9 @@ class SettingsService extends ChangeNotifier {
   String get mqttServer => Settings.getValue(SettingKeys.mqttServer.name);
 
   int get mqttPort => Settings.getValue<int>(SettingKeys.mqttPort.name) ?? 1883;
+
+  String get mqttUser => Settings.getValue(SettingKeys.mqttUser.name) ?? "";
+
+  String get mqttPassword =>
+      Settings.getValue(SettingKeys.mqttPassword.name) ?? "";
 }

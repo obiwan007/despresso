@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:despresso/model/services/ble/ble_service.dart';
+import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
@@ -17,6 +18,7 @@ class AppSettingsScreen extends StatefulWidget {
 class SettingsScreenState extends State<AppSettingsScreen> {
   late SettingsService settingsService;
   late BLEService bleService;
+  late MqttService mqttService;
 
   @override
   void initState() {
@@ -500,7 +502,12 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               settingKey: SettingKeys.mqttEnabled.name,
               title: 'MQTT',
               onChange: (value) {
-                debugPrint('mqttEnabled: $value');
+                debugPrint('mqtt enabled: $value');
+                if (value) {
+                  mqttService.startService();
+                } else {
+                  //stop mqtt service
+                }
               },
             ),
             TextInputSettingsTile(
@@ -512,6 +519,17 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               title: 'MQTT Port',
               settingKey: SettingKeys.mqttPort.name,
               initialValue: '1883',
+            ),
+            TextInputSettingsTile(
+              title: 'MQTT User',
+              settingKey: SettingKeys.mqttUser.name,
+              initialValue: 'user',
+            ),
+            TextInputSettingsTile(
+              title: 'MQTT Password',
+              settingKey: SettingKeys.mqttPassword.name,
+              initialValue: '',
+              obscureText: true,
             ),
           ],
         ),
