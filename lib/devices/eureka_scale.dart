@@ -14,6 +14,11 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   // ignore: non_constant_identifier_names
   static Uuid CharateristicUUID =
       Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb');
+
+  static Uuid BatteryServiceUUID =
+      Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb');
+  static Uuid BatteryCharacteristicUUID =
+      Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb');
   // ignore: non_constant_identifier_names
   static Uuid CommandUUID = Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb');
 
@@ -113,6 +118,14 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         }, onError: (dynamic error) {
           // code to handle errors
         });
+
+        final batteryCharacteristic = QualifiedCharacteristic(
+            characteristicId: BatteryCharacteristicUUID,
+            serviceId: BatteryServiceUUID,
+            deviceId: device.id);
+        final batteryLevel =
+            await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
+        scaleService.setBattery(batteryLevel[0]);
 
         return;
       case DeviceConnectionState.disconnected:
