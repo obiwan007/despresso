@@ -52,7 +52,7 @@ class MachineState {
 enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush }
 
 class EspressoMachineFullState {
-  EspressoMachineState state = EspressoMachineState.idle;
+  EspressoMachineState state = EspressoMachineState.disconnected;
   String subState = "";
 }
 
@@ -128,6 +128,7 @@ class EspressoMachineService extends ChangeNotifier {
     _streamWaterLevel = _controllerWaterLevel.stream.asBroadcastStream();
 
     init();
+    _controllerEspressoMachineState.add(currentFullState);
   }
   void init() async {
     profileService = getIt<ProfileService>();
