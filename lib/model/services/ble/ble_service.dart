@@ -46,8 +46,7 @@ class BLEService extends ChangeNotifier {
     _subscription?.cancel();
     notifyListeners();
 
-    _subscription = flutterReactiveBle.scanForDevices(
-        withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
+    _subscription = flutterReactiveBle.scanForDevices(withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
       deviceScanListener(device);
     }, onError: (err) {
       // ignore: prefer_interpolation_to_compose_strings
@@ -87,9 +86,8 @@ class BLEService extends ChangeNotifier {
   void _addDeviceTolist(final DiscoveredDevice device) async {
     if (device.name.isNotEmpty) {
       if (!_devicesList.map((e) => e.id).contains(device.id)) {
-        log('Found Device: ${device.name}');
-        if (device.name.startsWith('ACAIA') ||
-            device.name.startsWith('PROCHBT')) {
+        // log('Found Device: ${device.name}');
+        if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
           log('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);

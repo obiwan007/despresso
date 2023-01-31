@@ -66,6 +66,7 @@ dependencies:
   fl_chart: ^0.60.0
   mqtt_client: ^9.7.4
   collection:
+  battery_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:

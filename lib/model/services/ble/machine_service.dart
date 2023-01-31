@@ -12,6 +12,9 @@ import 'package:flutter/services.dart';
 import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
+
+import 'package:battery_plus/battery_plus.dart';
+
 import '../../../service_locator.dart';
 import '../../shot.dart';
 import '../../shotstate.dart';
@@ -49,7 +52,7 @@ class MachineState {
 enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush }
 
 class EspressoMachineFullState {
-  EspressoMachineState state = EspressoMachineState.idle;
+  EspressoMachineState state = EspressoMachineState.disconnected;
   String subState = "";
 }
 
@@ -100,6 +103,8 @@ class EspressoMachineService extends ChangeNotifier {
   late Stream<ShotState> _streamShotState;
 
   EspressoMachineState lastState = EspressoMachineState.disconnected;
+
+  Battery _battery = Battery();
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -123,6 +128,7 @@ class EspressoMachineService extends ChangeNotifier {
     _streamWaterLevel = _controllerWaterLevel.stream.asBroadcastStream();
 
     init();
+    _controllerEspressoMachineState.add(currentFullState);
   }
   void init() async {
     profileService = getIt<ProfileService>();
@@ -137,6 +143,9 @@ class EspressoMachineService extends ChangeNotifier {
     loadSettings();
     notifyListeners();
     loadShotData();
+
+    handleBattery();
+
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (state.coffeeState == EspressoMachineState.sleep) {
         try {
@@ -179,10 +188,45 @@ class EspressoMachineService extends ChangeNotifier {
             de1?.switchOff();
           }
         } catch (e) {
+          {}
           log("Error $e");
         }
       } else {
         idleTime = 0;
+      }
+    });
+  }
+
+  handleBattery() async {
+// Access current battery level
+    var state = await _battery.batteryLevel;
+    log("Battery: $state");
+
+// Be informed when the state (full, charging, discharging) changes
+    _battery.onBatteryStateChanged.listen((BatteryState state) async {
+      // Do something with new state
+      final batteryLevel = await _battery.batteryLevel;
+      log("Battery: changed: $state $batteryLevel");
+      if (de1 == null) {
+        log("DE1 not connected yet");
+        return;
+      }
+      if (settingsService.smartCharging) {
+        if (batteryLevel < 80) {
+          if (await de1!.getUsbChargerMode() == 0) {
+            log("Battery: Charging is off, switching it on");
+            de1!.setUsbChargerMode(1);
+          } else {
+            log("Battery: Charging is already on");
+          }
+        } else if (batteryLevel > 90) {
+          if (await de1!.getUsbChargerMode() == 1) {
+            log("Battery: Charging is on, switching it off");
+            de1!.setUsbChargerMode(0);
+          } else {
+            log("Battery: Charging is already off");
+          }
+        }
       }
     });
   }

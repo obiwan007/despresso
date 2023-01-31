@@ -103,17 +103,19 @@ class _MachineFooterState extends State<MachineFooter> {
           StreamBuilder<EspressoMachineFullState>(
               stream: machineService.streamState,
               builder: (context, snapshot) {
-                return Row(
-                  children: [
-                    Text(isOn(snapshot.data?.state) ? 'On' : 'Off'),
-                    Switch(
-                      value: isOn(snapshot.data?.state), //set true to enable switch by default
-                      onChanged: (bool value) {
-                        value ? machineService.de1!.switchOn() : machineService.de1!.switchOff();
-                      },
-                    ),
-                  ],
-                );
+                return (snapshot.data?.state != EspressoMachineState.disconnected)
+                    ? Row(
+                        children: [
+                          Text(isOn(snapshot.data?.state) ? 'On' : 'Off'),
+                          Switch(
+                            value: isOn(snapshot.data?.state), //set true to enable switch by default
+                            onChanged: (bool value) {
+                              value ? machineService.de1!.switchOn() : machineService.de1!.switchOff();
+                            },
+                          ),
+                        ],
+                      )
+                    : Row();
               }),
         ],
       ),

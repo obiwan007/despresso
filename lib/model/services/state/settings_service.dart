@@ -19,6 +19,7 @@ enum SettingKeys {
   mqttPort,
   mqttUser,
   mqttPassword,
+  smartCharging,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -73,4 +74,7 @@ class SettingsService extends ChangeNotifier {
 
   String get mqttPassword =>
       Settings.getValue(SettingKeys.mqttPassword.name) ?? "";
+
+  bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
+
 }
