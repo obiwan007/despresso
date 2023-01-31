@@ -14,11 +14,8 @@ void setupServices() {
   getIt.registerSingleton<BLEService>(BLEService(), signalsReady: false);
   getIt.registerSingleton<ScaleService>(ScaleService(), signalsReady: false);
   getIt.registerSingleton<CoffeeService>(CoffeeService(), signalsReady: false);
-  getIt.registerSingleton<SettingsService>(SettingsService(),
-      signalsReady: false);
-  getIt.registerSingleton<ProfileService>(ProfileService(),
-      signalsReady: false);
-  getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(),
-      signalsReady: false);
+  getIt.registerSingleton<SettingsService>(SettingsService(), signalsReady: false);
+  getIt.registerSingleton<ProfileService>(ProfileService(), signalsReady: false);
+  getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(), signalsReady: false);
   getIt.registerSingleton<MqttService>(MqttService(), signalsReady: false);
 }

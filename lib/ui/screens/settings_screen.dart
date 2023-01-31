@@ -70,16 +70,11 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   ),
                 Row(
                   children: [
-                    SizedBox(
-                        width: 100,
-                        child: Text(
-                            "Found: ${bleService.devices.length} devices")),
+                    SizedBox(width: 100, child: Text("Found: ${bleService.devices.length} devices")),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: bleService.devices
-                          .map((e) => Text("${e.name} (${e.id})"))
-                          .toList(),
+                      children: bleService.devices.map((e) => Text("${e.name} (${e.id})")).toList(),
                     ),
                   ],
                 ),
@@ -94,8 +89,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               settingKey: SettingKeys.shotStopOnWeight.name,
               defaultValue: true,
               title: 'Stop on Weight if scale detected',
-              subtitle:
-                  'If the scale is connected it is used to stop the shot if the profile has a limit given.',
+              subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
               enabledLabel: 'Enabled',
               disabledLabel: 'Disabled',
               onChange: (value) {

@@ -44,37 +44,27 @@ class SettingsService extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get shotStopOnWeight =>
-      Settings.getValue<bool>(SettingKeys.shotStopOnWeight.name) ?? true;
-  bool get shotAutoTare =>
-      Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
+  bool get shotStopOnWeight => Settings.getValue<bool>(SettingKeys.shotStopOnWeight.name) ?? true;
+  bool get shotAutoTare => Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
 
-  bool get vizualizerUpload =>
-      Settings.getValue(SettingKeys.vizualizerUpload.name) ?? false;
-  String get vizualizerUser =>
-      Settings.getValue(SettingKeys.vizualizerUser.name);
+  bool get vizualizerUpload => Settings.getValue(SettingKeys.vizualizerUpload.name) ?? false;
+  String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name);
   String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name);
 
-  double get sleepTimer =>
-      Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 120;
-  double get screenLockTimer =>
-      Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
+  double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 120;
+  double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
 
-  bool get graphSingle =>
-      Settings.getValue<bool>(SettingKeys.graphSingle.name) ?? false;
+  bool get graphSingle => Settings.getValue<bool>(SettingKeys.graphSingle.name) ?? false;
 
-  bool get mqttEnabled =>
-      Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
+  bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
 
-  String get mqttServer => Settings.getValue(SettingKeys.mqttServer.name);
+  String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "localhost";
 
-  int get mqttPort => Settings.getValue<int>(SettingKeys.mqttPort.name) ?? 1883;
+  String get mqttPort => Settings.getValue<String>(SettingKeys.mqttPort.name) ?? "1883";
 
-  String get mqttUser => Settings.getValue(SettingKeys.mqttUser.name) ?? "";
+  String get mqttUser => Settings.getValue<String>(SettingKeys.mqttUser.name) ?? "";
 
-  String get mqttPassword =>
-      Settings.getValue(SettingKeys.mqttPassword.name) ?? "";
+  String get mqttPassword => Settings.getValue<String>(SettingKeys.mqttPassword.name) ?? "";
 
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
-
 }
