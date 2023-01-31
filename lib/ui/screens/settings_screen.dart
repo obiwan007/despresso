@@ -115,7 +115,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             min: 0,
             max: 240,
             step: 5,
-            leading: const Icon(Icons.volume_up),
+            leading: const Icon(Icons.switch_left),
             onChange: (value) {
               debugPrint('key-slider-volume: $value');
             },
@@ -127,7 +127,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             min: 0,
             max: 240,
             step: 5,
-            leading: const Icon(Icons.volume_up),
+            leading: const Icon(Icons.lock),
             onChange: (value) {
               debugPrint('key-slider-volume: $value');
             },
@@ -183,120 +183,28 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           title: 'App UI',
           children: <Widget>[
             SwitchSettingsTile(
-              leading: const Icon(Icons.developer_mode),
+              leading: const Icon(Icons.line_axis),
+              defaultValue: settingsService.graphSingle,
               settingKey: SettingKeys.graphSingle.name,
               title: 'Single Graph',
               onChange: (value) {
                 debugPrint('graphSingle: $value');
               },
-              // childrenIfEnabled: <Widget>[
-              //   CheckboxSettingsTile(
-              //     leading: const Icon(Icons.adb),
-              //     settingKey: 'key-is-developer',
-              //     title: 'Developer Mode',
-              //     defaultValue: true,
-              //     onChange: (value) {
-              //       debugPrint('key-is-developer: $value');
-              //     },
-              //   ),
-              //   SwitchSettingsTile(
-              //     leading: const Icon(Icons.usb),
-              //     settingKey: 'key-is-usb-debugging',
-              //     title: 'USB Debugging',
-              //     onChange: (value) {
-              //       debugPrint('key-is-usb-debugging: $value');
-              //     },
-              //   ),
-              //   SimpleSettingsTile(
-              //     title: 'Root Settings',
-              //     subtitle: 'These setting is not accessible',
-              //     enabled: false,
-              //   ),
-              //   SimpleSettingsTile(
-              //     title: 'Custom Settings',
-              //     subtitle: 'Tap to execute custom callback',
-              //     onTap: () => debugPrint('Custom action'),
-              //   ),
-              // ],
             ),
-            //   SimpleSettingsTile(
-            //     title: 'More Settings',
-            //     subtitle: 'General App Settings',
-            //     child: SettingsScreen(
-            //       title: 'App Settings',
-            //       children: <Widget>[
-            //         CheckboxSettingsTile(
-            //           leading: const Icon(Icons.adb),
-            //           settingKey: 'key-is-developer',
-            //           title: 'Developer Mode',
-            //           onChange: (bool value) {
-            //             debugPrint('Developer Mode ${value ? 'on' : 'off'}');
-            //           },
-            //         ),
-            //         SwitchSettingsTile(
-            //           leading: const Icon(Icons.usb),
-            //           settingKey: 'key-is-usb-debugging',
-            //           title: 'USB Debugging',
-            //           onChange: (value) {
-            //             debugPrint('USB Debugging: $value');
-            //           },
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            //   ModalSettingsTile(
-            //     title: 'Quick setting dialog',
-            //     subtitle: 'Settings on a dialog',
-            //     children: <Widget>[
-            //       CheckboxSettingsTile(
-            //         settingKey: 'key-day-light-savings',
-            //         title: 'Daylight Time Saving',
-            //         enabledLabel: 'Enabled',
-            //         disabledLabel: 'Disabled',
-            //         leading: const Icon(Icons.timelapse),
-            //         onChange: (value) {
-            //           debugPrint('key-day-light-saving: $value');
-            //         },
-            //       ),
-            //       SwitchSettingsTile(
-            //         settingKey: 'key-dark-mode',
-            //         title: 'Dark Mode',
-            //         enabledLabel: 'Enabled',
-            //         disabledLabel: 'Disabled',
-            //         leading: const Icon(Icons.palette),
-            //         onChange: (value) {
-            //           debugPrint('jey-dark-mode: $value');
-            //         },
-            //       ),
-            //     ],
-            //   ),
-            //   ExpandableSettingsTile(
-            //     title: 'Quick setting 2',
-            //     subtitle: 'Expandable Settings',
-            //     expanded: true,
-            //     children: <Widget>[
-            //       CheckboxSettingsTile(
-            //         settingKey: 'key-day-light-savings-2',
-            //         title: 'Daylight Time Saving',
-            //         enabledLabel: 'Enabled',
-            //         disabledLabel: 'Disabled',
-            //         leading: const Icon(Icons.timelapse),
-            //         onChange: (value) {
-            //           debugPrint('key-day-light-savings-2: $value');
-            //         },
-            //       ),
-            //       SwitchSettingsTile(
-            //         settingKey: 'key-dark-mode-2',
-            //         title: 'Dark Mode',
-            //         enabledLabel: 'Enabled',
-            //         disabledLabel: 'Disabled',
-            //         leading: const Icon(Icons.palette),
-            //         onChange: (value) {
-            //           debugPrint('key-dark-mode-2: $value');
-            //         },
-            //       ),
-            //     ],
-            //   ),
+          ],
+        ),
+        SettingsGroup(
+          title: 'Tablet',
+          children: <Widget>[
+            SwitchSettingsTile(
+              leading: const Icon(Icons.power),
+              defaultValue: settingsService.smartCharging,
+              settingKey: SettingKeys.smartCharging.name,
+              title: 'Keep Tablet charged between 60-90%',
+              onChange: (value) {
+                debugPrint('smartCharging: $value');
+              },
+            ),
           ],
         ),
         // SettingsGroup(
