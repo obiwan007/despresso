@@ -58,6 +58,40 @@ enum De1StateEnum {
   unknown
 }
 
+enum MMRAddrEnum {
+  ExternalFlash,
+  HWConfig,
+  Model,
+  CPUBoardModel,
+  v13Model,
+  CPUFirmwareBuild,
+  DebugLen,
+  DebugBuffer,
+  DebugConfig,
+  FanThreshold,
+  TankTemp,
+  HeaterUp1Flow,
+  HeaterUp2Flow,
+  WaterHeaterIdleTemp,
+  GHCInfo,
+  PrefGHCMCI,
+  MaxShotPres,
+  TargetSteamFlow,
+  SteamStartSecs,
+  SerialN,
+  HeaterV,
+  HeaterUp2Timeout,
+  CalFlowEst,
+  FlushFlowRate,
+  FlushTemp,
+  FlushTimeout,
+  HotWaterFlowRate,
+  SteamPurgeMode,
+  AllowUSBCharging,
+  AppFeatureFlags,
+  RefillKitPresent,
+}
+
 class DE1 extends ChangeNotifier {
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
@@ -85,6 +119,73 @@ class DE1 extends ChangeNotifier {
 
   static Map<Endpoint, String> cuuidLookup =
       LinkedHashMap.fromEntries(cuuids.entries.map((e) => MapEntry(e.value, e.key)));
+
+  static List<List<Object>> mmrList = [
+    [0x00000000, MMRAddrEnum.ExternalFlash, 0xFFFFF, "Flash RW"],
+    [0x00800000, MMRAddrEnum.HWConfig, 4, "HWConfig"],
+    [0x00800004, MMRAddrEnum.Model, 4, "Model"],
+    [0x00800008, MMRAddrEnum.CPUBoardModel, 4, "CPU Board Model * 1000. eg: 1100 = 1.1"],
+    [
+      0x0080000C,
+      MMRAddrEnum.v13Model,
+      4,
+      "v1.3+ Firmware Model (Unset = 0, DE1 = 1, DE1Plus = 2, DE1Pro = 3, DE1XL = 4, DE1Cafe = 5)"
+    ],
+    [
+      0x00800010,
+      MMRAddrEnum.CPUFirmwareBuild,
+      4,
+      "CPU Board Firmware build number. (Starts at 1000 for 1.3, increments by 1 for every build)"
+    ],
+    [
+      0x00802800,
+      MMRAddrEnum.DebugLen,
+      4,
+      "How many characters in debug buffer are valid. Accessing this pauses BLE debug logging."
+    ],
+    [
+      0x00802804,
+      MMRAddrEnum.DebugBuffer,
+      0x1000,
+      "Last 4K of output. Zero terminated if buffer not full yet. Pauses BLE debug logging."
+    ],
+    [0x00803804, MMRAddrEnum.DebugConfig, 4, "BLEDebugConfig. (Reading restarts logging into the BLE log)"],
+    [0x00803808, MMRAddrEnum.FanThreshold, 4, "Fan threshold temp"],
+    [0x0080380C, MMRAddrEnum.TankTemp, 4, "Tank water temp threshold."],
+    [0x00803810, MMRAddrEnum.HeaterUp1Flow, 4, "HeaterUp Phase 1 Flow Rate"],
+    [0x00803814, MMRAddrEnum.HeaterUp2Flow, 4, "HeaterUp Phase 2 Flow Rate"],
+    [0x00803818, MMRAddrEnum.WaterHeaterIdleTemp, 4, "Water Heater Idle Temperature"],
+    [
+      0x0080381C,
+      MMRAddrEnum.GHCInfo,
+      4,
+      "GHC Info Bitmask, 0x1 = GHC LED Controller Present, 0x2 = GHC Touch Controller_Present, 0x4 GHC Active, 0x80000000 = Factory Mode"
+    ],
+    [0x00803820, MMRAddrEnum.PrefGHCMCI, 4, "TODO"],
+    [0x00803824, MMRAddrEnum.MaxShotPres, 4, "TODO"],
+    [0x00803828, MMRAddrEnum.TargetSteamFlow, 4, "Target steam flow rate"],
+    [
+      0x0080382C,
+      MMRAddrEnum.SteamStartSecs,
+      4,
+      "Seconds of high steam flow * 100. Valid range 0.0 - 4.0. 0 may result in an overheated heater. Be careful."
+    ],
+    [0x00803830, MMRAddrEnum.SerialN, 4, "Current serial number"],
+    [0x00803834, MMRAddrEnum.HeaterV, 4, "Nominal Heater Voltage (0, 120V or 230V). +1000 if it's a set value."],
+    [0x00803838, MMRAddrEnum.HeaterUp2Timeout, 4, "HeaterUp Phase 2 Timeout"],
+    [0x0080383C, MMRAddrEnum.CalFlowEst, 4, "Flow Estimation Calibration"],
+    [0x00803840, MMRAddrEnum.FlushFlowRate, 4, "Flush Flow Rate"],
+    [0x00803844, MMRAddrEnum.FlushTemp, 4, "Flush Temp"],
+    [0x00803848, MMRAddrEnum.FlushTimeout, 4, "Flush Timeout"],
+    [0x0080384C, MMRAddrEnum.HotWaterFlowRate, 4, "Hot Water Flow Rate"],
+    [0x00803850, MMRAddrEnum.SteamPurgeMode, 4, "Steam Purge Mode"],
+    [0x00803854, MMRAddrEnum.AllowUSBCharging, 4, "Allow USB charging"],
+    [0x00803858, MMRAddrEnum.AppFeatureFlags, 4, "App Feature Flags"],
+    [0x0080385C, MMRAddrEnum.RefillKitPresent, 4, "Refill Kit Present"],
+  ];
+
+  Map<MMRAddrEnum, int> mmrAddrLookup =
+      LinkedHashMap.fromEntries(mmrList.map((e) => MapEntry(e[1] as MMRAddrEnum, e[0] as int)));
 
   static Map states = {
     0x00: 'sleep', // 0 Everything is off
@@ -160,6 +261,26 @@ class DE1 extends ChangeNotifier {
 
   late StreamSubscription<ConnectionStateUpdate> _connectToDeviceSubscription;
 
+  int fwAPIVersion = 0;
+
+  int fwRelease = 0;
+
+  int fwCommits = 0;
+
+  int fwChanges = 0;
+
+  int fwSHA = 0;
+  late StreamController<List<int>> _controllerMmrStream;
+  late Stream<List<int>> _streamMMR;
+
+  int ghcInfo = 0;
+
+  int ghcMode = 0;
+
+  int machineSerial = 0;
+
+  int firmware = 0;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -169,6 +290,9 @@ class DE1 extends ChangeNotifier {
     //   _onStateChange(connectionState);
     // });
     // device.connect();
+    _controllerMmrStream = StreamController<List<int>>();
+    _streamMMR = _controllerMmrStream.stream.asBroadcastStream();
+
     service.setState(EspressoMachineState.connecting);
     _connectToDeviceSubscription = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
@@ -297,11 +421,11 @@ class DE1 extends ChangeNotifier {
     var bleChanges = value.getUint8(4);
     var bleSHA = value.getUint32(5);
 
-    var fwAPIVersion = value.getUint8(9);
-    var fwRelease = value.getUint8(10);
-    var fwCommits = value.getUint16(11);
-    var fwChanges = value.getUint8(13);
-    var fwSHA = value.getUint32(14);
+    fwAPIVersion = value.getUint8(9);
+    fwRelease = value.getUint8(10);
+    fwCommits = value.getUint16(11);
+    fwChanges = value.getUint8(13);
+    fwSHA = value.getUint32(14);
 
     log('bleAPIVersion = ${bleAPIVersion.toRadixString(16)}');
     log('bleRelease = ${bleRelease.toRadixString(16)}');
@@ -384,35 +508,118 @@ class DE1 extends ChangeNotifier {
   void mmrNotification(ByteData value) {
     var list = value.buffer.asUint8List();
     if (kDebugMode) {
-      print(list.map(toHexString).toList());
+      log("MMR Notify: ${list.map(toHexString).toList()}");
     }
-    log('mmr received');
+    _controllerMmrStream.add(list);
   }
 
-  void get ghcMode {
+  Future<int> getGhcMode() async {
     log('Reading group head control mode');
-    mmrRead(0x803820, 0);
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.PrefGHCMCI]!, 0));
+    log("ghc controll mode: ${toHexString(data)}");
+    return data;
   }
 
-  void ghcInstalled() {
+  Future<int> getGhcInfo() async {
     log('Reading whether the group head controller is installed or not');
-    mmrRead(0x80381C, 0);
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.GHCInfo]!, 0));
+    log("ghc Info: ${toHexString(data)}");
+    return data;
   }
 
-  void mmrRead(int address, int length) {
-    log("MMR READ REQUEST");
+  Future<int> getSerialNumber() async {
+    log('Reading whether the group head controller is installed or not');
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.SerialN]!, 0));
+    log("SerialNo: $data ${toHexString(data)}");
+    return data;
+  }
+
+  Future<int> getFirmwareBuild() async {
+    log('Reading whether the group head controller is installed or not');
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CPUFirmwareBuild]!, 0));
+    log("Firmware Version: $data ${toHexString(data)}");
+    return data;
+  }
+
+  Future<int> getFanThreshhold() async {
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, 0));
+    log("getFanThreshold: $data ${toHexString(data)}");
+    return data;
+  }
+
+  int getInt(List<int> buffer) {
+    ByteData bytes = ByteData(20);
+    var i = 0;
+    var list = bytes.buffer.asUint8List();
+    list.forEach((element) {
+      list[i] = buffer[i++];
+    });
+    return bytes.getInt32(4, Endian.little);
+  }
+
+  Future<List<int>> mmrRead(int address, int length) async {
+    for (var element in mmrList) {
+      if (element[0] == address) {
+        log("MMR Read  ${toHexString(address)} = ${element[1]} : ${element[3]}");
+        break;
+      }
+    }
+    if (!mmrAvailable) {
+      log('Unable to mmr_read because MMR not available');
+      throw ("Error in mmr");
+    }
+
+    ByteData bytes = ByteData(20);
+    bytes.setInt32(0, address, Endian.big);
+    var buffer = bytes.buffer.asUint8List();
+    buffer[0] = (length % 0xFF);
+
+    if (kDebugMode) {
+      // log("MMR READ: ${byteData.buffer.asUint8List().map(toHexString).toList()}");
+      log("MMR READ: ${buffer.map(toHexString).toList()}");
+    }
+
+    write(Endpoint.readFromMMR, Uint8List.fromList(buffer));
+
+    var result = await _streamMMR.firstWhere(
+      (element) {
+        // log("listen where event  ${element.map(toHexString).toList()}");
+
+        if (buffer[1] == element[1] && buffer[2] == element[2] && buffer[3] == element[3]) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      orElse: () => [],
+    );
+    log("listen event Result:  ${result.map(toHexString).toList()}");
+    return result;
+  }
+
+  setFanThreshhold(int t) {
+    ByteData bytes = ByteData(4);
+    bytes.setUint32(0, t, Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
+  }
+
+  void mmrWrite(int address, List<int> bufferData) {
+    log("MMR WRITE REQUEST");
     if (!mmrAvailable) {
       log('Unable to mmr_read because MMR not available');
       return;
     }
-    // 16 byte 00000000000000000000000000000000
-    var buffer = List<int>.filled(20, 0, growable: true);
-    buffer[0] = (address >> 16) % 0xFF;
-    buffer[1] = (address >> 8) % 0xFF;
-    buffer[2] = (address) % 0xFF;
-    buffer[3] = (length % 0xFF);
 
-    write(Endpoint.readFromMMR, Uint8List.fromList(buffer));
+    ByteData bytes = ByteData(20);
+    bytes.setInt32(0, address, Endian.big);
+    var buffer = bytes.buffer.asUint8List();
+    buffer[0] = (bufferData.length % 0xFF);
+    var i = 0;
+    bufferData.forEach((element) {
+      buffer[i + 4] = bufferData[i++];
+    });
+    log("MMR WRITE: ${buffer.map(toHexString).toList()}");
+    write(Endpoint.writeToMMR, Uint8List.fromList(buffer));
   }
 
   Future<void> _onStateChange(DeviceConnectionState state) async {
@@ -452,7 +659,16 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.readFromMMR, mmrNotification);
         enableNotification(Endpoint.writeToMMR, mmrNotification);
 
-        ghcInstalled();
+        ghcInfo = await getGhcInfo();
+        ghcMode = await getGhcMode();
+
+        machineSerial = await getSerialNumber();
+
+        firmware = await getFirmwareBuild();
+        var fan = await getFanThreshhold();
+        if (fan < 50) setFanThreshhold(50);
+
+        log("Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
 
         return;
       case DeviceConnectionState.disconnected:
