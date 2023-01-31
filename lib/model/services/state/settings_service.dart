@@ -14,6 +14,7 @@ enum SettingKeys {
   sleepTimer,
   screenLockTimer,
   graphSingle,
+  smartCharging,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -49,4 +50,6 @@ class SettingsService extends ChangeNotifier {
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
 
   bool get graphSingle => Settings.getValue<bool>(SettingKeys.graphSingle.name) ?? false;
+
+  bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
 }

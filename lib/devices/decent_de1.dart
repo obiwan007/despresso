@@ -547,6 +547,24 @@ class DE1 extends ChangeNotifier {
     return data;
   }
 
+  setFanThreshhold(int t) {
+    ByteData bytes = ByteData(4);
+    bytes.setUint32(0, t, Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
+  }
+
+  Future<int> getUsbChargerMode() async {
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, 0));
+    log("getUsbChargerMode: $data ${toHexString(data)}");
+    return data;
+  }
+
+  setUsbChargerMode(int t) {
+    ByteData bytes = ByteData(4);
+    bytes.setUint32(0, t, Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, bytes.buffer.asUint8List());
+  }
+
   int getInt(List<int> buffer) {
     ByteData bytes = ByteData(20);
     var i = 0;
@@ -595,12 +613,6 @@ class DE1 extends ChangeNotifier {
     );
     log("listen event Result:  ${result.map(toHexString).toList()}");
     return result;
-  }
-
-  setFanThreshhold(int t) {
-    ByteData bytes = ByteData(4);
-    bytes.setUint32(0, t, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
   }
 
   void mmrWrite(int address, List<int> bufferData) {
