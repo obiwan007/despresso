@@ -82,7 +82,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
-        SettingsGroup(
+        ExpandableSettingsTile(
           title: 'Shot Settings',
           children: <Widget>[
             SwitchSettingsTile(
@@ -109,7 +109,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
-        SettingsGroup(title: "Sleep Timer", children: [
+        ExpandableSettingsTile(title: "Sleep Timer", children: [
           SliderSettingsTile(
             title: 'Switch Off After',
             settingKey: SettingKeys.sleepTimer.name,
@@ -135,53 +135,46 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             },
           )
         ]),
-        SettingsGroup(
-          title: "Cloud Services",
-          children: [
-            ExpandableSettingsTile(
-                title: 'Vizualizer',
-                subtitle: 'Cloud shot upload',
-                expanded: false,
-                children: <Widget>[
-                  SwitchSettingsTile(
-                    leading: const Icon(Icons.usb),
-                    settingKey: SettingKeys.vizualizerUpload.name,
-                    defaultValue: false,
-                    title: 'Upload Shots to Vizualizer',
-                    onChange: (value) {
-                      debugPrint('USB Debugging: $value');
-                    },
-                  ),
-                  TextInputSettingsTile(
-                    title: 'User Name/email',
-                    settingKey: SettingKeys.vizualizerUser.name,
-                    initialValue: 'admin',
-                    validator: (String? username) {
-                      if (username != null && username.length > 3) {
-                        return null;
-                      }
-                      return "User Name can't be smaller than 4 letters";
-                    },
-                    borderColor: Colors.blueAccent,
-                    errorColor: Colors.deepOrangeAccent,
-                  ),
-                  TextInputSettingsTile(
-                    title: 'password',
-                    settingKey: SettingKeys.vizualizerPwd.name,
-                    obscureText: true,
-                    validator: (String? password) {
-                      if (password != null && password.length > 6) {
-                        return null;
-                      }
-                      return "Password can't be smaller than 7 letters";
-                    },
-                    borderColor: Colors.blueAccent,
-                    errorColor: Colors.deepOrangeAccent,
-                  ),
-                ]),
-          ],
-        ),
-        SettingsGroup(
+
+        ExpandableSettingsTile(title: 'Vizualizer', subtitle: 'Cloud shot upload', expanded: false, children: <Widget>[
+          SwitchSettingsTile(
+            leading: const Icon(Icons.usb),
+            settingKey: SettingKeys.vizualizerUpload.name,
+            defaultValue: false,
+            title: 'Upload Shots to Vizualizer',
+            onChange: (value) {
+              debugPrint('USB Debugging: $value');
+            },
+          ),
+          TextInputSettingsTile(
+            title: 'User Name/email',
+            settingKey: SettingKeys.vizualizerUser.name,
+            initialValue: 'admin',
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return "User Name can't be smaller than 4 letters";
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          TextInputSettingsTile(
+            title: 'password',
+            settingKey: SettingKeys.vizualizerPwd.name,
+            obscureText: true,
+            validator: (String? password) {
+              if (password != null && password.length > 6) {
+                return null;
+              }
+              return "Password can't be smaller than 7 letters";
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+        ]),
+
+        ExpandableSettingsTile(
           title: 'App UI',
           children: <Widget>[
             SwitchSettingsTile(
@@ -195,9 +188,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
-        SettingsGroup(
-          title: 'Tablet',
-          children: <Widget>[
+
+        ExpandableSettingsTile(
+          title: "Tablet settings",
+          children: [
             SwitchSettingsTile(
               leading: const Icon(Icons.power),
               defaultValue: settingsService.smartCharging,
@@ -209,6 +203,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
+
         // SettingsGroup(
         //   title: 'Multiple choice settings',
         //   children: <Widget>[
@@ -396,13 +391,14 @@ class SettingsScreenState extends State<AppSettingsScreen> {
         //     )
         //   ],
         // ),
-        SettingsGroup(
-          title: "MQTT",
-          children: <Widget>[
+
+        ExpandableSettingsTile(
+          title: "Message Queue Broadcast",
+          children: [
             SwitchSettingsTile(
               leading: const Icon(Icons.settings_remote),
               settingKey: SettingKeys.mqttEnabled.name,
-              title: 'MQTT',
+              title: 'Enable MQTT',
               onChange: (value) {
                 debugPrint('mqtt enabled: $value');
                 if (value) {

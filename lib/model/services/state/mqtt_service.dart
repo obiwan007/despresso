@@ -178,5 +178,12 @@ class MqttService extends ChangeNotifier {
       builder.addString(event.waterLimit.toString());
       client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
     });
+
+    machineService.streamBatteryState.listen((event) {
+      const pubTopic = 'despresso/tablet/batterylevel';
+      var builder = MqttClientPayloadBuilder();
+      builder.addString(event.toString());
+      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    });
   }
 }

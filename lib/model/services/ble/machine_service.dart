@@ -115,6 +115,10 @@ class EspressoMachineService extends ChangeNotifier {
   late Stream<EspressoMachineFullState> _streamState;
   Stream<EspressoMachineFullState> get streamState => _streamState;
 
+  late StreamController<int> _controllerBattery;
+  late Stream<int> _streamBatteryState;
+  Stream<int> get streamBatteryState => _streamBatteryState;
+
   EspressoMachineFullState currentFullState = EspressoMachineFullState();
 
   EspressoMachineService() {
@@ -126,6 +130,9 @@ class EspressoMachineService extends ChangeNotifier {
 
     _controllerWaterLevel = StreamController<WaterLevel>();
     _streamWaterLevel = _controllerWaterLevel.stream.asBroadcastStream();
+
+    _controllerBattery = StreamController<int>();
+    _streamBatteryState = _controllerBattery.stream.asBroadcastStream();
 
     init();
     _controllerEspressoMachineState.add(currentFullState);
@@ -207,6 +214,7 @@ class EspressoMachineService extends ChangeNotifier {
       // Do something with new state
       final batteryLevel = await _battery.batteryLevel;
       log("Battery: changed: $state $batteryLevel");
+      _controllerBattery.add(batteryLevel);
       if (de1 == null) {
         log("DE1 not connected yet");
         return;
