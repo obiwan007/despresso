@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:developer';
+import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -11,15 +13,21 @@ import 'settings_service.dart';
 
 class MqttService extends ChangeNotifier {
   late SettingsService settingsService;
+  late EspressoMachineService machineService;
   late MqttClient client;
+  final subTopic = 'despresso';
+
+  bool connected = false;
 
   MqttService() {
     log('MQTT:init mqtt');
     settingsService = getIt<SettingsService>();
+    machineService = getIt<EspressoMachineService>();
     startService();
   }
 
   Future<int> startService() async {
+    connected = false;
     if (settingsService.mqttEnabled) {
       try {
         client = MqttServerClient(settingsService.mqttServer, "");
@@ -29,6 +37,8 @@ class MqttService extends ChangeNotifier {
         log('MQTT:mqtt service started');
         client.keepAlivePeriod = 60;
         client.onDisconnected = onDisconnected;
+        client.setProtocolV311();
+
         // client.onConnected = onConnected;
         // client.onSubscribed = onSubscribed;
         // client.pongCallback = pong;
@@ -65,7 +75,6 @@ class MqttService extends ChangeNotifier {
         return -1;
       }
 
-      const subTopic = 'despresso';
       log('MQTT:Subscribing to the $subTopic topic');
       client.subscribe(subTopic, MqttQos.atMostOnce);
       client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
@@ -83,23 +92,38 @@ class MqttService extends ChangeNotifier {
       builder.addString('Hello from mqtt_client');
 
       log('Subscribing to the $pubTopic topic');
-      client.subscribe(pubTopic, MqttQos.exactlyOnce);
+      // client.subscribe(pubTopic, MqttQos.exactlyOnce);
 
       log('MQTT:Publishing our topic');
       client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
 
-      log('MQTT:Sleeping....');
-      await MqttUtilities.asyncSleep(80);
+      connected = true;
 
-      log('MQTT:Unsubscribing');
-      client.unsubscribe(subTopic);
-      client.unsubscribe(pubTopic);
+      handleEvents();
+      // log('MQTT:Sleeping....');
+      // await MqttUtilities.asyncSleep(80);
 
-      await MqttUtilities.asyncSleep(2);
-      log('MQTT:Disconnecting');
-      client.disconnect();
+      // log('MQTT:Unsubscribing');
+      // client.unsubscribe(subTopic);
+      // client.unsubscribe(pubTopic);
+
+      // await MqttUtilities.asyncSleep(2);
+      // log('MQTT:Disconnecting');
+      // client.disconnect();
     }
     return 0;
+  }
+
+  void disconnect() async {
+    if (!connected) return;
+
+    log('MQTT:Unsubscribing');
+    client.unsubscribe(subTopic);
+    // client.unsubscribe(pubTopic);
+
+    await MqttUtilities.asyncSleep(2);
+    log('MQTT:Disconnecting');
+    client.disconnect();
   }
 
   /// The subscribed callback
@@ -123,5 +147,34 @@ class MqttService extends ChangeNotifier {
   /// Pong callback
   void pong() {
     log('MQTT:Ping response client callback invoked');
+  }
+
+  void handleEvents() {
+    machineService.streamState.listen((event) {
+      log("State CHange detected $event");
+      const pubTopic = 'despresso/de1';
+      var builder = MqttClientPayloadBuilder();
+      builder.addString(event.state.name);
+      client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!);
+
+      builder = MqttClientPayloadBuilder();
+      builder.addString(event.subState);
+      client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!);
+    });
+    machineService.streamShotState.listen((event) {
+      log("Shot State CHange detected $event");
+      const pubTopic = 'despresso/de1/shot';
+      var builder = MqttClientPayloadBuilder();
+
+      builder.addString(jsonEncode(event.toJson()));
+      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    });
+    machineService.streamWaterLevel.listen((event) {
+      const pubTopic = 'despresso/de1/waterlevel';
+      var builder = MqttClientPayloadBuilder();
+
+      builder.addInt(event.waterLevel);
+      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    });
   }
 }
