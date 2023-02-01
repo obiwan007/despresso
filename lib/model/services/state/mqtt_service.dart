@@ -37,7 +37,7 @@ class MqttService extends ChangeNotifier {
         log('MQTT:mqtt service started');
         client.keepAlivePeriod = 60;
         client.onDisconnected = onDisconnected;
-        client.setProtocolV311();
+        client.setProtocolV31();
 
         // client.onConnected = onConnected;
         // client.onSubscribed = onSubscribed;
@@ -172,9 +172,11 @@ class MqttService extends ChangeNotifier {
     machineService.streamWaterLevel.listen((event) {
       const pubTopic = 'despresso/de1/waterlevel';
       var builder = MqttClientPayloadBuilder();
-
-      builder.addInt(event.waterLevel);
+      builder.addString(event.waterLevel.toString());
       client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+      builder = MqttClientPayloadBuilder();
+      builder.addString(event.waterLimit.toString());
+      client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
     });
   }
 }
