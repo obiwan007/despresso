@@ -184,6 +184,9 @@ class MqttService extends ChangeNotifier {
       var builder = MqttClientPayloadBuilder();
       builder.addString(event.toString());
       client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+      builder = MqttClientPayloadBuilder();
+      builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
+      client.publishMessage('despresso/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
     });
   }
 }

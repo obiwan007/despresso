@@ -281,6 +281,8 @@ class DE1 extends ChangeNotifier {
 
   int firmware = 0;
 
+  int usbChargerMode = 0;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -556,6 +558,7 @@ class DE1 extends ChangeNotifier {
   Future<int> getUsbChargerMode() async {
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, 0));
     log("getUsbChargerMode: $data ${toHexString(data)}");
+    usbChargerMode = data;
     return data;
   }
 
@@ -563,6 +566,7 @@ class DE1 extends ChangeNotifier {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
     mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, bytes.buffer.asUint8List());
+    usbChargerMode = t;
   }
 
   int getInt(List<int> buffer) {

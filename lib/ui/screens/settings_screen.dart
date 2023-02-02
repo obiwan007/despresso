@@ -174,20 +174,20 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           ),
         ]),
 
-        ExpandableSettingsTile(
-          title: 'App UI',
-          children: <Widget>[
-            SwitchSettingsTile(
-              leading: const Icon(Icons.line_axis),
-              defaultValue: settingsService.graphSingle,
-              settingKey: SettingKeys.graphSingle.name,
-              title: 'Single Graph',
-              onChange: (value) {
-                debugPrint('graphSingle: $value');
-              },
-            ),
-          ],
-        ),
+        // ExpandableSettingsTile(
+        //   title: 'App UI',
+        //   children: <Widget>[
+        //     SwitchSettingsTile(
+        //       leading: const Icon(Icons.line_axis),
+        //       defaultValue: settingsService.graphSingle,
+        //       settingKey: SettingKeys.graphSingle.name,
+        //       title: 'Single Graph',
+        //       onChange: (value) {
+        //         debugPrint('graphSingle: $value');
+        //       },
+        //     ),
+        //   ],
+        // ),
 
         ExpandableSettingsTile(
           title: "Tablet settings",

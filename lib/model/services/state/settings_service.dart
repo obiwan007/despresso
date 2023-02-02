@@ -54,16 +54,10 @@ class SettingsService extends ChangeNotifier {
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 120;
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
 
-  bool get graphSingle => Settings.getValue<bool>(SettingKeys.graphSingle.name) ?? false;
-
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
-
   String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "localhost";
-
   String get mqttPort => Settings.getValue<String>(SettingKeys.mqttPort.name) ?? "1883";
-
   String get mqttUser => Settings.getValue<String>(SettingKeys.mqttUser.name) ?? "";
-
   String get mqttPassword => Settings.getValue<String>(SettingKeys.mqttPassword.name) ?? "";
 
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;

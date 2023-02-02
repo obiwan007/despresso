@@ -358,110 +358,11 @@ class EspressoScreenState extends State<EspressoScreen> {
       maxTime = 0;
     }
 
-//     log("Maxtime: $maxTime $corrected A ${(t).toInt()}  ${(t ~/ 5).toInt()}");
-    if (settingsService.graphSingle == false) {
-      // var temp = _buildGraphTemp(data, ranges);
-      // var flow = _buildGraphFlow(data, ranges);
-      // var pressure = _buildGraphPressure(data, ranges);
-
-      // return {"temp": temp, "flow": flow, "pressure": pressure};
-    } else {
-      var single = _buildGraphSingleFlCharts(data, maxTime, ranges);
-      return {"single": single};
-    }
+    var single = _buildGraphSingleFlCharts(data, maxTime, ranges);
+    return {"single": single};
   }
 
-  _buildGraphs2() {
-    var ranges = _createPhases();
-    var data = _createData();
-
-    try {
-      var maxData = data["flow"]!.data.last;
-      var t = maxData.sampleTimeCorrected;
-
-      if (machineService.inShot == true) {
-        var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
-        maxTime = math.max(30, corrected);
-      } else {
-        maxTime = t;
-      }
-    } catch (ex) {
-      maxTime = 0;
-    }
-
-//     log("Maxtime: $maxTime $corrected A ${(t).toInt()}  ${(t ~/ 5).toInt()}");
-    if (settingsService.graphSingle == false) {
-      var temp = _buildGraphTemp(data, ranges);
-      var flow = _buildGraphFlow(data, ranges);
-      var pressure = _buildGraphPressure(data, ranges);
-
-      return {"temp": temp, "flow": flow, "pressure": pressure};
-    } else {
-      var single = _buildGraphSingle(data, ranges);
-      return {"single": single};
-    }
-  }
-
-  Widget _buildGraphTemp(
-      Map<String, charts.Series<ShotState, double>> data, Iterable<charts.RangeAnnotationSegment<double>> ranges) {
-    var flowChart = charts.LineChart(
-      [data["temp"]!, data["tempSet"]!],
-      animate: false,
-      behaviors: [
-        // Define one domain and two measure annotations configured to render
-        // labels in the chart margins.
-        charts.SeriesLegend(),
-        charts.RangeAnnotation([
-          ...ranges,
-          // charts.RangeAnnotationSegment(
-          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
-          //     labelAnchor: charts.AnnotationLabelAnchor.end,
-          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
-          //     labelDirection: charts.AnnotationLabelDirection.vertical),
-        ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
-      ],
-      secondaryMeasureAxis: charts.NumericAxisSpec(
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle: charts.TextStyleSpec(
-              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-          lineStyle: charts.LineStyleSpec(
-              thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-        ),
-      ),
-      primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      domainAxis: charts.NumericAxisSpec(
-        viewport: charts.NumericExtents(0, maxTime),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-    );
-
-    return Container(
-      height: 300,
-      margin: const EdgeInsets.only(left: 10.0),
-      width: MediaQuery.of(context).size.width - 105,
-      decoration: BoxDecoration(
-        color: theme.ThemeColors.graphBackground,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: flowChart,
-    );
-  }
-
-  LineChartBarData sinLine(List<FlSpot> points, double barWidth, Color col) {
+  LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col) {
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
@@ -488,11 +389,11 @@ class EspressoScreenState extends State<EspressoScreen> {
           drawVerticalLine: true,
         ),
         lineBarsData: [
-          sinLine(data["pressure"]!, 4, theme.ThemeColors.pressureColor),
-          sinLine(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor),
-          sinLine(data["flow"]!, 4, theme.ThemeColors.flowColor),
-          sinLine(data["flowSet"]!, 2, theme.ThemeColors.flowColor),
-          sinLine(data["flowG"]!, 2, theme.ThemeColors.weightColor),
+          createChartLineDatapoints(data["pressure"]!, 4, theme.ThemeColors.pressureColor),
+          createChartLineDatapoints(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor),
+          createChartLineDatapoints(data["flow"]!, 4, theme.ThemeColors.flowColor),
+          createChartLineDatapoints(data["flowSet"]!, 2, theme.ThemeColors.flowColor),
+          createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor),
         ],
         rangeAnnotations: RangeAnnotations(
           verticalRangeAnnotations: [
@@ -560,9 +461,9 @@ class EspressoScreenState extends State<EspressoScreen> {
           drawVerticalLine: true,
         ),
         lineBarsData: [
-          sinLine(data["weight"]!, 2, theme.ThemeColors.weightColor),
-          sinLine(data["temp"]!, 4, theme.ThemeColors.tempColor),
-          sinLine(data["tempSet"]!, 2, theme.ThemeColors.tempColor),
+          createChartLineDatapoints(data["weight"]!, 2, theme.ThemeColors.weightColor),
+          createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor),
+          createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor),
         ],
         titlesData: FlTitlesData(
           topTitles: AxisTitles(
@@ -654,188 +555,6 @@ class EspressoScreenState extends State<EspressoScreen> {
     );
   }
 
-  Widget _buildGraphSingle(
-      Map<String, charts.Series<ShotState, double>> data, Iterable<charts.RangeAnnotationSegment<double>> ranges) {
-    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
-    var flowChart = charts.LineChart(
-      [
-        data["pressure"]!,
-        data["pressureSet"]!,
-        data["temp"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId), // temp axis,
-        data["tempSet"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId), // temp axis
-        data["flowSet"]!,
-        data["flow"]!,
-        data["flowG"]!,
-        data["weight"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId), // temp axis,
-      ],
-      animate: false,
-      behaviors: [
-        // Define one domain and two measure annotations configured to render
-        // labels in the chart margins.
-        charts.SeriesLegend(
-          position: charts.BehaviorPosition.end,
-        ),
-        charts.RangeAnnotation([
-          ...ranges,
-          // charts.RangeAnnotationSegment(
-          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
-          //     labelAnchor: charts.AnnotationLabelAnchor.end,
-          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
-          //     labelDirection: charts.AnnotationLabelDirection.vertical),
-        ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
-      ],
-      secondaryMeasureAxis: charts.NumericAxisSpec(
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle: charts.TextStyleSpec(
-              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-          lineStyle: charts.LineStyleSpec(
-              thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-        ),
-      ),
-      primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      domainAxis: charts.NumericAxisSpec(
-        viewport: charts.NumericExtents(0, maxTime),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-    );
-
-    return Container(
-      height: 300,
-      margin: const EdgeInsets.only(left: 10.0),
-      width: MediaQuery.of(context).size.width - 105,
-      decoration: BoxDecoration(
-        color: theme.ThemeColors.graphBackground,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: flowChart,
-    );
-  }
-
-  Widget _buildGraphPressure(
-      Map<String, charts.Series<ShotState, double>> data, Iterable<charts.RangeAnnotationSegment<double>> ranges) {
-    var flowChart = charts.LineChart(
-      [data["pressure"]!, data["pressureSet"]!],
-      animate: false,
-      behaviors: [
-        charts.SeriesLegend(),
-        // Define one domain and two measure annotations configured to render
-        // labels in the chart margins.
-        charts.RangeAnnotation([
-          ...ranges,
-          // charts.RangeAnnotationSegment(
-          //     9.5, 12, charts.RangeAnnotationAxisType.domain,
-          //     labelAnchor: charts.AnnotationLabelAnchor.end,
-          //     color: const charts.Color(r: 0xff, g: 0, b: 0, a: 100),
-          //     labelDirection: charts.AnnotationLabelDirection.vertical),
-        ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
-      ],
-      primaryMeasureAxis: charts.NumericAxisSpec(
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      domainAxis: charts.NumericAxisSpec(
-        viewport: charts.NumericExtents(0, maxTime),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-    );
-
-    return Container(
-      // height: 100,
-      margin: const EdgeInsets.only(left: 10.0),
-      width: MediaQuery.of(context).size.width - 105,
-      decoration: BoxDecoration(
-        color: theme.ThemeColors.graphBackground,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: flowChart,
-    );
-  }
-
-  Widget _buildGraphFlow(
-      Map<String, charts.Series<ShotState, double>> data, Iterable<charts.RangeAnnotationSegment<double>> ranges) {
-    double maxWeight = (profileService.currentProfile?.shotHeader.targetWeight ?? 200.0) * 1.5;
-    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
-
-    var flowChart = charts.LineChart(
-      [
-        data["flow"]!,
-        data["flowSet"]!,
-        data["flowG"]!,
-        data["weight"]!..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
-      ],
-      animate: false,
-      behaviors: [
-        charts.SeriesLegend(),
-        charts.RangeAnnotation([
-          ...ranges,
-        ], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
-      ],
-      secondaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
-        viewport: charts.NumericExtents(0.0, maxWeight),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      primaryMeasureAxis: charts.NumericAxisSpec(
-        tickProviderSpec: const charts.BasicNumericTickProviderSpec(zeroBound: false),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      domainAxis: charts.NumericAxisSpec(
-        viewport: charts.NumericExtents(0, maxTime),
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-    );
-
-    return Container(
-      margin: const EdgeInsets.only(left: 10.0),
-      width: MediaQuery.of(context).size.width - 105,
-      decoration: BoxDecoration(
-        color: theme.ThemeColors.graphBackground,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: flowChart,
-    );
-  }
-
   Widget _buildLiveInsights() {
     Widget insights;
     if (machineService.state.shot != null) {
@@ -882,30 +601,14 @@ class EspressoScreenState extends State<EspressoScreen> {
             Expanded(
               flex: 8, // takes 30% of available width
               child: Column(
-                children: isEmpty
-                    ? [const Text("No data yet")]
-                    : settingsService.graphSingle
-                        ? [
-                            Expanded(
-                              flex: 1,
-                              child: graphs["single"],
-                            ),
-                          ]
-                        : [
-                            Expanded(
-                              flex: 1,
-                              child: graphs["pressure"],
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: graphs["flow"],
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: graphs["temp"],
-                            ),
-                          ],
-              ),
+                  children: isEmpty
+                      ? [const Text("No data yet")]
+                      : [
+                          Expanded(
+                            flex: 1,
+                            child: graphs["single"],
+                          ),
+                        ]),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
