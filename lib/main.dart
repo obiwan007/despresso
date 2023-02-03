@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:path_provider/path_provider.dart';
-
 import 'logger_util.dart';
 import 'objectbox.dart';
 import 'ui/landingpage.dart';
