@@ -1,3 +1,4 @@
+import 'package:despresso/logger_util.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'dart:developer';
@@ -9,6 +10,7 @@ part 'shotstate.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ShotList {
+  final log = getLogger();
   bool saving = false;
 
   bool saved = true;
@@ -37,42 +39,42 @@ class ShotList {
   Future load(String s) async {
     // try {
     //   saved = true;
-    //   log("Loading shot: ${s}");
+    //   log.i("Loading shot: ${s}");
     //   final directory = await getApplicationDocumentsDirectory();
-    //   log("Storing to path:${directory.path}");
+    //   log.i("Storing to path:${directory.path}");
     //   var file = File('${directory.path}/$s');
     //   if (await file.exists()) {
     //     var json = file.readAsStringSync();
-    //     log("Loaded: ${json}");
+    //     log.i("Loaded: ${json}");
     //     Map<String, dynamic> map = jsonDecode(json);
     //     var data = ShotList.fromJson(map);
     //     entries = data.entries;
-    //     log("Loaded entries: ${entries.length}");
+    //     log.i("Loaded entries: ${entries.length}");
     //   } else {
-    //     log("File $s not existing");
+    //     log.i("File $s not existing");
     //   }
     // } catch (ex) {
-    //   log("loading error");
+    //   log.i("loading error");
     // }
   }
 
   saveData() async {
     // if (saving) return;
     // saving = true;
-    // log("Storing shot: ${entries.length}");
+    // log.i("Storing shot: ${entries.length}");
     // if (entries.length > 50) {
     //   final directory = await getApplicationDocumentsDirectory();
-    //   log("Storing to path:${directory.path}");
+    //   log.i("Storing to path:${directory.path}");
     //   var file = File('${directory.path}/$filename');
     //   if (await file.exists()) {
-    //     log("overwrite existing file");
+    //     log.i("overwrite existing file");
     //     // file.deleteSync();
     //   }
-    //   log("Write file");
+    //   log.i("Write file");
     //   file.writeAsStringSync(jsonEncode(this), mode: FileMode.writeOnly);
-    //   log("Written file");
+    //   log.i("Written file");
     // }
-    log("Clean shot data cache");
+    log.i("Clean shot data cache");
     for (var element in entries) {
       element.id = 0;
     }

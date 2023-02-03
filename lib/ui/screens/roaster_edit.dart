@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -20,6 +19,7 @@ class RoasterEdit extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class RoasterEditState extends State<RoasterEdit> {
+  final log = getLogger();
   int _selectedRoasterId = 0;
 
   late CoffeeService coffeeService;
@@ -66,7 +66,7 @@ class RoasterEditState extends State<RoasterEdit> {
   void dispose() {
     super.dispose();
     coffeeService.removeListener(updateCoffee);
-    log('Disposed coffeeselection');
+    log.i('Disposed coffeeselection');
   }
 
   @override
@@ -139,7 +139,7 @@ class RoasterEditState extends State<RoasterEdit> {
             return ElevatedButton(
               onPressed: form.valid
                   ? () {
-                      log("${form.value}");
+                      log.i("${form.value}");
                       saveFormData(form);
                       Navigator.pop(context);
                     }

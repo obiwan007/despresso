@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
@@ -23,6 +22,7 @@ class ProfilesEditScreen extends StatefulWidget {
 }
 
 class ProfilesEditScreenState extends State<ProfilesEditScreen> {
+  final log = getLogger();
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
@@ -41,14 +41,14 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   @override
   void initState() {
     super.initState();
-    log('Init State ${_profile.shotHeader.title}');
+    log.i('Init State ${_profile.shotHeader.title}');
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
 
     profileService.addListener(profileListener);
 
     for (var element in _profile.shotFrames) {
-      log("Profile: $element");
+      log.i("Profile: $element");
     }
 
     calcProfileGraph();
@@ -69,7 +69,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
       _profile.shotFrames.add(declineObject);
       decline = declineObject;
     }
-    log("Decline: $decline");
+    log.i("Decline: $decline");
   }
 
   @override
@@ -77,7 +77,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     super.dispose();
 
     machineService.removeListener(profileListener);
-    log('Disposed profile');
+    log.i('Disposed profile');
   }
 
   @override
@@ -502,7 +502,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   }
 
   void profileListener() {
-    log('Profile updated');
+    log.i('Profile updated');
   }
 
   List<charts.Series<ShotState, double>> _createSeriesData() {
@@ -591,11 +591,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     }
     // shotList.entries.forEach((element) {
     //   if (element.subState.isNotEmpty) {
-    //     log(element.subState + " " + element.sampleTimeCorrected.toString());
+    //     log.i(element.subState + " " + element.sampleTimeCorrected.toString());
     //   }
     // });
     var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
-    // log("Phases= ${stateChanges.length}");
+    // log.i("Phases= ${stateChanges.length}");
 
     int i = 0;
     var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
@@ -618,7 +618,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
           labelStyleSpec: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log("Phase ${element.subState}");
+      // log.i("Phase ${element.subState}");
     });
   }
 }

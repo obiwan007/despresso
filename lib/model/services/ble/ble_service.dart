@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
+
 // import 'dart:html';
 // import 'dart:html';
 
+import 'package:despresso/logger_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
@@ -13,6 +14,7 @@ import 'package:despresso/devices/decent_de1.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class BLEService extends ChangeNotifier {
+  final log = getLogger();
   // static BleManager bleManager = BleManager();
   final flutterReactiveBle = FlutterReactiveBle();
 
@@ -50,7 +52,7 @@ class BLEService extends ChangeNotifier {
       deviceScanListener(device);
     }, onError: (err) {
       // ignore: prefer_interpolation_to_compose_strings
-      log('Scanner Error:' + err?.message?.message);
+      log.i('Scanner Error:' + err?.message?.message);
     });
 
     Timer(const Duration(seconds: 10), () {
@@ -76,7 +78,7 @@ class BLEService extends ChangeNotifier {
 
   void _checkdevice(DiscoveredDevice device) async {
     if (true) {
-      log('Removing device');
+      log.i('Removing device');
       _devicesList.remove(device);
       // bleManager.startPeripheralScan().listen(deviceScanListener);
       startScan();
@@ -86,19 +88,19 @@ class BLEService extends ChangeNotifier {
   void _addDeviceTolist(final DiscoveredDevice device) async {
     if (device.name.isNotEmpty) {
       if (!_devicesList.map((e) => e.id).contains(device.id)) {
-        // log('Found Device: ${device.name}');
+        // log.i('Found Device: ${device.name}');
         if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
-          log('Creating Acaia Scale!');
+          log.i('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
         if (device.name.startsWith('CFS-9002')) {
-          log('eureka scale found');
+          log.i('eureka scale found');
           EurekaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
         if (device.name.startsWith('DE1')) {
-          log('Creating DE1 machine!');
+          log.i('Creating DE1 machine!');
           DE1(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }

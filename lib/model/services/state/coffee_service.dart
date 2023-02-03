@@ -1,9 +1,10 @@
 // ignore_for_file: unused_import
 
 import 'dart:convert';
-import 'dart:developer';
+
 import 'dart:io';
 
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
@@ -21,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../service_locator.dart';
 
 class CoffeeService extends ChangeNotifier {
+  final log = getLogger();
   late SharedPreferences prefs;
 
   late ObjectBox objectBox;
@@ -66,7 +68,7 @@ class CoffeeService extends ChangeNotifier {
 
   Shot? getLastShot() {
     var allshots = shotBox.getAll();
-    log("Number of stored shots: ${allshots.length}");
+    log.i("Number of stored shots: ${allshots.length}");
     if (selectedShot > 0) {
       return shotBox.get(selectedShot);
     } else {
@@ -105,38 +107,38 @@ class CoffeeService extends ChangeNotifier {
 
     selectedShot = prefs.getInt("lastShot") ?? 0;
 
-    log("lastshot $selectedShot");
+    log.i("lastshot $selectedShot");
     // try {
-    //   log("Loading coffees");
+    //   log.i("Loading coffees");
     //   final directory = await getApplicationDocumentsDirectory();
-    //   log("Storing to path:${directory.path}");
+    //   log.i("Storing to path:${directory.path}");
     //   var file = File('${directory.path}/db/coffee.json');
     //   if (await file.exists()) {
     //     var json = file.readAsStringSync();
-    //     log("Loaded: ${json}");
+    //     log.i("Loaded: ${json}");
     //     List<dynamic> l = jsonDecode(json);
     //     var data = l.map((value) => Coffee.fromJson(value));
     //     //knownCoffees = data;
     //     this.knownCoffees = data.toList();
-    //     log("Loaded Coffee entries: ${data.length}");
+    //     log.i("Loaded Coffee entries: ${data.length}");
     //   } else {
-    //     log("File not existing");
+    //     log.i("File not existing");
     //   }
 
     //   var file2 = File('${directory.path}/db/roasters.json');
     //   if (await file2.exists()) {
     //     var json = file2.readAsStringSync();
-    //     log("Loaded: ${json}");
+    //     log.i("Loaded: ${json}");
     //     List<dynamic> l = jsonDecode(json);
     //     var data = l.map((value) => Roaster.fromJson(value));
     //     //knownCoffees = data;
     //     this.knownRoasters = data.toList();
-    //     log("Loaded Roasters: ${data.length}");
+    //     log.i("Loaded Roasters: ${data.length}");
     //   } else {
-    //     log("Roasters File not existing");
+    //     log.i("Roasters File not existing");
     //   }
     // } catch (ex) {
-    //   log("loading error");
+    //   log.i("loading error");
     // }
 
     // var id = prefs.getString("selectedRoaster");
@@ -156,16 +158,16 @@ class CoffeeService extends ChangeNotifier {
 
   save() async {
     // try {
-    //   log("Storing coffee");
+    //   log.i("Storing coffee");
 
     //   final directory = await getApplicationDocumentsDirectory();
-    //   log("Storing to path:${directory.path}");
+    //   log.i("Storing to path:${directory.path}");
 
     //   final Directory _appDocDirFolder = Directory('${directory.path}/db/');
 
     //   if (!_appDocDirFolder.existsSync()) {
     //     await _appDocDirFolder.create(recursive: true);
-    //     log("Directory created");
+    //     log.i("Directory created");
     //   }
 
     //   var file = File('${directory.path}/db/coffee.json');
@@ -173,7 +175,7 @@ class CoffeeService extends ChangeNotifier {
     //     file.deleteSync();
     //   } else {}
     //   var encoded = jsonEncode(knownCoffees);
-    //   log("Coffee: $encoded");
+    //   log.i("Coffee: $encoded");
     //   file.writeAsStringSync(encoded);
 
     //   file = File('${directory.path}/db/roasters.json');
@@ -181,21 +183,21 @@ class CoffeeService extends ChangeNotifier {
     //     file.deleteSync();
     //   } else {}
     //   encoded = jsonEncode(knownRoasters);
-    //   log("Roasters: $encoded");
+    //   log.i("Roasters: $encoded");
     //   file.writeAsStringSync(encoded);
     // } catch (ex) {
-    //   log("save error $ex");
+    //   log.i("save error $ex");
     // }
   }
 
   Future<void> setSelectedRoaster(int id) async {
     if (id == 0) return;
 
-    log('Roaster Saving');
+    log.i('Roaster Saving');
     await prefs.setInt("selectedRoaster", id);
-    log('Roaster Set $id');
+    log.i('Roaster Set $id');
     selectedRoaster = id;
-    log('Roaster Saved');
+    log.i('Roaster Saved');
     notifyListeners();
   }
 
@@ -220,7 +222,7 @@ class CoffeeService extends ChangeNotifier {
     selectedCoffee = id;
 
     // notifyListeners();
-    log('Coffee Saved');
+    log.i('Coffee Saved');
   }
 
   setLastShotId(int id) async {

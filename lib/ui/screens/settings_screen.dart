@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -16,6 +15,7 @@ class AppSettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<AppSettingsScreen> {
+  final log = getLogger();
   late SettingsService settingsService;
   late BLEService bleService;
   late MqttService mqttService;
@@ -35,7 +35,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
     settingsService.removeListener(settingsServiceListener);
     bleService.removeListener(settingsServiceListener);
-    log('Disposed settingspage');
+    log.i('Disposed settingspage');
   }
 
   @override
