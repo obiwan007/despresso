@@ -3,6 +3,7 @@ import 'dart:async';
 // import 'dart:html';
 // import 'dart:html';
 
+import 'package:despresso/devices/decent_scale.dart';
 import 'package:despresso/logger_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -97,6 +98,11 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('CFS-9002')) {
           log.i('eureka scale found');
           EurekaScale(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
+        if (device.name.startsWith('Decent')) {
+          log.i('decent scale found');
+          DecentScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
         if (device.name.startsWith('DE1')) {
