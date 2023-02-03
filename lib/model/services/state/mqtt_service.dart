@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:developer';
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -18,6 +19,11 @@ class MqttService extends ChangeNotifier {
   final subTopic = 'despresso';
 
   bool connected = false;
+
+  late StreamSubscription<EspressoMachineFullState> streamStateSubscription;
+  late StreamSubscription<int> streamBatterySubscription;
+  late StreamSubscription<ShotState> streamShotSubscription;
+  late StreamSubscription<WaterLevel> streamWaterSubscription;
 
   MqttService() {
     log('MQTT:init mqtt');
@@ -99,7 +105,6 @@ class MqttService extends ChangeNotifier {
 
       connected = true;
 
-      handleEvents();
       // log('MQTT:Sleeping....');
       // await MqttUtilities.asyncSleep(80);
 
@@ -133,15 +138,32 @@ class MqttService extends ChangeNotifier {
 
   /// The unsolicited disconnect callback
   void onDisconnected() {
+    connected = false;
+
+    streamStateSubscription.cancel();
+    streamBatterySubscription.cancel();
+    streamShotSubscription.cancel();
+    streamWaterSubscription.cancel();
+
     log('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       log('MQTT:OnDisconnected callback is solicited, this is correct');
     }
+
+    Future.delayed(
+      const Duration(seconds: 10),
+      () {
+        log('MQTT:Reconnecting');
+        handleEvents();
+      },
+    );
   }
 
   /// The successful connect callback
   void onConnected() {
+    connected = true;
     log('MQTT:OnConnected client callback - Client connection was sucessful');
+    handleEvents();
   }
 
   /// Pong callback
@@ -150,43 +172,59 @@ class MqttService extends ChangeNotifier {
   }
 
   void handleEvents() {
-    machineService.streamState.listen((event) {
-      log("State CHange detected $event");
-      const pubTopic = 'despresso/de1';
-      var builder = MqttClientPayloadBuilder();
-      builder.addString(event.state.name);
-      client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!);
+    streamStateSubscription = machineService.streamState.listen((event) {
+      try {
+        log("State CHange detected $event");
+        const pubTopic = 'despresso/de1';
+        var builder = MqttClientPayloadBuilder();
+        builder.addString(event.state.name);
+        client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!);
 
-      builder = MqttClientPayloadBuilder();
-      builder.addString(event.subState);
-      client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!);
+        builder = MqttClientPayloadBuilder();
+        builder.addString(event.subState);
+        client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!);
+      } catch (e) {
+        log("MQTT: $e");
+      }
     });
-    machineService.streamShotState.listen((event) {
-      log("Shot State CHange detected $event");
-      const pubTopic = 'despresso/de1/shot';
-      var builder = MqttClientPayloadBuilder();
+    streamShotSubscription = machineService.streamShotState.listen((event) {
+      try {
+        log("Shot State CHange detected $event");
+        const pubTopic = 'despresso/de1/shot';
+        var builder = MqttClientPayloadBuilder();
 
-      builder.addString(jsonEncode(event.toJson()));
-      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        builder.addString(jsonEncode(event.toJson()));
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+      } catch (e) {
+        log("MQTT: $e");
+      }
     });
-    machineService.streamWaterLevel.listen((event) {
-      const pubTopic = 'despresso/de1/waterlevel';
-      var builder = MqttClientPayloadBuilder();
-      builder.addString(event.waterLevel.toString());
-      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
-      builder = MqttClientPayloadBuilder();
-      builder.addString(event.waterLimit.toString());
-      client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
+    streamWaterSubscription = machineService.streamWaterLevel.listen((event) {
+      try {
+        const pubTopic = 'despresso/de1/waterlevel';
+        var builder = MqttClientPayloadBuilder();
+        builder.addString(event.waterLevel.toString());
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        builder = MqttClientPayloadBuilder();
+        builder.addString(event.waterLimit.toString());
+        client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
+      } catch (e) {
+        log("MQTT: $e");
+      }
     });
 
-    machineService.streamBatteryState.listen((event) {
-      const pubTopic = 'despresso/tablet/batterylevel';
-      var builder = MqttClientPayloadBuilder();
-      builder.addString(event.toString());
-      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
-      builder = MqttClientPayloadBuilder();
-      builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
-      client.publishMessage('despresso/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
+    streamBatterySubscription = machineService.streamBatteryState.listen((event) {
+      try {
+        const pubTopic = 'despresso/tablet/batterylevel';
+        var builder = MqttClientPayloadBuilder();
+        builder.addString(event.toString());
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        builder = MqttClientPayloadBuilder();
+        builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
+        client.publishMessage('despresso/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
+      } catch (e) {
+        log("MQTT: $e");
+      }
     });
   }
 }
