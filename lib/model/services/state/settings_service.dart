@@ -19,6 +19,7 @@ enum SettingKeys {
   mqttPort,
   mqttUser,
   mqttPassword,
+  mqttRootTopic,
   smartCharging,
 }
 
@@ -55,10 +56,11 @@ class SettingsService extends ChangeNotifier {
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
-  String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "localhost";
+  String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "192.168.178.79";
   String get mqttPort => Settings.getValue<String>(SettingKeys.mqttPort.name) ?? "1883";
   String get mqttUser => Settings.getValue<String>(SettingKeys.mqttUser.name) ?? "";
   String get mqttPassword => Settings.getValue<String>(SettingKeys.mqttPassword.name) ?? "";
+  String get mqttRootTopic => Settings.getValue<String>(SettingKeys.mqttRootTopic.name) ?? "0";
 
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
 }

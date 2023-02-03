@@ -19,6 +19,7 @@ class MqttService extends ChangeNotifier {
   late EspressoMachineService machineService;
   late MqttClient client;
   final subTopic = 'despresso';
+  String rootTopic = "despresso";
 
   bool connected = false;
 
@@ -31,6 +32,9 @@ class MqttService extends ChangeNotifier {
     log.i('MQTT:init mqtt');
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
+    if (settingsService.mqttRootTopic.isNotEmpty) {
+      rootTopic = "despresso/${settingsService.mqttRootTopic}";
+    }
     startService();
   }
 
@@ -96,7 +100,7 @@ class MqttService extends ChangeNotifier {
       });
 
       log.i('MQTT:Publishing our topic');
-      const pubTopic = 'despresso/status';
+      var pubTopic = '$rootTopic/status';
       final builder = MqttClientPayloadBuilder();
       builder.addString(DateTime.now().toIso8601String());
       client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
@@ -173,7 +177,7 @@ class MqttService extends ChangeNotifier {
     streamStateSubscription = machineService.streamState.listen((event) {
       try {
         log.v("State Change detected $event");
-        const pubTopic = 'despresso/de1';
+        var pubTopic = '$rootTopic/de1';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.state.name);
         client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!);
@@ -188,7 +192,7 @@ class MqttService extends ChangeNotifier {
     streamShotSubscription = machineService.streamShotState.listen((event) {
       try {
         log.v("Shot State CHange detected $event");
-        const pubTopic = 'despresso/de1/shot';
+        var pubTopic = '$rootTopic/de1/shot';
         var builder = MqttClientPayloadBuilder();
 
         builder.addString(jsonEncode(event.toJson()));
@@ -199,7 +203,7 @@ class MqttService extends ChangeNotifier {
     });
     streamWaterSubscription = machineService.streamWaterLevel.listen((event) {
       try {
-        const pubTopic = 'despresso/de1/waterlevel';
+        var pubTopic = '$rootTopic/de1/waterlevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.waterLevel.toString());
         client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
@@ -213,13 +217,13 @@ class MqttService extends ChangeNotifier {
 
     streamBatterySubscription = machineService.streamBatteryState.listen((event) {
       try {
-        const pubTopic = 'despresso/tablet/batterylevel';
+        var pubTopic = '$rootTopic/tablet/batterylevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.toString());
         client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
         builder = MqttClientPayloadBuilder();
         builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
-        client.publishMessage('despresso/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
         log.v("Batterydata pushed to MQTT");
       } catch (e) {
         log.e("MQTT: $e");

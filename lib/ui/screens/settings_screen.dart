@@ -411,7 +411,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             TextInputSettingsTile(
               title: 'MQTT Server',
               settingKey: SettingKeys.mqttServer.name,
-              initialValue: 'mqtt://192.168.1.14',
+              initialValue: settingsService.mqttServer,
             ),
             TextInputSettingsTile(
               title: 'MQTT Port',
@@ -428,6 +428,12 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               settingKey: SettingKeys.mqttPassword.name,
               initialValue: '',
               obscureText: true,
+            ),
+            TextInputSettingsTile(
+              title: 'MQTT root topic',
+              settingKey: SettingKeys.mqttRootTopic.name,
+              initialValue: settingsService.mqttRootTopic,
+              obscureText: false,
             ),
           ],
         ),
