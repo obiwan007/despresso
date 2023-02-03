@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -8,43 +9,33 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-class EurekaScale extends ChangeNotifier implements AbstractScale {
+class DecentScale extends ChangeNotifier implements AbstractScale {
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb');
-  // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID =
-      Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb');
-
-  static Uuid BatteryServiceUUID =
-      Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb');
-  static Uuid BatteryCharacteristicUUID =
-      Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb');
-  // ignore: non_constant_identifier_names
-  static Uuid CommandUUID = Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb');
+// ignore: non_constant_identifier_names
+  static Uuid ReadCharacteristicUUID =
+      Uuid.parse('0000fff4-0000-1000-8000-00805f9b34fb');
+// ignore: non_constant_identifier_names
+  static Uuid WriteCharacteristicUUID =
+      Uuid.parse('000036f5-0000-1000-8000-00805f9b34fb');
 
   late ScaleService scaleService;
-
-  static const int cmdHeader = 0xAA;
-  static const int cmdBase = 0x02;
-  static const int cmdStartTimer = 0x33;
-  static const int cmdStopTimer = 0x34;
-  static const int cmdResetTimer = 0x35;
-  static const int cmdTare = 0x31;
 
   final DiscoveredDevice device;
 
   late DeviceConnectionState _state;
 
-  List<int> commandBuffer = [];
   final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
-  EurekaScale(this.device) {
+  bool weightStability = true;
+
+  DecentScale(this.device) {
     scaleService = getIt<ScaleService>();
-    log("Connect to Acaia");
+    log("Connect to Decent");
     scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
         (connectionState) {
@@ -57,34 +48,74 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
-    var isNeg = (data[6] == 0 ? false : true);
-    var weight = (data[7] + (data[8] << 8));
+    var weight = ((data[2] << 8) + data[3]) / 10;
+    if (weight > 3200) {
+      writeTare();
+    } else {
+      scaleService.setWeight(weight);
+    }
+    if (data[1] == 0xCE) {
+      // scaleService.setWeightStable(true);
+      log('weight stable');
+      weightStability = true;
+    } else {
+      // scaleService.setWeightStable(false);
+      log('weight changing');
+      weightStability = false;
+    }
+  }
 
-    weight = isNeg ? weight * -1 : weight;
-    scaleService.setWeight((weight / 10).toDouble());
+  int getXOR(payload) {
+    return payload[0] ^
+        payload[1] ^
+        payload[2] ^
+        payload[3] ^
+        payload[4] ^
+        payload[5];
   }
 
   writeTare() {
-    return writeToEureka([cmdHeader, cmdBase, cmdTare, cmdTare]);
+    List<int> payload = [0x03, 0x0F, 0xFD, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
+  }
+
+  Future<void> ledOff() {
+    List<int> payload = [0x03, 0x0A, 0x00, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
   }
 
   Future<void> startTimer() {
-    return writeToEureka([cmdHeader, cmdBase, cmdStartTimer, cmdStartTimer]);
+    List<int> payload = [0x03, 0x0B, 0x03, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
   }
 
   Future<void> stopTimer() {
-    return writeToEureka([cmdHeader, cmdBase, cmdStopTimer, cmdStopTimer]);
+    List<int> payload = [0x03, 0x0B, 0x00, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
   }
 
   Future<void> resetTimer() {
-    return writeToEureka([cmdHeader, cmdBase, cmdResetTimer, cmdResetTimer]);
+    List<int> payload = [0x03, 0x0B, 0x02, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
   }
 
-  Future<void> writeToEureka(List<int> payload) async {
-    log("Sending to Eureka");
+  Future<void> powerOff() {
+    List<int> payload = [0x03, 0x0B, 0x03, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
+  }
+
+  Future<void> writeToDecentScale(List<int> payload) async {
+    // Uint8List command = Uint8List.fromList(payload.add(getXOR(payload)));
+    log("Sending to Decent");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID,
-        characteristicId: CommandUUID,
+        characteristicId: WriteCharacteristicUUID,
         deviceId: device.id);
     return await flutterReactiveBle.writeCharacteristicWithoutResponse(
         characteristic,
@@ -104,10 +135,11 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
       case DeviceConnectionState.connected:
         log('Connected');
         scaleService.setState(ScaleState.connected);
-        // await device.discoverAllServicesAndCharacteristics();
+        ledOff(); // make the scale report weight by sending an inital write cmd
+
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID,
-            characteristicId: CharateristicUUID,
+            characteristicId: ReadCharacteristicUUID,
             deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle
@@ -118,14 +150,6 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         }, onError: (dynamic error) {
           // code to handle errors
         });
-
-        final batteryCharacteristic = QualifiedCharacteristic(
-            characteristicId: BatteryCharacteristicUUID,
-            serviceId: BatteryServiceUUID,
-            deviceId: device.id);
-        final batteryLevel =
-            await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
-        scaleService.setBattery(batteryLevel[0]);
 
         return;
       case DeviceConnectionState.disconnected:
