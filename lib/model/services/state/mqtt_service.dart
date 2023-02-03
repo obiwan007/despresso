@@ -156,7 +156,7 @@ class MqttService extends ChangeNotifier {
       const Duration(seconds: 10),
       () {
         log.i('MQTT:Reconnecting');
-        handleEvents();
+        startService();
       },
     );
   }

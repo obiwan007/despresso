@@ -80,152 +80,138 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     );
   }
 
-  Scaffold scaffoldNewLayout(BuildContext context) {
-    final List<Widget> aboutBoxChildren = <Widget>[
-      const SizedBox(height: 24),
-      RichText(
-        text: const TextSpan(
-          children: <TextSpan>[
-            TextSpan(
-                text: "Flutter is Google's UI toolkit for building beautiful, "
-                    'natively compiled applications for mobile, web, and desktop '
-                    'from a single codebase. Learn more about Flutter at '),
-            TextSpan(text: 'https://flutter.dev'),
-            TextSpan(text: '.'),
-          ],
-        ),
-      ),
-    ];
-
-    return Scaffold(
-      extendBodyBehindAppBar: false,
-      body: SizedBox(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                SizedBox(
-                  child: Builder(builder: (context) {
-                    return IconButton(
-                      iconSize: 40,
-                      icon: const Icon(Icons.menu, color: Colors.grey),
-                      tooltip: 'Options Menu',
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                    );
-                  }),
-                ),
-                Expanded(child: createTabBar()),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  RecipeScreen(),
-                  EspressoScreen(),
-                  SteamScreen(),
-                  WaterScreen(),
-                  FlushScreen(),
+  Widget scaffoldNewLayout(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        extendBodyBehindAppBar: false,
+        body: SizedBox(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    child: Builder(builder: (context) {
+                      return IconButton(
+                        iconSize: 40,
+                        icon: const Icon(Icons.menu, color: Colors.grey),
+                        tooltip: 'Options Menu',
+                        onPressed: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                      );
+                    }),
+                  ),
+                  Expanded(child: createTabBar()),
                 ],
               ),
-            ),
-            const MachineFooter(),
-          ],
-        ),
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: const [
+                    RecipeScreen(),
+                    EspressoScreen(),
+                    SteamScreen(),
+                    WaterScreen(),
+                    FlushScreen(),
+                  ],
+                ),
               ),
-              child: Text("despresso settings"),
-            ),
-            ListTile(
-              title: const Text('Profiles'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilesScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Coffees'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
-                );
-                // Then close the drawer
-              },
-            ),
-            ListTile(
-              title: const Text('Exit'),
-              onTap: () {
-                Navigator.pop(context);
-                var snackBar = SnackBar(
-                    content: const Text('Going to sleep'),
-                    action: SnackBarAction(
-                      label: 'Undo',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                machineService.de1?.switchOff();
-                // Then close the drawer
-                Future.delayed(const Duration(milliseconds: 2000), () {
-                  SystemNavigator.pop();
-                });
-              },
-            ),
-            ListTile(
-              title: const Text('Privacy'),
-              onTap: () async {
-                Navigator.pop(context);
-                final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else
-                  // can't launch url, there is some error
-                  throw "Could not launch $url";
-              },
-            ),
-            const AboutListTile(
-              icon: Icon(Icons.info),
-              applicationIcon: FlutterLogo(),
-              applicationName: 'About despresso',
-              applicationVersion: 'August 2023',
-              applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
-              // aboutBoxChildren: aboutBoxChildren,
-            ),
-          ],
+              const MachineFooter(),
+            ],
+          ),
+        ),
+        drawer: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text("despresso settings"),
+              ),
+              ListTile(
+                title: const Text('Profiles'),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('Coffees'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text('Settings'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
+                  );
+                  // Then close the drawer
+                },
+              ),
+              ListTile(
+                title: const Text('Exit'),
+                onTap: () {
+                  Navigator.pop(context);
+                  var snackBar = SnackBar(
+                      content: const Text('Going to sleep'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  machineService.de1?.switchOff();
+                  // Then close the drawer
+                  Future.delayed(const Duration(milliseconds: 2000), () {
+                    SystemNavigator.pop();
+                  });
+                },
+              ),
+              ListTile(
+                title: const Text('Privacy'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else
+                    // can't launch url, there is some error
+                    throw "Could not launch $url";
+                },
+              ),
+              const AboutListTile(
+                icon: Icon(Icons.info),
+                applicationIcon: FlutterLogo(),
+                applicationName: 'About despresso',
+                applicationVersion: 'August 2023',
+                applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
+                // aboutBoxChildren: aboutBoxChildren,
+              ),
+            ],
+          ),
         ),
       ),
     );

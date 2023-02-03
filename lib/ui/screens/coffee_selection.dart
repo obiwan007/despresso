@@ -208,7 +208,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         if (roaster.homepage.isNotEmpty) createKeyValue("Homepage", roaster.homepage),
         if (roaster.address.isNotEmpty) createKeyValue("Address", roaster.address),
         if (_editRosterMode == EditModes.show)
-          ElevatedButton(
+          OutlinedButton(
             onPressed: () {
               setState(() {
                 // _editRosterMode = EditModes.edit;
@@ -274,7 +274,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
           direction: Axis.horizontal,
         ),
         if (_editCoffeeMode == EditModes.show)
-          ElevatedButton(
+          OutlinedButton(
             onPressed: () {
               setState(() {
                 Navigator.push(

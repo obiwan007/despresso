@@ -148,7 +148,7 @@ class ScaleFooter extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (machineService.scaleService.state != ScaleState.connecting)
-                        ElevatedButton(
+                        OutlinedButton(
                           onPressed: () {
                             machineService.scaleService.state == ScaleState.connected
                                 ? machineService.scaleService.tare()
@@ -159,11 +159,11 @@ class ScaleFooter extends StatelessWidget {
                           ),
                         ),
                       SizedBox(
-                        width: 170,
+                        width: 190,
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 80,
+                              width: 100,
                               child: Text(
                                 textAlign: TextAlign.right,
                                 machineService.scaleService.state == ScaleState.connected

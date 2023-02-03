@@ -95,6 +95,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
             ),
             onPressed: () {
               setState(() {
+                var form = ReactiveForm.of(context);
                 Navigator.pop(context);
               });
             },
