@@ -67,6 +67,9 @@ dependencies:
   mqtt_client: ^9.7.4
   collection:
   battery_plus: ^3.0.2
+  logging_appenders: ^1.0.0+2
+  logging: ^1.1.1
+  logger: ^1.1.0
 
 dev_dependencies:
   flutter_test:

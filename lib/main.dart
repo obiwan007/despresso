@@ -5,24 +5,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-
+import 'logger_util.dart';
 import 'objectbox.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
 import 'color_schemes.g.dart';
 
+import 'package:logger/logger.dart';
+// import 'package:logging_appenders/logging_appenders.dart';
+
+final _logger = Logger();
+
 late ObjectBox objectbox;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  objectbox = await ObjectBox.create();
+  Logger.level = Level.debug;
+  final log = getLogger();
+  // final appender = PrintAppender.setupLogging(stderrLevel: Level.SEVERE);
+  // final basePath = await getApplicationDocumentsDirectory();
+  // RotatingFileAppender(baseFilePath: "${basePath.path}/logs", keepRotateCount: 3);
 
+  WidgetsFlutterBinding.ensureInitialized();
+  objectbox = await ObjectBox.create();
+  log.i("Starting app");
   try {
     Wakelock.enable();
   } on MissingPluginException catch (e) {
-    log('Failed to set wakelock: $e');
+    log.i('Failed to set wakelock: $e');
   }
-  WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
 
   // SystemChrome.setEnabledSystemUIOverlays([

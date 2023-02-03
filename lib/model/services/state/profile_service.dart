@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
+
 import 'dart:io';
 
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,7 @@ const int Interpolate = 0x20; // Hard jump to target value, or ramp?
 const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
 class ProfileService extends ChangeNotifier {
+  final log = getLogger();
   De1ShotProfile? currentProfile;
   late SharedPreferences prefs;
   List<De1ShotProfile> defaultProfiles = <De1ShotProfile>[];
@@ -39,22 +41,22 @@ class ProfileService extends ChangeNotifier {
 
   void init() async {
     prefs = await SharedPreferences.getInstance();
-    log('Preferences loaded');
+    log.i('Preferences loaded');
 
     var profileId = prefs.getString("profilename");
     await loadAllDefaultProfiles();
-    log('Profiles loaded');
+    log.i('Profiles loaded');
 
     try {
       var dirs = await getSavedProfileFiles();
 
       for (var element in dirs) {
-        log(element.path);
+        log.i(element.path);
         var i = element.path.lastIndexOf('/');
         var file = element.path.substring(i);
         try {
           var loaded = await loadProfileFromDocuments(file);
-          log("Saved profile loaded $loaded");
+          log.i("Saved profile loaded $loaded");
           var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
           if (defaultProfile.isNotEmpty) {
             profiles.add(loaded);
@@ -62,15 +64,14 @@ class ProfileService extends ChangeNotifier {
             // profiles.add(defaultProfile.first);
           }
         } catch (ex) {
-          log("Error loading profile $ex");
+          log.i("Error loading profile $ex");
         }
       }
       // dirs.forEach((element) => {
       //   loadUserProfile(element.path);
       // });
-
     } catch (ex) {
-      log("List files $ex");
+      log.i("List files $ex");
     }
 
 // Add defaultprofile if not already modified;
@@ -85,7 +86,7 @@ class ProfileService extends ChangeNotifier {
       try {
         currentProfile = profiles.where((element) => element.id == profileId).first;
       } catch (_) {}
-      log("Profile ${currentProfile!.shotHeader.title} loaded");
+      log.i("Profile ${currentProfile!.shotHeader.title} loaded");
     }
     notifyListeners();
   }
@@ -104,18 +105,18 @@ class ProfileService extends ChangeNotifier {
   void setProfile(De1ShotProfile profile) {
     currentProfile = profile;
     prefs.setString("profilename", profile.id);
-    log("Profile selected and saved ${profile.id}");
+    log.i("Profile selected and saved ${profile.id}");
     notify();
   }
 
   saveAsNew(De1ShotProfile profile) {
-    log("Saving as a new profile");
+    log.i("Saving as a new profile");
     profile.isDefault = false;
     profile.id = const Uuid().toString();
   }
 
   save(De1ShotProfile profile) async {
-    log("Saving as a existing profile to documents region");
+    log.i("Saving as a existing profile to documents region");
     profile.isDefault = false;
     await saveProvileToDocuments(profile, profile.id);
     currentProfile = profile;
@@ -136,9 +137,9 @@ class ProfileService extends ChangeNotifier {
 
   Future<De1ShotProfile> loadProfileFromDocuments(String fileName) async {
     try {
-      log("Loading shot: $fileName");
+      log.i("Loading shot: $fileName");
       final directory = await getApplicationDocumentsDirectory();
-      log("LoadingFrom path:${directory.path}");
+      log.i("LoadingFrom path:${directory.path}");
       var file = File('${directory.path}/profiles/$fileName');
       if (await file.exists()) {
         var json = file.readAsStringSync();
@@ -146,24 +147,24 @@ class ProfileService extends ChangeNotifier {
         Map<String, dynamic> map = jsonDecode(json);
         var data = De1ShotProfile.fromJson(map);
 
-        log("Loaded Profile: ${data.id}");
+        log.i("Loaded Profile: ${data.id}");
         return data;
       } else {
-        log("File $fileName not existing");
+        log.i("File $fileName not existing");
         throw Exception("File not found");
       }
     } catch (ex) {
-      log("loading error $ex");
+      log.i("loading error $ex");
       Future.error("Error loading filename $ex");
       rethrow;
     }
   }
 
   Future<File> saveProvileToDocuments(De1ShotProfile profile, String filename) async {
-    log("Storing shot: ${profile.id}");
+    log.i("Storing shot: ${profile.id}");
 
     final directory = await getApplicationDocumentsDirectory();
-    log("Storing to path:${directory.path}");
+    log.i("Storing to path:${directory.path}");
     final Directory appDocDirFolder = Directory('${directory.path}/profiles/');
 
     if (!appDocDirFolder.existsSync()) {
@@ -176,7 +177,7 @@ class ProfileService extends ChangeNotifier {
     }
     await file.create();
     var json = profile.toJson();
-    log("Save json $json");
+    log.i("Save json $json");
     return file.writeAsString(jsonEncode(json));
   }
 
@@ -186,19 +187,19 @@ class ProfileService extends ChangeNotifier {
     List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
-      log("Parsing profile $file");
+      log.i("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
       try {
         parseDefaultProfile(rawJson, true);
       } catch (ex) {
-        log("Profile parse error: $ex");
+        log.i("Profile parse error: $ex");
       }
     }
-    log('all profiles loaded');
+    log.i('all profiles loaded');
   }
 
   String parseDefaultProfile(String json, bool isDefault) {
-    log("parse json profile data");
+    log.i("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
@@ -207,7 +208,7 @@ class ProfileService extends ChangeNotifier {
 
     p.isDefault = isDefault;
     defaultProfiles.add(p);
-    log("$header $frames $exFrames");
+    log.i("$header $frames $exFrames");
 
     return "";
   }

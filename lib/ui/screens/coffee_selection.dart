@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
+import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeSelection {
@@ -27,6 +28,7 @@ class CoffeeSelectionTab extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
+  final log = getLogger();
   Roaster newRoaster = Roaster();
   Coffee newCoffee = Coffee();
   int _selectedRoasterId = 0;
@@ -64,7 +66,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   void dispose() {
     super.dispose();
     coffeeService.removeListener(updateCoffee);
-    log('Disposed coffeeselection');
+    log.i('Disposed coffeeselection');
   }
 
   @override
@@ -310,7 +312,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
       () {
         roasters = loadRoasters();
         coffees = loadCoffees();
-        log("Loaded ROasters $roasters");
+        log.i("Loaded ROasters $roasters");
         _selectedCoffeeId = coffeeService.selectedCoffee;
         _selectedRoasterId = coffeeService.selectedRoaster;
       },

@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
@@ -18,6 +17,7 @@ class ProfilesScreen extends StatefulWidget {
 }
 
 class ProfilesScreenState extends State<ProfilesScreen> {
+  final log = getLogger();
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
@@ -32,7 +32,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     profileService = getIt<ProfileService>();
 
     profileService.addListener(profileListener);
-    log(profileService.currentProfile.toString());
+    log.i(profileService.currentProfile.toString());
     _selectedProfile = profileService.currentProfile;
     calcProfileGraph();
     phases = _createPhases();
@@ -43,7 +43,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     super.dispose();
 
     machineService.removeListener(profileListener);
-    log('Disposed profile');
+    log.i('Disposed profile');
   }
 
   @override
@@ -248,7 +248,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   }
 
   void profileListener() {
-    log('Profile updated');
+    log.i('Profile updated');
     _selectedProfile = profileService.currentProfile;
   }
 
@@ -338,11 +338,11 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     }
     // shotList.entries.forEach((element) {
     //   if (element.subState.isNotEmpty) {
-    //     log(element.subState + " " + element.sampleTimeCorrected.toString());
+    //     log.i(element.subState + " " + element.sampleTimeCorrected.toString());
     //   }
     // });
     var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
-    // log("Phases= ${stateChanges.length}");
+    // log.i("Phases= ${stateChanges.length}");
 
     int i = 0;
     var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
@@ -367,7 +367,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
               // color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
               color: charts.ColorUtil.fromDartColor(Color(0xFFD0BCFF))),
           labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log("Phase ${element.subState}");
+      // log.i("Phase ${element.subState}");
     });
   }
 }

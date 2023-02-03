@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
 
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
@@ -29,6 +29,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+  final log = getLogger();
   bool available = false;
   int currentPageIndex = 1;
 
@@ -56,7 +57,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     profileService = getIt<ProfileService>();
     profileService.addListener(updatedProfile);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-    //   log("Print after 5 seconds");
+    //   log.i("Print after 5 seconds");
     //   selectedPage++;
     //   if (selectedPage > 2) selectedPage = 0;
     //   _tabController.index = selectedPage;
@@ -284,7 +285,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   void updatedMachine() {
     if (lastState != machineService.state.coffeeState) {
-      log("Machine state: ${machineService.state.coffeeState}");
+      log.i("Machine state: ${machineService.state.coffeeState}");
       lastState = machineService.state.coffeeState;
       setState(() {
         switch (lastState) {
@@ -312,7 +313,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
           default:
             break;
         }
-        log("Switch to $currentPageIndex");
+        log.i("Switch to $currentPageIndex");
         _tabController.index = currentPageIndex;
         // DefaultTabController.of(context)!
         //     .animateTo(currentPageIndex, duration: const Duration(milliseconds: 100), curve: Curves.ease);

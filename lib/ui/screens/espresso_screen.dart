@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -29,6 +30,7 @@ class EspressoScreen extends StatefulWidget {
 }
 
 class EspressoScreenState extends State<EspressoScreen> {
+  final log = getLogger();
   late CoffeeService coffeeSelectionService;
   late EspressoMachineService machineService;
   late ProfileService profileService;
@@ -55,7 +57,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     machineService.removeListener(updateMachine);
     profileService.removeListener(updateProfile);
     coffeeSelectionService.removeListener(updateCoffeeSelection);
-    log('Disposed espresso');
+    log.i('Disposed espresso');
   }
 
   updateMachine() {
@@ -97,7 +99,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         checkForRefill();
       });
   void triggerEndOfShot() {
-    log("Idle mode initiated because of weight", error: {DateTime.now()});
+    log.i("Idle mode initiated because of weight");
 
     machineService.de1?.requestState(De1StateEnum.idle);
   }
@@ -151,7 +153,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       //     labelStyleSpec: charts.TextStyleSpec(
       //         fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
       //     labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log("Phase ${element.subState}");
+      // log.i("Phase ${element.subState}");
     });
   }
 
@@ -183,7 +185,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           labelStyleSpec: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log("Phase ${element.subState}");
+      // log.i("Phase ${element.subState}");
     });
   }
 

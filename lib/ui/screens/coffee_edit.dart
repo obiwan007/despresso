@@ -9,6 +9,7 @@ import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 
+import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeEdit extends StatefulWidget {
@@ -22,6 +23,7 @@ class CoffeeEdit extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class CoffeeEditState extends State<CoffeeEdit> {
+  final log = getLogger();
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;
 
@@ -78,7 +80,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
   void dispose() {
     super.dispose();
     coffeeService.removeListener(updateCoffee);
-    log('Disposed coffeeselection');
+    log.i('Disposed coffeeselection');
   }
 
   @override
@@ -224,7 +226,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
             return ElevatedButton(
               onPressed: form.valid
                   ? () {
-                      log("${form.value}");
+                      log.i("${form.value}");
                       saveFormData(form);
                       Navigator.pop(context);
                     }
