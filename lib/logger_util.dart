@@ -9,17 +9,12 @@ Future<void> initLogger() async {
   // Logger.root.onRecord.listen((record) {
   //   print('APP#${record.level.name}: ${record.time}:${record.loggerName}# ${record.message}');
   // });
-  // PrintAppender.setupLogging();
+  Logger.root.clearListeners();
   PrintAppender(formatter: const ColorFormatter()).attachToLogger(Logger.root);
 
   Directory? dir;
   try {
-    dir = await getExternalStorageDirectory();
-    if (Platform.isAndroid) {
-      dir = Directory('/storage/emulated/0/Download/despresso');
-    } else {
-      dir = await getExternalStorageDirectory();
-    }
+    dir = await getDirectory();
     await dir?.create(recursive: true);
     print("Store log to ${dir?.path}");
   } catch (ex) {
@@ -27,6 +22,26 @@ Future<void> initLogger() async {
   }
   RotatingFileAppender(formatter: const DefaultLogRecordFormatter(), baseFilePath: "${dir!.path}/logs.txt")
       .attachToLogger(Logger.root);
+
+  final log = Logger("APP");
+  log.info("##############################");
+  log.info("STARTING APPLICATION DESPRESSO");
+  log.info("##############################");
+}
+
+Future<Directory?> getDirectory() async {
+  Directory? dir;
+  if (Platform.isAndroid) {
+    dir = Directory('/storage/emulated/0/Download/despresso');
+  } else {
+    try {
+      dir = await getExternalStorageDirectory();
+    } on UnsupportedError catch (ex) {
+      print("Not possible to store to external $ex");
+      dir = await getApplicationDocumentsDirectory();
+    }
+  }
+  return dir;
 }
 
 // class FileOutput extends LogOutput {
