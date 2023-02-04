@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io' show Platform;
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -94,37 +95,65 @@ enum MMRAddrEnum {
 class DE1 extends ChangeNotifier {
   final log = l.Logger('DE1');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
+  static Uuid ServiceUUID = Platform.isAndroid
+      ? Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB')
+      : Uuid.parse('A000');
 
-  static var cuuids = {
-    '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
-    '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,
-    '0000A003-0000-1000-8000-00805F9B34FB': Endpoint.setTime,
-    '0000A004-0000-1000-8000-00805F9B34FB': Endpoint.shotDirectory,
-    '0000A005-0000-1000-8000-00805F9B34FB': Endpoint.readFromMMR,
-    '0000A006-0000-1000-8000-00805F9B34FB': Endpoint.writeToMMR,
-    '0000A007-0000-1000-8000-00805F9B34FB': Endpoint.shotMapRequest,
-    '0000A008-0000-1000-8000-00805F9B34FB': Endpoint.deleteShotRange,
-    '0000A009-0000-1000-8000-00805F9B34FB': Endpoint.fwMapRequest,
-    '0000A00A-0000-1000-8000-00805F9B34FB': Endpoint.temperatures,
-    '0000A00B-0000-1000-8000-00805F9B34FB': Endpoint.shotSettings,
-    '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
-    '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
-    '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
-    '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
-    '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
-    '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
-    '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
-  };
+  static var cuuids = Platform.isAndroid
+      ? {
+          '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
+          '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,
+          '0000A003-0000-1000-8000-00805F9B34FB': Endpoint.setTime,
+          '0000A004-0000-1000-8000-00805F9B34FB': Endpoint.shotDirectory,
+          '0000A005-0000-1000-8000-00805F9B34FB': Endpoint.readFromMMR,
+          '0000A006-0000-1000-8000-00805F9B34FB': Endpoint.writeToMMR,
+          '0000A007-0000-1000-8000-00805F9B34FB': Endpoint.shotMapRequest,
+          '0000A008-0000-1000-8000-00805F9B34FB': Endpoint.deleteShotRange,
+          '0000A009-0000-1000-8000-00805F9B34FB': Endpoint.fwMapRequest,
+          '0000A00A-0000-1000-8000-00805F9B34FB': Endpoint.temperatures,
+          '0000A00B-0000-1000-8000-00805F9B34FB': Endpoint.shotSettings,
+          '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
+          '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
+          '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
+          '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
+          '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
+          '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
+          '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
+        }
+      : {
+          'A001': Endpoint.versions,
+          'A002': Endpoint.requestedState,
+          'A003': Endpoint.setTime,
+          'A004': Endpoint.shotDirectory,
+          'A005': Endpoint.readFromMMR,
+          'A006': Endpoint.writeToMMR,
+          'A007': Endpoint.shotMapRequest,
+          'A008': Endpoint.deleteShotRange,
+          'A009': Endpoint.fwMapRequest,
+          'A00A': Endpoint.temperatures,
+          'A00B': Endpoint.shotSettings,
+          'A00C': Endpoint.deprecatedShotDesc,
+          'A00D': Endpoint.shotSample,
+          'A00E': Endpoint.stateInfo,
+          'A00F': Endpoint.headerWrite,
+          'A010': Endpoint.frameWrite,
+          'A011': Endpoint.waterLevels,
+          'A012': Endpoint.calibration
+        };
 
-  static Map<Endpoint, String> cuuidLookup =
-      LinkedHashMap.fromEntries(cuuids.entries.map((e) => MapEntry(e.value, e.key)));
+  static Map<Endpoint, String> cuuidLookup = LinkedHashMap.fromEntries(
+      cuuids.entries.map((e) => MapEntry(e.value, e.key)));
 
   static List<List<Object>> mmrList = [
     [0x00000000, MMRAddrEnum.ExternalFlash, 0xFFFFF, "Flash RW"],
     [0x00800000, MMRAddrEnum.HWConfig, 4, "HWConfig"],
     [0x00800004, MMRAddrEnum.Model, 4, "Model"],
-    [0x00800008, MMRAddrEnum.CPUBoardModel, 4, "CPU Board Model * 1000. eg: 1100 = 1.1"],
+    [
+      0x00800008,
+      MMRAddrEnum.CPUBoardModel,
+      4,
+      "CPU Board Model * 1000. eg: 1100 = 1.1"
+    ],
     [
       0x0080000C,
       MMRAddrEnum.v13Model,
@@ -149,12 +178,22 @@ class DE1 extends ChangeNotifier {
       0x1000,
       "Last 4K of output. Zero terminated if buffer not full yet. Pauses BLE debug logging."
     ],
-    [0x00803804, MMRAddrEnum.DebugConfig, 4, "BLEDebugConfig. (Reading restarts logging into the BLE log)"],
+    [
+      0x00803804,
+      MMRAddrEnum.DebugConfig,
+      4,
+      "BLEDebugConfig. (Reading restarts logging into the BLE log)"
+    ],
     [0x00803808, MMRAddrEnum.FanThreshold, 4, "Fan threshold temp"],
     [0x0080380C, MMRAddrEnum.TankTemp, 4, "Tank water temp threshold."],
     [0x00803810, MMRAddrEnum.HeaterUp1Flow, 4, "HeaterUp Phase 1 Flow Rate"],
     [0x00803814, MMRAddrEnum.HeaterUp2Flow, 4, "HeaterUp Phase 2 Flow Rate"],
-    [0x00803818, MMRAddrEnum.WaterHeaterIdleTemp, 4, "Water Heater Idle Temperature"],
+    [
+      0x00803818,
+      MMRAddrEnum.WaterHeaterIdleTemp,
+      4,
+      "Water Heater Idle Temperature"
+    ],
     [
       0x0080381C,
       MMRAddrEnum.GHCInfo,
@@ -171,7 +210,12 @@ class DE1 extends ChangeNotifier {
       "Seconds of high steam flow * 100. Valid range 0.0 - 4.0. 0 may result in an overheated heater. Be careful."
     ],
     [0x00803830, MMRAddrEnum.SerialN, 4, "Current serial number"],
-    [0x00803834, MMRAddrEnum.HeaterV, 4, "Nominal Heater Voltage (0, 120V or 230V). +1000 if it's a set value."],
+    [
+      0x00803834,
+      MMRAddrEnum.HeaterV,
+      4,
+      "Nominal Heater Voltage (0, 120V or 230V). +1000 if it's a set value."
+    ],
     [0x00803838, MMRAddrEnum.HeaterUp2Timeout, 4, "HeaterUp Phase 2 Timeout"],
     [0x0080383C, MMRAddrEnum.CalFlowEst, 4, "Flow Estimation Calibration"],
     [0x00803840, MMRAddrEnum.FlushFlowRate, 4, "Flush Flow Rate"],
@@ -184,13 +228,14 @@ class DE1 extends ChangeNotifier {
     [0x0080385C, MMRAddrEnum.RefillKitPresent, 4, "Refill Kit Present"],
   ];
 
-  Map<MMRAddrEnum, int> mmrAddrLookup =
-      LinkedHashMap.fromEntries(mmrList.map((e) => MapEntry(e[1] as MMRAddrEnum, e[0] as int)));
+  Map<MMRAddrEnum, int> mmrAddrLookup = LinkedHashMap.fromEntries(
+      mmrList.map((e) => MapEntry(e[1] as MMRAddrEnum, e[0] as int)));
 
   static Map states = {
     0x00: 'sleep', // 0 Everything is off
     0x01: 'going_to_sleep', // 1 Going to sleep
-    0x02: 'idle', // 2 Heaters are controlled, tank water will be heated if required.
+    0x02:
+        'idle', // 2 Heaters are controlled, tank water will be heated if required.
     0x03:
         'busy', // 3 Firmware is doing something you can't interrupt (eg. cooling down water heater after a shot, calibrating sensors on startup).
     0x04: 'espresso', // 4 Making espresso
@@ -204,28 +249,36 @@ class DE1 extends ChangeNotifier {
     0x0a: 'descale', // A Descale the whole bang-tooty
     0x0b: 'fatal_error', // B Something has gone horribly wrong
     0x0c: 'init', // C Machine has not been run yet
-    0x0d: 'no_request', // D State for T_RequestedState. Means nothing is specifically requested
-    0x0e: 'skip_to_next', // E In Espresso, skip to next frame. Others, go to Idle if possible
-    0x0f: 'hot_water_rinse', // F Produce hot water at whatever temperature is available
+    0x0d:
+        'no_request', // D State for T_RequestedState. Means nothing is specifically requested
+    0x0e:
+        'skip_to_next', // E In Espresso, skip to next frame. Others, go to Idle if possible
+    0x0f:
+        'hot_water_rinse', // F Produce hot water at whatever temperature is available
     0x10: 'steam_rinse', // 10 Produce a blast of steam
     0x11: 'refill', // 11 Attempting, or needs, a refill.
     0x12: 'clean', // 12 Clean group head
-    0x13: 'in_boot_loader', // 13 The main firmware has not run for some reason. Bootloader is active.
+    0x13:
+        'in_boot_loader', // 13 The main firmware has not run for some reason. Bootloader is active.
     0x14: 'air_purge', // 14 Air purge.
     0x15: 'sched_idle', // 15 Scheduled wake up idle state
   };
 
   static const Map subStates = {
     0x00: 'no_state', // 0 State is not relevant
-    0x01: 'heat_water_tank', // 1 Cold water is not hot enough. Heating hot water tank.
+    0x01:
+        'heat_water_tank', // 1 Cold water is not hot enough. Heating hot water tank.
     0x02: 'heat_water_heater', // 2 Warm up hot water heater for shot.
-    0x03: 'stabilize_mix_temp', // 3 Stabilize mix temp and get entire water path up to temperature.
-    0x04: 'pre_infuse', // 4 Espresso only. Hot Water and Steam will skip this state.
+    0x03:
+        'stabilize_mix_temp', // 3 Stabilize mix temp and get entire water path up to temperature.
+    0x04:
+        'pre_infuse', // 4 Espresso only. Hot Water and Steam will skip this state.
     0x05: 'pour', // 5 Not used in Steam
     0x06: 'flush', // 6 Espresso only, atm
     0x07: 'steaming', // 7 Steam only
     0x08: 'descale_int', // 8 Starting descale
-    0x09: 'descale_fill_group', // 9 get some descaling solution into the group and let it sit
+    0x09:
+        'descale_fill_group', // 9 get some descaling solution into the group and let it sit
     0x0a: 'descale_return', // A descaling internals
     0x0b: 'descale_group', // B descaling group
     0x0c: 'descale_steam', // C descaling steam
@@ -238,9 +291,12 @@ class DE1 extends ChangeNotifier {
 
     200: 'error_nan', // 200 Something died with a NaN
     201: 'error_inf', // 201 Something died with an Inf
-    202: 'error_generic', // 202 An error for which we have no more specific description
-    203: 'error_acc', // 203 ACC not responding, unlocked, or incorrectly programmed
-    204: 'error_tsensor', // 204 We are getting an error that is probably a broken temperature sensor
+    202:
+        'error_generic', // 202 An error for which we have no more specific description
+    203:
+        'error_acc', // 203 ACC not responding, unlocked, or incorrectly programmed
+    204:
+        'error_tsensor', // 204 We are getting an error that is probably a broken temperature sensor
     205: 'error_psensor', // 205 Pressure sensor error
     206: 'error_wlevel', // 206 Water level sensor error
     207: 'error_dip', // 207 DIP switches told us to wait in the error state.
@@ -296,9 +352,12 @@ class DE1 extends ChangeNotifier {
     _streamMMR = _controllerMmrStream.stream.asBroadcastStream();
 
     service.setState(EspressoMachineState.connecting);
-    _connectToDeviceSubscription = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _connectToDeviceSubscription = flutterReactiveBle
+        .connectToDevice(id: device.id)
+        .listen((connectionState) {
       // Handle connection state updates
-      log.info('DE1 Peripheral ${device.name} connection state is $connectionState');
+      log.info(
+          'DE1 Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -310,8 +369,10 @@ class DE1 extends ChangeNotifier {
   void enableNotification(Endpoint e, Function(ByteData) callback) {
     log.info('enabeling Notification for $e (${getCharacteristic(e)})');
 
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
     flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
       // Handle connection state updates
 
@@ -348,25 +409,33 @@ class DE1 extends ChangeNotifier {
   }
 
   Future<List<int>> read(Endpoint e) {
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
     var data = flutterReactiveBle.readCharacteristic(characteristic);
     // return device.readCharacteristic(ServiceUUID, getCharacteristic(e));
     return data;
   }
 
   void write(Endpoint e, Uint8List data) {
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: data);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
+    flutterReactiveBle.writeCharacteristicWithResponse(characteristic,
+        value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
 
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID,
+        characteristicId: getCharacteristic(e),
+        deviceId: device.id);
+    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic,
+        value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
@@ -376,7 +445,8 @@ class DE1 extends ChangeNotifier {
     var state = value.getUint8(0);
     var subState = value.getUint8(1);
 
-    log.info("DE1 is in state: ${states[state]} $state substate: ${subStates[subState]}");
+    log.info(
+        "DE1 is in state: ${states[state]} $state substate: ${subStates[subState]}");
     service.setSubState(subStates[subState]);
 
     switch (state) {
@@ -446,7 +516,9 @@ class DE1 extends ChangeNotifier {
     var groupPressure = r.getUint16(2) / (1 << 12);
     var groupFlow = r.getUint16(4) / (1 << 12);
     var mixTemp = r.getUint16(6) / (1 << 8);
-    var headTemp = ((r.getUint8(8) << 16) + (r.getUint8(9) << 8) + (r.getUint8(10))) / (1 << 16);
+    var headTemp =
+        ((r.getUint8(8) << 16) + (r.getUint8(9) << 8) + (r.getUint8(10))) /
+            (1 << 16);
     var setMixTemp = r.getUint16(11) / (1 << 8);
     var setHeadTemp = r.getUint16(13) / (1 << 8);
     var setGroupPressure = r.getUint8(15) / (1 << 4);
@@ -456,8 +528,21 @@ class DE1 extends ChangeNotifier {
     // log.info("$headTemp $setHeadTemp $mixTemp $setMixTemp");
     sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     // log.info('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
-    service.setShot(ShotState(sampleTime, 0, groupPressure, groupFlow, mixTemp, headTemp, setMixTemp, setHeadTemp,
-        setGroupPressure, setGroupFlow, frameNumber, steamTemp, 0, ""));
+    service.setShot(ShotState(
+        sampleTime,
+        0,
+        groupPressure,
+        groupFlow,
+        mixTemp,
+        headTemp,
+        setMixTemp,
+        setHeadTemp,
+        setGroupPressure,
+        setGroupFlow,
+        frameNumber,
+        steamTemp,
+        0,
+        ""));
   }
 
   De1ShotHeaderClass parseShotHeaderSettings(ByteData r) {
@@ -505,7 +590,8 @@ class DE1 extends ChangeNotifier {
     log.info('TargetGroupTemp = $targetGroupTemp');
   }
 
-  String toHexString(int number) => '0x${number.toRadixString(16).padLeft(2, '0')}';
+  String toHexString(int number) =>
+      '0x${number.toRadixString(16).padLeft(2, '0')}';
 
   void mmrNotification(ByteData value) {
     var list = value.buffer.asUint8List();
@@ -538,13 +624,15 @@ class DE1 extends ChangeNotifier {
 
   Future<int> getFirmwareBuild() async {
     log.info('Reading whether the group head controller is installed or not');
-    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CPUFirmwareBuild]!, 0));
+    var data =
+        getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CPUFirmwareBuild]!, 0));
     log.info("Firmware Version: $data ${toHexString(data)}");
     return data;
   }
 
   Future<int> getFanThreshhold() async {
-    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, 0));
+    var data =
+        getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, 0));
     log.info("getFanThreshold: $data ${toHexString(data)}");
     return data;
   }
@@ -552,11 +640,13 @@ class DE1 extends ChangeNotifier {
   setFanThreshhold(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
+    mmrWrite(
+        mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
   }
 
   Future<int> getUsbChargerMode() async {
-    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, 0));
+    var data =
+        getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, 0));
     log.info("getUsbChargerMode: $data ${toHexString(data)}");
     usbChargerMode = data;
     return data;
@@ -565,7 +655,8 @@ class DE1 extends ChangeNotifier {
   setUsbChargerMode(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, bytes.buffer.asUint8List());
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!,
+        bytes.buffer.asUint8List());
     usbChargerMode = t;
   }
 
@@ -582,7 +673,8 @@ class DE1 extends ChangeNotifier {
   Future<List<int>> mmrRead(int address, int length) async {
     for (var element in mmrList) {
       if (element[0] == address) {
-        log.info("MMR Read  ${toHexString(address)} = ${element[1]} : ${element[3]}");
+        log.info(
+            "MMR Read  ${toHexString(address)} = ${element[1]} : ${element[3]}");
         break;
       }
     }
@@ -607,7 +699,9 @@ class DE1 extends ChangeNotifier {
       (element) {
         // log.info("listen where event  ${element.map(toHexString).toList()}");
 
-        if (buffer[1] == element[1] && buffer[2] == element[2] && buffer[3] == element[3]) {
+        if (buffer[1] == element[1] &&
+            buffer[2] == element[2] &&
+            buffer[3] == element[3]) {
           return true;
         } else {
           return false;
@@ -647,17 +741,25 @@ class DE1 extends ChangeNotifier {
         // await device.discoverAllServicesAndCharacteristics();
         // Enable notification
 
-        parseVersion(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.versions)))));
-        stateNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.stateInfo)))));
-        waterLevelNotification(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.waterLevels)))));
-        parseShotSetting(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.shotSettings)))));
+        parseVersion(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.versions)))));
+        stateNotification(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.stateInfo)))));
+        waterLevelNotification(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.waterLevels)))));
+        parseShotSetting(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.shotSettings)))));
 
         // parseShotMapRequest(ByteData.sublistView(
         //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
-        parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        parseShotHeaderSettings(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.headerWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        parseFrameWrite(ByteData.sublistView(
+            Uint8List.fromList((await read(Endpoint.frameWrite)))));
 
         enableNotification(Endpoint.requestedState, requestedState);
 
@@ -684,7 +786,8 @@ class DE1 extends ChangeNotifier {
         var fan = await getFanThreshhold();
         if (fan < 50) setFanThreshhold(50);
 
-        log.info("Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
+        log.info(
+            "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
 
         return;
       case DeviceConnectionState.disconnected:
