@@ -15,25 +15,20 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('EurekaScale');
 
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Platform.isAndroid
-      ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb')
-      : Uuid.parse('fff0');
+  static Uuid ServiceUUID =
+      Platform.isAndroid ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
   // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID = Platform.isAndroid
-      ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb')
-      : Uuid.parse('fff1');
+  static Uuid CharateristicUUID =
+      Platform.isAndroid ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
   // ignore: non_constant_identifier_names
-  static Uuid BatteryServiceUUID = Platform.isAndroid
-      ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb')
-      : Uuid.parse('180f');
+  static Uuid BatteryServiceUUID =
+      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // ignore: non_constant_identifier_names
-  static Uuid BatteryCharacteristicUUID = Platform.isAndroid
-      ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb')
-      : Uuid.parse('2a19');
+  static Uuid BatteryCharacteristicUUID =
+      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
   // ignore: non_constant_identifier_names
-  static Uuid CommandUUID = Platform.isAndroid
-      ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb')
-      : Uuid.parse('fff2');
+  static Uuid CommandUUID =
+      Platform.isAndroid ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
 
   late ScaleService scaleService;
 
@@ -59,11 +54,9 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
-        (connectionState) {
+    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
-      log.info(
-          'Peripheral ${device.name} connection state is $connectionState');
+      log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -97,12 +90,9 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
   Future<void> writeToEureka(List<int> payload) async {
     log.info("Sending to Eureka");
-    final characteristic = QualifiedCharacteristic(
-        serviceId: ServiceUUID,
-        characteristicId: CommandUUID,
-        deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(
-        characteristic,
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CommandUUID, deviceId: device.id);
+    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
         value: Uint8List.fromList(payload));
   }
 
@@ -120,14 +110,10 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         log.info('Connected');
         scaleService.setState(ScaleState.connected);
         // await device.discoverAllServicesAndCharacteristics();
-        final characteristic = QualifiedCharacteristic(
-            serviceId: ServiceUUID,
-            characteristicId: CharateristicUUID,
-            deviceId: device.id);
+        final characteristic =
+            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle
-            .subscribeToCharacteristic(characteristic)
-            .listen((data) {
+        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
@@ -135,11 +121,8 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         });
 
         final batteryCharacteristic = QualifiedCharacteristic(
-            characteristicId: BatteryCharacteristicUUID,
-            serviceId: BatteryServiceUUID,
-            deviceId: device.id);
-        final batteryLevel =
-            await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
+            characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
+        final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
         scaleService.setBattery(batteryLevel[0]);
 
         return;
