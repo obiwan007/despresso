@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:despresso/logger_util.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import '../../../devices/abstract_scale.dart';
 import '../../../service_locator.dart';
@@ -32,7 +33,8 @@ class WeightMeassurement {
 }
 
 class ScaleService extends ChangeNotifier {
-  final log = getLogger();
+  final log = Logger('ScaleService');
+
   double _weight = 0.0;
   double _flow = 0.0;
   int _battery = 0;
@@ -85,7 +87,7 @@ class ScaleService extends ChangeNotifier {
   }
 
   void setTara() {
-    log.i("Tara done");
+    log.info("Tara done");
     averaging.clear();
   }
 
@@ -117,7 +119,7 @@ class ScaleService extends ChangeNotifier {
       var t = DateTime.now();
       var ms = t.difference(t1).inMilliseconds;
       var hz = 10 / ms * 1000.0;
-      if (_count & 50 == 0) log.i("Weight Hz: $ms $hz");
+      if (_count & 50 == 0) log.info("Weight Hz: $ms $hz");
       t1 = t;
     }
   }
@@ -128,7 +130,7 @@ class ScaleService extends ChangeNotifier {
 
   void setState(ScaleState state) {
     _state = state;
-    log.i('Scale State: $_state');
+    log.info('Scale State: $_state');
     _controller.add(WeightMeassurement(_weight, _flow, _state));
   }
 

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
@@ -22,7 +23,8 @@ class ProfilesEditScreen extends StatefulWidget {
 }
 
 class ProfilesEditScreenState extends State<ProfilesEditScreen> {
-  final log = getLogger();
+  final log = Logger('ProfilesEditScreenState');
+
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
@@ -41,14 +43,14 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   @override
   void initState() {
     super.initState();
-    log.i('Init State ${_profile.shotHeader.title}');
+    log.info('Init State ${_profile.shotHeader.title}');
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
 
     profileService.addListener(profileListener);
 
     for (var element in _profile.shotFrames) {
-      log.i("Profile: $element");
+      log.info("Profile: $element");
     }
 
     calcProfileGraph();
@@ -69,7 +71,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
       _profile.shotFrames.add(declineObject);
       decline = declineObject;
     }
-    log.i("Decline: $decline");
+    log.info("Decline: $decline");
   }
 
   @override
@@ -77,7 +79,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     super.dispose();
 
     machineService.removeListener(profileListener);
-    log.i('Disposed profile');
+    log.info('Disposed profile');
   }
 
   @override
@@ -502,7 +504,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   }
 
   void profileListener() {
-    log.i('Profile updated');
+    log.info('Profile updated');
   }
 
   List<charts.Series<ShotState, double>> _createSeriesData() {
@@ -591,11 +593,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     }
     // shotList.entries.forEach((element) {
     //   if (element.subState.isNotEmpty) {
-    //     log.i(element.subState + " " + element.sampleTimeCorrected.toString());
+    //     log.info(element.subState + " " + element.sampleTimeCorrected.toString());
     //   }
     // });
     var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
-    // log.i("Phases= ${stateChanges.length}");
+    // log.info("Phases= ${stateChanges.length}");
 
     int i = 0;
     var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
@@ -618,7 +620,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
           labelStyleSpec: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.i("Phase ${element.subState}");
+      // log.info("Phase ${element.subState}");
     });
   }
 }

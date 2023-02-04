@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-
-import '../logger_util.dart';
+import 'package:logging/logging.dart' as l;
 import '../model/shotstate.dart';
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
@@ -94,7 +92,7 @@ enum MMRAddrEnum {
 }
 
 class DE1 extends ChangeNotifier {
-  final log = getLogger();
+  final log = l.Logger('ExampleLogger');
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
 
@@ -290,7 +288,7 @@ class DE1 extends ChangeNotifier {
     //     .observeConnectionState(
     //         emitCurrentValue: false, completeOnDisconnect: true)
     //     .listen((connectionState) {
-    //   log.i('Peripheral ${device.identifier} connection state is $connectionState');
+    //   log.info('Peripheral ${device.identifier} connection state is $connectionState');
     //   _onStateChange(connectionState);
     // });
     // device.connect();
@@ -300,7 +298,7 @@ class DE1 extends ChangeNotifier {
     service.setState(EspressoMachineState.connecting);
     _connectToDeviceSubscription = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
-      log.i('DE1 Peripheral ${device.name} connection state is $connectionState');
+      log.info('DE1 Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -310,7 +308,7 @@ class DE1 extends ChangeNotifier {
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
-    log.i('enabeling Notification for $e (${getCharacteristic(e)})');
+    log.info('enabeling Notification for $e (${getCharacteristic(e)})');
 
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
@@ -332,17 +330,17 @@ class DE1 extends ChangeNotifier {
 
   setIdleState() {
     requestState(De1StateEnum.idle);
-    log.i('idleState Requested');
+    log.info('idleState Requested');
   }
 
   switchOn() {
     requestState(De1StateEnum.idle);
-    log.i('SwitchOn Requested');
+    log.info('SwitchOn Requested');
   }
 
   switchOff() {
     requestState(De1StateEnum.sleep);
-    log.i('SwitchOff Requested');
+    log.info('SwitchOff Requested');
   }
 
   requestState(De1StateEnum state) {
@@ -378,7 +376,7 @@ class DE1 extends ChangeNotifier {
     var state = value.getUint8(0);
     var subState = value.getUint8(1);
 
-    log.i("DE1 is in state: ${states[state]} $state substate: ${subStates[subState]}");
+    log.info("DE1 is in state: ${states[state]} $state substate: ${subStates[subState]}");
     service.setSubState(subStates[subState]);
 
     switch (state) {
@@ -409,7 +407,7 @@ class DE1 extends ChangeNotifier {
   void requestedState(ByteData value) {
     var state = value.getUint8(0);
 
-    log.i('DE1 is in requested state: ${states[state]}');
+    log.info('DE1 is in requested state: ${states[state]}');
   }
 
   void waterLevelNotification(ByteData value) {
@@ -431,16 +429,16 @@ class DE1 extends ChangeNotifier {
     fwChanges = value.getUint8(13);
     fwSHA = value.getUint32(14);
 
-    log.i('bleAPIVersion = ${bleAPIVersion.toRadixString(16)}');
-    log.i('bleRelease = ${bleRelease.toRadixString(16)}');
-    log.i('bleCommits = ${bleCommits.toRadixString(16)}');
-    log.i('bleChanges = ${bleChanges.toRadixString(16)}');
-    log.i('bleSHA = ${bleSHA.toRadixString(16)}');
-    log.i('fwAPIVersion = ${fwAPIVersion.toRadixString(16)}');
-    log.i('fwRelease = ${fwRelease.toRadixString(16)}');
-    log.i('fwCommits = ${fwCommits.toRadixString(16)}');
-    log.i('fwChanges = ${fwChanges.toRadixString(16)}');
-    log.i('fwSHA = ${fwSHA.toRadixString(16)}');
+    log.info('bleAPIVersion = ${bleAPIVersion.toRadixString(16)}');
+    log.info('bleRelease = ${bleRelease.toRadixString(16)}');
+    log.info('bleCommits = ${bleCommits.toRadixString(16)}');
+    log.info('bleChanges = ${bleChanges.toRadixString(16)}');
+    log.info('bleSHA = ${bleSHA.toRadixString(16)}');
+    log.info('fwAPIVersion = ${fwAPIVersion.toRadixString(16)}');
+    log.info('fwRelease = ${fwRelease.toRadixString(16)}');
+    log.info('fwCommits = ${fwCommits.toRadixString(16)}');
+    log.info('fwChanges = ${fwChanges.toRadixString(16)}');
+    log.info('fwSHA = ${fwSHA.toRadixString(16)}');
   }
 
   void shotSampleNotification(ByteData r) {
@@ -455,19 +453,19 @@ class DE1 extends ChangeNotifier {
     var setGroupFlow = r.getUint8(16) / (1 << 4);
     var frameNumber = r.getUint8(17);
     var steamTemp = r.getUint8(18);
-    // log.i("$headTemp $setHeadTemp $mixTemp $setMixTemp");
+    // log.info("$headTemp $setHeadTemp $mixTemp $setMixTemp");
     sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-    // log.i('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
+    // log.info('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
     service.setShot(ShotState(sampleTime, 0, groupPressure, groupFlow, mixTemp, headTemp, setMixTemp, setHeadTemp,
         setGroupPressure, setGroupFlow, frameNumber, steamTemp, 0, ""));
   }
 
   De1ShotHeaderClass parseShotHeaderSettings(ByteData r) {
-    log.i("Shotheader received");
+    log.info("Shotheader received");
     var sh = De1ShotHeaderClass();
     var decoded = De1ShotHeaderClass.decodeDe1ShotHeader(r, sh, true);
     if (!decoded) {
-      log.i("Error decoding header");
+      log.info("Error decoding header");
     }
 
     service.setShotHeader(sh);
@@ -475,13 +473,13 @@ class DE1 extends ChangeNotifier {
   }
 
   void parseShotMapRequest(ByteData r) {
-    log.i("parseShotMapRequest received");
+    log.info("parseShotMapRequest received");
   }
 
   void parseFrameWrite(ByteData r) {
     var sh = De1ShotFrameClass();
     if (De1ShotFrameClass.decodeDe1ShotFrame(r, sh, true) == false) {
-      log.i("Error decoding shot frame");
+      log.info("Error decoding shot frame");
     }
 
     service.setShotFrame(sh);
@@ -497,14 +495,14 @@ class DE1 extends ChangeNotifier {
     var targetEspressoVolume = r.getUint8(6);
     var targetGroupTemp = r.getUint16(7) / (1 << 8);
 
-    log.i('SteamBits = ${steamBits.toRadixString(16)}');
-    log.i('TargetSteamTemp = $targetSteamTemp');
-    log.i('TargetSteamLength = $targetSteamLength');
-    log.i('TargetWaterTemp = $targetWaterTemp');
-    log.i('TargetWaterVolume = $targetWaterVolume');
-    log.i('TargetWaterLength = $targetWaterLength');
-    log.i('TargetEspressoVolume = $targetEspressoVolume');
-    log.i('TargetGroupTemp = $targetGroupTemp');
+    log.info('SteamBits = ${steamBits.toRadixString(16)}');
+    log.info('TargetSteamTemp = $targetSteamTemp');
+    log.info('TargetSteamLength = $targetSteamLength');
+    log.info('TargetWaterTemp = $targetWaterTemp');
+    log.info('TargetWaterVolume = $targetWaterVolume');
+    log.info('TargetWaterLength = $targetWaterLength');
+    log.info('TargetEspressoVolume = $targetEspressoVolume');
+    log.info('TargetGroupTemp = $targetGroupTemp');
   }
 
   String toHexString(int number) => '0x${number.toRadixString(16).padLeft(2, '0')}';
@@ -512,42 +510,42 @@ class DE1 extends ChangeNotifier {
   void mmrNotification(ByteData value) {
     var list = value.buffer.asUint8List();
     if (kDebugMode) {
-      log.i("MMR Notify: ${list.map(toHexString).toList()}");
+      log.info("MMR Notify: ${list.map(toHexString).toList()}");
     }
     _controllerMmrStream.add(list);
   }
 
   Future<int> getGhcMode() async {
-    log.i('Reading group head control mode');
+    log.info('Reading group head control mode');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.PrefGHCMCI]!, 0));
-    log.i("ghc controll mode: ${toHexString(data)}");
+    log.info("ghc controll mode: ${toHexString(data)}");
     return data;
   }
 
   Future<int> getGhcInfo() async {
-    log.i('Reading whether the group head controller is installed or not');
+    log.info('Reading whether the group head controller is installed or not');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.GHCInfo]!, 0));
-    log.i("ghc Info: ${toHexString(data)}");
+    log.info("ghc Info: ${toHexString(data)}");
     return data;
   }
 
   Future<int> getSerialNumber() async {
-    log.i('Reading whether the group head controller is installed or not');
+    log.info('Reading whether the group head controller is installed or not');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.SerialN]!, 0));
-    log.i("SerialNo: $data ${toHexString(data)}");
+    log.info("SerialNo: $data ${toHexString(data)}");
     return data;
   }
 
   Future<int> getFirmwareBuild() async {
-    log.i('Reading whether the group head controller is installed or not');
+    log.info('Reading whether the group head controller is installed or not');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CPUFirmwareBuild]!, 0));
-    log.i("Firmware Version: $data ${toHexString(data)}");
+    log.info("Firmware Version: $data ${toHexString(data)}");
     return data;
   }
 
   Future<int> getFanThreshhold() async {
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, 0));
-    log.i("getFanThreshold: $data ${toHexString(data)}");
+    log.info("getFanThreshold: $data ${toHexString(data)}");
     return data;
   }
 
@@ -559,7 +557,7 @@ class DE1 extends ChangeNotifier {
 
   Future<int> getUsbChargerMode() async {
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, 0));
-    log.i("getUsbChargerMode: $data ${toHexString(data)}");
+    log.info("getUsbChargerMode: $data ${toHexString(data)}");
     usbChargerMode = data;
     return data;
   }
@@ -584,12 +582,12 @@ class DE1 extends ChangeNotifier {
   Future<List<int>> mmrRead(int address, int length) async {
     for (var element in mmrList) {
       if (element[0] == address) {
-        log.i("MMR Read  ${toHexString(address)} = ${element[1]} : ${element[3]}");
+        log.info("MMR Read  ${toHexString(address)} = ${element[1]} : ${element[3]}");
         break;
       }
     }
     if (!mmrAvailable) {
-      log.i('Unable to mmr_read because MMR not available');
+      log.info('Unable to mmr_read because MMR not available');
       throw ("Error in mmr");
     }
 
@@ -599,15 +597,15 @@ class DE1 extends ChangeNotifier {
     buffer[0] = (length % 0xFF);
 
     if (kDebugMode) {
-      // log.i("MMR READ: ${byteData.buffer.asUint8List().map(toHexString).toList()}");
-      log.v("MMR READ: ${buffer.map(toHexString).toList()}");
+      // log.info("MMR READ: ${byteData.buffer.asUint8List().map(toHexString).toList()}");
+      log.fine("MMR READ: ${buffer.map(toHexString).toList()}");
     }
 
     write(Endpoint.readFromMMR, Uint8List.fromList(buffer));
 
     var result = await _streamMMR.firstWhere(
       (element) {
-        // log.i("listen where event  ${element.map(toHexString).toList()}");
+        // log.info("listen where event  ${element.map(toHexString).toList()}");
 
         if (buffer[1] == element[1] && buffer[2] == element[2] && buffer[3] == element[3]) {
           return true;
@@ -617,14 +615,14 @@ class DE1 extends ChangeNotifier {
       },
       orElse: () => [],
     );
-    log.i("listen event Result:  ${result.map(toHexString).toList()}");
+    log.info("listen event Result:  ${result.map(toHexString).toList()}");
     return result;
   }
 
   void mmrWrite(int address, List<int> bufferData) {
-    log.i("MMR WRITE REQUEST");
+    log.info("MMR WRITE REQUEST");
     if (!mmrAvailable) {
-      log.i('Unable to mmr_read because MMR not available');
+      log.info('Unable to mmr_read because MMR not available');
       return;
     }
 
@@ -636,12 +634,12 @@ class DE1 extends ChangeNotifier {
     bufferData.forEach((element) {
       buffer[i + 4] = bufferData[i++];
     });
-    log.i("MMR WRITE: ${buffer.map(toHexString).toList()}");
+    log.info("MMR WRITE: ${buffer.map(toHexString).toList()}");
     write(Endpoint.writeToMMR, Uint8List.fromList(buffer));
   }
 
   Future<void> _onStateChange(DeviceConnectionState state) async {
-    log.i('State changed to $state');
+    log.info('State changed to $state');
     //_state = state;
 
     switch (state) {
@@ -686,11 +684,11 @@ class DE1 extends ChangeNotifier {
         var fan = await getFanThreshhold();
         if (fan < 50) setFanThreshhold(50);
 
-        log.i("Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
+        log.info("Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
 
         return;
       case DeviceConnectionState.disconnected:
-        log.i('de1 disconnected. Destroying');
+        log.info('de1 disconnected. Destroying');
         _connectToDeviceSubscription.cancel;
         notifyListeners();
         return;

@@ -4,24 +4,25 @@ import 'dart:async';
 // import 'dart:html';
 
 import 'package:despresso/devices/decent_scale.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:despresso/devices/eureka_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' as ble;
 
 class BLEService extends ChangeNotifier {
-  final log = getLogger();
+  final log = Logger('BLEService');
+
   // static BleManager bleManager = BleManager();
-  final flutterReactiveBle = FlutterReactiveBle();
+  final flutterReactiveBle = ble.FlutterReactiveBle();
 
-  final List<DiscoveredDevice> _devicesList = <DiscoveredDevice>[];
+  final List<ble.DiscoveredDevice> _devicesList = <ble.DiscoveredDevice>[];
 
-  StreamSubscription<DiscoveredDevice>? _subscription;
+  StreamSubscription<ble.DiscoveredDevice>? _subscription;
 
   bool isScanning = false;
 
@@ -49,11 +50,12 @@ class BLEService extends ChangeNotifier {
     _subscription?.cancel();
     notifyListeners();
 
-    _subscription = flutterReactiveBle.scanForDevices(withServices: [], scanMode: ScanMode.lowLatency).listen((device) {
+    _subscription =
+        flutterReactiveBle.scanForDevices(withServices: [], scanMode: ble.ScanMode.lowLatency).listen((device) {
       deviceScanListener(device);
     }, onError: (err) {
       // ignore: prefer_interpolation_to_compose_strings
-      log.i('Scanner Error:' + err?.message?.message);
+      log.info('Scanner Error:' + err?.message?.message);
     });
 
     Timer(const Duration(seconds: 10), () {
@@ -68,45 +70,45 @@ class BLEService extends ChangeNotifier {
     // });
   }
 
-  void deviceScanListener(DiscoveredDevice result) {
+  void deviceScanListener(ble.DiscoveredDevice result) {
     if (kDebugMode) {
       print('Scanned Peripheral ${result..name}, RSSI ${result.rssi}');
     }
     _addDeviceTolist(result);
   }
 
-  List<DiscoveredDevice> get devices => _devicesList;
+  List<ble.DiscoveredDevice> get devices => _devicesList;
 
-  void _checkdevice(DiscoveredDevice device) async {
+  void _checkdevice(ble.DiscoveredDevice device) async {
     if (true) {
-      log.i('Removing device');
+      log.info('Removing device');
       _devicesList.remove(device);
       // bleManager.startPeripheralScan().listen(deviceScanListener);
       startScan();
     }
   }
 
-  void _addDeviceTolist(final DiscoveredDevice device) async {
+  void _addDeviceTolist(final ble.DiscoveredDevice device) async {
     if (device.name.isNotEmpty) {
       if (!_devicesList.map((e) => e.id).contains(device.id)) {
-        // log.i('Found Device: ${device.name}');
+        // log.info('Found Device: ${device.name}');
         if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
-          log.i('Creating Acaia Scale!');
+          log.info('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
         if (device.name.startsWith('CFS-9002')) {
-          log.i('eureka scale found');
+          log.info('eureka scale found');
           EurekaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
         if (device.name.startsWith('Decent')) {
-          log.i('decent scale found');
+          log.info('decent scale found');
           DecentScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
         if (device.name.startsWith('DE1')) {
-          log.i('Creating DE1 machine!');
+          log.info('Creating DE1 machine!');
           DE1(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }

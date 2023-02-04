@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
 import 'package:despresso/logger_util.dart';
@@ -30,7 +30,8 @@ class EspressoScreen extends StatefulWidget {
 }
 
 class EspressoScreenState extends State<EspressoScreen> {
-  final log = getLogger();
+  final log = Logger('ExampleLogger');
+
   late CoffeeService coffeeSelectionService;
   late EspressoMachineService machineService;
   late ProfileService profileService;
@@ -57,7 +58,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     machineService.removeListener(updateMachine);
     profileService.removeListener(updateProfile);
     coffeeSelectionService.removeListener(updateCoffeeSelection);
-    log.i('Disposed espresso');
+    log.info('Disposed espresso');
   }
 
   updateMachine() {
@@ -99,7 +100,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         checkForRefill();
       });
   void triggerEndOfShot() {
-    log.i("Idle mode initiated because of weight");
+    log.info("Idle mode initiated because of weight");
 
     machineService.de1?.requestState(De1StateEnum.idle);
   }
@@ -153,7 +154,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       //     labelStyleSpec: charts.TextStyleSpec(
       //         fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
       //     labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.i("Phase ${element.subState}");
+      // log.info("Phase ${element.subState}");
     });
   }
 
@@ -185,7 +186,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           labelStyleSpec: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
           labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.i("Phase ${element.subState}");
+      // log.info("Phase ${element.subState}");
     });
   }
 

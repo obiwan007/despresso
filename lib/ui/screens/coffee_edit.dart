@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -23,7 +23,8 @@ class CoffeeEdit extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class CoffeeEditState extends State<CoffeeEdit> {
-  final log = getLogger();
+  final log = Logger('ExampleLogger');
+
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;
 
@@ -80,7 +81,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
   void dispose() {
     super.dispose();
     coffeeService.removeListener(updateCoffee);
-    log.i('Disposed coffeeselection');
+    log.info('Disposed coffeeselection');
   }
 
   @override
@@ -227,7 +228,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
             return ElevatedButton(
               onPressed: form.valid
                   ? () {
-                      log.i("${form.value}");
+                      log.info("${form.value}");
                       saveFormData(form);
                       Navigator.pop(context);
                     }

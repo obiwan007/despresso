@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -28,7 +28,8 @@ class CoffeeSelectionTab extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
-  final log = getLogger();
+  final log = Logger('ExampleLogger');
+
   Roaster newRoaster = Roaster();
   Coffee newCoffee = Coffee();
   int _selectedRoasterId = 0;
@@ -66,7 +67,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   void dispose() {
     super.dispose();
     coffeeService.removeListener(updateCoffee);
-    log.i('Disposed coffeeselection');
+    log.info('Disposed coffeeselection');
   }
 
   @override
@@ -312,7 +313,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
       () {
         roasters = loadRoasters();
         coffees = loadCoffees();
-        log.i("Loaded ROasters $roasters");
+        log.info("Loaded ROasters $roasters");
         _selectedCoffeeId = coffeeService.selectedCoffee;
         _selectedRoasterId = coffeeService.selectedRoaster;
       },

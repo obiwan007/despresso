@@ -1,7 +1,7 @@
 import 'package:despresso/logger_util.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
-import 'dart:developer';
+import 'package:logging/logging.dart';
 
 /// This allows the `User` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
@@ -10,7 +10,8 @@ part 'shotstate.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ShotList {
-  final log = getLogger();
+  final log = Logger('ExampleLogger');
+
   bool saving = false;
 
   bool saved = true;
@@ -39,42 +40,42 @@ class ShotList {
   Future load(String s) async {
     // try {
     //   saved = true;
-    //   log.i("Loading shot: ${s}");
+    //   log.info("Loading shot: ${s}");
     //   final directory = await getApplicationDocumentsDirectory();
-    //   log.i("Storing to path:${directory.path}");
+    //   log.info("Storing to path:${directory.path}");
     //   var file = File('${directory.path}/$s');
     //   if (await file.exists()) {
     //     var json = file.readAsStringSync();
-    //     log.i("Loaded: ${json}");
+    //     log.info("Loaded: ${json}");
     //     Map<String, dynamic> map = jsonDecode(json);
     //     var data = ShotList.fromJson(map);
     //     entries = data.entries;
-    //     log.i("Loaded entries: ${entries.length}");
+    //     log.info("Loaded entries: ${entries.length}");
     //   } else {
-    //     log.i("File $s not existing");
+    //     log.info("File $s not existing");
     //   }
     // } catch (ex) {
-    //   log.i("loading error");
+    //   log.info("loading error");
     // }
   }
 
   saveData() async {
     // if (saving) return;
     // saving = true;
-    // log.i("Storing shot: ${entries.length}");
+    // log.info("Storing shot: ${entries.length}");
     // if (entries.length > 50) {
     //   final directory = await getApplicationDocumentsDirectory();
-    //   log.i("Storing to path:${directory.path}");
+    //   log.info("Storing to path:${directory.path}");
     //   var file = File('${directory.path}/$filename');
     //   if (await file.exists()) {
-    //     log.i("overwrite existing file");
+    //     log.info("overwrite existing file");
     //     // file.deleteSync();
     //   }
-    //   log.i("Write file");
+    //   log.info("Write file");
     //   file.writeAsStringSync(jsonEncode(this), mode: FileMode.writeOnly);
-    //   log.i("Written file");
+    //   log.info("Written file");
     // }
-    log.i("Clean shot data cache");
+    log.info("Clean shot data cache");
     for (var element in entries) {
       element.id = 0;
     }

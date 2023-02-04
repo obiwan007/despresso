@@ -1,6 +1,7 @@
 import 'package:despresso/logger_util.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:logging/logging.dart';
 
 import '../../devices/decent_de1.dart';
 import '../../model/services/ble/machine_service.dart';
@@ -16,7 +17,8 @@ class StartStopButton extends StatefulWidget {
 }
 
 class _StartStopButtonState extends State<StartStopButton> {
-  final log = getLogger();
+  final log = Logger('_StartStopButtonState');
+
   late EspressoMachineService machineService;
 
   _StartStopButtonState();
@@ -42,7 +44,7 @@ class _StartStopButtonState extends State<StartStopButton> {
     // machineService.removeListener(updateMachine);
     // profileService.removeListener(updateProfile);
     // coffeeSelectionService.removeListener(updateCoffeeSelection);
-    // log.i('Disposed espresso');
+    // log.info('Disposed espresso');
   }
 
   updateMachine() {
@@ -116,7 +118,7 @@ class _StartStopButtonState extends State<StartStopButton> {
                       machineService.de1?.switchOn();
                     } else {
                       if (!isBusy) {
-                        log.i("Start");
+                        log.info("Start");
                         machineService.de1?.requestState(De1StateEnum.espresso);
                       } else {
                         machineService.de1?.setIdleState();

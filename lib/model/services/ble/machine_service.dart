@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:despresso/devices/decent_de1.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/settings.dart';
@@ -10,7 +9,8 @@ import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:developer';
+
+import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -59,7 +59,7 @@ class EspressoMachineFullState {
 
 class EspressoMachineService extends ChangeNotifier {
   final MachineState _state = MachineState(null, EspressoMachineState.disconnected);
-  final log = getLogger();
+  final log = Logger('EspressoMachineService');
 
   DE1? de1;
 
@@ -148,7 +148,7 @@ class EspressoMachineService extends ChangeNotifier {
     coffeeService = getIt<CoffeeService>();
     prefs = await SharedPreferences.getInstance();
 
-    log.v('Preferences loaded');
+    log.fine('Preferences loaded');
     loadSettings();
     notifyListeners();
     loadShotData();
@@ -158,39 +158,39 @@ class EspressoMachineService extends ChangeNotifier {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (state.coffeeState == EspressoMachineState.sleep) {
         try {
-          log.v("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
+          log.fine("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
           sleepTime += 10;
 
           if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
             try {
               if (await Wakelock.enabled) {
-                log.i('Disable WakeLock');
+                log.info('Disable WakeLock');
                 Wakelock.disable();
               }
             } on MissingPluginException catch (e) {
-              log.e('Failed to set wakelock: $e');
+              log.severe('Failed to set wakelock: $e');
             }
           }
         } catch (e) {
-          log.e("Error $e");
+          log.severe("Error $e");
         }
       } else {
         sleepTime = 0;
         try {
           if ((await Wakelock.enabled) == false) {
-            log.i('enable WakeLock');
+            log.info('enable WakeLock');
             Wakelock.enable();
           } else {
-            // log.i('is enabled WakeLock');
+            log.fine('is enabled WakeLock');
           }
         } on MissingPluginException catch (e) {
-          log.e('Failed to set wakelock enable: $e');
+          log.severe('Failed to set wakelock enable: $e');
         }
       }
 
       if (state.coffeeState == EspressoMachineState.idle) {
         try {
-          log.v("Machine is still idle $idleTime ${settingsService.sleepTimer * 60}");
+          log.fine("Machine is still idle $idleTime ${settingsService.sleepTimer * 60}");
           idleTime += 10;
 
           if (idleTime > settingsService.sleepTimer * 60 && settingsService.sleepTimer > 0.1) {
@@ -198,7 +198,7 @@ class EspressoMachineService extends ChangeNotifier {
           }
         } catch (e) {
           {}
-          log.e("Error $e");
+          log.severe("Error $e");
         }
       } else {
         idleTime = 0;
@@ -209,34 +209,47 @@ class EspressoMachineService extends ChangeNotifier {
   handleBattery() async {
 // Access current battery level
     var state = await _battery.batteryLevel;
-    log.v("Battery: $state");
+    log.fine("Battery: $state");
 
 // Be informed when the state (full, charging, discharging) changes
     _battery.onBatteryStateChanged.listen((BatteryState state) async {
       // Do something with new state
       final batteryLevel = await _battery.batteryLevel;
-      log.i("Battery: changed: $state $batteryLevel");
-      _controllerBattery.add(batteryLevel);
+      log.info("Battery: changed: $state $batteryLevel");
+      //_controllerBattery.add(batteryLevel);
       if (de1 == null) {
-        log.e("DE1 not connected yet");
+        log.severe("Battery: DE1 not connected yet");
+        _controllerBattery.add(batteryLevel);
         return;
       }
       if (settingsService.smartCharging) {
         if (batteryLevel < 80) {
+          log.info("Battery: below 80");
           if (await de1!.getUsbChargerMode() == 0) {
-            log.i("Battery: Charging is off, switching it on");
+            log.info("Battery: Charging is off, switching it on");
             de1!.setUsbChargerMode(1);
           } else {
-            log.i("Battery: Charging is already on");
+            log.info("Battery: Charging is already on");
           }
+          // de1!.setUsbChargerMode(1);
         } else if (batteryLevel > 90) {
+          log.info("Battery: above 90");
           if (await de1!.getUsbChargerMode() == 1) {
-            log.i("Battery: Charging is on, switching it off");
+            log.info("Battery: Charging is on, switching it off");
             de1!.setUsbChargerMode(0);
           } else {
-            log.i("Battery: Charging is already off");
+            log.info("Battery: Charging is already off");
           }
+          // de1!.setUsbChargerMode(0);
         }
+        Future.delayed(
+          const Duration(seconds: 1),
+          () {
+            _controllerBattery.add(batteryLevel);
+          },
+        );
+      } else {
+        log.info("Battery: SmartCharging off");
       }
     });
   }
@@ -257,7 +270,7 @@ class EspressoMachineService extends ChangeNotifier {
     currentShot = coffeeService.getLastShot() ?? Shot();
     shotList.entries = currentShot.shotstates;
     // await shotList.load("testshot.json");
-    log.v("Lastshot loaded ${shotList.entries.length}");
+    log.fine("Lastshot loaded ${shotList.entries.length}");
     notifyListeners();
   }
 
@@ -270,7 +283,7 @@ class EspressoMachineService extends ChangeNotifier {
       var t = DateTime.now();
       var ms = t.difference(t1).inMilliseconds;
       var hz = 10 / ms * 1000.0;
-      if (_state.coffeeState == EspressoMachineState.espresso || _count & 50 == 0) log.v("Hz: $ms $hz");
+      if (_state.coffeeState == EspressoMachineState.espresso || _count & 50 == 0) log.fine("Hz: $ms $hz");
       t1 = t;
     }
     handleShotData();
@@ -315,31 +328,31 @@ class EspressoMachineService extends ChangeNotifier {
 
   void setShotHeader(De1ShotHeaderClass sh) {
     _state.shotHeader = sh;
-    log.v("Shotheader:$sh");
+    log.fine("Shotheader:$sh");
     notifyListeners();
   }
 
   void setShotFrame(De1ShotFrameClass sh) {
     _state.shotFrame = sh;
-    log.v("ShotFrame:$sh");
+    log.fine("ShotFrame:$sh");
     notifyListeners();
   }
 
   Future<String> uploadProfile(De1ShotProfile profile) async {
-    log.v("Save profile $profile");
+    log.fine("Save profile $profile");
     var header = profile.shotHeader;
 
     try {
-      log.v("Write Header: $header");
+      log.fine("Write Header: $header");
       await de1!.writeWithResult(Endpoint.headerWrite, header.bytes);
     } catch (ex) {
-      log.v("Save profile $profile");
+      log.fine("Save profile $profile");
       return "Error writing profile header $ex";
     }
 
     for (var fr in profile.shotFrames) {
       try {
-        log.v("Write Frame: $fr");
+        log.fine("Write Frame: $fr");
         await de1!.writeWithResult(Endpoint.frameWrite, fr.bytes);
       } catch (ex) {
         return "Error writing shot frame $fr";
@@ -348,7 +361,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     for (var exFrame in profile.shotExframes) {
       try {
-        log.v("Write ExtFrame: $exFrame");
+        log.fine("Write ExtFrame: $exFrame");
         await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
       } catch (ex) {
         return "Error writing ex shot frame $exFrame";
@@ -360,7 +373,7 @@ class EspressoMachineService extends ChangeNotifier {
       var tailBytes = De1ShotHeaderClass.encodeDe1ShotTail(profile.shotFrames.length, 0);
 
       try {
-        log.v("Write Tail: $tailBytes");
+        log.fine("Write Tail: $tailBytes");
         await de1!.writeWithResult(Endpoint.frameWrite, tailBytes);
       } catch (ex) {
         return "Error writing shot frame tail $tailBytes";
@@ -373,7 +386,7 @@ class EspressoMachineService extends ChangeNotifier {
       var bytes = Settings.encodeDe1OtherSetn(settings);
 
       try {
-        log.v("Write Shot Settings: $bytes");
+        log.fine("Write Shot Settings: $bytes");
         await de1!.writeWithResult(Endpoint.shotSettings, bytes);
       } catch (ex) {
         return "Error writing shot settings $bytes";
@@ -395,7 +408,7 @@ class EspressoMachineService extends ChangeNotifier {
     //   subState = machineService.state.subState;
     // }
     if (shot == null) {
-      log.v('Shot null');
+      log.fine('Shot null');
       return;
     }
     if (state.coffeeState == EspressoMachineState.idle && inShot == true) {
@@ -412,12 +425,12 @@ class EspressoMachineService extends ChangeNotifier {
       return;
     }
     if (!inShot && state.coffeeState == EspressoMachineState.espresso) {
-      log.i('Not Idle and not in Shot');
+      log.info('Not Idle and not in Shot');
       inShot = true;
       isPouring = false;
       shotList.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-      log.i("basetime $baseTime");
+      log.info("basetime $baseTime");
       lastPourTime = 0;
     }
     if (state.coffeeState == EspressoMachineState.espresso &&
@@ -432,30 +445,30 @@ class EspressoMachineService extends ChangeNotifier {
     }
 
     if (state.coffeeState == EspressoMachineState.water && lastSubstate != state.subState && state.subState == "pour") {
-      log.i('Startet water pour');
+      log.info('Startet water pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
-      log.v("basetime $baseTime");
+      log.fine("basetime $baseTime");
     }
 
     if (state.coffeeState == EspressoMachineState.steam && lastSubstate != state.subState && state.subState == "pour") {
-      log.i('Startet steam pour');
+      log.info('Startet steam pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
-      log.v("basetime $baseTime");
+      log.fine("basetime $baseTime");
     }
     if (state.coffeeState == EspressoMachineState.flush && lastSubstate != state.subState && state.subState == "pour") {
-      log.i('Startet flush pour');
+      log.info('Startet flush pour');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
-      log.v("basetime $baseTime");
+      log.fine("basetime $baseTime");
     }
 
     var subState = state.subState;
     timer = DateTime.now().difference(baseTimeDate);
     if (!(shot.sampleTimeCorrected > 0)) {
       if (lastSubstate != subState && subState.isNotEmpty) {
-        log.i("SubState: $subState");
+        log.info("SubState: $subState");
         lastSubstate = state.subState;
         shot.subState = lastSubstate;
       }
@@ -473,7 +486,8 @@ class EspressoMachineService extends ChangeNotifier {
           if (scaleService.state == ScaleState.connected) {
             if (profileService.currentProfile!.shotHeader.targetWeight > 1 &&
                 shot.weight + 1 > profileService.currentProfile!.shotHeader.targetWeight) {
-              log.i("Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
+              log.info(
+                  "Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();
@@ -484,7 +498,8 @@ class EspressoMachineService extends ChangeNotifier {
         case EspressoMachineState.water:
           if (scaleService.state == ScaleState.connected) {
             if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
-              log.i("Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
+              log.info(
+                  "Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();
@@ -494,7 +509,7 @@ class EspressoMachineService extends ChangeNotifier {
           if (state.subState == "pour" &&
               settings.targetHotWaterLength > 1 &&
               timer.inSeconds > settings.targetHotWaterLength) {
-            log.i("Water Timer reached ${timer.inSeconds} > ${settings.targetHotWaterLength}");
+            log.info("Water Timer reached ${timer.inSeconds} > ${settings.targetHotWaterLength}");
 
             triggerEndOfShot();
           }
@@ -504,7 +519,7 @@ class EspressoMachineService extends ChangeNotifier {
           if (state.subState == "pour" &&
               settings.targetSteamLength > 1 &&
               timer.inSeconds > settings.targetSteamLength) {
-            log.i("Steam Timer reached ${timer.inSeconds} > ${settings.targetSteamLength}");
+            log.info("Steam Timer reached ${timer.inSeconds} > ${settings.targetSteamLength}");
 
             triggerEndOfShot();
           }
@@ -512,7 +527,7 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.flush:
           if (state.subState == "pour" && settings.targetFlushTime > 1 && timer.inSeconds > settings.targetFlushTime) {
-            log.i("Flush Timer reached ${timer.inSeconds} > ${settings.targetFlushTime}");
+            log.info("Flush Timer reached ${timer.inSeconds} > ${settings.targetFlushTime}");
 
             triggerEndOfShot();
           }
@@ -531,7 +546,7 @@ class EspressoMachineService extends ChangeNotifier {
       }
 
       //if (profileService.currentProfile.shot_header.target_weight)
-      // log.i("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
+      log.info("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
       if (inShot == true) {
         shotList.add(shot);
       }
@@ -539,17 +554,17 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   void triggerEndOfShot() {
-    log.i("Idle mode initiated because of weight");
+    log.info("Idle mode initiated because of weight");
 
     de1?.requestState(De1StateEnum.idle);
     // Future.delayed(const Duration(milliseconds: 5000), () {
-    //   log.i("Idle mode initiated finished", error: {DateTime.now()});
+    // log.info("Idle mode initiated finished", error: {DateTime.now()});
     //   stopTriggered = false;
     // });
   }
 
   shotFinished() async {
-    log.i("Save last shot");
+    log.info("Save last shot");
     try {
       currentShot = Shot();
       currentShot.coffee.targetId = coffeeService.selectedCoffee;
@@ -567,7 +582,7 @@ class EspressoMachineService extends ChangeNotifier {
       shotList.saveData();
       // currentShot = Shot();
     } catch (ex) {
-      log.e("Error writing file: $ex");
+      log.severe("Error writing file: $ex");
     }
   }
 
@@ -578,10 +593,10 @@ class EspressoMachineService extends ChangeNotifier {
 
     var bytes = Settings.encodeDe1OtherSetn(settings);
     try {
-      log.i("Write Shot Settings: $bytes");
+      log.info("Write Shot Settings: $bytes");
       await de1!.writeWithResult(Endpoint.shotSettings, bytes);
     } catch (ex) {
-      log.e("Error writing shot settings $bytes");
+      log.severe("Error writing shot settings $bytes");
     }
   }
 }

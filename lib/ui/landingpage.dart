@@ -14,6 +14,7 @@ import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logging/logging.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
@@ -29,7 +30,8 @@ class LandingPage extends StatefulWidget {
 }
 
 class LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
-  final log = getLogger();
+  final log = Logger('LandingPageState');
+
   bool available = false;
   int currentPageIndex = 1;
 
@@ -57,7 +59,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     profileService = getIt<ProfileService>();
     profileService.addListener(updatedProfile);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-    //   log.i("Print after 5 seconds");
+    //   log.info("Print after 5 seconds");
     //   selectedPage++;
     //   if (selectedPage > 2) selectedPage = 0;
     //   _tabController.index = selectedPage;
@@ -271,7 +273,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   void updatedMachine() {
     if (lastState != machineService.state.coffeeState) {
-      log.i("Machine state: ${machineService.state.coffeeState}");
+      log.info("Machine state: ${machineService.state.coffeeState}");
       lastState = machineService.state.coffeeState;
       setState(() {
         switch (lastState) {
@@ -299,7 +301,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
           default:
             break;
         }
-        log.i("Switch to $currentPageIndex");
+        log.info("Switch to $currentPageIndex");
         _tabController.index = currentPageIndex;
         // DefaultTabController.of(context)!
         //     .animateTo(currentPageIndex, duration: const Duration(milliseconds: 100), curve: Curves.ease);

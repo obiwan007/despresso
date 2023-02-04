@@ -5,6 +5,7 @@ import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:logging/logging.dart';
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 import './profiles_edit_screen.dart';
@@ -17,7 +18,8 @@ class ProfilesScreen extends StatefulWidget {
 }
 
 class ProfilesScreenState extends State<ProfilesScreen> {
-  final log = getLogger();
+  final log = Logger('ProfilesScreenState');
+
   late ProfileService profileService;
   ShotList shotList = ShotList([]);
   late EspressoMachineService machineService;
@@ -32,7 +34,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     profileService = getIt<ProfileService>();
 
     profileService.addListener(profileListener);
-    log.i(profileService.currentProfile.toString());
+    log.info(profileService.currentProfile.toString());
     _selectedProfile = profileService.currentProfile;
     calcProfileGraph();
     phases = _createPhases();
@@ -43,7 +45,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     super.dispose();
 
     machineService.removeListener(profileListener);
-    log.i('Disposed profile');
+    log.info('Disposed profile');
   }
 
   @override
@@ -248,7 +250,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   }
 
   void profileListener() {
-    log.i('Profile updated');
+    log.info('Profile updated');
     _selectedProfile = profileService.currentProfile;
   }
 
@@ -338,11 +340,11 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     }
     // shotList.entries.forEach((element) {
     //   if (element.subState.isNotEmpty) {
-    //     log.i(element.subState + " " + element.sampleTimeCorrected.toString());
+    //     log.info(element.subState + " " + element.sampleTimeCorrected.toString());
     //   }
     // });
     var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
-    // log.i("Phases= ${stateChanges.length}");
+    // log.info("Phases= ${stateChanges.length}");
 
     int i = 0;
     var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
@@ -367,7 +369,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
               // color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
               color: charts.ColorUtil.fromDartColor(Color(0xFFD0BCFF))),
           labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.i("Phase ${element.subState}");
+      // log.info("Phase ${element.subState}");
     });
   }
 }

@@ -44,7 +44,7 @@ class _MachineFooterState extends State<MachineFooter> {
     // scaleService.removeListener(updateMachine);
     // profileService.removeListener(updateProfile);
     // coffeeSelectionService.removeListener(updateCoffeeSelection);
-    // log.i('Disposed espresso');
+    // log.info('Disposed espresso');
   }
 
   updateMachine() {

@@ -5,6 +5,7 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:logging/logging.dart';
 import '../../service_locator.dart';
 
 class AppSettingsScreen extends StatefulWidget {
@@ -15,7 +16,8 @@ class AppSettingsScreen extends StatefulWidget {
 }
 
 class SettingsScreenState extends State<AppSettingsScreen> {
-  final log = getLogger();
+  final log = Logger('SettingsScreenState');
+
   late SettingsService settingsService;
   late BLEService bleService;
   late MqttService mqttService;
@@ -35,7 +37,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
     settingsService.removeListener(settingsServiceListener);
     bleService.removeListener(settingsServiceListener);
-    log.i('Disposed settingspage');
+    log.info('Disposed settingspage');
   }
 
   @override

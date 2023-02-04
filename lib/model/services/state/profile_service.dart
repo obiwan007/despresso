@@ -6,6 +6,7 @@ import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -28,7 +29,8 @@ const int Interpolate = 0x20; // Hard jump to target value, or ramp?
 const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
 class ProfileService extends ChangeNotifier {
-  final log = getLogger();
+  final log = Logger('ProfileService');
+
   De1ShotProfile? currentProfile;
   late SharedPreferences prefs;
   List<De1ShotProfile> defaultProfiles = <De1ShotProfile>[];
@@ -41,22 +43,22 @@ class ProfileService extends ChangeNotifier {
 
   void init() async {
     prefs = await SharedPreferences.getInstance();
-    log.i('Preferences loaded');
+    log.info('Preferences loaded');
 
     var profileId = prefs.getString("profilename");
     await loadAllDefaultProfiles();
-    log.i('Profiles loaded');
+    log.info('Profiles loaded');
 
     try {
       var dirs = await getSavedProfileFiles();
 
       for (var element in dirs) {
-        log.i(element.path);
+        log.info(element.path);
         var i = element.path.lastIndexOf('/');
         var file = element.path.substring(i);
         try {
           var loaded = await loadProfileFromDocuments(file);
-          log.i("Saved profile loaded $loaded");
+          log.info("Saved profile loaded $loaded");
           var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
           if (defaultProfile.isNotEmpty) {
             profiles.add(loaded);
@@ -64,14 +66,14 @@ class ProfileService extends ChangeNotifier {
             // profiles.add(defaultProfile.first);
           }
         } catch (ex) {
-          log.i("Error loading profile $ex");
+          log.info("Error loading profile $ex");
         }
       }
       // dirs.forEach((element) => {
       //   loadUserProfile(element.path);
       // });
     } catch (ex) {
-      log.i("List files $ex");
+      log.info("List files $ex");
     }
 
 // Add defaultprofile if not already modified;
@@ -86,7 +88,7 @@ class ProfileService extends ChangeNotifier {
       try {
         currentProfile = profiles.where((element) => element.id == profileId).first;
       } catch (_) {}
-      log.i("Profile ${currentProfile!.shotHeader.title} loaded");
+      log.info("Profile ${currentProfile!.shotHeader.title} loaded");
     }
     notifyListeners();
   }
@@ -105,18 +107,18 @@ class ProfileService extends ChangeNotifier {
   void setProfile(De1ShotProfile profile) {
     currentProfile = profile;
     prefs.setString("profilename", profile.id);
-    log.i("Profile selected and saved ${profile.id}");
+    log.info("Profile selected and saved ${profile.id}");
     notify();
   }
 
   saveAsNew(De1ShotProfile profile) {
-    log.i("Saving as a new profile");
+    log.info("Saving as a new profile");
     profile.isDefault = false;
     profile.id = const Uuid().toString();
   }
 
   save(De1ShotProfile profile) async {
-    log.i("Saving as a existing profile to documents region");
+    log.info("Saving as a existing profile to documents region");
     profile.isDefault = false;
     await saveProvileToDocuments(profile, profile.id);
     currentProfile = profile;
@@ -137,9 +139,9 @@ class ProfileService extends ChangeNotifier {
 
   Future<De1ShotProfile> loadProfileFromDocuments(String fileName) async {
     try {
-      log.i("Loading shot: $fileName");
+      log.info("Loading shot: $fileName");
       final directory = await getApplicationDocumentsDirectory();
-      log.i("LoadingFrom path:${directory.path}");
+      log.info("LoadingFrom path:${directory.path}");
       var file = File('${directory.path}/profiles/$fileName');
       if (await file.exists()) {
         var json = file.readAsStringSync();
@@ -147,24 +149,24 @@ class ProfileService extends ChangeNotifier {
         Map<String, dynamic> map = jsonDecode(json);
         var data = De1ShotProfile.fromJson(map);
 
-        log.i("Loaded Profile: ${data.id}");
+        log.info("Loaded Profile: ${data.id}");
         return data;
       } else {
-        log.i("File $fileName not existing");
+        log.info("File $fileName not existing");
         throw Exception("File not found");
       }
     } catch (ex) {
-      log.i("loading error $ex");
+      log.info("loading error $ex");
       Future.error("Error loading filename $ex");
       rethrow;
     }
   }
 
   Future<File> saveProvileToDocuments(De1ShotProfile profile, String filename) async {
-    log.i("Storing shot: ${profile.id}");
+    log.info("Storing shot: ${profile.id}");
 
     final directory = await getApplicationDocumentsDirectory();
-    log.i("Storing to path:${directory.path}");
+    log.info("Storing to path:${directory.path}");
     final Directory appDocDirFolder = Directory('${directory.path}/profiles/');
 
     if (!appDocDirFolder.existsSync()) {
@@ -177,7 +179,7 @@ class ProfileService extends ChangeNotifier {
     }
     await file.create();
     var json = profile.toJson();
-    log.i("Save json $json");
+    log.info("Save json $json");
     return file.writeAsString(jsonEncode(json));
   }
 
@@ -187,19 +189,19 @@ class ProfileService extends ChangeNotifier {
     List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
-      log.i("Parsing profile $file");
+      log.info("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
       try {
         parseDefaultProfile(rawJson, true);
       } catch (ex) {
-        log.i("Profile parse error: $ex");
+        log.info("Profile parse error: $ex");
       }
     }
-    log.i('all profiles loaded');
+    log.info('all profiles loaded');
   }
 
   String parseDefaultProfile(String json, bool isDefault) {
-    log.i("parse json profile data");
+    log.info("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
@@ -208,7 +210,7 @@ class ProfileService extends ChangeNotifier {
 
     p.isDefault = isDefault;
     defaultProfiles.add(p);
-    log.i("$header $frames $exFrames");
+    log.info("$header $frames $exFrames");
 
     return "";
   }

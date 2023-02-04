@@ -124,6 +124,17 @@ class RecipeScreenState extends State<RecipeScreen> {
                                     style: Theme.of(context).textTheme.titleMedium,
                                   ),
                                 Text(coffeeService.currentCoffee?.description ?? ""),
+                                StreamBuilder<int>(
+                                    stream: machineService.streamBatteryState,
+                                    builder: (context, snapshot) {
+                                      return Column(
+                                        children: [
+                                          if (snapshot.hasData) Text("Battery: ${snapshot.data}"),
+                                          if (machineService.de1 != null)
+                                            Text("Mode: ${machineService.de1!.usbChargerMode}"),
+                                        ],
+                                      );
+                                    })
                               ],
                             )),
                       ],

@@ -6,6 +6,7 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:logging/logging.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'settings_service.dart';
@@ -14,7 +15,8 @@ import 'package:despresso/logger_util.dart';
 // final client = MqttServerClient(mqttServer, mqttPort.toString());
 
 class MqttService extends ChangeNotifier {
-  final log = getLogger();
+  final log = Logger('MqttService');
+
   late SettingsService settingsService;
   late EspressoMachineService machineService;
   late MqttClient client;
@@ -29,7 +31,7 @@ class MqttService extends ChangeNotifier {
   late StreamSubscription<WaterLevel> streamWaterSubscription;
 
   MqttService() {
-    log.i('MQTT:init mqtt');
+    log.info('MQTT:init mqtt');
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
     if (settingsService.mqttRootTopic.isNotEmpty) {
@@ -43,10 +45,9 @@ class MqttService extends ChangeNotifier {
     if (settingsService.mqttEnabled) {
       try {
         client = MqttServerClient(settingsService.mqttServer, "");
+        client.logging(on: false);
         client.port = int.parse(settingsService.mqttPort);
-        log.i('MQTT:mqtt enabled starting service');
-        client.logging(on: true);
-        log.i('MQTT:mqtt service started');
+        log.info('MQTT:mqtt service started');
         client.keepAlivePeriod = 60;
         client.onDisconnected = onDisconnected;
         client.setProtocolV31();
@@ -61,45 +62,46 @@ class MqttService extends ChangeNotifier {
             // .withWillMessage('My Will message')
             .startClean()
             .withWillQos(MqttQos.atLeastOnce);
-        log.i('MQTT: Client connecting....');
+        log.info('MQTT: Client connecting....');
         client.connectionMessage = connMess;
 
         try {
-          log.i('MQTT:trying to connect');
+          log.info('MQTT:trying to connect');
           await client.connect(settingsService.mqttUser, settingsService.mqttPassword);
         } on NoConnectionException catch (e) {
-          log.e('MQTT: Client exception: $e');
+          log.severe('MQTT: Client exception: $e');
           client.disconnect();
         } on SocketException catch (e) {
-          log.e('MQTT: Socket exception: $e');
+          log.severe('MQTT: Socket exception: $e');
           client.disconnect();
         }
       } catch (ex) {
-        log.e("MQTT: Exception: $ex");
+        log.severe("MQTT: Exception: $ex");
         return -1;
       }
 
       if (client.connectionStatus!.state == MqttConnectionState.connected) {
-        log.i('MQTT: Client connected');
+        log.info('MQTT: Client connected');
       } else {
-        log.e('MQTT:Client connection failed - disconnecting, status is ${client.connectionStatus}');
+        log.severe('MQTT:Client connection failed - disconnecting, status is ${client.connectionStatus}');
         client.disconnect();
         return -1;
       }
 
-      log.i('MQTT:Subscribing to the $subTopic topic');
+      log.info('MQTT:Subscribing to the $subTopic topic');
       client.subscribe(subTopic, MqttQos.atMostOnce);
       client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
         final recMess = c![0].payload as MqttPublishMessage;
         final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-        log.i('MQTT:Received message: topic is ${c[0].topic}, payload is $pt');
+        log.info('MQTT:Received message: topic is ${c[0].topic}, payload is $pt');
       });
 
       client.published!.listen((MqttPublishMessage message) {
-        log.v('MQTT:Published topic: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
+        log.fine(
+            'MQTT:Published topic: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
       });
 
-      log.i('MQTT:Publishing our topic');
+      log.info('MQTT:Publishing our topic');
       var pubTopic = '$rootTopic/status';
       final builder = MqttClientPayloadBuilder();
       builder.addString(DateTime.now().toIso8601String());
@@ -107,15 +109,15 @@ class MqttService extends ChangeNotifier {
 
       connected = true;
 
-      // log.i('MQTT:Sleeping....');
+      // log.info('MQTT:Sleeping....');
       // await MqttUtilities.asyncSleep(80);
 
-      // log.i('MQTT:Unsubscribing');
+      // log.info('MQTT:Unsubscribing');
       // client.unsubscribe(subTopic);
       // client.unsubscribe(pubTopic);
 
       // await MqttUtilities.asyncSleep(2);
-      // log.i('MQTT:Disconnecting');
+      // log.info('MQTT:Disconnecting');
       // client.disconnect();
     }
     return 0;
@@ -124,18 +126,18 @@ class MqttService extends ChangeNotifier {
   void disconnect() async {
     if (!connected) return;
 
-    log.i('MQTT:Unsubscribing');
+    log.info('MQTT:Unsubscribing');
     client.unsubscribe(subTopic);
     // client.unsubscribe(pubTopic);
 
     await MqttUtilities.asyncSleep(2);
-    log.i('MQTT:Disconnecting');
+    log.info('MQTT:Disconnecting');
     client.disconnect();
   }
 
   /// The subscribed callback
   void onSubscribed(String topic) {
-    log.i('MQTT:Subscription confirmed for topic $topic');
+    log.info('MQTT:Subscription confirmed for topic $topic');
   }
 
   /// The unsolicited disconnect callback
@@ -147,15 +149,15 @@ class MqttService extends ChangeNotifier {
     streamShotSubscription.cancel();
     streamWaterSubscription.cancel();
 
-    log.i('MQTT:OnDisconnected client callback - Client disconnection');
+    log.info('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
-      log.i('MQTT:OnDisconnected callback is solicited, this is correct');
+      log.info('MQTT:OnDisconnected callback is solicited, this is correct');
     }
 
     Future.delayed(
       const Duration(seconds: 10),
       () {
-        log.i('MQTT:Reconnecting');
+        log.info('MQTT:Reconnecting');
         startService();
       },
     );
@@ -164,19 +166,19 @@ class MqttService extends ChangeNotifier {
   /// The successful connect callback
   void onConnected() {
     connected = true;
-    log.i('MQTT:OnConnected client callback - Client connection was sucessful');
+    log.info('MQTT:OnConnected client callback - Client connection was sucessful');
     handleEvents();
   }
 
   /// Pong callback
   void pong() {
-    log.i('MQTT:Ping response client callback invoked');
+    log.info('MQTT:Ping response client callback invoked');
   }
 
   void handleEvents() {
     streamStateSubscription = machineService.streamState.listen((event) {
       try {
-        log.v("State Change detected $event");
+        log.fine("State Change detected $event");
         var pubTopic = '$rootTopic/de1';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.state.name);
@@ -186,19 +188,19 @@ class MqttService extends ChangeNotifier {
         builder.addString(event.subState);
         client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!);
       } catch (e) {
-        log.e("MQTT: $e");
+        log.severe("MQTT: $e");
       }
     });
     streamShotSubscription = machineService.streamShotState.listen((event) {
       try {
-        log.v("Shot State CHange detected $event");
+        log.fine("Shot State CHange detected $event");
         var pubTopic = '$rootTopic/de1/shot';
         var builder = MqttClientPayloadBuilder();
 
         builder.addString(jsonEncode(event.toJson()));
         client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
       } catch (e) {
-        log.e("MQTT: $e");
+        log.severe("MQTT: $e");
       }
     });
     streamWaterSubscription = machineService.streamWaterLevel.listen((event) {
@@ -211,7 +213,7 @@ class MqttService extends ChangeNotifier {
         builder.addString(event.waterLimit.toString());
         client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
       } catch (e) {
-        log.e("MQTT: $e");
+        log.severe("MQTT: $e");
       }
     });
 
@@ -221,12 +223,14 @@ class MqttService extends ChangeNotifier {
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.toString());
         client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
-        builder = MqttClientPayloadBuilder();
-        builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
-        client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
-        log.v("Batterydata pushed to MQTT");
+        if (machineService.de1 != null) {
+          builder = MqttClientPayloadBuilder();
+          builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
+          client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
+        }
+        log.fine("Batterydata pushed to MQTT");
       } catch (e) {
-        log.e("MQTT: $e");
+        log.severe("MQTT: $e");
       }
     });
   }

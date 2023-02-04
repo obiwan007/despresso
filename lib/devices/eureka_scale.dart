@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
+import 'package:logging/logging.dart';
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -8,10 +8,11 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-import '../logger_util.dart';
+import 'package:logging/logging.dart' as l;
 
 class EurekaScale extends ChangeNotifier implements AbstractScale {
-  final log = getLogger();
+  final log = l.Logger('ExampleLogger');
+
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb');
   // ignore: non_constant_identifier_names
@@ -44,11 +45,11 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
   EurekaScale(this.device) {
     scaleService = getIt<ScaleService>();
-    log.i("Connect to Acaia");
+    log.info("Connect to Acaia");
     scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
-      log.i('Peripheral ${device.name} connection state is $connectionState');
+      log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -81,7 +82,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   }
 
   Future<void> writeToEureka(List<int> payload) async {
-    log.i("Sending to Eureka");
+    log.info("Sending to Eureka");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CommandUUID, deviceId: device.id);
     return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
@@ -89,17 +90,17 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _onStateChange(DeviceConnectionState state) async {
-    log.i('SCALE State changed to $state');
+    log.info('SCALE State changed to $state');
     _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:
-        log.i('Connecting');
+        log.info('Connecting');
         scaleService.setState(ScaleState.connecting);
         break;
 
       case DeviceConnectionState.connected:
-        log.i('Connected');
+        log.info('Connected');
         scaleService.setState(ScaleState.connected);
         // await device.discoverAllServicesAndCharacteristics();
         final characteristic =
@@ -120,7 +121,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
-        log.i('Eureka Scale disconnected. Destroying');
+        log.info('Eureka Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
 

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:despresso/logger_util.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:logging/logging.dart';
 
 part "de1shotclasses.g.dart";
 
@@ -144,7 +145,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   }
 
   static bool decodeDe1ShotHeader(ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
-    final log = getLogger();
+    final log = Logger('decodeDe1ShotHeader');
     if (data.buffer.lengthInBytes != 5) return false;
 
     try {
@@ -167,7 +168,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
         }
         for (int i = 0; i < newBytes.buffer.lengthInBytes; i++) {
           if (newBytes[i] != array[i]) {
-            log.e("Error in decoding header:${newBytes[i]} != ${array[i]}");
+            log.severe("Error in decoding header:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }
@@ -175,13 +176,14 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
       return true;
     } catch (ex) {
-      log.e("Exception in header decode $ex");
+      log.severe("Exception in header decode $ex");
       return false;
     }
   }
 
   static Uint8List encodeDe1ShotHeader(De1ShotHeaderClass shotHeader) {
-    final log = getLogger();
+    final log = Logger('ExampleLogger');
+
     Uint8List data = Uint8List(5);
 
     int index = 0;
@@ -196,12 +198,13 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     data[index] = (0.5 + shotHeader.maximumFlow * 16.0).toInt();
 
     index++;
-    log.v('EncodeDe1ShotFrame:$shotHeader ${Helper.toHex(data)}');
+    log.fine('EncodeDe1ShotFrame:$shotHeader ${Helper.toHex(data)}');
     return data;
   }
 
   static Uint8List encodeDe1ShotTail(int frameToWrite, double maxTotalVolume) {
-    final log = getLogger();
+    final log = Logger('ExampleLogger');
+
     Uint8List data = Uint8List(8);
 
     data[0] = frameToWrite;
@@ -213,7 +216,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     data[5] = 0;
     data[6] = 0;
     data[7] = 0;
-    log.v('encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
+    log.fine('encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
     return data;
   }
 }
@@ -282,9 +285,10 @@ class De1ShotFrameClass // proc spec_shotframe
   // }
 
   static bool decodeDe1ShotFrame(ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
-    final log = getLogger();
+    final log = Logger('ExampleLogger');
+
     if (data.buffer.lengthInBytes != 8) return false;
-    log.v('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
+    log.fine('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
     try {
       int index = 0;
       shotFrame.frameToWrite = data.getUint8(index++);
@@ -301,13 +305,13 @@ class De1ShotFrameClass // proc spec_shotframe
         var array = data.buffer.asUint8List();
         var newBytes = encodeDe1ShotFrame(shotFrame);
         if (newBytes.length != array.buffer.lengthInBytes) {
-          log.e("Error in decoding frame Length not matching");
+          log.severe("Error in decoding frame Length not matching");
           return false;
         }
 
         for (int i = 0; i < newBytes.length; i++) {
           if (newBytes[i] != array[i]) {
-            log.e("Error in decoding frame:${newBytes[i]} != ${array[i]}");
+            log.severe("Error in decoding frame:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }
@@ -315,13 +319,14 @@ class De1ShotFrameClass // proc spec_shotframe
 
       return true;
     } catch (ex) {
-      log.e("Exception $ex");
+      log.severe("Exception $ex");
       return false;
     }
   }
 
   static Uint8List encodeDe1ShotFrame(De1ShotFrameClass shotFrame) {
-    final log = getLogger();
+    final log = Logger('ExampleLogger');
+
     Uint8List data = Uint8List(8);
 
     int index = 0;
@@ -334,12 +339,12 @@ class De1ShotFrameClass // proc spec_shotframe
     data[index] = (0.5 + shotFrame.temp * 2.0).toInt();
     index++;
     data[index] = Helper.convert_float_to_F8_1_7(shotFrame.frameLen);
-    log.v("FrameLen ${data[index].toRadixString(16)}");
+    log.fine("FrameLen ${data[index].toRadixString(16)}");
     index++;
     data[index] = (0.5 + shotFrame.triggerVal * 16.0).toInt();
     index++;
     Helper.convert_float_to_U10P0(shotFrame.maxVol, data, index);
-    log.v('EncodeDe1ShotFrame:$shotFrame ${Helper.toHex(data)}');
+    log.fine('EncodeDe1ShotFrame:$shotFrame ${Helper.toHex(data)}');
     return data;
   }
 
@@ -502,7 +507,8 @@ class Helper {
 
   // ignore: non_constant_identifier_names
   static convert_float_to_U10P0(double x, Uint8List data, int index) {
-    final log = getLogger();
+    final log = Logger('ExampleLogger');
+
     Uint8List d = Uint8List(2);
 
     int ix = x.toInt() | 1024;
@@ -515,6 +521,6 @@ class Helper {
     data[index] = d.buffer.asByteData().getUint8(0);
     data[index + 1] = d.buffer.asByteData().getUint8(1);
 
-    log.v("Final: $x = ${data[index]} ${data[index + 1]}");
+    log.fine("Final: $x = ${data[index]} ${data[index + 1]}");
   }
 }

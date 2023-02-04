@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
+import 'package:logging/logging.dart';
 import 'dart:ffi';
 import 'dart:typed_data';
 
@@ -8,16 +8,16 @@ import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:logging/logging.dart' as l;
 
 class DecentScale extends ChangeNotifier implements AbstractScale {
+  final log = l.Logger('DecentScale');
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb');
 // ignore: non_constant_identifier_names
-  static Uuid ReadCharacteristicUUID =
-      Uuid.parse('0000fff4-0000-1000-8000-00805f9b34fb');
+  static Uuid ReadCharacteristicUUID = Uuid.parse('0000fff4-0000-1000-8000-00805f9b34fb');
 // ignore: non_constant_identifier_names
-  static Uuid WriteCharacteristicUUID =
-      Uuid.parse('000036f5-0000-1000-8000-00805f9b34fb');
+  static Uuid WriteCharacteristicUUID = Uuid.parse('000036f5-0000-1000-8000-00805f9b34fb');
 
   late ScaleService scaleService;
 
@@ -35,12 +35,11 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   DecentScale(this.device) {
     scaleService = getIt<ScaleService>();
-    log("Connect to Decent");
+    log.info("Connect to Decent");
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen(
-        (connectionState) {
+    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
-      log('Peripheral ${device.name} connection state is $connectionState');
+      log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -56,22 +55,17 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     }
     if (data[1] == 0xCE) {
       // scaleService.setWeightStable(true);
-      log('weight stable');
+      log.info('weight stable');
       weightStability = true;
     } else {
       // scaleService.setWeightStable(false);
-      log('weight changing');
+      log.info('weight changing');
       weightStability = false;
     }
   }
 
   int getXOR(payload) {
-    return payload[0] ^
-        payload[1] ^
-        payload[2] ^
-        payload[3] ^
-        payload[4] ^
-        payload[5];
+    return payload[0] ^ payload[1] ^ payload[2] ^ payload[3] ^ payload[4] ^ payload[5];
   }
 
   writeTare() {
@@ -112,39 +106,32 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   Future<void> writeToDecentScale(List<int> payload) async {
     // Uint8List command = Uint8List.fromList(payload.add(getXOR(payload)));
-    log("Sending to Decent");
-    final characteristic = QualifiedCharacteristic(
-        serviceId: ServiceUUID,
-        characteristicId: WriteCharacteristicUUID,
-        deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(
-        characteristic,
+    log.info("Sending to Decent");
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteCharacteristicUUID, deviceId: device.id);
+    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
         value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
-    log('SCALE State changed to $state');
+    log.info('SCALE State changed to $state');
     _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:
-        log('Connecting');
+        log.info('Connecting');
         scaleService.setState(ScaleState.connecting);
         break;
 
       case DeviceConnectionState.connected:
-        log('Connected');
+        log.info('Connected');
         scaleService.setState(ScaleState.connected);
         ledOff(); // make the scale report weight by sending an inital write cmd
 
         final characteristic = QualifiedCharacteristic(
-            serviceId: ServiceUUID,
-            characteristicId: ReadCharacteristicUUID,
-            deviceId: device.id);
+            serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle
-            .subscribeToCharacteristic(characteristic)
-            .listen((data) {
+        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
@@ -154,7 +141,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
-        log('Eureka Scale disconnected. Destroying');
+        log.info('Eureka Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
 
