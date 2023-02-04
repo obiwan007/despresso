@@ -1,13 +1,32 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:logging_appenders/logging_appenders.dart';
 import 'package:path_provider/path_provider.dart';
 
-void initLogger() {
+Future<void> initLogger() async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    print('APP#${record.level.name}: ${record.time}:${record.loggerName}# ${record.message}');
-  });
+  // Logger.root.onRecord.listen((record) {
+  //   print('APP#${record.level.name}: ${record.time}:${record.loggerName}# ${record.message}');
+  // });
+  // PrintAppender.setupLogging();
+  PrintAppender(formatter: const ColorFormatter()).attachToLogger(Logger.root);
+
+  Directory? dir;
+  try {
+    dir = await getExternalStorageDirectory();
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download/despresso');
+    } else {
+      dir = await getExternalStorageDirectory();
+    }
+    await dir?.create(recursive: true);
+    print("Store log to ${dir?.path}");
+  } catch (ex) {
+    print("Error creating logfiles");
+  }
+  RotatingFileAppender(formatter: const DefaultLogRecordFormatter(), baseFilePath: "${dir!.path}/logs.txt")
+      .attachToLogger(Logger.root);
 }
 
 // class FileOutput extends LogOutput {

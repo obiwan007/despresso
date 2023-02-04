@@ -92,7 +92,7 @@ enum MMRAddrEnum {
 }
 
 class DE1 extends ChangeNotifier {
-  final log = l.Logger('ExampleLogger');
+  final log = l.Logger('DE1');
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
 

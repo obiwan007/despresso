@@ -23,7 +23,7 @@ class CoffeeEdit extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class CoffeeEditState extends State<CoffeeEdit> {
-  final log = Logger('ExampleLogger');
+  final log = Logger('CoffeeEditState');
 
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;

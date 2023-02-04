@@ -28,7 +28,7 @@ class CoffeeSelectionTab extends StatefulWidget {
 enum EditModes { show, add, edit }
 
 class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
-  final log = Logger('ExampleLogger');
+  final log = Logger('CoffeeSelectionTabState');
 
   Roaster newRoaster = Roaster();
   Coffee newCoffee = Coffee();

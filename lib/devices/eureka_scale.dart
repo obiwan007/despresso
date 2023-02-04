@@ -11,7 +11,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logging/logging.dart' as l;
 
 class EurekaScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('ExampleLogger');
+  final log = l.Logger('EurekaScale');
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb');

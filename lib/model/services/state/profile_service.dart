@@ -210,7 +210,7 @@ class ProfileService extends ChangeNotifier {
 
     p.isDefault = isDefault;
     defaultProfiles.add(p);
-    log.info("$header $frames $exFrames");
+    log.fine("$header $frames $exFrames");
 
     return "";
   }

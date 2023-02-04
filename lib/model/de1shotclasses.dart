@@ -182,7 +182,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   }
 
   static Uint8List encodeDe1ShotHeader(De1ShotHeaderClass shotHeader) {
-    final log = Logger('ExampleLogger');
+    final log = Logger('encodeDe1ShotHeader');
 
     Uint8List data = Uint8List(5);
 
@@ -203,7 +203,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   }
 
   static Uint8List encodeDe1ShotTail(int frameToWrite, double maxTotalVolume) {
-    final log = Logger('ExampleLogger');
+    final log = Logger('encodeDe1ShotTail');
 
     Uint8List data = Uint8List(8);
 
@@ -285,7 +285,7 @@ class De1ShotFrameClass // proc spec_shotframe
   // }
 
   static bool decodeDe1ShotFrame(ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
-    final log = Logger('ExampleLogger');
+    final log = Logger('decodeDe1ShotFrame');
 
     if (data.buffer.lengthInBytes != 8) return false;
     log.fine('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
@@ -325,7 +325,7 @@ class De1ShotFrameClass // proc spec_shotframe
   }
 
   static Uint8List encodeDe1ShotFrame(De1ShotFrameClass shotFrame) {
-    final log = Logger('ExampleLogger');
+    final log = Logger('encodeDe1ShotFrame');
 
     Uint8List data = Uint8List(8);
 
@@ -507,7 +507,7 @@ class Helper {
 
   // ignore: non_constant_identifier_names
   static convert_float_to_U10P0(double x, Uint8List data, int index) {
-    final log = Logger('ExampleLogger');
+    final log = Logger('convert_float_to_U10P0');
 
     Uint8List d = Uint8List(2);
 

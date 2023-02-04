@@ -30,7 +30,7 @@ class EspressoScreen extends StatefulWidget {
 }
 
 class EspressoScreenState extends State<EspressoScreen> {
-  final log = Logger('ExampleLogger');
+  final log = Logger('EspressoScreenState');
 
   late CoffeeService coffeeSelectionService;
   late EspressoMachineService machineService;

@@ -10,7 +10,7 @@ part 'shotstate.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ShotList {
-  final log = Logger('ExampleLogger');
+  final log = Logger('ShotList');
 
   bool saving = false;
 
