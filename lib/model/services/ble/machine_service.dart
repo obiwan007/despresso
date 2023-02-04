@@ -223,24 +223,12 @@ class EspressoMachineService extends ChangeNotifier {
         return;
       }
       if (settingsService.smartCharging) {
-        if (batteryLevel < 80) {
-          log.info("Battery: below 80");
-          if (await de1!.getUsbChargerMode() == 0) {
-            log.info("Battery: Charging is off, switching it on");
-            de1!.setUsbChargerMode(1);
-          } else {
-            log.info("Battery: Charging is already on");
-          }
-          // de1!.setUsbChargerMode(1);
-        } else if (batteryLevel > 90) {
-          log.info("Battery: above 90");
-          if (await de1!.getUsbChargerMode() == 1) {
-            log.info("Battery: Charging is on, switching it off");
-            de1!.setUsbChargerMode(0);
-          } else {
-            log.info("Battery: Charging is already off");
-          }
-          // de1!.setUsbChargerMode(0);
+        if (batteryLevel < 60) {
+          log.info("Battery: below 60");
+          de1!.setUsbChargerMode(1);
+        } else if (batteryLevel > 70) {
+          log.info("Battery: above 70");
+          de1!.setUsbChargerMode(0);
         }
         Future.delayed(
           const Duration(seconds: 1),
@@ -250,6 +238,7 @@ class EspressoMachineService extends ChangeNotifier {
         );
       } else {
         log.info("Battery: SmartCharging off");
+        _controllerBattery.add(batteryLevel);
       }
     });
   }

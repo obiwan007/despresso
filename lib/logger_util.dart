@@ -33,6 +33,11 @@ Future<Directory?> getDirectory() async {
   Directory? dir;
   if (Platform.isAndroid) {
     dir = Directory('/storage/emulated/0/Download/despresso');
+    try {
+      await dir?.create(recursive: true);
+    } catch (e) {
+      dir = await getExternalStorageDirectory();
+    }
   } else {
     try {
       dir = await getExternalStorageDirectory();
@@ -41,6 +46,7 @@ Future<Directory?> getDirectory() async {
       dir = await getApplicationDocumentsDirectory();
     }
   }
+
   return dir;
 }
 

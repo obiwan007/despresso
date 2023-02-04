@@ -132,6 +132,13 @@ class RecipeScreenState extends State<RecipeScreen> {
                                           if (snapshot.hasData) Text("Battery: ${snapshot.data}"),
                                           if (machineService.de1 != null)
                                             Text("Mode: ${machineService.de1!.usbChargerMode}"),
+                                          if (machineService.de1 != null)
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  machineService.de1!.setUsbChargerMode(
+                                                      machineService.de1!.usbChargerMode == 0 ? 1 : 0);
+                                                },
+                                                child: Text("Toggle USB Charger"))
                                         ],
                                       );
                                     })

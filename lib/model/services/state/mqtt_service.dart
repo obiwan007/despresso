@@ -97,7 +97,7 @@ class MqttService extends ChangeNotifier {
       });
 
       client.published!.listen((MqttPublishMessage message) {
-        log.fine(
+        log.finer(
             'MQTT:Published topic: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
       });
 
