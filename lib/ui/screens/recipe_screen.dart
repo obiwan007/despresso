@@ -115,11 +115,17 @@ class RecipeScreenState extends State<RecipeScreen> {
                                         child: ProfileGraphWidget(
                                             key: UniqueKey(), selectedProfile: profileService.currentProfile!),
                                       ),
-                                    Text(profileService.currentProfile?.shotHeader.notes ?? ""),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(profileService.currentProfile?.shotHeader.notes ?? ""),
+                                    ),
                                     if (coffeeService.currentCoffee?.description.isNotEmpty == true)
-                                      Text(
-                                        "Coffee notes",
-                                        style: Theme.of(context).textTheme.titleMedium,
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Coffee notes",
+                                          style: Theme.of(context).textTheme.titleMedium,
+                                        ),
                                       ),
                                     Text(coffeeService.currentCoffee?.description ?? ""),
                                   ],
