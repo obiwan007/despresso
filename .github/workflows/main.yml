@@ -64,4 +64,4 @@ jobs:
         if: always()
         with:
           name: Android
-          path: build/outputs/bundle/release/*
+          path:  build/app/outputs/bundle/release/*
