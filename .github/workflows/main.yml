@@ -44,6 +44,9 @@ jobs:
       - name: Version
         run: flutter --version
 
+      - name: Update pods
+        run: pod repo update
+
       - name: Build iOS  
         run: flutter build ios --release --no-codesign
 
