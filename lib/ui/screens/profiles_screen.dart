@@ -2,6 +2,8 @@ import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
+import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:despresso/ui/theme.dart' as theme;
@@ -96,18 +98,21 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                             setState(() {
                               _selectedProfile = value!;
                               profileService.setProfile(_selectedProfile!);
-                              calcProfileGraph();
-                              phases = _createPhases();
+                              // calcProfileGraph();
+                              // phases = _createPhases();
                             });
                           },
                           hint: const Text("Select item")),
-                      createKeyValue("Notes", _selectedProfile!.shotHeader.notes),
-                      createKeyValue("Beverage", _selectedProfile!.shotHeader.beverageType),
-                      createKeyValue("Type", _selectedProfile!.shotHeader.type),
-                      createKeyValue("Max Flow", _selectedProfile!.shotHeader.maximumFlow.toString()),
-                      createKeyValue("Max Pressure", _selectedProfile!.shotHeader.minimumPressure.toString()),
-                      createKeyValue("Target Volume", _selectedProfile!.shotHeader.targetVolume.toString()),
-                      createKeyValue("Target Weight", _selectedProfile!.shotHeader.targetWeight.toString()),
+                      KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
+                      KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
+                      KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
+                      KeyValueWidget(label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
+                      KeyValueWidget(
+                          label: "Max Pressure", value: _selectedProfile!.shotHeader.minimumPressure.toString()),
+                      KeyValueWidget(
+                          label: "Target Volume", value: _selectedProfile!.shotHeader.targetVolume.toString()),
+                      KeyValueWidget(
+                          label: "Target Weight", value: _selectedProfile!.shotHeader.targetWeight.toString()),
                     ],
                   ),
                 ),
@@ -121,7 +126,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                 children: [
                   Expanded(
                     flex: 4,
-                    child: _buildGraphPressure(),
+                    child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!),
                   ),
                   Expanded(
                     flex: 6,
@@ -245,13 +250,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
   createSteps() {
     return _selectedProfile!.shotFrames
-        .map((p) => createKeyValue(p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
+        .map((p) => KeyValueWidget(label: p.name, value: "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
         .toList();
-  }
-
-  void profileListener() {
-    log.info('Profile updated');
-    _selectedProfile = profileService.currentProfile;
   }
 
   List<charts.Series<ShotState, double>> _createSeriesData() {
@@ -371,5 +371,10 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log.info("Phase ${element.subState}");
     });
+  }
+
+  void profileListener() {
+    log.info('Profile updated');
+    _selectedProfile = profileService.currentProfile;
   }
 }

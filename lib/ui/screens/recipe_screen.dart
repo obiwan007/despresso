@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/shotstate.dart';
@@ -103,13 +104,22 @@ class RecipeScreenState extends State<RecipeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                            flex: 6,
-                            child: Text(
-                              "Graph",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            )),
+                          flex: 6,
+                          child: SizedBox(
+                              width: 100,
+                              child: Column(
+                                children: [
+                                  if (profileService.currentProfile != null)
+                                    SizedBox(
+                                      height: 300,
+                                      child: ProfileGraphWidget(
+                                          key: UniqueKey(), selectedProfile: profileService.currentProfile!),
+                                    ),
+                                ],
+                              )),
+                        ),
                         Expanded(
-                            flex: 4,
+                            flex: 3,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
