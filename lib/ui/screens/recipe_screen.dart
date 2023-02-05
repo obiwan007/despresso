@@ -87,56 +87,39 @@ class RecipeScreenState extends State<RecipeScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Details",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                SingleChildScrollView(
+                  child: Column(
                     children: [
-                      Text(
-                        "Details",
-                        style: Theme.of(context).textTheme.titleMedium,
+                      if (profileService.currentProfile != null)
+                        SizedBox(
+                          height: 300,
+                          child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: profileService.currentProfile!),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(profileService.currentProfile?.shotHeader.notes ?? ""),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                                width: 100,
-                                child: Column(
-                                  children: [
-                                    if (profileService.currentProfile != null)
-                                      SizedBox(
-                                        height: 300,
-                                        child: ProfileGraphWidget(
-                                            key: UniqueKey(), selectedProfile: profileService.currentProfile!),
-                                      ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(profileService.currentProfile?.shotHeader.notes ?? ""),
-                                    ),
-                                    if (coffeeService.currentCoffee?.description.isNotEmpty == true)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          "Coffee notes",
-                                          style: Theme.of(context).textTheme.titleMedium,
-                                        ),
-                                      ),
-                                    Text(coffeeService.currentCoffee?.description ?? ""),
-                                  ],
-                                )),
+                      if (coffeeService.currentCoffee?.description.isNotEmpty == true)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Coffee notes",
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
-                        ],
-                      ),
+                        ),
+                      Text(coffeeService.currentCoffee?.description ?? ""),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

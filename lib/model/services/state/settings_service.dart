@@ -20,6 +20,10 @@ enum SettingKeys {
   mqttUser,
   mqttPassword,
   mqttRootTopic,
+  mqttSendState,
+  mqttSendShot,
+  mqttSendBattery,
+  mqttSendWater,
   smartCharging,
 }
 
@@ -61,6 +65,10 @@ class SettingsService extends ChangeNotifier {
   String get mqttUser => Settings.getValue<String>(SettingKeys.mqttUser.name) ?? "";
   String get mqttPassword => Settings.getValue<String>(SettingKeys.mqttPassword.name) ?? "";
   String get mqttRootTopic => Settings.getValue<String>(SettingKeys.mqttRootTopic.name) ?? "0";
+  bool get mqttSendState => Settings.getValue<bool>(SettingKeys.mqttSendState.name) ?? false;
+  bool get mqttSendShot => Settings.getValue<bool>(SettingKeys.mqttSendShot.name) ?? false;
+  bool get mqttSendBattery => Settings.getValue<bool>(SettingKeys.mqttSendBattery.name) ?? false;
+  bool get mqttSendWater => Settings.getValue<bool>(SettingKeys.mqttSendWater.name) ?? false;
 
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
 }

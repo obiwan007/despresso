@@ -192,6 +192,7 @@ class MqttService extends ChangeNotifier {
     streamStateSubscription = machineService.streamState.listen((event) {
       try {
         if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendState) return;
         var pubTopic = '$rootTopic/de1';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.state.name);
@@ -207,6 +208,7 @@ class MqttService extends ChangeNotifier {
     streamShotSubscription = machineService.streamShotState.listen((event) {
       try {
         if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendShot) return;
         var pubTopic = '$rootTopic/de1/shot';
         var builder = MqttClientPayloadBuilder();
 
@@ -219,6 +221,7 @@ class MqttService extends ChangeNotifier {
     streamWaterSubscription = machineService.streamWaterLevel.listen((event) {
       try {
         if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendWater) return;
         var pubTopic = '$rootTopic/de1/waterlevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.waterLevel.toString());
@@ -234,6 +237,7 @@ class MqttService extends ChangeNotifier {
     streamBatterySubscription = machineService.streamBatteryState.listen((event) {
       try {
         if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendBattery) return;
         var pubTopic = '$rootTopic/tablet/batterylevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.toString());
