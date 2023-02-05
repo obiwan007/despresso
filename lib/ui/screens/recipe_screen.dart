@@ -84,7 +84,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           ),
         ),
         Expanded(
-          flex: 2,
+          flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -104,56 +104,28 @@ class RecipeScreenState extends State<RecipeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          flex: 6,
-                          child: SizedBox(
-                              width: 100,
-                              child: Column(
-                                children: [
-                                  if (profileService.currentProfile != null)
-                                    SizedBox(
-                                      height: 300,
-                                      child: ProfileGraphWidget(
-                                          key: UniqueKey(), selectedProfile: profileService.currentProfile!),
-                                    ),
-                                ],
-                              )),
+                          child: SingleChildScrollView(
+                            child: SizedBox(
+                                width: 100,
+                                child: Column(
+                                  children: [
+                                    if (profileService.currentProfile != null)
+                                      SizedBox(
+                                        height: 300,
+                                        child: ProfileGraphWidget(
+                                            key: UniqueKey(), selectedProfile: profileService.currentProfile!),
+                                      ),
+                                    Text(profileService.currentProfile?.shotHeader.notes ?? ""),
+                                    if (coffeeService.currentCoffee?.description.isNotEmpty == true)
+                                      Text(
+                                        "Coffee notes",
+                                        style: Theme.of(context).textTheme.titleMedium,
+                                      ),
+                                    Text(coffeeService.currentCoffee?.description ?? ""),
+                                  ],
+                                )),
+                          ),
                         ),
-                        Expanded(
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Description",
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
-                                Text(profileService.currentProfile?.shotHeader.notes ?? ""),
-                                if (coffeeService.currentCoffee?.description.isNotEmpty == true)
-                                  Text(
-                                    "Coffee notes",
-                                    style: Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                Text(coffeeService.currentCoffee?.description ?? ""),
-                                StreamBuilder<int>(
-                                    stream: machineService.streamBatteryState,
-                                    builder: (context, snapshot) {
-                                      return Column(
-                                        children: [
-                                          if (snapshot.hasData) Text("Battery: ${snapshot.data}"),
-                                          if (machineService.de1 != null)
-                                            Text("Mode: ${machineService.de1!.usbChargerMode}"),
-                                          if (machineService.de1 != null)
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  machineService.de1!.setUsbChargerMode(
-                                                      machineService.de1!.usbChargerMode == 0 ? 1 : 0);
-                                                },
-                                                child: Text("Toggle USB Charger"))
-                                        ],
-                                      );
-                                    })
-                              ],
-                            )),
                       ],
                     ),
                   ],
