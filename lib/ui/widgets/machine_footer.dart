@@ -69,8 +69,7 @@ class _MachineFooterState extends State<MachineFooter> {
                   children: snapshot.data != null &&
                           machineService.currentFullState.state != EspressoMachineState.espresso &&
                           machineService.currentFullState.state != EspressoMachineState.water &&
-                          machineService.currentFullState.state != EspressoMachineState.steam &&
-                          machineService.currentFullState.state != EspressoMachineState.sleep
+                          machineService.currentFullState.state != EspressoMachineState.steam
                       ? [
                           FooterValue(
                               value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",

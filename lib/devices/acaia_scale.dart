@@ -10,7 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class AcaiaScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('decodeDe1ShotHeader');
+  final log = l.Logger('AcaiaScale');
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Uuid.parse('00001820-0000-1000-8000-00805f9b34fb');
   // ignore: non_constant_identifier_names
@@ -109,36 +109,34 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     switch (type) {
       case 12:
         var subType = payload[0];
-        if (subType != 5) {
-          log.info('Acaia: 12 Subtype $subType');
+        if (subType != 5) {}
+        switch (subType) {
+          case 5: // weight
+            double weight = decodeWeight(payload);
+            scaleService.setWeight(weight);
+            break;
+          case 8: // Tara done
+            scaleService.setTara();
+            break;
+          case 7:
+            double time = decodeTime(payload.sublist(2));
+            log.fine("Time Response:  $time");
+            break;
+          case 11: // Heartbeat
+            var weight = 0.0;
+            var time = 0.0;
+
+            if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
+            if (payload[3] == 7) time = decodeTime(payload.sublist(3));
+            // scaleService.setWeight(weight);
+            scaleService.setWeight(weight);
+            log.finer("Heartbeat Response: Weight: $weight Time: $time");
+            break;
+          default:
+            log.fine('Acaia: 12 Subtype $subType');
+            break;
         }
-        if (subType == 5) {
-          double weight = decodeWeight(payload);
-          scaleService.setWeight(weight);
 
-          break;
-        }
-
-        if (subType == 8) {
-          scaleService.setTara();
-          break;
-        }
-
-        // if (subType == 7) {
-        //   double time = decodeTime(payload.sublist(2));
-        //   log.info("Time Response:  $time");
-        // }
-
-        // if (subType == 11) {
-        //   var weight = 0.0;
-        //   var time = 0.0;
-
-        //   if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
-        //   if (payload[3] == 7) time = decodeTime(payload.sublist(3));
-        //   // scaleService.setWeight(weight);
-        //   log.info("Heartbeat Response: $weight $time");
-        //   break;
-        // }
         //log.info("Unparsed acaia event subtype: " + subType.toString());
         //log.info("Payload: " + payload.toString());
 
@@ -194,6 +192,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
 
       scaleService.setState(ScaleState.disconnected);
+      scaleService.setBattery(0);
       return;
     }
     final characteristic =
@@ -290,8 +289,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
+        scaleService.setBattery(0);
         log.info('Acaia Scale disconnected. Destroying');
-        // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
         _heartBeatTimer.cancel();
         _deviceListener.cancel();
