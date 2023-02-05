@@ -229,7 +229,10 @@ class EspressoMachineService extends ChangeNotifier {
         } else if (batteryLevel > 70) {
           log.info("Battery: above 70");
           de1!.setUsbChargerMode(0);
+        } else {
+          de1!.setUsbChargerMode(0);
         }
+
         Future.delayed(
           const Duration(seconds: 1),
           () {

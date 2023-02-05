@@ -6,6 +6,7 @@
         }
     ],
     "settings": {
-        "dart.flutterSdkPath": null
+        "dart.flutterSdkPath": null,
+        "dart.lineLength": 120
     }
 }
