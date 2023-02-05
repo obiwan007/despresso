@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/shotstate.dart';
@@ -83,72 +84,59 @@ class RecipeScreenState extends State<RecipeScreen> {
           ),
         ),
         Expanded(
-          flex: 2,
+          flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Details",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                            flex: 6,
-                            child: Text(
-                              "Graph",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            )),
-                        Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Description",
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
-                                Text(profileService.currentProfile?.shotHeader.notes ?? ""),
-                                if (coffeeService.currentCoffee?.description.isNotEmpty == true)
-                                  Text(
-                                    "Coffee notes",
-                                    style: Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                Text(coffeeService.currentCoffee?.description ?? ""),
-                                StreamBuilder<int>(
-                                    stream: machineService.streamBatteryState,
-                                    builder: (context, snapshot) {
-                                      return Column(
-                                        children: [
-                                          if (snapshot.hasData) Text("Battery: ${snapshot.data}"),
-                                          if (machineService.de1 != null)
-                                            Text("Mode: ${machineService.de1!.usbChargerMode}"),
-                                          if (machineService.de1 != null)
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  machineService.de1!.setUsbChargerMode(
-                                                      machineService.de1!.usbChargerMode == 0 ? 1 : 0);
-                                                },
-                                                child: Text("Toggle USB Charger"))
-                                        ],
-                                      );
-                                    })
-                              ],
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Details",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                                width: 100,
+                                child: Column(
+                                  children: [
+                                    if (profileService.currentProfile != null)
+                                      SizedBox(
+                                        height: 300,
+                                        child: ProfileGraphWidget(
+                                            key: UniqueKey(), selectedProfile: profileService.currentProfile!),
+                                      ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(profileService.currentProfile?.shotHeader.notes ?? ""),
+                                    ),
+                                    if (coffeeService.currentCoffee?.description.isNotEmpty == true)
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Coffee notes",
+                                          style: Theme.of(context).textTheme.titleMedium,
+                                        ),
+                                      ),
+                                    Text(coffeeService.currentCoffee?.description ?? ""),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
