@@ -76,10 +76,7 @@ class _MachineFooterState extends State<MachineFooter> {
                                   color: Colors.red,
                                   child: const FooterValue(value: "Refill water", label: "Water", width: 200),
                                 )
-                              : FooterValue(
-                                  value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
-                                  label: "Water",
-                                  width: 200)
+                              : FooterValue(value: "${snapshot.data?.getLevelML()} ml", label: "Water", width: 200)
                         ]
                       : [],
                 );
