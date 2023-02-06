@@ -237,7 +237,7 @@ class EspressoMachineService extends ChangeNotifier {
           log.info("Battery: above 70");
           de1!.setUsbChargerMode(0);
         } else {
-          de1!.setUsbChargerMode(0);
+          de1!.setUsbChargerMode(de1!.usbChargerMode);
         }
 
         Future.delayed(
