@@ -80,38 +80,52 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           children: [
             Expanded(
               flex: 4, // takes 30% of available width
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownButton(
-                          isExpanded: true,
-                          alignment: Alignment.centerLeft,
-                          value: _selectedProfile,
-                          items: items,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedProfile = value!;
-                              profileService.setProfile(_selectedProfile!);
-                              // calcProfileGraph();
-                              // phases = _createPhases();
-                            });
-                          },
-                          hint: const Text("Select item")),
-                      KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
-                      KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
-                      KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
-                      KeyValueWidget(label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
-                      KeyValueWidget(
-                          label: "Max Pressure", value: _selectedProfile!.shotHeader.minimumPressure.toString()),
-                      KeyValueWidget(
-                          label: "Target Volume", value: _selectedProfile!.shotHeader.targetVolume.toString()),
-                      KeyValueWidget(
-                          label: "Target Weight", value: _selectedProfile!.shotHeader.targetWeight.toString()),
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    DropdownButton(
+                        isExpanded: true,
+                        alignment: Alignment.centerLeft,
+                        value: _selectedProfile,
+                        items: items,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedProfile = value!;
+                            profileService.setProfile(_selectedProfile!);
+                            // calcProfileGraph();
+                            // phases = _createPhases();
+                          });
+                        },
+                        hint: const Text("Select item")),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
+                                KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
+                                KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
+                                KeyValueWidget(
+                                    label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
+                                KeyValueWidget(
+                                    label: "Max Pressure",
+                                    value: _selectedProfile!.shotHeader.minimumPressure.toString()),
+                                KeyValueWidget(
+                                    label: "Target Volume",
+                                    value: _selectedProfile!.shotHeader.targetVolume.toString()),
+                                KeyValueWidget(
+                                    label: "Target Weight",
+                                    value: _selectedProfile!.shotHeader.targetWeight.toString()),
+                              ],
+                            )),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

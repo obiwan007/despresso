@@ -71,16 +71,21 @@ class _MachineFooterState extends State<MachineFooter> {
                           machineService.currentFullState.state != EspressoMachineState.water &&
                           machineService.currentFullState.state != EspressoMachineState.steam
                       ? [
-                          FooterValue(
-                              value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
-                              label: "Water",
-                              width: 200),
+                          machineService.currentFullState.state == EspressoMachineState.refill
+                              ? Container(
+                                  color: Colors.red,
+                                  child: const FooterValue(value: "Refill water", label: "Water", width: 200),
+                                )
+                              : FooterValue(
+                                  value: "${snapshot.data?.getLevelML()} ml / ${snapshot.data?.getLevelPercent()} %",
+                                  label: "Water",
+                                  width: 200)
                         ]
                       : [],
                 );
               }),
           const Spacer(),
-          Container(color: Colors.black38, child: ScaleFooter(machineService: machineService)),
+          ScaleFooter(machineService: machineService),
           const Spacer(),
           StreamBuilder<ShotState>(
               stream: machineService.streamShotState,
