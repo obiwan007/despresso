@@ -29,7 +29,7 @@
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<string>2</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>
@@ -57,5 +57,9 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+        <key>NSBluetoothAlwaysUsageDescription</key>
+	<string>The app uses bluetooth to find, connect and transfer data between different devices like finding your BLE scale and decent DE1 machine.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>The app uses bluetooth to find, connect and transfer data between different devices like finding your BLE scale and decent DE1 machine.</string>
 	</dict>
 </plist>

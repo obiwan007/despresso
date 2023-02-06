@@ -1,4 +1,11 @@
 # Flutter/Dart/Pub related
+report.xml
+*.p12
+*.cer*
+Runner.ipa
+Runner.app.dSYM.zip
+**/*.mobileprovision
+**/.env.default
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
