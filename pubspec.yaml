@@ -69,6 +69,8 @@ dependencies:
   battery_plus: ^3.0.2
   logging_appenders: ^1.0.0+2
   logging: ^1.1.1
+  file_picker: ^5.2.5
+  share_plus: ^6.3.0
 
 dev_dependencies:
   flutter_test:

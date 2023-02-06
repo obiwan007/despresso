@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -8,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:logging/logging.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../model/services/ble/machine_service.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../service_locator.dart';
 import './profiles_edit_screen.dart';
 
@@ -27,6 +32,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   late EspressoMachineService machineService;
 
   De1ShotProfile? _selectedProfile;
+  FilePickerResult? filePickerResult;
+  File? pickedFile;
 
   @override
   void initState() {
@@ -60,6 +67,24 @@ class ProfilesScreenState extends State<ProfilesScreen> {
       appBar: AppBar(
         title: const Text('Profiles'),
         actions: <Widget>[
+          // Use Builder to get the widget context
+          Builder(
+            builder: (BuildContext context) {
+              return ElevatedButton(
+                onPressed: () => _onShare(context),
+                child: const Text('Share'),
+              );
+            },
+          ),
+
+          ElevatedButton(
+            child: const Text(
+              'Load',
+            ),
+            onPressed: () {
+              getProfileFromFolder(context);
+            },
+          ),
           ElevatedButton(
             child: const Text(
               'Edit',
@@ -197,6 +222,18 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     );
   }
 
+  getProfileFromFolder(context) async {
+    filePickerResult = await FilePicker.platform
+        .pickFiles(lockParentWindow: true, type: FileType.custom, allowedExtensions: ["json", "tcl"]);
+
+    if (filePickerResult != null) {
+      pickedFile = File(filePickerResult!.files.single.path.toString());
+      LoadJsonProfile(file: pickedFile!);
+    } else {
+      // can perform some actions like notification etc
+    }
+  }
+
   createSteps() {
     return _selectedProfile!.shotFrames
         .map((p) => KeyValueWidget(
@@ -209,5 +246,23 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   void profileListener() {
     log.info('Profile updated');
     _selectedProfile = profileService.currentProfile;
+  }
+
+  LoadJsonProfile({required File file}) async {
+    var lines = await file.readAsLines();
+    log.info(lines);
+  }
+
+  _onShare(BuildContext context) async {
+    // _onShare method:
+    final box = context.findRenderObject() as RenderBox?;
+    // var profileAsString = jsonEncode(_selectedProfile!.toJson());
+    var encoder = const JsonEncoder.withIndent("  ");
+    var profileAsString = encoder.convert(_selectedProfile!.toJson());
+    await Share.share(
+      profileAsString,
+      subject: _selectedProfile!.title,
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+    );
   }
 }
