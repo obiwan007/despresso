@@ -2,6 +2,7 @@ import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
+import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
@@ -110,7 +111,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
           children: [
             Expanded(
               child: IntrinsicHeight(
-                child: _buildGraphPressure(),
+                child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _profile),
               ),
             ),
             Container(
@@ -194,13 +195,18 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
-                              value: preInfusion!.frameLen,
+                              value: preInfusion!.pump == "flow" ? preInfusion!.setVal : preInfusion!.triggerVal,
                               interval: 1,
                               showTicks: true,
                               showLabels: true,
                               enableTooltip: true,
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
+                                var v = (value * 10).round() / 10;
+                                if (preInfusion!.pump == "flow")
+                                  preInfusion!.setVal = v;
+                                else
+                                  preInfusion!.triggerVal = v;
                                 setState(() {});
                               },
                             ),
@@ -214,19 +220,23 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      Text("Pressure (${preInfusion?.setVal.round()} bar)"),
+                      Text("Pressure < ${preInfusion?.setVal} bar"),
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
-                        value: preInfusion?.setVal,
-                        interval: 2,
+                        value: preInfusion!.pump == "pressure" ? preInfusion!.setVal : preInfusion!.triggerVal,
+                        interval: 5,
                         showTicks: true,
                         showLabels: true,
                         enableTooltip: true,
-                        minorTicksPerInterval: 1,
+                        minorTicksPerInterval: 5,
                         onChanged: (dynamic value) {
                           setState(() {
-                            preInfusion!.setVal = value;
+                            var v = (value * 10).round() / 10;
+                            if (preInfusion!.pump == "pressure")
+                              preInfusion!.setVal = v;
+                            else
+                              preInfusion!.triggerVal = v;
 
                             calcProfileGraph();
                           });
