@@ -1,4 +1,5 @@
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
@@ -32,9 +33,15 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
     phases = _createPhases();
     const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
     var data = _createSeriesData();
-
+    var isPressure = _selectedProfile!.shotHeader.type == "pressure";
+    var isFlow = _selectedProfile!.shotHeader.type == "flow";
+    var isAdvanced = _selectedProfile!.shotHeader.type == "advanced";
+    List<charts.Series<dynamic, num>> view = [];
+    if (isPressure) view = [data[0], data[1], data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)];
+    if (isFlow) view = [data[0], data[1], data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)];
+    if (isAdvanced) view = [data[0], data[1], data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)];
     var flowChart = charts.LineChart(
-      [data[0], data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
+      view,
       animate: false,
       behaviors: [
         charts.SeriesLegend(),
@@ -43,6 +50,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         charts.RangeAnnotation([...phases], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       primaryMeasureAxis: charts.NumericAxisSpec(
+        viewport: charts.NumericExtents(0, 10),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
@@ -127,11 +135,133 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
     shotList.entries.add(shotState);
+    double lastVal = 0;
     for (var frame in _selectedProfile!.shotFrames) {
-      time += frame.frameLen;
-      ShotState shotState = ShotState(time, time, frame.setVal, frame.setVal, frame.temp, frame.temp, frame.temp,
-          frame.temp, 0, 0, 0, 0, 0, frame.name);
-      shotList.entries.add(shotState);
+      double defaultPressure = -1;
+      double defaultFlow = -1;
+      if (frame.name == "preinfusion") {
+        defaultPressure = 1;
+      }
+
+      if (frame.transition == "fast") {
+        ShotState shotState = ShotState(
+            time,
+            time,
+            frame.pump == "pressure" ? lastVal : defaultPressure,
+            frame.pump == "flow" ? lastVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "");
+        shotList.entries.add(shotState);
+        shotState = ShotState(
+            time + 1.5,
+            time + 1.5,
+            frame.pump == "pressure" ? frame.setVal : defaultPressure,
+            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            frame.name);
+        shotList.entries.add(shotState);
+        time += frame.frameLen;
+        shotState = ShotState(
+            time,
+            time,
+            frame.pump == "pressure" ? frame.setVal : defaultPressure,
+            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "");
+        shotList.entries.add(shotState);
+      } else if (frame.transition == "smooth") {
+        ShotState shotState = ShotState(
+            time,
+            time,
+            frame.pump == "pressure" ? lastVal : defaultPressure,
+            frame.pump == "flow" ? lastVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "");
+        shotList.entries.add(shotState);
+        shotState = ShotState(
+            time + 2.5,
+            time + 2.5,
+            frame.pump == "pressure" ? frame.setVal : defaultPressure,
+            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            "");
+        time += frame.frameLen;
+        shotState = ShotState(
+            time,
+            time,
+            frame.pump == "pressure" ? frame.setVal : defaultPressure,
+            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            frame.name);
+        shotList.entries.add(shotState);
+      } else {
+        ShotState shotState = ShotState(
+            time,
+            time,
+            frame.pump == "pressure" ? frame.setVal : defaultPressure,
+            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            frame.temp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            frame.name);
+        shotList.entries.add(shotState);
+      }
+
+      lastVal = frame.setVal;
     }
   }
 

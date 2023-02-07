@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   battery_plus
   objectbox_flutter_libs
   permission_handler_windows
+  share_plus
   url_launcher_windows
 )
 

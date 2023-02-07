@@ -309,7 +309,7 @@ class ProfileService extends ChangeNotifier {
       if (transition == "") return false;
 
       if (transition == "smooth") features |= Interpolate;
-
+      frame.transition = transition;
       // "move on if...."
       if (frameData.containsKey("exit")) {
         var exitData = frameData["exit"];
