@@ -27,10 +27,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   final log = Logger('ProfilesEditScreenState');
 
   late ProfileService profileService;
-  ShotList shotList = ShotList([]);
-  late EspressoMachineService machineService;
 
-  Iterable<RangeAnnotationSegment<double>> phases = [];
+  late EspressoMachineService machineService;
 
   final De1ShotProfile _profile;
 
@@ -53,8 +51,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     for (var element in _profile.shotFrames) {
       log.info("Profile: $element");
     }
-
-    phases = _createPhases();
 
     var declineObject = De1ShotFrameClass();
     declineObject.frameToWrite = _profile.shotFrames.length;
@@ -179,7 +175,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             onChanged: (dynamic value) {
                               setState(() {
                                 preInfusion!.frameLen = value;
-                                phases = _createPhases();
                               });
                             },
                           ),
@@ -278,7 +273,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             onChanged: (dynamic value) {
                               setState(() {
                                 riseAndHold!.frameLen = value;
-                                phases = _createPhases();
                               });
                             },
                           ),
@@ -371,7 +365,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             onChanged: (dynamic value) {
                               setState(() {
                                 decline!.frameLen = value;
-                                phases = _createPhases();
                               });
                             },
                           ),
@@ -453,38 +446,5 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
   void profileListener() {
     log.info('Profile updated');
-  }
-
-  Iterable<RangeAnnotationSegment<double>> _createPhases() {
-    if (shotList.entries.isEmpty) {
-      return [];
-    }
-
-    var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
-    // log.info("Phases= ${stateChanges.length}");
-
-    int i = 0;
-    var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
-    return stateChanges.map((from) {
-      var toSampleTime = maxSampleTime;
-      // og(from.subState);
-      if (i < stateChanges.length - 1) {
-        i++;
-        toSampleTime = stateChanges[i].sampleTimeCorrected;
-      }
-
-      var col = theme.ThemeColors.statesColors[from.subState];
-      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.ThemeColors.backgroundColor);
-      // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
-      return charts.RangeAnnotationSegment(
-          from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
-          labelAnchor: charts.AnnotationLabelAnchor.end,
-          color: col2,
-          startLabel: from.subState,
-          labelStyleSpec: charts.TextStyleSpec(
-              fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-          labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.info("Phase ${element.subState}");
-    });
   }
 }
