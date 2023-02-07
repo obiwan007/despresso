@@ -98,7 +98,7 @@ source_gen:combining_builder:
     - lib/**/model/*.dart
 flutter_native_splash:
   color: "#000000"
-  image: assets/decent.png
+  image: assets/logo.png
   android: true
   ios: true
 # objectbox:
@@ -121,7 +121,7 @@ flutter:
  
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/decent.png
+    - assets/logo.png
     - assets/fill_tank.jpg
     - assets/filling_tank.jpg
     - assets/profiles/
