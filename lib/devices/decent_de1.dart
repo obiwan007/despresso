@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io' show Platform;
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -94,28 +95,50 @@ enum MMRAddrEnum {
 class DE1 extends ChangeNotifier {
   final log = l.Logger('DE1');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB');
+  static Uuid ServiceUUID =
+      Platform.isAndroid ? Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB') : Uuid.parse('A000');
 
-  static var cuuids = {
-    '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
-    '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,
-    '0000A003-0000-1000-8000-00805F9B34FB': Endpoint.setTime,
-    '0000A004-0000-1000-8000-00805F9B34FB': Endpoint.shotDirectory,
-    '0000A005-0000-1000-8000-00805F9B34FB': Endpoint.readFromMMR,
-    '0000A006-0000-1000-8000-00805F9B34FB': Endpoint.writeToMMR,
-    '0000A007-0000-1000-8000-00805F9B34FB': Endpoint.shotMapRequest,
-    '0000A008-0000-1000-8000-00805F9B34FB': Endpoint.deleteShotRange,
-    '0000A009-0000-1000-8000-00805F9B34FB': Endpoint.fwMapRequest,
-    '0000A00A-0000-1000-8000-00805F9B34FB': Endpoint.temperatures,
-    '0000A00B-0000-1000-8000-00805F9B34FB': Endpoint.shotSettings,
-    '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
-    '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
-    '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
-    '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
-    '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
-    '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
-    '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
-  };
+  static var cuuids = Platform.isAndroid
+      ? {
+          '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
+          '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,
+          '0000A003-0000-1000-8000-00805F9B34FB': Endpoint.setTime,
+          '0000A004-0000-1000-8000-00805F9B34FB': Endpoint.shotDirectory,
+          '0000A005-0000-1000-8000-00805F9B34FB': Endpoint.readFromMMR,
+          '0000A006-0000-1000-8000-00805F9B34FB': Endpoint.writeToMMR,
+          '0000A007-0000-1000-8000-00805F9B34FB': Endpoint.shotMapRequest,
+          '0000A008-0000-1000-8000-00805F9B34FB': Endpoint.deleteShotRange,
+          '0000A009-0000-1000-8000-00805F9B34FB': Endpoint.fwMapRequest,
+          '0000A00A-0000-1000-8000-00805F9B34FB': Endpoint.temperatures,
+          '0000A00B-0000-1000-8000-00805F9B34FB': Endpoint.shotSettings,
+          '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
+          '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
+          '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
+          '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
+          '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
+          '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
+          '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
+        }
+      : {
+          'A001': Endpoint.versions,
+          'A002': Endpoint.requestedState,
+          'A003': Endpoint.setTime,
+          'A004': Endpoint.shotDirectory,
+          'A005': Endpoint.readFromMMR,
+          'A006': Endpoint.writeToMMR,
+          'A007': Endpoint.shotMapRequest,
+          'A008': Endpoint.deleteShotRange,
+          'A009': Endpoint.fwMapRequest,
+          'A00A': Endpoint.temperatures,
+          'A00B': Endpoint.shotSettings,
+          'A00C': Endpoint.deprecatedShotDesc,
+          'A00D': Endpoint.shotSample,
+          'A00E': Endpoint.stateInfo,
+          'A00F': Endpoint.headerWrite,
+          'A010': Endpoint.frameWrite,
+          'A011': Endpoint.waterLevels,
+          'A012': Endpoint.calibration
+        };
 
   static Map<Endpoint, String> cuuidLookup =
       LinkedHashMap.fromEntries(cuuids.entries.map((e) => MapEntry(e.value, e.key)));
@@ -358,7 +381,7 @@ class DE1 extends ChangeNotifier {
   void write(Endpoint e, Uint8List data) {
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: data);
+    flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }

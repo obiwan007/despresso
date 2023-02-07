@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math' show pow;
 import 'dart:typed_data';
 
@@ -12,9 +13,11 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 class AcaiaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('AcaiaScale');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Uuid.parse('00001820-0000-1000-8000-00805f9b34fb');
+  static Uuid ServiceUUID =
+      Platform.isAndroid ? Uuid.parse('00001820-0000-1000-8000-00805f9b34fb') : Uuid.parse('1820');
   // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID = Uuid.parse('00002a80-0000-1000-8000-00805f9b34fb');
+  static Uuid CharateristicUUID =
+      Platform.isAndroid ? Uuid.parse('00002a80-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a80');
   late ScaleService scaleService;
 
   static const _heartbeatTime = Duration(seconds: 3);

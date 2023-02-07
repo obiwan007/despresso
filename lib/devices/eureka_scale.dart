@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:logging/logging.dart';
 import 'dart:typed_data';
 
@@ -14,14 +15,20 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('EurekaScale');
 
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb');
+  static Uuid ServiceUUID =
+      Platform.isAndroid ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
   // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID = Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb');
-
-  static Uuid BatteryServiceUUID = Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb');
-  static Uuid BatteryCharacteristicUUID = Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb');
+  static Uuid CharateristicUUID =
+      Platform.isAndroid ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
   // ignore: non_constant_identifier_names
-  static Uuid CommandUUID = Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb');
+  static Uuid BatteryServiceUUID =
+      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+  // ignore: non_constant_identifier_names
+  static Uuid BatteryCharacteristicUUID =
+      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
+  // ignore: non_constant_identifier_names
+  static Uuid CommandUUID =
+      Platform.isAndroid ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
 
   late ScaleService scaleService;
 

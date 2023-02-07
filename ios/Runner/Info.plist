@@ -57,6 +57,12 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+	    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>  
+	    <string>Need Location permission</string>  
+	    <key>NSLocationAlwaysUsageDescription</key>  
+	    <string>Need Location permission</string>  
+	    <key>NSLocationWhenInUseUsageDescription</key>  
+	    <string>Need Location permission</string>
 		<key>NSBluetoothAlwaysUsageDescription</key>
 		<string>The app uses bluetooth to find, connect and transfer data between different devices like finding your BLE scale and decent DE1 machine.</string>
 		<key>NSBluetoothPeripheralUsageDescription</key>
