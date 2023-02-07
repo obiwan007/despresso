@@ -1,4 +1,11 @@
 # Flutter/Dart/Pub related
+report.xml
+*.p12
+*.cer*
+Runner.ipa
+Runner.app.dSYM.zip
+**/*.mobileprovision
+**/.env.default
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -22,7 +29,7 @@ android/app/release
 .packages
 build/
 # If you're building an application, you may want to check-in your pubspec.lock
-pubspec.lock
+# pubspec.lock
 
 # Directory created by dartdoc
 # If you don't generate documentation locally you can remove this line.

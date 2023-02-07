@@ -49,10 +49,20 @@ class MqttService extends ChangeNotifier {
         client.port = int.parse(settingsService.mqttPort);
         log.info('MQTT:mqtt service started');
         client.keepAlivePeriod = 60;
+        client.autoReconnect = true;
+        client.resubscribeOnAutoReconnect = true;
         client.onDisconnected = onDisconnected;
         client.setProtocolV31();
 
         client.onConnected = onConnected;
+        client.onAutoReconnected = () {
+          log.info("Auto Reconnected");
+        };
+
+        client.onAutoReconnect = () {
+          log.info("Auto Reconnect - connection lost");
+        };
+
         client.onSubscribed = onSubscribed;
         client.pongCallback = pong;
 
@@ -96,10 +106,10 @@ class MqttService extends ChangeNotifier {
         log.info('MQTT:Received message: topic is ${c[0].topic}, payload is $pt');
       });
 
-      client.published!.listen((MqttPublishMessage message) {
-        log.fine(
-            'MQTT:Published topic: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
-      });
+      // client.published!.listen((MqttPublishMessage message) {
+      //   log.finer(
+      //       'MQTT:Published topic: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
+      // });
 
       log.info('MQTT:Publishing our topic');
       var pubTopic = '$rootTopic/status';
@@ -141,26 +151,29 @@ class MqttService extends ChangeNotifier {
   }
 
   /// The unsolicited disconnect callback
-  void onDisconnected() {
+  Future<void> onDisconnected() async {
     connected = false;
-
-    streamStateSubscription.cancel();
-    streamBatterySubscription.cancel();
-    streamShotSubscription.cancel();
-    streamWaterSubscription.cancel();
+    try {
+      await streamStateSubscription.cancel();
+      await streamBatterySubscription.cancel();
+      await streamShotSubscription.cancel();
+      await streamWaterSubscription.cancel();
+    } catch (e) {
+      log.severe('MQTT:OnDisconnected listener could not be closed $e');
+    }
 
     log.info('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       log.info('MQTT:OnDisconnected callback is solicited, this is correct');
     }
 
-    Future.delayed(
-      const Duration(seconds: 10),
-      () {
-        log.info('MQTT:Reconnecting');
-        startService();
-      },
-    );
+    // Future.delayed(
+    //   const Duration(seconds: 10),
+    //   () {
+    //     log.info('MQTT:Reconnecting');
+    //     startService();
+    //   },
+    // );
   }
 
   /// The successful connect callback
@@ -178,7 +191,8 @@ class MqttService extends ChangeNotifier {
   void handleEvents() {
     streamStateSubscription = machineService.streamState.listen((event) {
       try {
-        log.fine("State Change detected $event");
+        if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendState) return;
         var pubTopic = '$rootTopic/de1';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.state.name);
@@ -193,7 +207,8 @@ class MqttService extends ChangeNotifier {
     });
     streamShotSubscription = machineService.streamShotState.listen((event) {
       try {
-        log.fine("Shot State CHange detected $event");
+        if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendShot) return;
         var pubTopic = '$rootTopic/de1/shot';
         var builder = MqttClientPayloadBuilder();
 
@@ -205,6 +220,8 @@ class MqttService extends ChangeNotifier {
     });
     streamWaterSubscription = machineService.streamWaterLevel.listen((event) {
       try {
+        if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendWater) return;
         var pubTopic = '$rootTopic/de1/waterlevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.waterLevel.toString());
@@ -219,6 +236,8 @@ class MqttService extends ChangeNotifier {
 
     streamBatterySubscription = machineService.streamBatteryState.listen((event) {
       try {
+        if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+        if (!settingsService.mqttSendBattery) return;
         var pubTopic = '$rootTopic/tablet/batterylevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.toString());

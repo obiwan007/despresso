@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/settings.dart';
@@ -68,6 +70,7 @@ class EspressoMachineService extends ChangeNotifier {
   late SharedPreferences prefs;
 
   late ProfileService profileService;
+  late BLEService bleService;
 
   bool refillAnounced = false;
 
@@ -107,6 +110,8 @@ class EspressoMachineService extends ChangeNotifier {
   EspressoMachineState lastState = EspressoMachineState.disconnected;
 
   Battery _battery = Battery();
+
+  final List<int> _waterAverager = [];
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -142,6 +147,8 @@ class EspressoMachineService extends ChangeNotifier {
   void init() async {
     profileService = getIt<ProfileService>();
     settingsService = getIt<SettingsService>();
+    bleService = getIt<BLEService>();
+
     objectBox = getIt<ObjectBox>();
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
@@ -223,25 +230,16 @@ class EspressoMachineService extends ChangeNotifier {
         return;
       }
       if (settingsService.smartCharging) {
-        if (batteryLevel < 80) {
-          log.info("Battery: below 80");
-          if (await de1!.getUsbChargerMode() == 0) {
-            log.info("Battery: Charging is off, switching it on");
-            de1!.setUsbChargerMode(1);
-          } else {
-            log.info("Battery: Charging is already on");
-          }
-          // de1!.setUsbChargerMode(1);
-        } else if (batteryLevel > 90) {
-          log.info("Battery: above 90");
-          if (await de1!.getUsbChargerMode() == 1) {
-            log.info("Battery: Charging is on, switching it off");
-            de1!.setUsbChargerMode(0);
-          } else {
-            log.info("Battery: Charging is already off");
-          }
-          // de1!.setUsbChargerMode(0);
+        if (batteryLevel < 60) {
+          log.info("Battery: below 60");
+          de1!.setUsbChargerMode(1);
+        } else if (batteryLevel > 70) {
+          log.info("Battery: above 70");
+          de1!.setUsbChargerMode(0);
+        } else {
+          de1!.setUsbChargerMode(de1!.usbChargerMode);
         }
+
         Future.delayed(
           const Duration(seconds: 1),
           () {
@@ -250,6 +248,7 @@ class EspressoMachineService extends ChangeNotifier {
         );
       } else {
         log.info("Battery: SmartCharging off");
+        _controllerBattery.add(batteryLevel);
       }
     });
   }
@@ -292,9 +291,19 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   void setWaterLevel(WaterLevel water) {
-    _state.water = water;
-    notifyListeners();
-    _controllerWaterLevel.add(water);
+    try {
+      _waterAverager.add(water.waterLevel);
+      if (_waterAverager.length > 10) {
+        _waterAverager.removeAt(0);
+      }
+      var avWater = _waterAverager.average;
+      water.waterLevel = avWater.toInt();
+      _state.water = water;
+      notifyListeners();
+      _controllerWaterLevel.add(water);
+    } catch (e) {
+      log.severe("Waterlevel add not possible $e");
+    }
   }
 
   void setState(EspressoMachineState state) {
@@ -306,7 +315,13 @@ class EspressoMachineService extends ChangeNotifier {
         scaleService.tare();
       }
     }
-    if (state == EspressoMachineState.idle) {}
+    if (state == EspressoMachineState.idle &&
+        scaleService.state == ScaleState.disconnected &&
+        (_state.subState == "heat_water_tank" || _state.subState == "no_state")) {
+      log.info("Trying to autoconnect to scale");
+      bleService.startScan();
+    }
+
     notifyListeners();
     currentFullState.state = state;
     _controllerEspressoMachineState.add(currentFullState);
@@ -546,7 +561,6 @@ class EspressoMachineService extends ChangeNotifier {
       }
 
       //if (profileService.currentProfile.shot_header.target_weight)
-      log.info("Sample ${shot!.sampleTimeCorrected} ${shot.weight}");
       if (inShot == true) {
         shotList.add(shot);
       }

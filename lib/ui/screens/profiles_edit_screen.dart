@@ -2,6 +2,7 @@ import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
+import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:community_charts_flutter/community_charts_flutter.dart';
@@ -53,7 +54,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
       log.info("Profile: $element");
     }
 
-    calcProfileGraph();
     phases = _createPhases();
 
     var declineObject = De1ShotFrameClass();
@@ -110,7 +110,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
           children: [
             Expanded(
               child: IntrinsicHeight(
-                child: _buildGraphPressure(),
+                child: ProfileGraphWidget(selectedProfile: _profile),
               ),
             ),
             Container(
@@ -180,7 +180,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                               setState(() {
                                 preInfusion!.frameLen = value;
                                 phases = _createPhases();
-                                calcProfileGraph();
                               });
                             },
                           ),
@@ -194,13 +193,18 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
-                              value: preInfusion!.frameLen,
+                              value: preInfusion!.pump == "flow" ? preInfusion!.setVal : preInfusion!.triggerVal,
                               interval: 1,
                               showTicks: true,
                               showLabels: true,
                               enableTooltip: true,
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
+                                var v = (value * 10).round() / 10;
+                                if (preInfusion!.pump == "flow")
+                                  preInfusion!.setVal = v;
+                                else
+                                  preInfusion!.triggerVal = v;
                                 setState(() {});
                               },
                             ),
@@ -214,21 +218,23 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      Text("Pressure (${preInfusion?.setVal.round()} bar)"),
+                      Text("Pressure < ${preInfusion?.setVal} bar"),
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
-                        value: preInfusion?.setVal,
-                        interval: 2,
+                        value: preInfusion!.pump == "pressure" ? preInfusion!.setVal : preInfusion!.triggerVal,
+                        interval: 5,
                         showTicks: true,
                         showLabels: true,
                         enableTooltip: true,
-                        minorTicksPerInterval: 1,
+                        minorTicksPerInterval: 5,
                         onChanged: (dynamic value) {
                           setState(() {
-                            preInfusion!.setVal = value;
-
-                            calcProfileGraph();
+                            var v = (value * 10).round() / 10;
+                            if (preInfusion!.pump == "pressure")
+                              preInfusion!.setVal = v;
+                            else
+                              preInfusion!.triggerVal = v;
                           });
                         },
                       ),
@@ -273,7 +279,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                               setState(() {
                                 riseAndHold!.frameLen = value;
                                 phases = _createPhases();
-                                calcProfileGraph();
                               });
                             },
                           ),
@@ -323,7 +328,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             if (forcedRise != null) {
                               forcedRise!.setVal = value;
                             }
-                            calcProfileGraph();
                           });
                         },
                       ),
@@ -368,7 +372,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                               setState(() {
                                 decline!.frameLen = value;
                                 phases = _createPhases();
-                                calcProfileGraph();
                               });
                             },
                           ),
@@ -417,10 +420,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         onChanged: (dynamic value) {
                           setState(() {
                             decline!.setVal = value;
-                            // if (forcedRise != null) {
-                            //   forcedRise!.setVal = value;
-                            // }
-                            calcProfileGraph();
                           });
                         },
                       ),
@@ -432,57 +431,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildGraphPressure() {
-    const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
-    var data = _createSeriesData();
-    var flowChart = charts.LineChart(
-      [data[0], data[2]..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)],
-      animate: false,
-      behaviors: [
-        charts.SeriesLegend(),
-        // Define one domain and two measure annotations configured to render
-        // labels in the chart margins.
-        charts.RangeAnnotation([...phases], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
-      ],
-      primaryMeasureAxis: charts.NumericAxisSpec(
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      secondaryMeasureAxis: charts.NumericAxisSpec(
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-      domainAxis: charts.NumericAxisSpec(
-        renderSpec: charts.GridlineRendererSpec(
-          labelStyle:
-              charts.TextStyleSpec(fontSize: 10, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-          lineStyle:
-              charts.LineStyleSpec(thickness: 0, color: charts.ColorUtil.fromDartColor(theme.ThemeColors.primaryColor)),
-        ),
-      ),
-    );
-
-    return Container(
-      // height: 100,
-      margin: const EdgeInsets.only(left: 0.0),
-      width: MediaQuery.of(context).size.width - 0,
-      decoration: BoxDecoration(
-        color: Colors.black12,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: flowChart,
     );
   }
 
@@ -507,95 +455,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     log.info('Profile updated');
   }
 
-  List<charts.Series<ShotState, double>> _createSeriesData() {
-    return [
-      charts.Series<ShotState, double>(
-        id: 'Pressure',
-        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-        measureFn: (ShotState point, _) => point.groupPressure,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.pressureColor),
-        strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
-      ),
-      charts.Series<ShotState, double>(
-        id: 'Flow',
-        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-        measureFn: (ShotState point, _) => point.groupFlow,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.flowColor),
-        strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
-      ),
-      charts.Series<ShotState, double>(
-        id: 'Temp',
-        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-        measureFn: (ShotState point, _) => point.headTemp,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
-        strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
-      ),
-      charts.Series<ShotState, double>(
-        id: 'Weight',
-        domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-        measureFn: (ShotState point, _) => point.weight,
-        colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
-        strokeWidthPxFn: (_, __) => 3,
-        data: shotList.entries,
-      ),
-    ];
-  }
-
-  void calcProfileGraph() {
-    // this.sampleTime,
-    //   this.sampleTimeCorrected,
-    //   this.groupPressure,
-    //   this.groupFlow,
-    //   this.mixTemp,
-    //   this.headTemp,
-    //   this.setMixTemp,
-    //   this.setHeadTemp,
-    //   this.setGroupPressure,
-    //   this.setGroupFlow,
-    //   this.frameNumber,
-    //   this.steamTemp,
-    //   this.weight,
-    //   this.subState
-
-    // int frameToWrite = 0;
-    // int flag = 0;
-    // double setVal = 0; // {
-    // double temp = 0; // {
-    // double frameLen = 0.0; // convert_F8_1_7_to_float
-    // double triggerVal = 0; // {
-    // double maxVol = 0.0; // convert_bottom_10_of_U10P0
-    // String name = "";
-    // String pump = "";
-    // String sensor = "";
-    // String transition = "";
-    shotList.clear();
-    var time = 0.0;
-    var frame = _profile.shotFrames.first;
-
-    ShotState shotState = ShotState(
-        time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
-
-    shotList.entries.add(shotState);
-    for (var frame in _profile.shotFrames) {
-      time += frame.frameLen;
-      ShotState shotState = ShotState(time, time, frame.setVal, frame.setVal, frame.temp, frame.temp, frame.temp,
-          frame.temp, 0, 0, 0, 0, 0, frame.name);
-      shotList.entries.add(shotState);
-    }
-  }
-
   Iterable<RangeAnnotationSegment<double>> _createPhases() {
     if (shotList.entries.isEmpty) {
       return [];
     }
-    // shotList.entries.forEach((element) {
-    //   if (element.subState.isNotEmpty) {
-    //     log.info(element.subState + " " + element.sampleTimeCorrected.toString());
-    //   }
-    // });
+
     var stateChanges = shotList.entries.where((element) => element.subState.isNotEmpty).toList();
     // log.info("Phases= ${stateChanges.length}");
 
