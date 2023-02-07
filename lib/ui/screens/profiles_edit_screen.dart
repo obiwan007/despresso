@@ -33,9 +33,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
   final De1ShotProfile _profile;
 
   De1ShotFrameClass? preInfusion;
-  De1ShotFrameClass? forcedRise;
+  // De1ShotFrameClass? forcedRise;
   De1ShotFrameClass? riseAndHold;
   De1ShotFrameClass? decline;
+
+  De1ShotFrameClass? forcedRise;
 
   ProfilesEditScreenState(this._profile);
 
@@ -56,10 +58,13 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     declineObject.frameToWrite = _profile.shotFrames.length;
     declineObject.temp = _profile.shotFrames.first.temp;
 
-    preInfusion = _profile.shotFrames.where((element) => (element.name == "preinfusion")).toList().first;
+    var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
+    preInfusion = pre.toList().first;
 
-    riseAndHold = _profile.shotFrames.where((element) => (element.name == "rise and hold")).toList().first;
-    forcedRise = _profile.shotFrames.where((element) => (element.name == "forced rise without limit")).toList().first;
+    var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold"));
+    riseAndHold = riseW.isNotEmpty ? riseW.first : null;
+    var forcedRiseWhere = _profile.shotFrames.where((element) => (element.name == "forced rise without limit"));
+    forcedRise = forcedRiseWhere.isNotEmpty ? forcedRiseWhere.first : null;
     var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
     if (declineArray.isNotEmpty) {
       decline = declineArray.first;
@@ -115,28 +120,76 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 5,
-                        child: Card(
-                          child: buildPreinfusion(),
+                  if (_profile.shotHeader.type == "pressure")
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: Card(
+                            child: buildPreinfusion(),
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 5, // takes 30% of available width
-                        child: Card(
-                          child: buildRiseAndHold(),
+                        Expanded(
+                          flex: 5, // takes 30% of available width
+                          child: Card(
+                            child: buildRiseAndHold(riseAndHold, forcedRise),
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 5, // takes 30% of available width
-                        child: Card(
-                          child: buildDecline(),
+                        Expanded(
+                          flex: 5, // takes 30% of available width
+                          child: Card(
+                            child: buildDecline(),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  if (_profile.shotHeader.type == "flow")
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: Card(
+                            child: buildPreinfusion(),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5, // takes 30% of available width
+                          child: Card(
+                            child: buildRiseAndHold(
+                                _profile.shotFrames.where((element) => (element.name == "hold")).first, forcedRise),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5, // takes 30% of available width
+                          child: Card(
+                            child: buildDecline(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (_profile.shotHeader.type == "advanced")
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: Card(
+                            child: buildPreinfusion(),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5, // takes 30% of available width
+                          child: Card(
+                            child: buildRiseAndHold(riseAndHold, forcedRise),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5, // takes 30% of available width
+                          child: Card(
+                            child: buildDecline(),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -244,7 +297,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     );
   }
 
-  Padding buildRiseAndHold() {
+  Padding buildRiseAndHold(De1ShotFrameClass? riseAndHold, De1ShotFrameClass? forcedRise) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -272,7 +325,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             minorTicksPerInterval: 1,
                             onChanged: (dynamic value) {
                               setState(() {
-                                riseAndHold!.frameLen = value;
+                                var v = (value * 10).round() / 10;
+                                riseAndHold!.frameLen = v;
                               });
                             },
                           ),
@@ -282,11 +336,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         padding: const EdgeInsets.only(top: 28.0),
                         child: Column(
                           children: [
-                            Text("Limit flow (${riseAndHold?.frameLen.round()} ml/s)"),
+                            Text("Limit flow (${riseAndHold?.setVal.round()} ml/s)"),
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
-                              value: riseAndHold!.frameLen,
+                              value: riseAndHold!.pump == "flow" ? riseAndHold!.setVal : riseAndHold!.triggerVal,
                               interval: 1,
                               showTicks: true,
                               showLabels: true,
@@ -310,7 +364,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
-                        value: riseAndHold?.setVal,
+                        value: riseAndHold!.pump == "pressure" ? riseAndHold!.setVal : riseAndHold!.triggerVal,
                         interval: 2,
                         showTicks: true,
                         showLabels: true,
@@ -404,7 +458,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                       SfSlider.vertical(
                         min: 0.0,
                         max: 15.0,
-                        value: decline?.setVal,
+                        value: preInfusion!.pump == "pressure" ? preInfusion!.setVal : preInfusion!.triggerVal,
                         interval: 2,
                         showTicks: true,
                         showLabels: true,
@@ -412,7 +466,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         minorTicksPerInterval: 1,
                         onChanged: (dynamic value) {
                           setState(() {
-                            decline!.setVal = value;
+                            var v = (value * 10).round() / 10;
+                            if (decline!.pump == "pressure")
+                              decline!.setVal = v;
+                            else
+                              decline!.triggerVal = v;
                           });
                         },
                       ),
