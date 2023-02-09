@@ -165,14 +165,21 @@ class ScaleFooter extends StatelessWidget {
                           children: [
                             SizedBox(
                               width: 100,
-                              child: Text(
-                                textAlign: TextAlign.right,
-                                machineService.scaleService.state == ScaleState.connected
-                                    ? "${snapshot.data?.weight.toStringAsFixed(1)} g"
-                                    : machineService.scaleService.state.name,
-                                style: machineService.scaleService.state == ScaleState.connected
-                                    ? theme.TextStyles.headingFooter
-                                    : Theme.of(context).textTheme.labelSmall,
+                              child: FittedBox(
+                                fit: BoxFit.fitHeight,
+                                child: machineService.scaleService.state == ScaleState.connected
+                                    ? Text(
+                                        textAlign: TextAlign.right,
+                                        "${snapshot.data?.weight.toStringAsFixed(1)} g",
+                                        style: theme.TextStyles.headingFooter)
+                                    : FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Text(
+                                          textAlign: TextAlign.right,
+                                          machineService.scaleService.state.name,
+                                          style: Theme.of(context).textTheme.labelSmall,
+                                        ),
+                                      ),
                               ),
                             ),
                             SizedBox(
