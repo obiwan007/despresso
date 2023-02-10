@@ -73,23 +73,19 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             builder: (BuildContext context) {
               return ElevatedButton(
                 onPressed: () => _onShare(context),
-                child: const Text('Share'),
+                child: Icon(Icons.ios_share),
               );
             },
           ),
 
           ElevatedButton(
-            child: const Text(
-              'Load',
-            ),
+            child: const Icon(Icons.file_download),
             onPressed: () {
               getProfileFromFolder(context);
             },
           ),
           ElevatedButton(
-            child: const Text(
-              'Edit',
-            ),
+            child: const Icon(Icons.edit),
             onPressed: () {
               setState(() {
                 Navigator.push(
