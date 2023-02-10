@@ -11,6 +11,7 @@ import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 // FrameFlag of zero and pressure of 0 means end of shot, unless we are at the tenth frame, in which case
 // it's the end of shot no matter what
@@ -414,6 +415,20 @@ class ProfileService extends ChangeNotifier {
     }
     for (var exframe in shotExframes) {
       exframe.bytes = De1ShotExtFrameClass.encodeDe1ExtentionFrame(exframe);
+    }
+  }
+
+  getJsonProfileFromVisualizerShortCode(String shortCode) async {
+    if (shortCode.length == 4) {
+      try {
+        var url = Uri.https('visualizer.coffee', '/api/shots/shared', {'code': shortCode});
+        var response = await http.get(url);
+        var profileUrl = jsonDecode(response.body)['profile_url'] + '.json';
+        var profileResponse = await http.get(Uri.parse(profileUrl));
+        defaultProfiles.add(parseDefaultProfile(profileResponse.body, false));
+      } catch (e) {
+        log.warning(e);
+      }
     }
   }
 }
