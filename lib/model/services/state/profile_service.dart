@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 // FrameFlag of zero and pressure of 0 means end of shot, unless we are at the tenth frame, in which case
 // it's the end of shot no matter what
@@ -60,10 +62,10 @@ class ProfileService extends ChangeNotifier {
           var loaded = await loadProfileFromDocuments(file);
           log.info("Saved profile loaded $loaded");
           var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
-          if (defaultProfile.isNotEmpty) {
+          if (defaultProfile.isEmpty) {
             profiles.add(loaded);
           } else {
-            // profiles.add(defaultProfile.first);
+            profiles.add(defaultProfile.first);
           }
         } catch (ex) {
           log.info("Error loading profile $ex");
@@ -120,8 +122,15 @@ class ProfileService extends ChangeNotifier {
   save(De1ShotProfile profile) async {
     log.info("Saving as a existing profile to documents region");
     profile.isDefault = false;
-    await saveProvileToDocuments(profile, profile.id);
+    await saveProfileToDocuments(profile, profile.id);
     currentProfile = profile;
+    if (profiles.firstWhereOrNull((element) => element.id == profile.id) == null) {
+      log.info("New profile saved");
+      profiles.add(profile);
+    } else {
+      var index = profiles.indexWhere((element) => element.id == profile.id);
+      profiles[index] = profile;
+    }
     notify();
   }
 
@@ -149,7 +158,7 @@ class ProfileService extends ChangeNotifier {
         Map<String, dynamic> map = jsonDecode(json);
         var data = De1ShotProfile.fromJson(map);
 
-        log.info("Loaded Profile: ${data.id}");
+        log.info("Loaded Profile: ${data.id} ${data.title}");
         return data;
       } else {
         log.info("File $fileName not existing");
@@ -162,7 +171,7 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  Future<File> saveProvileToDocuments(De1ShotProfile profile, String filename) async {
+  Future<File> saveProfileToDocuments(De1ShotProfile profile, String filename) async {
     log.info("Storing shot: ${profile.id}");
 
     final directory = await getApplicationDocumentsDirectory();
@@ -180,6 +189,7 @@ class ProfileService extends ChangeNotifier {
     await file.create();
     var json = profile.toJson();
     log.info("Save json $json");
+
     return file.writeAsString(jsonEncode(json));
   }
 
@@ -192,7 +202,7 @@ class ProfileService extends ChangeNotifier {
       log.info("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
       try {
-        parseDefaultProfile(rawJson, true);
+        defaultProfiles.add(parseDefaultProfile(rawJson, true));
       } catch (ex) {
         log.info("Profile parse error: $ex");
       }
@@ -200,19 +210,19 @@ class ProfileService extends ChangeNotifier {
     log.info('all profiles loaded');
   }
 
-  String parseDefaultProfile(String json, bool isDefault) {
+  De1ShotProfile parseDefaultProfile(String json, bool isDefault) {
     log.info("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
     var p = De1ShotProfile(header, frames, exFrames);
-    if (!shotJsonParser(json, p)) return "Failed to encode profile, try to load another profile";
+    if (!shotJsonParser(json, p)) throw ("Error");
 
     p.isDefault = isDefault;
-    defaultProfiles.add(p);
+
     log.fine("$header $frames $exFrames");
 
-    return "";
+    return p;
   }
 
   static bool shotJsonParser(String jsonStr, De1ShotProfile profile) {
@@ -405,6 +415,20 @@ class ProfileService extends ChangeNotifier {
     }
     for (var exframe in shotExframes) {
       exframe.bytes = De1ShotExtFrameClass.encodeDe1ExtentionFrame(exframe);
+    }
+  }
+
+  getJsonProfileFromVisualizerShortCode(String shortCode) async {
+    if (shortCode.length == 4) {
+      try {
+        var url = Uri.https('visualizer.coffee', '/api/shots/shared', {'code': shortCode});
+        var response = await http.get(url);
+        var profileUrl = jsonDecode(response.body)['profile_url'] + '.json';
+        var profileResponse = await http.get(Uri.parse(profileUrl));
+        defaultProfiles.add(parseDefaultProfile(profileResponse.body, false));
+      } catch (e) {
+        log.warning(e);
+      }
     }
   }
 }
