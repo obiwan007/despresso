@@ -2,6 +2,7 @@ import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
+import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
@@ -94,7 +95,15 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile Edit: ${_profile.shotHeader.title}'),
+        title: IconEditableText(
+          initialValue: _profile.shotHeader.title,
+          onChanged: (value) {
+            setState(() {
+              _profile.shotHeader.title = value;
+            });
+          },
+        ),
+        //Text('Profile Edit: ${_profile.shotHeader.title}'),
         actions: <Widget>[
           ElevatedButton(
             child: const Text('Save'),

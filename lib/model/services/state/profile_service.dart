@@ -61,10 +61,10 @@ class ProfileService extends ChangeNotifier {
           var loaded = await loadProfileFromDocuments(file);
           log.info("Saved profile loaded $loaded");
           var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
-          if (defaultProfile.isNotEmpty) {
+          if (defaultProfile.isEmpty) {
             profiles.add(loaded);
           } else {
-            // profiles.add(defaultProfile.first);
+            profiles.add(defaultProfile.first);
           }
         } catch (ex) {
           log.info("Error loading profile $ex");
@@ -126,6 +126,9 @@ class ProfileService extends ChangeNotifier {
     if (profiles.firstWhereOrNull((element) => element.id == profile.id) == null) {
       log.info("New profile saved");
       profiles.add(profile);
+    } else {
+      var index = profiles.indexWhere((element) => element.id == profile.id);
+      profiles[index] = profile;
     }
     notify();
   }
@@ -154,7 +157,7 @@ class ProfileService extends ChangeNotifier {
         Map<String, dynamic> map = jsonDecode(json);
         var data = De1ShotProfile.fromJson(map);
 
-        log.info("Loaded Profile: ${data.id}");
+        log.info("Loaded Profile: ${data.id} ${data.title}");
         return data;
       } else {
         log.info("File $fileName not existing");
