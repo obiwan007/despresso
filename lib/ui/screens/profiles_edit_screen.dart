@@ -101,6 +101,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
             onPressed: () {
               setState(() {
                 profileService.save(_profile);
+                Navigator.pop(context);
               });
             },
           ),

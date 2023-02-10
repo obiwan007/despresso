@@ -12,6 +12,7 @@ import 'package:community_charts_flutter/community_charts_flutter.dart' as chart
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:uuid/uuid.dart';
 import '../../model/services/ble/machine_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../service_locator.dart';
@@ -228,7 +229,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
     if (filePickerResult != null) {
       pickedFile = File(filePickerResult!.files.single.path.toString());
-      LoadJsonProfile(file: pickedFile!);
+      loadJsonProfile(file: pickedFile!);
     } else {
       // can perform some actions like notification etc
     }
@@ -246,11 +247,25 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   void profileListener() {
     log.info('Profile updated');
     _selectedProfile = profileService.currentProfile;
+    setState(() {});
   }
 
-  LoadJsonProfile({required File file}) async {
-    var lines = await file.readAsLines();
-    log.info(lines);
+  loadJsonProfile({required File file}) async {
+    try {
+      var lines = await file.readAsString();
+      var profile = profileService.parseDefaultProfile(lines, false);
+      profile.isDefault = false;
+      profile.id = const Uuid().v1().toString();
+      log.info("Loaded Profile: ${profile.id} ${profile.title}");
+      setState(() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilesEditScreen(profile)),
+        );
+      });
+    } catch (e) {
+      log.severe("Error loading profile $e");
+    }
   }
 
   _onShare(BuildContext context) async {
