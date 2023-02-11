@@ -4,6 +4,7 @@ import 'dart:async';
 // import 'dart:html';
 
 import 'package:despresso/devices/decent_scale.dart';
+import 'package:despresso/devices/meater_thermometer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -71,8 +72,8 @@ class BLEService extends ChangeNotifier {
   }
 
   void deviceScanListener(ble.DiscoveredDevice result) {
-    if (kDebugMode) {
-      print('Scanned Peripheral ${result..name}, RSSI ${result.rssi}');
+    if (kDebugMode && result.name.isNotEmpty) {
+      log.fine('Scanned Peripheral ${result.name}, RSSI ${result.rssi} ${result.serviceUuids}');
     }
     _addDeviceTolist(result);
   }
@@ -110,6 +111,11 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('DE1')) {
           log.info('Creating DE1 machine!');
           DE1(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
+        if (device.name.startsWith('MEATER')) {
+          log.info('Meater thermometer ');
+          MeaterThermometer(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
 
