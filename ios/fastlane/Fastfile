@@ -37,8 +37,8 @@ platform :ios do
         username: 'obiwan007',
         git_user_email: 'markus.miertschink@hotmail.com',
       )
-    get_certificates           # invokes cert
-    get_provisioning_profile   # invokes sigh
+    # get_certificates           # invokes cert
+    # get_provisioning_profile   # invokes sigh
     increment_build_number(
         build_number: latest_testflight_build_number + 1,
         xcodeproj: "Runner.xcodeproj"
