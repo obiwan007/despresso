@@ -42,6 +42,8 @@ jobs:
             MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
             FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
             API_KEY: ${{ secrets.API_KEY }}
+            API_KEY_ID: ${{ secrets.API_KEY_ID }}
+            ISSUER_ID: ${{ secrets.ISSUER_ID }}
         with:
           lane: 'betamatch'
           subdirectory: 'ios'
