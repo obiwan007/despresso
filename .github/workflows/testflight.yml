@@ -40,7 +40,7 @@ jobs:
             MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
             MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
             MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-            FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+            FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
         with:
           lane: 'betamatch'
           subdirectory: 'ios'
