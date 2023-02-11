@@ -38,7 +38,7 @@ jobs:
       - uses: maierj/fastlane-action@v3.0.0        
         env:
             MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
-            GIT_FASTLANE_REPO_PAT: ${{ secrets.GIT_FASTLANE_REPO_PAT }}
+            MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_FASTLANE_REPO_PAT }}
         with:
           lane: 'betamatch'
           subdirectory: 'ios'
