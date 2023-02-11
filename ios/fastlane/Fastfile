@@ -34,6 +34,7 @@ platform :ios do
         readonly: is_ci,
         # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
         keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+        username: 'obiwan007',
         git_user_email: 'markus.miertschink@hotmail.com',
       )
     # get_certificates           # invokes cert
