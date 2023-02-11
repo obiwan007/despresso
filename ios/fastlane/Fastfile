@@ -27,4 +27,21 @@ platform :ios do
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight
   end
+
+  lane :betamatch do
+    match(
+        type: "appstore",
+        readonly: is_ci,
+        # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
+        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+      )
+    # get_certificates           # invokes cert
+    # get_provisioning_profile   # invokes sigh
+    increment_build_number(
+        build_number: latest_testflight_build_number + 1,
+        xcodeproj: "Runner.xcodeproj"
+    )
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    upload_to_testflight
+  end
 end
