@@ -17,16 +17,13 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
   final log = l.Logger('MeaterTherm');
 
   // ignore: non_constant_identifier_names
-  Uuid ServiceUUID = Platform.isAndroid ? Uuid.parse('a75cc7fc-c956-488f-ac2a-2dbc08b63a04') : Uuid.parse('a75cc7fc');
+  Uuid ServiceUUID = Uuid.parse('a75cc7fc-c956-488f-ac2a-2dbc08b63a04');
   // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID =
-      Platform.isAndroid ? Uuid.parse('7edda774-045e-4bbf-909b-45d1991a2876') : Uuid.parse('7edda774');
+  static Uuid CharateristicUUID = Uuid.parse('7edda774-045e-4bbf-909b-45d1991a2876');
   // ignore: non_constant_identifier_names
-  static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('a75cc7fc-c956-488f-ac2a-2dbc08b63a04') : Uuid.parse('2a19');
+  static Uuid BatteryServiceUUID = Uuid.parse('a75cc7fc-c956-488f-ac2a-2dbc08b63a04');
   // ignore: non_constant_identifier_names
-  static Uuid BatteryCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
+  static Uuid BatteryCharacteristicUUID = Uuid.parse('2adb4877-68d8-4884-bd3c-d83853bf27b8');
 
   late TempService tempService;
 
@@ -102,14 +99,24 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
-          log.severe("Error subscribing to characteristics $error");
+          log.severe("Error subscribing to temp characteristics $error");
         });
 
         try {
           final batteryCharacteristic = QualifiedCharacteristic(
               characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
+
+          flutterReactiveBle.subscribeToCharacteristic(batteryCharacteristic).listen((data) {
+            // code to handle incoming data
+            int bat = bytesToInt(data[0], data[1]) * 10;
+            tempService.setBattery(bat);
+          }, onError: (dynamic error) {
+            log.severe("Error subscribing to battery characteristics $error");
+          });
+
           final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
-          tempService.setBattery(batteryLevel[0]);
+          int bat = bytesToInt(batteryLevel[0], batteryLevel[1]) * 10;
+          tempService.setBattery(bat);
         } catch (e) {
           log.severe("Error reading battery $e");
         }

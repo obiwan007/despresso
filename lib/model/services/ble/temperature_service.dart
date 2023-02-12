@@ -122,6 +122,7 @@ class TempService extends ChangeNotifier {
     if (batteryLevel == _battery) return;
     _battery = batteryLevel;
     _controllerBattery.add(_battery);
+    log.fine("Meater battery $_battery");
   }
 
   resetHistory() {
