@@ -159,42 +159,43 @@ class ThermprobeFooter extends StatelessWidget {
                             "Connect",
                           ),
                         ),
-                      SizedBox(
-                        width: 100,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: FittedBox(
-                                fit: BoxFit.fitHeight,
-                                child: machineService.tempService.state == TempState.connected
-                                    ? Text(
-                                        textAlign: TextAlign.right,
-                                        "${snapshot.data?.temp1.toStringAsFixed(1)} °C",
-                                        style: theme.TextStyles.headingFooter)
-                                    : FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
+                      if (machineService.tempService.state == TempState.connected)
+                        SizedBox(
+                          width: 100,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: FittedBox(
+                                  fit: BoxFit.fitHeight,
+                                  child: machineService.tempService.state == TempState.connected
+                                      ? Text(
                                           textAlign: TextAlign.right,
-                                          machineService.tempService.state.name,
-                                          style: Theme.of(context).textTheme.labelSmall,
+                                          "${snapshot.data?.temp1.toStringAsFixed(1)} °C",
+                                          style: theme.TextStyles.headingFooter)
+                                      : FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Text(
+                                            textAlign: TextAlign.right,
+                                            machineService.tempService.state.name,
+                                            style: Theme.of(context).textTheme.labelSmall,
+                                          ),
                                         ),
-                                      ),
+                                ),
                               ),
-                            ),
-                            // SizedBox(
-                            //   width: 90,
-                            //   child: Text(
-                            //     textAlign: TextAlign.right,
-                            //     machineService.tempService.state == TempState.connected
-                            //         ? "${snapshot.data?.temp2.toStringAsFixed(1)} °C"
-                            //         : "",
-                            //     style: theme.TextStyles.headingFooterSmall,
-                            //   ),
-                            // ),
-                          ],
+                              // SizedBox(
+                              //   width: 90,
+                              //   child: Text(
+                              //     textAlign: TextAlign.right,
+                              //     machineService.tempService.state == TempState.connected
+                              //         ? "${snapshot.data?.temp2.toStringAsFixed(1)} °C"
+                              //         : "",
+                              //     style: theme.TextStyles.headingFooterSmall,
+                              //   ),
+                              // ),
+                            ],
+                          ),
                         ),
-                      ),
                       // if (machineService.scaleService.state == ScaleState.connected)
                       //   ElevatedButton(
                       //     onPressed: () => {},

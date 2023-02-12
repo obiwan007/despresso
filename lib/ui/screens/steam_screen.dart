@@ -210,12 +210,6 @@ class SteamScreenState extends State<SteamScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (tempService.state != TempState.connected)
-                ElevatedButton(
-                    onPressed: () {
-                      machineService.bleService.startScan();
-                    },
-                    child: Text("Connect Meater")),
               if (tempService.state == TempState.connected)
                 StreamBuilder<TempMeassurement>(
                     stream: tempService.stream,
