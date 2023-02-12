@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
+import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/settings.dart';
@@ -106,12 +107,14 @@ class EspressoMachineService extends ChangeNotifier {
 
   late StreamController<ShotState> _controllerShotState;
   late Stream<ShotState> _streamShotState;
+  late TempService tempService;
 
   EspressoMachineState lastState = EspressoMachineState.disconnected;
 
   Battery _battery = Battery();
 
   final List<int> _waterAverager = [];
+
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -153,6 +156,7 @@ class EspressoMachineService extends ChangeNotifier {
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
     coffeeService = getIt<CoffeeService>();
+
     prefs = await SharedPreferences.getInstance();
 
     log.fine('Preferences loaded');
@@ -160,7 +164,13 @@ class EspressoMachineService extends ChangeNotifier {
     notifyListeners();
     loadShotData();
 
-    handleBattery();
+    try {
+      handleBattery();
+    } catch (e) {
+      log.severe("Error handling battery $e");
+    }
+    tempService = getIt<TempService>();
+    handleTemperature();
 
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (state.coffeeState == EspressoMachineState.sleep) {
@@ -468,6 +478,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     if (state.coffeeState == EspressoMachineState.steam && lastSubstate != state.subState && state.subState == "pour") {
       log.info('Startet steam pour');
+      tempService.resetHistory();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
       log.fine("basetime $baseTime");
@@ -612,5 +623,19 @@ class EspressoMachineService extends ChangeNotifier {
     } catch (ex) {
       log.severe("Error writing shot settings $bytes");
     }
+  }
+
+  void handleTemperature() {
+    tempService.stream.listen((event) {
+      if (settingsService.hasSteamThermometer &&
+          event.state == TempState.connected &&
+          state.coffeeState == EspressoMachineState.steam &&
+          state.subState == "pour") {
+        if (event.temp1 >= settings.targetMilkTemperature) {
+          log.info("End of shot ${event.temp1} > ${settings.targetMilkTemperature}");
+          triggerEndOfShot();
+        }
+      }
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -18,4 +19,5 @@ void setupServices() {
   getIt.registerSingleton<ProfileService>(ProfileService(), signalsReady: false);
   getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(), signalsReady: false);
   getIt.registerSingleton<MqttService>(MqttService(), signalsReady: false);
+  getIt.registerSingleton<TempService>(TempService(), signalsReady: false);
 }

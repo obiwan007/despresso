@@ -34,9 +34,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   @override
   void dispose() {
     super.dispose();
-
+    settingsService.notifyDelayed();
     settingsService.removeListener(settingsServiceListener);
     bleService.removeListener(settingsServiceListener);
+
     log.info('Disposed settingspage');
   }
 
@@ -137,7 +138,23 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             },
           )
         ]),
-
+        ExpandableSettingsTile(
+          title: "Bluetooth devices",
+          children: [
+            SwitchSettingsTile(
+              leading: const Icon(Icons.settings_remote),
+              settingKey: SettingKeys.hasScale.name,
+              defaultValue: settingsService.hasScale,
+              title: 'Scale support',
+            ),
+            SwitchSettingsTile(
+              leading: const Icon(Icons.settings_remote),
+              settingKey: SettingKeys.hasSteamThermometer.name,
+              defaultValue: settingsService.hasSteamThermometer,
+              title: 'Milk steaming thermometer support',
+            ),
+          ],
+        ),
         ExpandableSettingsTile(title: 'Vizualizer', subtitle: 'Cloud shot upload', expanded: false, children: <Widget>[
           SwitchSettingsTile(
             leading: const Icon(Icons.usb),

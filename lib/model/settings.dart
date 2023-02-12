@@ -7,6 +7,7 @@ class Settings {
   int steamSettings = 0; // do not know what is this, use always 0
   int targetSteamTemp = 130;
   int targetSteamLength = 120;
+  int targetMilkTemperature = 60;
   int targetHotWaterTemp = 85;
   int targetHotWaterVol = 120;
   int targetHotWaterWeight = 120;
