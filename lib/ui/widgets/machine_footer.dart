@@ -1,8 +1,10 @@
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:logging/logging.dart';
 
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
@@ -17,8 +19,10 @@ class MachineFooter extends StatefulWidget {
 }
 
 class _MachineFooterState extends State<MachineFooter> {
+  final log = Logger('MachineFooterState');
   late EspressoMachineService machineService;
   late ScaleService scaleService;
+  late SettingsService settingsService;
   _MachineFooterState();
 
   @override
@@ -26,8 +30,9 @@ class _MachineFooterState extends State<MachineFooter> {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     scaleService = getIt<ScaleService>();
-    // machineService.addListener(updateMachine);
-    // scaleService.addListener(updateMachine);
+    settingsService = getIt<SettingsService>();
+    settingsService.addListener(updateMachine);
+    // scaleService.addListener();
 
     // profileService = getIt<ProfileService>();
     // profileService.addListener(updateProfile);
@@ -41,7 +46,7 @@ class _MachineFooterState extends State<MachineFooter> {
   @override
   void dispose() {
     super.dispose();
-    // machineService.removeListener(updateMachine);
+    settingsService.removeListener(updateMachine);
     // scaleService.removeListener(updateMachine);
     // profileService.removeListener(updateProfile);
     // coffeeSelectionService.removeListener(updateCoffeeSelection);
@@ -83,8 +88,8 @@ class _MachineFooterState extends State<MachineFooter> {
                 );
               }),
           const Spacer(),
-          ScaleFooter(machineService: machineService),
-          ThermprobeFooter(machineService: machineService),
+          if (settingsService.hasScale) ScaleFooter(machineService: machineService),
+          if (settingsService.hasSteamThermometer) ThermprobeFooter(machineService: machineService),
           const Spacer(),
           StreamBuilder<ShotState>(
               stream: machineService.streamShotState,

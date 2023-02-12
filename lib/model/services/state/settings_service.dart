@@ -25,6 +25,8 @@ enum SettingKeys {
   mqttSendBattery,
   mqttSendWater,
   smartCharging,
+  hasSteamThermometer,
+  hasScale,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -71,4 +73,16 @@ class SettingsService extends ChangeNotifier {
   bool get mqttSendWater => Settings.getValue<bool>(SettingKeys.mqttSendWater.name) ?? false;
 
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
+
+  bool get hasSteamThermometer => Settings.getValue<bool>(SettingKeys.hasSteamThermometer.name) ?? false;
+  bool get hasScale => Settings.getValue<bool>(SettingKeys.hasScale.name) ?? true;
+
+  void notifyDelayed() {
+    Future.delayed(
+      const Duration(milliseconds: 100),
+      () {
+        notifyListeners();
+      },
+    );
+  }
 }
