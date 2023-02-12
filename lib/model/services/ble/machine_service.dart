@@ -627,7 +627,8 @@ class EspressoMachineService extends ChangeNotifier {
 
   void handleTemperature() {
     tempService.stream.listen((event) {
-      if (event.state == TempState.connected &&
+      if (settingsService.hasSteamThermometer &&
+          event.state == TempState.connected &&
           state.coffeeState == EspressoMachineState.steam &&
           state.subState == "pour") {
         if (event.temp1 >= settings.targetMilkTemperature) {
