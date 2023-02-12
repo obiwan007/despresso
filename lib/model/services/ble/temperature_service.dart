@@ -105,7 +105,7 @@ class TempService extends ChangeNotifier {
   void setState(TempState state) {
     if (state == TempState.connected) {
       _baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-      history.clear();
+      resetHistory();
     }
     _state = state;
     log.info('Scale State: $_state');

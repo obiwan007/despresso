@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'dart:math';
 import 'package:despresso/model/services/ble/temperature_service.dart';
-import 'package:logging/logging.dart';
-import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_thermometer.dart';
-import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -28,8 +24,6 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
   late TempService tempService;
 
   final DiscoveredDevice device;
-
-  late DeviceConnectionState _state;
 
   List<int> commandBuffer = [];
   final flutterReactiveBle = FlutterReactiveBle();
@@ -67,11 +61,11 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
     int oa = bytesToInt(pData[4], pData[5]);
     double ambient2 = tip + (max(0.0, ((((ra - min(48, oa)) * 16) * 589)) / 1487));
 
-    int meat_raw = ((pData[1] << 8) + (pData[0]));
-    double temp_int = (meat_raw).toDouble() / 16;
-    int ambient_raw = ((pData[3] << 8) + (pData[2]));
-    int offset = ((pData[5] << 8) + (pData[4]));
-    double ambient = (meat_raw + max(0, (ambient_raw - offset)) * 6.33) / 16;
+    // int meat_raw = ((pData[1] << 8) + (pData[0]));
+    // double temp_int = (meat_raw).toDouble() / 16;
+    // int ambient_raw = ((pData[3] << 8) + (pData[2]));
+    // int offset = ((pData[5] << 8) + (pData[4]));
+    // double ambient = (meat_raw + max(0, (ambient_raw - offset)) * 6.33) / 16;
     // log.info(
     //     "Data $meat_raw, TempInt: $temp_int, Ambient Raw:$ambient_raw, $offset, Ambient:$ambient 2:${toCelsius(ambient2.toInt())} TIP:${toCelsius(tip)}");
 
@@ -80,7 +74,6 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
 
   void _onStateChange(DeviceConnectionState state) async {
     log.info('MEATER State changed to $state');
-    _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:

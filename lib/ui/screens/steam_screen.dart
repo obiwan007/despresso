@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:despresso/model/machine.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -205,8 +207,8 @@ class SteamScreenState extends State<SteamScreen> {
         Expanded(
           flex: 1,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (tempService.state != TempState.connected)
                 ElevatedButton(
@@ -218,13 +220,18 @@ class SteamScreenState extends State<SteamScreen> {
                 StreamBuilder<TempMeassurement>(
                     stream: tempService.stream,
                     builder: (context, snapshot) {
-                      return Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _buildGraphSingleFlCharts(),
-                      ));
+                      return snapshot.hasData
+                          ? Expanded(
+                              child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: _buildGraphSingleFlCharts(),
+                            ))
+                          : const Text("No data");
                     }),
-              StartStopButton(),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: StartStopButton(),
+              ),
             ],
           ),
         ),
@@ -249,17 +256,21 @@ class SteamScreenState extends State<SteamScreen> {
   Widget _buildGraphSingleFlCharts() {
     Map<String, List<FlSpot>> data = _createDataFlCharts();
 
+    double maxTime = 0;
     try {
       var maxData = data["temp1"]!.last;
       var t = maxData.x;
+
+      var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
+      maxTime = max(45, corrected);
     } catch (ex) {}
 
     var flowChart2 = LineChart(
       LineChartData(
         minY: 0,
-        // maxY: 15,
+        maxY: machineService.settings.targetMilkTemperature.toDouble() + 15,
         minX: data["temp1"]!.first.x,
-        // maxX: maxTime,
+        maxX: maxTime,
         lineTouchData: LineTouchData(enabled: false),
         clipData: FlClipData.all(),
         gridData: FlGridData(
@@ -332,10 +343,16 @@ class SteamScreenState extends State<SteamScreen> {
                   onPressed: () {
                     tempService.resetHistory();
                   },
-                  child: Text("Reset")),
+                  child: const Text("Reset")),
             ],
           ),
-          Expanded(flex: 1, child: flowChart2),
+          if (data["temp1"]!.length > 2)
+            Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: flowChart2,
+                )),
         ],
       ),
     );
