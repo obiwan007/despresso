@@ -313,6 +313,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.6"
+  document_file_save_plus:
+    dependency: "direct main"
+    description:
+      name: document_file_save_plus
+      sha256: "251cf2f0511c97ef19ca33bea599634e5da5df37e909ea1ef0c3920472d6dfff"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.9"
   equatable:
     dependency: transitive
     description:

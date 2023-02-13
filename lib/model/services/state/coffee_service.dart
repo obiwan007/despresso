@@ -11,6 +11,7 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:objectbox/objectbox.dart';
@@ -258,5 +259,14 @@ class CoffeeService extends ChangeNotifier {
     recipeBox.remove(id);
     notifyListeners();
     _controllerRecipe.add(getRecipes());
+  }
+
+  getBackupData() {
+    String file = objectBox.store.directoryPath + "/data.mdb";
+    var f = File(file);
+
+    Uint8List data = f.readAsBytesSync();
+    log.info("Data read ${data.length}");
+    return data;
   }
 }

@@ -1,11 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/objectbox.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
+
 import '../../service_locator.dart';
 
 class AppSettingsScreen extends StatefulWidget {
@@ -81,6 +90,27 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     ),
                   ],
                 ),
+              ],
+            ),
+          ],
+        ),
+        SettingsGroup(
+          title: 'Backup Database',
+          children: <Widget>[
+            SettingsContainer(
+              leftPadding: 16,
+              children: [
+                const Text("Backup database on other place"),
+                ElevatedButton(
+                    onPressed: () {
+                      backupDatabase();
+                    },
+                    child: const Text("Backup")),
+                ElevatedButton(
+                    onPressed: () {
+                      restoreDatabase();
+                    },
+                    child: const Text("Restore")),
               ],
             ),
           ],
@@ -192,22 +222,6 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             errorColor: Colors.deepOrangeAccent,
           ),
         ]),
-
-        // ExpandableSettingsTile(
-        //   title: 'App UI',
-        //   children: <Widget>[
-        //     SwitchSettingsTile(
-        //       leading: const Icon(Icons.line_axis),
-        //       defaultValue: settingsService.graphSingle,
-        //       settingKey: SettingKeys.graphSingle.name,
-        //       title: 'Single Graph',
-        //       onChange: (value) {
-        //         debugPrint('graphSingle: $value');
-        //       },
-        //     ),
-        //   ],
-        // ),
-
         ExpandableSettingsTile(
           title: "Tablet settings",
           children: [
@@ -222,195 +236,6 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
-
-        // SettingsGroup(
-        //   title: 'Multiple choice settings',
-        //   children: <Widget>[
-        //     RadioSettingsTile<int>(
-        //       title: 'Preferred Sync Period',
-        //       settingKey: 'key-radio-sync-period',
-        //       values: const <int, String>{
-        //         0: 'Never',
-        //         1: 'Daily',
-        //         7: 'Weekly',
-        //         15: 'Fortnight',
-        //         30: 'Monthly',
-        //       },
-        //       selected: 0,
-        //       onChange: (value) {
-        //         debugPrint('key-radio-sync-period: $value');
-        //       },
-        //     ),
-        //     DropDownSettingsTile<int>(
-        //       title: 'E-Mail View',
-        //       settingKey: 'key-dropdown-email-view',
-        //       values: const <int, String>{
-        //         2: 'Simple',
-        //         3: 'Adjusted',
-        //         4: 'Normal',
-        //         5: 'Compact',
-        //         6: 'Squizzed',
-        //       },
-        //       selected: 2,
-        //       onChange: (value) {
-        //         debugPrint('key-dropdown-email-view: $value');
-        //       },
-        //     ),
-        //   ],
-        // ),
-        // ModalSettingsTile(
-        //   title: 'Group Settings',
-        //   subtitle: 'Same group settings but in a dialog',
-        //   children: <Widget>[
-        //     SimpleRadioSettingsTile(
-        //       title: 'Sync Settings',
-        //       settingKey: 'key-radio-sync-settings',
-        //       values: const <String>[
-        //         'Never',
-        //         'Daily',
-        //         'Weekly',
-        //         'Fortnight',
-        //         'Monthly',
-        //       ],
-        //       selected: 'Daily',
-        //       onChange: (value) {
-        //         debugPrint('key-radio-sync-settings: $value');
-        //       },
-        //     ),
-        //     SimpleDropDownSettingsTile(
-        //       title: 'Beauty Filter',
-        //       settingKey: 'key-dropdown-beauty-filter',
-        //       values: const <String>[
-        //         'Simple',
-        //         'Normal',
-        //         'Little Special',
-        //         'Special',
-        //         'Extra Special',
-        //         'Bizarre',
-        //         'Horrific',
-        //       ],
-        //       selected: 'Special',
-        //       onChange: (value) {
-        //         debugPrint('key-dropdown-beauty-filter: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-        // ExpandableSettingsTile(
-        //   title: 'Expandable Group Settings',
-        //   subtitle: 'Group of settings (expandable)',
-        //   children: <Widget>[
-        //     RadioSettingsTile<double>(
-        //       title: 'Beauty Filter',
-        //       settingKey: 'key-radio-beauty-filter-expandable',
-        //       values: <double, String>{
-        //         1.0: 'Simple',
-        //         1.5: 'Normal',
-        //         2.0: 'Little Special',
-        //         2.5: 'Special',
-        //         3.0: 'Extra Special',
-        //         3.5: 'Bizarre',
-        //         4.0: 'Horrific',
-        //       },
-        //       selected: 2.5,
-        //       onChange: (value) {
-        //         debugPrint('key-radio-beauty-filter-expandable: $value');
-        //       },
-        //     ),
-        //     DropDownSettingsTile<int>(
-        //       title: 'Preferred Sync Period',
-        //       settingKey: 'key-dropdown-sync-period-2',
-        //       values: const <int, String>{
-        //         0: 'Never',
-        //         1: 'Daily',
-        //         7: 'Weekly',
-        //         15: 'Fortnight',
-        //         30: 'Monthly',
-        //       },
-        //       selected: 0,
-        //       onChange: (value) {
-        //         debugPrint('key-dropdown-sync-period-2: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-        // SettingsGroup(
-        //   title: 'Other settings',
-        //   children: <Widget>[
-        //     SliderSettingsTile(
-        //       title: 'Volume [Auto-Adjusting to 20]',
-        //       settingKey: 'key-slider-volume',
-        //       defaultValue: 20,
-        //       min: 0,
-        //       max: 100,
-        //       step: 1,
-        //       leading: const Icon(Icons.volume_up),
-        //       decimalPrecision: 0,
-        //       onChange: (value) {
-        //         debugPrint('\n===== on change end =====\n'
-        //             'key-slider-volume: $value'
-        //             '\n==========\n');
-        //         Future.delayed(const Duration(seconds: 1), () {
-        //           // Reset value only if the current value is not 20
-        //           if (Settings.getValue('key-slider-volume') != 20) {
-        //             debugPrint('\n===== on change end =====\n'
-        //                 'Resetting value to 20'
-        //                 '\n==========\n');
-        //             Settings.setValue('key-slider-volume', 20.0, notify: true);
-        //           }
-        //         });
-        //       },
-        //     ),
-        //     ColorPickerSettingsTile(
-        //       settingKey: 'key-color-picker',
-        //       title: 'Accent Color',
-        //       defaultValue: Colors.blue,
-        //       onChange: (value) {
-        //         debugPrint('key-color-picker: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-        // ModalSettingsTile(
-        //   title: 'Other settings',
-        //   subtitle: 'Other Settings in a Dialog',
-        //   children: <Widget>[
-        //     SliderSettingsTile(
-        //       title: 'Custom Ratio',
-        //       settingKey: 'key-custom-ratio-slider-2',
-        //       defaultValue: 2.5,
-        //       min: 1,
-        //       max: 5,
-        //       step: 0.1,
-        //       decimalPrecision: 1,
-        //       leading: const Icon(Icons.aspect_ratio),
-        //       onChange: (value) {
-        //         debugPrint('\n===== on change =====\n'
-        //             'key-custom-ratio-slider-2: $value'
-        //             '\n==========\n');
-        //       },
-        //       onChangeStart: (value) {
-        //         debugPrint('\n===== on change start =====\n'
-        //             'key-custom-ratio-slider-2: $value'
-        //             '\n==========\n');
-        //       },
-        //       onChangeEnd: (value) {
-        //         debugPrint('\n===== on change end =====\n'
-        //             'key-custom-ratio-slider-2: $value'
-        //             '\n==========\n');
-        //       },
-        //     ),
-        //     ColorPickerSettingsTile(
-        //       settingKey: 'key-color-picker-2',
-        //       title: 'Accent Picker',
-        //       defaultValue: Colors.blue,
-        //       onChange: (value) {
-        //         debugPrint('key-color-picker-2: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-
         ExpandableSettingsTile(
           title: "Message Queue Broadcast",
           children: [
@@ -504,5 +329,60 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
   void settingsServiceListener() {
     setState(() {});
+  }
+
+  void backupDatabase() {
+    try {
+      var objectBox = getIt<ObjectBox>();
+      var data = objectBox.getBackupData();
+      DocumentFileSavePlus.saveFile(data, "despresso_backup.bak", "application/octet-stream");
+      log.info("Backupdata saved ${data.length}");
+
+      var snackBar = SnackBar(
+          content: const Text('Saved backup'),
+          action: SnackBarAction(
+            label: 'ok',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      log.severe("Save database failed $e");
+    }
+  }
+
+  Future<void> restoreDatabase() async {
+    var filePickerResult = await FilePicker.platform.pickFiles(lockParentWindow: true, type: FileType.any);
+
+    if (filePickerResult != null) {
+      // var pickedFile = File(filePickerResult!.files.single.path.toString());
+      var objectBox = getIt<ObjectBox>();
+      try {
+        await objectBox.restoreBackupData(filePickerResult!.files.single.path.toString());
+        var snackBar = SnackBar(
+            content: const Text('Restored backup'),
+            action: SnackBarAction(
+              label: 'ok',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } catch (e) {
+        log.severe("Store restored $e");
+        var snackBar = SnackBar(
+            content: const Text('Failed restoring backup'),
+            action: SnackBarAction(
+              label: 'ok',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    } else {
+      // can perform some actions like notification etc
+    }
   }
 }
