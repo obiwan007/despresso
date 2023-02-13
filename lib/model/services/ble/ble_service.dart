@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:despresso/devices/decent_scale.dart';
 import 'package:despresso/devices/meater_thermometer.dart';
+import 'package:despresso/devices/skale2_scale.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -116,6 +117,11 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('MEATER')) {
           log.info('Meater thermometer ');
           MeaterThermometer(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
+        if (device.name.startsWith('Skale')) {
+          log.info('Skala 2');
+          Skale2Scale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
 

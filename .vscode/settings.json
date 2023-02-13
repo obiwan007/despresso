@@ -1,3 +1,4 @@
 {
     "dart.flutterSdkPath": null,
+    "cmake.configureOnOpen": false,
 }

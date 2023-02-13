@@ -11,33 +11,34 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import 'package:logging/logging.dart' as l;
 
-class EurekaScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('EurekaScale');
+class Skale2Scale extends ChangeNotifier implements AbstractScale {
+  final log = l.Logger('Skale2Scale');
 
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
+  static Uuid ServiceUUID = Platform.isAndroid
+      ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e')
+      : Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e');
   // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
+  static Uuid WeightCharacteristicUUID =
+      Platform.isAndroid ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
   // ignore: non_constant_identifier_names
   static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+      Platform.isAndroid ? Uuid.parse('0000180F-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // ignore: non_constant_identifier_names
   static Uuid BatteryCharacteristicUUID =
       Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
   // ignore: non_constant_identifier_names
   static Uuid CommandUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
+      Platform.isAndroid ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
 
   late ScaleService scaleService;
 
-  static const int cmdHeader = 0xAA;
-  static const int cmdBase = 0x02;
-  static const int cmdStartTimer = 0x33;
-  static const int cmdStopTimer = 0x34;
-  static const int cmdResetTimer = 0x35;
-  static const int cmdTare = 0x31;
+  static const int cmdDisplayOn = 0xed;
+  static const int cmdDisplayOff = 0xee;
+  static const int cmdDisplayWeight = 0xec;
+  static const int cmdGramms = 0x3;
+  static const int cmdPound = 0x2;
+  static const int cmdTare = 0x10;
 
   final DiscoveredDevice device;
 
@@ -50,7 +51,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
-  EurekaScale(this.device) {
+  Skale2Scale(this.device) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
@@ -61,32 +62,37 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
-    var isNeg = (data[6] == 0 ? false : true);
-    var weight = (data[7] + (data[8] << 8));
+    var weight = getInt(data);
+    scaleService.setWeight((weight / 10 / 256).toDouble());
+  }
 
-    weight = isNeg ? weight * -1 : weight;
-    scaleService.setWeight((weight / 10).toDouble());
+  int getInt(List<int> buffer) {
+    ByteData bytes = ByteData(20);
+    var i = 0;
+    var list = bytes.buffer.asUint8List();
+    buffer.forEach((element) {
+      list[i] = buffer[i];
+      i++;
+    });
+    return bytes.getInt32(0, Endian.little);
   }
 
   @override
   writeTare() {
-    return writeToEureka([cmdHeader, cmdBase, cmdTare, cmdTare]);
+    return writeToSkale([cmdTare]);
   }
 
-  Future<void> startTimer() {
-    return writeToEureka([cmdHeader, cmdBase, cmdStartTimer, cmdStartTimer]);
+  Future<void> displayOn() async {
+    await writeToSkale([cmdDisplayOn]);
+    return writeToSkale([cmdDisplayWeight]);
   }
 
-  Future<void> stopTimer() {
-    return writeToEureka([cmdHeader, cmdBase, cmdStopTimer, cmdStopTimer]);
+  Future<void> setGramms() async {
+    await writeToSkale([cmdGramms]);
   }
 
-  Future<void> resetTimer() {
-    return writeToEureka([cmdHeader, cmdBase, cmdResetTimer, cmdResetTimer]);
-  }
-
-  Future<void> writeToEureka(List<int> payload) async {
-    log.info("Sending to Eureka");
+  Future<void> writeToSkale(List<int> payload) async {
+    log.info("Sending to Skale2");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CommandUUID, deviceId: device.id);
     return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
@@ -94,7 +100,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _onStateChange(DeviceConnectionState state) async {
-    log.info('SCALE State changed to $state');
+    log.info('SCALE2 State changed to $state');
     _state = state;
 
     switch (state) {
@@ -107,8 +113,8 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         log.info('Connected');
         scaleService.setState(ScaleState.connected);
         // await device.discoverAllServicesAndCharacteristics();
-        final characteristic =
-            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
+        final characteristic = QualifiedCharacteristic(
+            serviceId: ServiceUUID, characteristicId: WeightCharacteristicUUID, deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
@@ -121,11 +127,13 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
             characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
         final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
         scaleService.setBattery(batteryLevel[0]);
+        await setGramms();
+        await displayOn();
 
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
-        log.info('Eureka Scale disconnected. Destroying');
+        log.info('Skale2 disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
 
