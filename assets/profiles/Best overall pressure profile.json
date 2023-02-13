@@ -1,0 +1,97 @@
+{
+  "title": "Best overall pressure profile",
+  "author": "Decent",
+  "notes": "We recommend this pressure profile as the most likely to produce a good espresso in the most varied number of cases.  The decreasing pressure will help reduce acidity.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion temp boost",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "3.5",
+      "seconds": "2",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4"
+      }
+    },
+    {
+      "name": "preinfusion",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "3.5",
+      "seconds": "18",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4"
+      }
+    },
+    {
+      "name": "forced rise without limit",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "8.4",
+      "flow": "",
+      "seconds": "3",
+      "volume": "0",
+      "weight": "0"
+    },
+    {
+      "name": "rise and hold",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "8.4",
+      "flow": "",
+      "seconds": "7",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "3.5",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "decline",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "smooth",
+      "pressure": "6.0",
+      "flow": "",
+      "seconds": "30",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "3.5",
+        "range": "1.0"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36",
+  "target_volume": "36",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2a",
+  "type": "pressure",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

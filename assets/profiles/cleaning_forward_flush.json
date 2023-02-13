@@ -1,0 +1,94 @@
+{
+  "title": "Cleaning\/Forward flush",
+  "author": "Decent",
+  "notes": "Use this profile with some cleaning product in a blind (no hole) portafilter basket, to thoroughly clean the inside of the group head.",
+  "beverage_type": "cleaning",
+  "steps": [
+    {
+      "name": "Pressure rise 1",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.80",
+      "flow": "4.00",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "7.00"
+      }
+    },
+    {
+      "name": "Pause 1",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Pressure rise 2",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.80",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "7.00"
+      }
+    },
+    {
+      "name": "Pause 2",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Pressure rise 3",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.80",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "7.00"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36",
+  "target_volume": "36",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

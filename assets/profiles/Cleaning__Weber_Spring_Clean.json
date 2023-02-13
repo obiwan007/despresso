@@ -1,0 +1,244 @@
+{
+  "title": "Cleaning\/Weber Spring Clean",
+  "author": "Decent",
+  "notes": "This profile is gentle on the coffee puck and not too demanding on the barista.  Produces a very acceptable espresso in a wide variety of settings.",
+  "beverage_type": "cleaning",
+  "steps": [
+    {
+      "name": "Initial prefill",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "11",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Initial fill",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "11",
+      "seconds": "60.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "1.00"
+      }
+    },
+    {
+      "name": "Fill and stir",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "0.30",
+      "seconds": "127",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "9.00"
+      }
+    },
+    {
+      "name": "Hold",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "0.00",
+      "seconds": "10.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Short flush",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "0.00",
+      "seconds": "1.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "7.00"
+      }
+    },
+    {
+      "name": "Hold",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "0.10",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "9.00"
+      }
+    },
+    {
+      "name": "Short flush",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "0.00",
+      "seconds": "1",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "7.00"
+      }
+    },
+    {
+      "name": "Hold",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "0.10",
+      "seconds": "10.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Long flush",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0.00",
+      "flow": "0.00",
+      "seconds": "10.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Fill to rinse",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "8.00",
+      "flow": "6.00",
+      "seconds": "30.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "9.00"
+      }
+    },
+    {
+      "name": "Flush to rinse",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "0.00",
+      "seconds": "10.00",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Fill to rinse",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "8.00",
+      "flow": "4.00",
+      "seconds": "30.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "8.00"
+      }
+    },
+    {
+      "name": "Full flush",
+      "temperature": "104.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "0.00",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "0.10"
+      }
+    },
+    {
+      "name": "Fill to rinse",
+      "temperature": "19.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "6.00",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "9.00"
+      }
+    },
+    {
+      "name": "Final flush",
+      "temperature": "19.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0.00",
+      "flow": "6.00",
+      "seconds": "30.00",
+      "volume": "500",
+      "weight": "0"
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0",
+  "target_volume": "0",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

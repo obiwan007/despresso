@@ -1,0 +1,82 @@
+{
+  "title": "Extractamundo Dos!",
+  "author": "Decent",
+  "notes": "Dynamic bloom into pressure extraction. Based on the 'easy blooming' profile structure from Luca and Stephane and modified to primarily target high extraction grinders at high flow rates, typically ending around 2.5-4ml\/s. Dial with ratio once grind is giving an ending flowrate in the range. Includes a significant temperature drop that reduces harshness (although the actual temperature drop is much less than programmed). Improves upon TurboBloom by using a flow-based pressure drop instead of a programmed pressure drop. By Joe D.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion",
+      "temperature": "83.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "8.0",
+      "flow": "8.0",
+      "seconds": "20.00",
+      "volume": "100",
+      "weight": "0.0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4.50"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "dynamic bloom",
+      "temperature": "67.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "40.00",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "2.20"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "6 bar",
+      "temperature": "74.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "6.0000000000000036",
+      "flow": "2.2",
+      "seconds": "60.00",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "flow",
+        "condition": "under",
+        "value": "0"
+      },
+      "limiter": {
+        "value": "1.0",
+        "range": "3.0"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "40.0",
+  "target_volume": "0",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

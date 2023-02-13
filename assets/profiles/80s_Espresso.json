@@ -1,0 +1,72 @@
+{
+  "title": "80's Espresso",
+  "author": "Decent",
+  "notes": "For medium to dark roasted beans. Produced a complex espresso meant for sipping, not for mixing with milk. The low starting temperature of 82C--which declines to 72C--is the magic.  This creates a silky, textured shot with good aroma, pleasant acidity, great complexity, and no off flavors. There are two styles: a ristretto or a double shot.  With a ristretto, put the recommended dose weight (ie, 14g, 15g, 18g, 20g) into the basket, and pull it as a 1:1 ratio shot.  For a double shot, updose by 10% to 20% and extract to a 2:1 ratio (and grind a bit coarser).  With both approaches, immediately after preinfusion aim for a flow rate in the range of 0.5-1.2ml\/sec. The darker the roast, the slower the recommended flow rate. The ristretto has more flavor and complexity while the overdosed double shot is very smooth, easy to drink, and classic.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion",
+      "temperature": "82.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "7.5",
+      "seconds": "8.00",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "3.8"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "rise and hold",
+      "temperature": "80.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "7.8",
+      "flow": "",
+      "seconds": "4.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "decline",
+      "temperature": "72.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "smooth",
+      "pressure": "5.0",
+      "flow": "",
+      "seconds": "50.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36",
+  "target_volume": "0",
+  "target_volume_count_start": "1",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}
