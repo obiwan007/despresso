@@ -35,12 +35,7 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
   MeaterThermometer(this.device) {
     tempService = getIt<TempService>();
     log.info("Connect to Meater ${device.serviceUuids}");
-    //ServiceUUID = device.serviceUuids.first;
-    // BatteryServiceUUID = device.serviceUuids[1];
-    //scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
-      // Handle connection state updates
-      log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error

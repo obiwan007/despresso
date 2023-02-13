@@ -39,11 +39,8 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   DecentScale(this.device) {
     scaleService = getIt<ScaleService>();
-    log.info("Connect to Decent");
     scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
-      // Handle connection state updates
-      log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
