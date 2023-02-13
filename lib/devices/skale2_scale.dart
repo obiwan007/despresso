@@ -15,15 +15,16 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('Skale2Scale');
 
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Platform.isAndroid
-      ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e')
-      : Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e');
+  static Uuid ServiceUUID =
+      Platform.isAndroid ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
   // ignore: non_constant_identifier_names
   static Uuid WeightCharacteristicUUID =
       Platform.isAndroid ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
   // ignore: non_constant_identifier_names
+
   static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000180F-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+  // Platform.isAndroid ? Uuid.parse('0000180F-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // ignore: non_constant_identifier_names
   static Uuid BatteryCharacteristicUUID =
       Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
@@ -112,7 +113,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
       case DeviceConnectionState.connected:
         log.info('Connected');
         scaleService.setState(ScaleState.connected);
-        // await device.discoverAllServicesAndCharacteristics();
+
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID, characteristicId: WeightCharacteristicUUID, deviceId: device.id);
 
@@ -120,15 +121,24 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
-          // code to handle errors
+          log.severe(("Error register weight callback $error"));
         });
 
-        final batteryCharacteristic = QualifiedCharacteristic(
-            characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
-        final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
-        scaleService.setBattery(batteryLevel[0]);
-        await setGramms();
-        await displayOn();
+        try {
+          log.info("Service Id ${device.serviceUuids}");
+          final batteryCharacteristic = QualifiedCharacteristic(
+              characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
+          final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
+          scaleService.setBattery(batteryLevel[0]);
+        } catch (e) {
+          log.severe("Error reading battery $e");
+        }
+        try {
+          // await setGramms();
+          await displayOn();
+        } catch (e) {
+          log.severe("Error setting scale2 gram and display $e");
+        }
 
         return;
       case DeviceConnectionState.disconnected:
