@@ -409,10 +409,9 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     var filePickerResult = await FilePicker.platform.pickFiles(lockParentWindow: true, type: FileType.any);
 
     if (filePickerResult != null) {
-      // var pickedFile = File(filePickerResult!.files.single.path.toString());
       var objectBox = getIt<ObjectBox>();
       try {
-        // await objectBox.restoreBackupData(filePickerResult!.files.single.path.toString());
+        await objectBox.restoreBackupData(filePickerResult!.files.single.path.toString());
         showRestartNowScreen();
         var snackBar = SnackBar(
             content: const Text('Restored backup'),
@@ -446,7 +445,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       barrierColor: Colors.black12.withOpacity(0.9), // Background color
       barrierDismissible: false,
 
-      transitionDuration: Duration(milliseconds: 400),
+      transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) {
         return Column(
           children: <Widget>[
@@ -471,7 +470,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     exit(0);
                   }
                 },
-                child: Text("Exit app"),
+                child: const Text("Exit app"),
               ),
             ),
           ],
