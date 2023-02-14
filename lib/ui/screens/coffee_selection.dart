@@ -271,40 +271,49 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         KeyValueWidget(label: "Grinder", value: coffee.grinderSettings.toString()),
         KeyValueWidget(label: "Dose", value: coffee.grinderDoseWeight.toString()),
         SizedBox(height: 10),
-        KeyValueWidget(label: "Acidity", value: ""),
-        RatingBarIndicator(
-          rating: coffee.acidRating,
-          itemBuilder: (context, index) => const Icon(
-            Icons.star,
-            color: Colors.amber,
+        KeyValueWidget(
+          label: "Acidity",
+          value: "",
+          widget: RatingBarIndicator(
+            rating: coffee.acidRating,
+            itemBuilder: (context, index) => const Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            itemCount: 5,
+            itemSize: 20.0,
+            direction: Axis.horizontal,
           ),
-          itemCount: 5,
-          itemSize: 20.0,
-          direction: Axis.horizontal,
         ),
         SizedBox(height: 10),
-        KeyValueWidget(label: "Intensity", value: ""),
-        RatingBarIndicator(
-          rating: coffee.intensityRating,
-          itemBuilder: (context, index) => const Icon(
-            Icons.star,
-            color: Colors.red,
+        KeyValueWidget(
+          label: "Intensity",
+          value: "",
+          widget: RatingBarIndicator(
+            rating: coffee.intensityRating,
+            itemBuilder: (context, index) => const Icon(
+              Icons.star,
+              color: Colors.red,
+            ),
+            itemCount: 5,
+            itemSize: 20.0,
+            direction: Axis.horizontal,
           ),
-          itemCount: 5,
-          itemSize: 20.0,
-          direction: Axis.horizontal,
         ),
         SizedBox(height: 10),
-        createKeyValue("Roast Level", null),
-        RatingBarIndicator(
-          rating: coffee.roastLevel,
-          itemBuilder: (context, index) => const Icon(
-            Icons.star,
-            color: Colors.lightBlue,
+        KeyValueWidget(
+          label: "Roast Level",
+          value: "",
+          widget: RatingBarIndicator(
+            rating: coffee.roastLevel,
+            itemBuilder: (context, index) => const Icon(
+              Icons.star,
+              color: Colors.lightBlue,
+            ),
+            itemCount: 5,
+            itemSize: 20.0,
+            direction: Axis.horizontal,
           ),
-          itemCount: 5,
-          itemSize: 20.0,
-          direction: Axis.horizontal,
         ),
       ],
     );
