@@ -5,6 +5,7 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:path/path.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
@@ -30,6 +31,8 @@ class CoffeeEditState extends State<CoffeeEdit> {
 
   Coffee _editedCoffee = Coffee();
   int selectedCoffeeId = 0;
+
+  FormGroup? currentForm;
 
   FormGroup get theForm2 => fb.group(<String, Object>{
         'name': ['test', Validators.required],
@@ -95,10 +98,13 @@ class CoffeeEditState extends State<CoffeeEdit> {
               'Save',
             ),
             onPressed: () {
-              setState(() {
-                var form = ReactiveForm.of(context);
-                Navigator.pop(context);
-              });
+              if (currentForm != null && currentForm!.valid) {
+                setState(() {
+                  log.info("${currentForm!.value}");
+                  saveFormData(currentForm!);
+                  Navigator.pop(context);
+                });
+              }
             },
           ),
         ],
@@ -106,15 +112,18 @@ class CoffeeEditState extends State<CoffeeEdit> {
       body: SingleChildScrollView(
         child: ReactiveFormBuilder(
           form: () => theForm,
-          builder: (context, form, child) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                coffeeForm(form),
-              ],
-            ),
-          ),
+          builder: (context, form, child) {
+            currentForm = form;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  coffeeForm(form),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -223,29 +232,20 @@ class CoffeeEditState extends State<CoffeeEdit> {
             color: Colors.amber,
           ),
         ),
-        ReactiveFormConsumer(
-          builder: (context, form, child) {
-            return ElevatedButton(
-              onPressed: form.valid
-                  ? () {
-                      log.info("${form.value}");
-                      saveFormData(form);
-                      Navigator.pop(context);
-                    }
-                  : null,
-              child: const Text('SAVE'),
-            );
-          },
-        ),
-        ElevatedButton(
-          onPressed: () {
-            form.reset();
-            setState(() {
-              Navigator.pop(context);
-            });
-          },
-          child: const Text('CANCEL'),
-        ),
+        // ReactiveFormConsumer(
+        //   builder: (context, form, child) {
+        //     return ElevatedButton(
+        //       onPressed: form.valid
+        //           ? () {
+        //               log.info("${form.value}");
+        //               saveFormData(form);
+        //               Navigator.pop(context);
+        //             }
+        //           : null,
+        //       child: const Text('SAVE'),
+        //     );
+        //   },
+        // ),
       ],
     );
   }
