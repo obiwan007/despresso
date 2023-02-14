@@ -434,9 +434,13 @@ class DE1 extends ChangeNotifier {
   }
 
   void waterLevelNotification(ByteData value) {
-    var waterlevel = value.getUint16(0);
-    var waterThreshold = value.getUint16(2);
-    service.setWaterLevel(WaterLevel(waterlevel, waterThreshold));
+    try {
+      var waterlevel = value.getUint16(0);
+      var waterThreshold = value.getUint16(2);
+      service.setWaterLevel(WaterLevel(waterlevel, waterThreshold));
+    } catch (e) {
+      log.severe("waternotify: $e");
+    }
   }
 
   void parseVersion(ByteData value) {
@@ -465,34 +469,43 @@ class DE1 extends ChangeNotifier {
   }
 
   void shotSampleNotification(ByteData r) {
-    var sampleTime = 100 * (r.getUint16(0)) / (50 * 2);
-    var groupPressure = r.getUint16(2) / (1 << 12);
-    var groupFlow = r.getUint16(4) / (1 << 12);
-    var mixTemp = r.getUint16(6) / (1 << 8);
-    var headTemp = ((r.getUint8(8) << 16) + (r.getUint8(9) << 8) + (r.getUint8(10))) / (1 << 16);
-    var setMixTemp = r.getUint16(11) / (1 << 8);
-    var setHeadTemp = r.getUint16(13) / (1 << 8);
-    var setGroupPressure = r.getUint8(15) / (1 << 4);
-    var setGroupFlow = r.getUint8(16) / (1 << 4);
-    var frameNumber = r.getUint8(17);
-    var steamTemp = r.getUint8(18);
-    // log.info("$headTemp $setHeadTemp $mixTemp $setMixTemp");
-    sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-    // log.info('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
-    service.setShot(ShotState(sampleTime, 0, groupPressure, groupFlow, mixTemp, headTemp, setMixTemp, setHeadTemp,
-        setGroupPressure, setGroupFlow, frameNumber, steamTemp, 0, ""));
+    try {
+      var sampleTime = 100 * (r.getUint16(0)) / (50 * 2);
+      var groupPressure = r.getUint16(2) / (1 << 12);
+      var groupFlow = r.getUint16(4) / (1 << 12);
+      var mixTemp = r.getUint16(6) / (1 << 8);
+      var headTemp = ((r.getUint8(8) << 16) + (r.getUint8(9) << 8) + (r.getUint8(10))) / (1 << 16);
+      var setMixTemp = r.getUint16(11) / (1 << 8);
+      var setHeadTemp = r.getUint16(13) / (1 << 8);
+      var setGroupPressure = r.getUint8(15) / (1 << 4);
+      var setGroupFlow = r.getUint8(16) / (1 << 4);
+      var frameNumber = r.getUint8(17);
+      var steamTemp = r.getUint8(18);
+      // log.info("$headTemp $setHeadTemp $mixTemp $setMixTemp");
+      sampleTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      // log.info('Sample ' + sampleTime.toString() + " " + frameNumber.toString());
+      service.setShot(ShotState(sampleTime, 0, groupPressure, groupFlow, mixTemp, headTemp, setMixTemp, setHeadTemp,
+          setGroupPressure, setGroupFlow, frameNumber, steamTemp, 0, ""));
+    } catch (e) {
+      log.severe("shotSampleNotification $e");
+    }
   }
 
   De1ShotHeaderClass parseShotHeaderSettings(ByteData r) {
-    log.info("Shotheader received");
-    var sh = De1ShotHeaderClass();
-    var decoded = De1ShotHeaderClass.decodeDe1ShotHeader(r, sh, true);
-    if (!decoded) {
-      log.info("Error decoding header");
-    }
+    try {
+      log.info("Shotheader received");
+      var sh = De1ShotHeaderClass();
+      var decoded = De1ShotHeaderClass.decodeDe1ShotHeader(r, sh, true);
+      if (!decoded) {
+        log.info("Error decoding header");
+      }
 
-    service.setShotHeader(sh);
-    return sh;
+      service.setShotHeader(sh);
+      return sh;
+    } catch (e) {
+      log.severe("parseShotHeaderSettings $e");
+      rethrow;
+    }
   }
 
   void parseShotMapRequest(ByteData r) {
