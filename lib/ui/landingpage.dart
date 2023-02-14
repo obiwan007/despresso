@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -173,26 +174,6 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 },
               ),
               ListTile(
-                title: const Text('Exit'),
-                onTap: () {
-                  Navigator.pop(context);
-                  var snackBar = SnackBar(
-                      content: const Text('Going to sleep'),
-                      action: SnackBarAction(
-                        label: 'Undo',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  machineService.de1?.switchOff();
-                  // Then close the drawer
-                  Future.delayed(const Duration(milliseconds: 2000), () {
-                    SystemNavigator.pop();
-                  });
-                },
-              ),
-              ListTile(
                 title: const Text('Privacy'),
                 onTap: () async {
                   Navigator.pop(context);
@@ -212,6 +193,27 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
                 // aboutBoxChildren: aboutBoxChildren,
               ),
+              if (Platform.isAndroid)
+                ListTile(
+                  title: const Text('Exit'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    var snackBar = SnackBar(
+                        content: const Text('Going to sleep'),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    machineService.de1?.switchOff();
+                    // Then close the drawer
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      SystemNavigator.pop();
+                    });
+                  },
+                ),
             ],
           ),
         ),

@@ -1,11 +1,21 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/objectbox.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:flutter/services.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
+
 import '../../service_locator.dart';
 
 class AppSettingsScreen extends StatefulWidget {
@@ -47,18 +57,25 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       title: 'Application Settings',
       children: [
         SettingsGroup(
-          title: 'Machine Connection',
+          title: 'Bluetooth Connections',
           children: <Widget>[
             SettingsContainer(
               leftPadding: 16,
               children: [
-                const Text("Scan for DE1 and Lunar scale"),
-                if (!bleService.isScanning)
-                  ElevatedButton(
-                      onPressed: () {
-                        bleService.startScan();
-                      },
-                      child: const Text("Scan for Devices")),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Text("Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)"),
+                      if (!bleService.isScanning)
+                        ElevatedButton(
+                            onPressed: () {
+                              bleService.startScan();
+                            },
+                            child: const Text("Scan for Devices")),
+                    ],
+                  ),
+                ),
                 if (bleService.isScanning)
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,407 +100,259 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 ),
               ],
             ),
-          ],
-        ),
-        ExpandableSettingsTile(
-          title: 'Shot Settings',
-          children: <Widget>[
-            SwitchSettingsTile(
-              settingKey: SettingKeys.shotStopOnWeight.name,
-              defaultValue: true,
-              title: 'Stop on Weight if scale detected',
-              subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
-              enabledLabel: 'Enabled',
-              disabledLabel: 'Disabled',
-              onChange: (value) {
-                debugPrint('ShotStopOnWeight: $value');
-              },
-            ),
-            SwitchSettingsTile(
-              settingKey: SettingKeys.shotAutoTare.name,
-              defaultValue: true,
-              title: 'Auto Tare',
-              subtitle: 'If a shot is starting, auto-tare the scale',
-              enabledLabel: 'Enabled',
-              disabledLabel: 'Disabled',
-              onChange: (value) {
-                debugPrint('ShotAutoTare: $value');
-              },
+            ExpandableSettingsTile(
+              title: "Bluetooth devices",
+              children: [
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.hasScale.name,
+                  defaultValue: settingsService.hasScale,
+                  title: 'Scale support',
+                ),
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.hasSteamThermometer.name,
+                  defaultValue: settingsService.hasSteamThermometer,
+                  title: 'Milk steaming thermometer support',
+                ),
+              ],
             ),
           ],
         ),
-        ExpandableSettingsTile(title: "Sleep Timer", children: [
-          SliderSettingsTile(
-            title: 'Switch Off After',
-            settingKey: SettingKeys.sleepTimer.name,
-            defaultValue: 120,
-            min: 0,
-            max: 240,
-            step: 5,
-            leading: const Icon(Icons.switch_left),
-            onChange: (value) {
-              debugPrint('key-slider-volume: $value');
-            },
-          ),
-          SliderSettingsTile(
-            title: 'Screen Lock',
-            settingKey: SettingKeys.screenLockTimer.name,
-            defaultValue: 120,
-            min: 0,
-            max: 240,
-            step: 5,
-            leading: const Icon(Icons.lock),
-            onChange: (value) {
-              debugPrint('key-slider-volume: $value');
-            },
-          )
-        ]),
-        ExpandableSettingsTile(
-          title: "Bluetooth devices",
+        SettingsGroup(
+          title: "Coffee pouring",
           children: [
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.hasScale.name,
-              defaultValue: settingsService.hasScale,
-              title: 'Scale support',
-            ),
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.hasSteamThermometer.name,
-              defaultValue: settingsService.hasSteamThermometer,
-              title: 'Milk steaming thermometer support',
-            ),
-          ],
-        ),
-        ExpandableSettingsTile(title: 'Vizualizer', subtitle: 'Cloud shot upload', expanded: false, children: <Widget>[
-          SwitchSettingsTile(
-            leading: const Icon(Icons.usb),
-            settingKey: SettingKeys.vizualizerUpload.name,
-            defaultValue: false,
-            title: 'Upload Shots to Vizualizer',
-            onChange: (value) {
-              debugPrint('USB Debugging: $value');
-            },
-          ),
-          TextInputSettingsTile(
-            title: 'User Name/email',
-            settingKey: SettingKeys.vizualizerUser.name,
-            initialValue: 'admin',
-            validator: (String? username) {
-              if (username != null && username.length > 3) {
-                return null;
-              }
-              return "User Name can't be smaller than 4 letters";
-            },
-            borderColor: Colors.blueAccent,
-            errorColor: Colors.deepOrangeAccent,
-          ),
-          TextInputSettingsTile(
-            title: 'password',
-            settingKey: SettingKeys.vizualizerPwd.name,
-            obscureText: true,
-            validator: (String? password) {
-              if (password != null && password.length > 6) {
-                return null;
-              }
-              return "Password can't be smaller than 7 letters";
-            },
-            borderColor: Colors.blueAccent,
-            errorColor: Colors.deepOrangeAccent,
-          ),
-        ]),
-
-        // ExpandableSettingsTile(
-        //   title: 'App UI',
-        //   children: <Widget>[
-        //     SwitchSettingsTile(
-        //       leading: const Icon(Icons.line_axis),
-        //       defaultValue: settingsService.graphSingle,
-        //       settingKey: SettingKeys.graphSingle.name,
-        //       title: 'Single Graph',
-        //       onChange: (value) {
-        //         debugPrint('graphSingle: $value');
-        //       },
-        //     ),
-        //   ],
-        // ),
-
-        ExpandableSettingsTile(
-          title: "Tablet settings",
-          children: [
-            SwitchSettingsTile(
-              leading: const Icon(Icons.power),
-              defaultValue: settingsService.smartCharging,
-              settingKey: SettingKeys.smartCharging.name,
-              title: 'Keep Tablet charged between 60-90%',
-              onChange: (value) {
-                debugPrint('smartCharging: $value');
-              },
+            ExpandableSettingsTile(
+              title: 'Shot Settings',
+              children: <Widget>[
+                SwitchSettingsTile(
+                  settingKey: SettingKeys.shotStopOnWeight.name,
+                  defaultValue: true,
+                  title: 'Stop on Weight if scale detected',
+                  subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
+                  enabledLabel: 'Enabled',
+                  disabledLabel: 'Disabled',
+                  onChange: (value) {
+                    debugPrint('ShotStopOnWeight: $value');
+                  },
+                ),
+                SwitchSettingsTile(
+                  settingKey: SettingKeys.shotAutoTare.name,
+                  defaultValue: true,
+                  title: 'Auto Tare',
+                  subtitle: 'If a shot is starting, auto-tare the scale',
+                  enabledLabel: 'Enabled',
+                  disabledLabel: 'Disabled',
+                  onChange: (value) {
+                    debugPrint('ShotAutoTare: $value');
+                  },
+                ),
+              ],
             ),
           ],
         ),
-
-        // SettingsGroup(
-        //   title: 'Multiple choice settings',
-        //   children: <Widget>[
-        //     RadioSettingsTile<int>(
-        //       title: 'Preferred Sync Period',
-        //       settingKey: 'key-radio-sync-period',
-        //       values: const <int, String>{
-        //         0: 'Never',
-        //         1: 'Daily',
-        //         7: 'Weekly',
-        //         15: 'Fortnight',
-        //         30: 'Monthly',
-        //       },
-        //       selected: 0,
-        //       onChange: (value) {
-        //         debugPrint('key-radio-sync-period: $value');
-        //       },
-        //     ),
-        //     DropDownSettingsTile<int>(
-        //       title: 'E-Mail View',
-        //       settingKey: 'key-dropdown-email-view',
-        //       values: const <int, String>{
-        //         2: 'Simple',
-        //         3: 'Adjusted',
-        //         4: 'Normal',
-        //         5: 'Compact',
-        //         6: 'Squizzed',
-        //       },
-        //       selected: 2,
-        //       onChange: (value) {
-        //         debugPrint('key-dropdown-email-view: $value');
-        //       },
-        //     ),
-        //   ],
-        // ),
-        // ModalSettingsTile(
-        //   title: 'Group Settings',
-        //   subtitle: 'Same group settings but in a dialog',
-        //   children: <Widget>[
-        //     SimpleRadioSettingsTile(
-        //       title: 'Sync Settings',
-        //       settingKey: 'key-radio-sync-settings',
-        //       values: const <String>[
-        //         'Never',
-        //         'Daily',
-        //         'Weekly',
-        //         'Fortnight',
-        //         'Monthly',
-        //       ],
-        //       selected: 'Daily',
-        //       onChange: (value) {
-        //         debugPrint('key-radio-sync-settings: $value');
-        //       },
-        //     ),
-        //     SimpleDropDownSettingsTile(
-        //       title: 'Beauty Filter',
-        //       settingKey: 'key-dropdown-beauty-filter',
-        //       values: const <String>[
-        //         'Simple',
-        //         'Normal',
-        //         'Little Special',
-        //         'Special',
-        //         'Extra Special',
-        //         'Bizarre',
-        //         'Horrific',
-        //       ],
-        //       selected: 'Special',
-        //       onChange: (value) {
-        //         debugPrint('key-dropdown-beauty-filter: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-        // ExpandableSettingsTile(
-        //   title: 'Expandable Group Settings',
-        //   subtitle: 'Group of settings (expandable)',
-        //   children: <Widget>[
-        //     RadioSettingsTile<double>(
-        //       title: 'Beauty Filter',
-        //       settingKey: 'key-radio-beauty-filter-expandable',
-        //       values: <double, String>{
-        //         1.0: 'Simple',
-        //         1.5: 'Normal',
-        //         2.0: 'Little Special',
-        //         2.5: 'Special',
-        //         3.0: 'Extra Special',
-        //         3.5: 'Bizarre',
-        //         4.0: 'Horrific',
-        //       },
-        //       selected: 2.5,
-        //       onChange: (value) {
-        //         debugPrint('key-radio-beauty-filter-expandable: $value');
-        //       },
-        //     ),
-        //     DropDownSettingsTile<int>(
-        //       title: 'Preferred Sync Period',
-        //       settingKey: 'key-dropdown-sync-period-2',
-        //       values: const <int, String>{
-        //         0: 'Never',
-        //         1: 'Daily',
-        //         7: 'Weekly',
-        //         15: 'Fortnight',
-        //         30: 'Monthly',
-        //       },
-        //       selected: 0,
-        //       onChange: (value) {
-        //         debugPrint('key-dropdown-sync-period-2: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-        // SettingsGroup(
-        //   title: 'Other settings',
-        //   children: <Widget>[
-        //     SliderSettingsTile(
-        //       title: 'Volume [Auto-Adjusting to 20]',
-        //       settingKey: 'key-slider-volume',
-        //       defaultValue: 20,
-        //       min: 0,
-        //       max: 100,
-        //       step: 1,
-        //       leading: const Icon(Icons.volume_up),
-        //       decimalPrecision: 0,
-        //       onChange: (value) {
-        //         debugPrint('\n===== on change end =====\n'
-        //             'key-slider-volume: $value'
-        //             '\n==========\n');
-        //         Future.delayed(const Duration(seconds: 1), () {
-        //           // Reset value only if the current value is not 20
-        //           if (Settings.getValue('key-slider-volume') != 20) {
-        //             debugPrint('\n===== on change end =====\n'
-        //                 'Resetting value to 20'
-        //                 '\n==========\n');
-        //             Settings.setValue('key-slider-volume', 20.0, notify: true);
-        //           }
-        //         });
-        //       },
-        //     ),
-        //     ColorPickerSettingsTile(
-        //       settingKey: 'key-color-picker',
-        //       title: 'Accent Color',
-        //       defaultValue: Colors.blue,
-        //       onChange: (value) {
-        //         debugPrint('key-color-picker: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-        // ModalSettingsTile(
-        //   title: 'Other settings',
-        //   subtitle: 'Other Settings in a Dialog',
-        //   children: <Widget>[
-        //     SliderSettingsTile(
-        //       title: 'Custom Ratio',
-        //       settingKey: 'key-custom-ratio-slider-2',
-        //       defaultValue: 2.5,
-        //       min: 1,
-        //       max: 5,
-        //       step: 0.1,
-        //       decimalPrecision: 1,
-        //       leading: const Icon(Icons.aspect_ratio),
-        //       onChange: (value) {
-        //         debugPrint('\n===== on change =====\n'
-        //             'key-custom-ratio-slider-2: $value'
-        //             '\n==========\n');
-        //       },
-        //       onChangeStart: (value) {
-        //         debugPrint('\n===== on change start =====\n'
-        //             'key-custom-ratio-slider-2: $value'
-        //             '\n==========\n');
-        //       },
-        //       onChangeEnd: (value) {
-        //         debugPrint('\n===== on change end =====\n'
-        //             'key-custom-ratio-slider-2: $value'
-        //             '\n==========\n');
-        //       },
-        //     ),
-        //     ColorPickerSettingsTile(
-        //       settingKey: 'key-color-picker-2',
-        //       title: 'Accent Picker',
-        //       defaultValue: Colors.blue,
-        //       onChange: (value) {
-        //         debugPrint('key-color-picker-2: $value');
-        //       },
-        //     )
-        //   ],
-        // ),
-
-        ExpandableSettingsTile(
-          title: "Message Queue Broadcast",
+        SettingsGroup(
+          title: "Tablet",
           children: [
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.mqttEnabled.name,
-              title: 'Enable MQTT',
-              onChange: (value) {
-                debugPrint('mqtt enabled: $value');
-                if (value) {
-                  mqttService.startService();
-                } else {
-                  //stop mqtt service
-                }
-              },
+            ExpandableSettingsTile(title: "Sleep Timer", children: [
+              SliderSettingsTile(
+                title: 'Switch Off After',
+                settingKey: SettingKeys.sleepTimer.name,
+                defaultValue: 120,
+                min: 0,
+                max: 240,
+                step: 5,
+                leading: const Icon(Icons.switch_left),
+                onChange: (value) {
+                  debugPrint('key-slider-volume: $value');
+                },
+              ),
+              SliderSettingsTile(
+                title: 'Screen Lock',
+                settingKey: SettingKeys.screenLockTimer.name,
+                defaultValue: 120,
+                min: 0,
+                max: 240,
+                step: 5,
+                leading: const Icon(Icons.lock),
+                onChange: (value) {
+                  debugPrint('key-slider-volume: $value');
+                },
+              )
+            ]),
+            ExpandableSettingsTile(
+              title: "Smart charging",
+              children: [
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.power),
+                  defaultValue: settingsService.smartCharging,
+                  settingKey: SettingKeys.smartCharging.name,
+                  title: 'Keep Tablet charged between 60-90%',
+                  onChange: (value) {
+                    debugPrint('smartCharging: $value');
+                  },
+                ),
+              ],
             ),
-            TextInputSettingsTile(
-              title: 'MQTT Server',
-              settingKey: SettingKeys.mqttServer.name,
-              initialValue: settingsService.mqttServer,
+          ],
+        ),
+        SettingsGroup(
+          title: "Cloud and Network",
+          children: [
+            ExpandableSettingsTile(
+              title: "Message Queue Broadcast",
+              children: [
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.mqttEnabled.name,
+                  title: 'Enable MQTT',
+                  onChange: (value) {
+                    debugPrint('mqtt enabled: $value');
+                    if (value) {
+                      mqttService.startService();
+                    } else {
+                      //stop mqtt service
+                    }
+                  },
+                ),
+                TextInputSettingsTile(
+                  title: 'MQTT Server',
+                  settingKey: SettingKeys.mqttServer.name,
+                  initialValue: settingsService.mqttServer,
+                ),
+                TextInputSettingsTile(
+                  title: 'MQTT Port',
+                  settingKey: SettingKeys.mqttPort.name,
+                  initialValue: '1883',
+                ),
+                TextInputSettingsTile(
+                  title: 'MQTT User',
+                  settingKey: SettingKeys.mqttUser.name,
+                  initialValue: 'user',
+                ),
+                TextInputSettingsTile(
+                  title: 'MQTT Password',
+                  settingKey: SettingKeys.mqttPassword.name,
+                  initialValue: '',
+                  obscureText: true,
+                ),
+                TextInputSettingsTile(
+                  title: 'MQTT root topic',
+                  settingKey: SettingKeys.mqttRootTopic.name,
+                  initialValue: settingsService.mqttRootTopic,
+                  obscureText: false,
+                ),
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.mqttSendState.name,
+                  defaultValue: settingsService.mqttSendState,
+                  title: 'Send de1 state updates',
+                  subtitle: "Sending the status of the de1",
+                  onChange: (value) {},
+                ),
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.mqttSendShot.name,
+                  defaultValue: settingsService.mqttSendShot,
+                  title: 'Send de1 shot updates',
+                  subtitle:
+                      "This can lead to a higher load on your MQTT server as the message frequency is about 10Hz.",
+                  onChange: (value) {},
+                ),
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.mqttSendShot.name,
+                  defaultValue: settingsService.mqttSendWater,
+                  title: 'Send de1 water level updates',
+                  subtitle: "This can lead to a higher load on your MQTT server.",
+                  onChange: (value) {},
+                ),
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.mqttSendBattery.name,
+                  defaultValue: settingsService.mqttSendBattery,
+                  title: 'Send tablet battery level updates',
+                  onChange: (value) {},
+                ),
+              ],
             ),
-            TextInputSettingsTile(
-              title: 'MQTT Port',
-              settingKey: SettingKeys.mqttPort.name,
-              initialValue: '1883',
-            ),
-            TextInputSettingsTile(
-              title: 'MQTT User',
-              settingKey: SettingKeys.mqttUser.name,
-              initialValue: 'user',
-            ),
-            TextInputSettingsTile(
-              title: 'MQTT Password',
-              settingKey: SettingKeys.mqttPassword.name,
-              initialValue: '',
-              obscureText: true,
-            ),
-            TextInputSettingsTile(
-              title: 'MQTT root topic',
-              settingKey: SettingKeys.mqttRootTopic.name,
-              initialValue: settingsService.mqttRootTopic,
-              obscureText: false,
-            ),
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.mqttSendState.name,
-              defaultValue: settingsService.mqttSendState,
-              title: 'Send de1 state updates',
-              subtitle: "Sending the status of the de1",
-              onChange: (value) {},
-            ),
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.mqttSendShot.name,
-              defaultValue: settingsService.mqttSendShot,
-              title: 'Send de1 shot updates',
-              subtitle: "This can lead to a higher load on your MQTT server as the message frequency is about 10Hz.",
-              onChange: (value) {},
-            ),
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.mqttSendShot.name,
-              defaultValue: settingsService.mqttSendWater,
-              title: 'Send de1 water level updates',
-              subtitle: "This can lead to a higher load on your MQTT server.",
-              onChange: (value) {},
-            ),
-            SwitchSettingsTile(
-              leading: const Icon(Icons.settings_remote),
-              settingKey: SettingKeys.mqttSendBattery.name,
-              defaultValue: settingsService.mqttSendBattery,
-              title: 'Send tablet battery level updates',
-              onChange: (value) {},
+            ExpandableSettingsTile(
+                title: 'Vizualizer',
+                subtitle: 'Cloud shot upload',
+                expanded: false,
+                children: <Widget>[
+                  SwitchSettingsTile(
+                    leading: const Icon(Icons.usb),
+                    settingKey: SettingKeys.vizualizerUpload.name,
+                    defaultValue: false,
+                    title: 'Upload Shots to Vizualizer',
+                    onChange: (value) {
+                      debugPrint('USB Debugging: $value');
+                    },
+                  ),
+                  TextInputSettingsTile(
+                    title: 'User Name/email',
+                    settingKey: SettingKeys.vizualizerUser.name,
+                    initialValue: 'admin',
+                    validator: (String? username) {
+                      if (username != null && username.length > 3) {
+                        return null;
+                      }
+                      return "User Name can't be smaller than 4 letters";
+                    },
+                    borderColor: Colors.blueAccent,
+                    errorColor: Colors.deepOrangeAccent,
+                  ),
+                  TextInputSettingsTile(
+                    title: 'password',
+                    settingKey: SettingKeys.vizualizerPwd.name,
+                    obscureText: true,
+                    validator: (String? password) {
+                      if (password != null && password.length > 6) {
+                        return null;
+                      }
+                      return "Password can't be smaller than 7 letters";
+                    },
+                    borderColor: Colors.blueAccent,
+                    errorColor: Colors.deepOrangeAccent,
+                  ),
+                ]),
+          ],
+        ),
+        SettingsGroup(
+          title: "Backup Settings",
+          children: [
+            ExpandableSettingsTile(
+              title: 'Backup/Restore Settings',
+              expanded: false,
+              children: <Widget>[
+                SettingsContainer(
+                  leftPadding: 16,
+                  children: [
+                    const Text("Backup/Restore database"),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                backupDatabase();
+                              },
+                              child: const Text("Backup")),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                restoreDatabase();
+                              },
+                              child: const Text("Restore")),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
@@ -504,5 +373,109 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
   void settingsServiceListener() {
     setState(() {});
+  }
+
+  Future<void> backupDatabase() async {
+    try {
+      var objectBox = getIt<ObjectBox>();
+      var data = objectBox.getBackupData();
+      await DocumentFileSavePlus.saveFile(data, "despresso_backup.bak", "application/octet-stream");
+      log.info("Backupdata saved ${data.length}");
+
+      var snackBar = SnackBar(
+          content: const Text('Saved backup'),
+          action: SnackBarAction(
+            label: 'ok',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      log.severe("Save database failed $e");
+      var snackBar = SnackBar(
+          content: const Text('Saving backup failed'),
+          action: SnackBarAction(
+            label: 'ok',
+            onPressed: () {
+              // Some code to undo the change.
+            },
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future<void> restoreDatabase() async {
+    var filePickerResult = await FilePicker.platform.pickFiles(lockParentWindow: true, type: FileType.any);
+
+    if (filePickerResult != null) {
+      var objectBox = getIt<ObjectBox>();
+      try {
+        await objectBox.restoreBackupData(filePickerResult!.files.single.path.toString());
+        showRestartNowScreen();
+        var snackBar = SnackBar(
+            content: const Text('Restored backup'),
+            action: SnackBarAction(
+              label: 'ok',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } catch (e) {
+        log.severe("Store restored $e");
+        var snackBar = SnackBar(
+            content: const Text('Failed restoring backup'),
+            action: SnackBarAction(
+              label: 'error',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    } else {
+      // can perform some actions like notification etc
+    }
+  }
+
+  void showRestartNowScreen() {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black12.withOpacity(0.9), // Background color
+      barrierDismissible: false,
+
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (_, __, ___) {
+        return Column(
+          children: <Widget>[
+            Expanded(
+              flex: 5,
+              child: SizedBox.expand(
+                child: Image.asset("assets/logo.png"),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Text("Settings are restored. Please close app and restart.",
+                  style: Theme.of(context).textTheme.bodyLarge),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  if (Platform.isAndroid) {
+                    SystemNavigator.pop();
+                  } else if (Platform.isIOS) {
+                    exit(0);
+                  }
+                },
+                child: const Text("Exit app"),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

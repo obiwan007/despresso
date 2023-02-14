@@ -71,6 +71,7 @@ dependencies:
   logging: ^1.1.1
   file_picker: ^5.2.5
   share_plus: ^6.3.0
+  document_file_save_plus: ^1.0.9
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -316,6 +317,12 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         log.info("Loaded ROasters $roasters");
         _selectedCoffeeId = coffeeService.selectedCoffee;
         _selectedRoasterId = coffeeService.selectedRoaster;
+        if (coffees.firstWhereOrNull((element) => element.value == _selectedCoffeeId) == null) {
+          _selectedCoffeeId = 0;
+        }
+        if (roasters.firstWhereOrNull((element) => element.value == _selectedRoasterId) == null) {
+          _selectedRoasterId = 0;
+        }
       },
     );
   }
