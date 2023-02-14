@@ -88,7 +88,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Coffee Beans'),
+        title: selectedCoffeeId == 0 ? const Text('Add new coffee beans') : const Text('Edit coffee beans'),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(

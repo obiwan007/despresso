@@ -5,10 +5,12 @@ class KeyValueWidget extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
+    this.width = 150,
   });
 
   final String label;
   final String value;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,8 @@ class KeyValueWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-            flex: 1, // takes 30% of available width
+        SizedBox(
+            width: width, // takes 30% of available width
             child: Text(label, style: Theme.of(context).textTheme.labelMedium)),
         Expanded(
             flex: 1, // takes 30% of available width
