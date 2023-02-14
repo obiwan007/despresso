@@ -82,7 +82,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CoffeeEdit(0)),
+            MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
           );
         },
         // backgroundColor: Colors.green,
@@ -157,7 +157,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                           if (value == 0) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => CoffeeEdit(0)),
+                              MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
                             );
                           } else {
                             coffeeService.setSelectedRoaster(_selectedRoasterId);
@@ -220,26 +220,6 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     return coffees;
   }
 
-  Future<void> addCoffee() async {
-    var r = Roaster();
-    r.name = "Bärista";
-    r.description = "Small little company in the middle of Berlin";
-    r.address = "Franklinstr. 21, Berlin";
-    r.homepage = "https://www.google.com";
-    await coffeeService.addRoaster(r);
-    var c = Coffee();
-    c.roaster.target = r;
-    c.name = "Bärige Mischung";
-    c.acidRating = 5;
-    c.grinderSettings = 10;
-    c.description = "Cheap supermarket coffee";
-    c.intensityRating = 5;
-    c.roastLevel = 5;
-    c.price = "20€";
-    c.origin = "Columbia";
-    await coffeeService.addCoffee(c);
-  }
-
   roasterData() {
     if (_selectedRoasterId == 0) return;
 
@@ -264,13 +244,13 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
       children: [
         KeyValueWidget(label: "Name", value: coffee.name),
         if (coffee.description.isNotEmpty) KeyValueWidget(label: "Description", value: coffee.description),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         KeyValueWidget(label: "Tasting", value: coffee.taste),
         KeyValueWidget(label: "Type of Beans", value: coffee.type),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         KeyValueWidget(label: "Grinder", value: coffee.grinderSettings.toString()),
         KeyValueWidget(label: "Dose", value: coffee.grinderDoseWeight.toString()),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         KeyValueWidget(
           label: "Acidity",
           value: "",
@@ -285,7 +265,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
             direction: Axis.horizontal,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         KeyValueWidget(
           label: "Intensity",
           value: "",
@@ -300,7 +280,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
             direction: Axis.horizontal,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         KeyValueWidget(
           label: "Roast Level",
           value: "",

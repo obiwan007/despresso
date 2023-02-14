@@ -5,17 +5,15 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
-import 'package:path/path.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeEdit extends StatefulWidget {
-  CoffeeEdit(this.selectedCoffeeId, {super.key});
-  int selectedCoffeeId;
+  const CoffeeEdit(this.selectedCoffeeId, {super.key});
+  final int selectedCoffeeId;
 
   @override
   CoffeeEditState createState() => CoffeeEditState(selectedCoffeeId);
