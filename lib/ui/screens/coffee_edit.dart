@@ -1,3 +1,5 @@
+import 'package:despresso/ui/widgets/height_widget.dart';
+import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -31,6 +33,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
   int selectedCoffeeId = 0;
 
   FormGroup? currentForm;
+  List<DropdownMenuItem<int>> roasters = [];
+
+  int _selectedRoasterId = 0;
 
   FormGroup get theForm2 => fb.group(<String, Object>{
         'name': ['test', Validators.required],
@@ -56,13 +61,18 @@ class CoffeeEditState extends State<CoffeeEdit> {
     coffeeService = getIt<CoffeeService>();
     machineService = getIt<EspressoMachineService>();
     coffeeService.addListener(updateCoffee);
+    roasters = loadRoasters();
 
     if (selectedCoffeeId > 0) {
       _editedCoffee = coffeeService.coffeeBox.get(selectedCoffeeId)!;
     } else {
       _editedCoffee = Coffee();
     }
-
+    if (_editedCoffee.roaster.targetId == 0) {
+      _selectedRoasterId = coffeeService.selectedRoaster;
+    } else {
+      _selectedRoasterId = _editedCoffee.roaster.targetId;
+    }
     theForm = fb.group(<String, Object>{
       'name': [_editedCoffee.name, Validators.required],
       'description': [_editedCoffee.description],
@@ -132,11 +142,23 @@ class CoffeeEditState extends State<CoffeeEdit> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        KeyValueWidget(label: "Roaster", value: ""),
+        DropdownButton(
+          isExpanded: true,
+          alignment: Alignment.centerLeft,
+          value: _selectedRoasterId,
+          items: roasters,
+          onChanged: (value) async {
+            _selectedRoasterId = value!;
+            coffeeService.setSelectedRoaster(_selectedRoasterId);
+          },
+        ),
+
         ReactiveTextField<String>(
           formControlName: 'name',
           keyboardType: TextInputType.text,
           decoration: const InputDecoration(
-            labelText: 'Name',
+            labelText: 'Name of bean',
           ),
           validationMessages: {
             ValidationMessage.required: (_) => 'Name must not be empty',
@@ -191,7 +213,8 @@ class CoffeeEditState extends State<CoffeeEdit> {
             labelText: 'Dose',
           ),
         ),
-        createKeyValue("Acidity", null),
+        HeightWidget(height: 20),
+        KeyValueWidget(label: "Acidity", value: ""),
         ReactiveRatingBarBuilder<double>(
           formControlName: 'acidRating',
           minRating: 1,
@@ -204,7 +227,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
             color: Colors.amber,
           ),
         ),
-        createKeyValue("Intensity", null),
+        HeightWidget(height: 20),
+
+        KeyValueWidget(label: "Intensity", value: ""),
         ReactiveRatingBarBuilder<double>(
           formControlName: 'intensityRating',
           minRating: 1,
@@ -217,7 +242,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
             color: Colors.amber,
           ),
         ),
-        createKeyValue("Roast Level", null),
+        HeightWidget(height: 20),
+        KeyValueWidget(label: "Roast Level", value: ""),
+
         ReactiveRatingBarBuilder<double>(
           formControlName: 'roastLevel',
           minRating: 1,
@@ -275,6 +302,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.grinderSettings = form.value["grinderSettings"] as double;
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
     _editedCoffee.grinderDoseWeight = form.value["grinderDoseWeight"] as double;
+    _editedCoffee.roaster.targetId = _selectedRoasterId;
     coffeeService.addCoffee(_editedCoffee);
     selectedCoffeeId = _editedCoffee.id;
     coffeeService.setSelectedCoffee(selectedCoffeeId);
@@ -284,5 +312,17 @@ class CoffeeEditState extends State<CoffeeEdit> {
     setState(
       () {},
     );
+  }
+
+  List<DropdownMenuItem<int>> loadRoasters() {
+    var roasters = coffeeService.roasterBox
+        .getAll()
+        .map((p) => DropdownMenuItem(
+              value: p.id,
+              child: Text(p.name),
+            ))
+        .toList();
+
+    return roasters;
   }
 }
