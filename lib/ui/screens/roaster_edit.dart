@@ -30,6 +30,8 @@ class RoasterEditState extends State<RoasterEdit> {
   Roaster _editedRoaster = Roaster();
   int selectedRoasterId;
 
+  FormGroup? currentForm;
+
   FormGroup get theForm2 => fb.group(<String, Object>{
         'name': ['test', Validators.required],
         'description': [''],
@@ -82,9 +84,13 @@ class RoasterEditState extends State<RoasterEdit> {
               'Save',
             ),
             onPressed: () {
-              setState(() {
-                Navigator.pop(context);
-              });
+              if (currentForm != null && currentForm!.valid) {
+                setState(() {
+                  log.info("${currentForm!.value}");
+                  saveFormData(currentForm!);
+                  Navigator.pop(context);
+                });
+              }
             },
           ),
         ],
@@ -92,15 +98,18 @@ class RoasterEditState extends State<RoasterEdit> {
       body: SingleChildScrollView(
         child: ReactiveFormBuilder(
           form: () => theForm,
-          builder: (context, form, child) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                roasterForm(form),
-              ],
-            ),
-          ),
+          builder: (context, form, child) {
+            currentForm = form;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  roasterForm(form),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -136,27 +145,27 @@ class RoasterEditState extends State<RoasterEdit> {
             labelText: 'Homepage',
           ),
         ),
-        ReactiveFormConsumer(
-          builder: (context, form, child) {
-            return ElevatedButton(
-              onPressed: form.valid
-                  ? () {
-                      log.info("${form.value}");
-                      saveFormData(form);
-                      Navigator.pop(context);
-                    }
-                  : null,
-              child: const Text('SAVE'),
-            );
-          },
-        ),
-        ElevatedButton(
-          onPressed: () {
-            form.reset();
-            Navigator.pop(context);
-          },
-          child: const Text('CANCEL'),
-        ),
+        // ReactiveFormConsumer(
+        //   builder: (context, form, child) {
+        //     return ElevatedButton(
+        //       onPressed: form.valid
+        //           ? () {
+        //               log.info("${form.value}");
+        //               saveFormData(form);
+        //               Navigator.pop(context);
+        //             }
+        //           : null,
+        //       child: const Text('SAVE'),
+        //     );
+        //   },
+        // ),
+        // ElevatedButton(
+        //   onPressed: () {
+        //     form.reset();
+        //     Navigator.pop(context);
+        //   },
+        //   child: const Text('CANCEL'),
+        // ),
       ],
     );
   }

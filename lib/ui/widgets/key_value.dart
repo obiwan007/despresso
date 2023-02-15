@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
 class KeyValueWidget extends StatelessWidget {
-  const KeyValueWidget({
+  KeyValueWidget({
     super.key,
     required this.label,
     required this.value,
+    this.width = 150,
+    this.widget,
   });
 
   final String label;
   final String value;
+  final double width;
+  Widget? widget;
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +20,12 @@ class KeyValueWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-            flex: 1, // takes 30% of available width
+        SizedBox(
+            width: width, // takes 30% of available width
             child: Text(label, style: Theme.of(context).textTheme.labelMedium)),
         Expanded(
             flex: 1, // takes 30% of available width
-            child: Text(value, style: Theme.of(context).textTheme.bodyMedium)),
+            child: widget != null ? widget! : Text(value, style: Theme.of(context).textTheme.bodyMedium)),
       ],
     );
   }

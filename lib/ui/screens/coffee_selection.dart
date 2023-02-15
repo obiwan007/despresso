@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -79,7 +80,10 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          addCoffee();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
+          );
         },
         // backgroundColor: Colors.green,
         child: const Icon(Icons.add),
@@ -92,7 +96,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
             children: <Widget>[
               Row(
                 children: [
-                  const Expanded(flex: 2, child: Text("Select Roaster", style: theme.TextStyles.h1)),
+                  const SizedBox(width: 150, child: Text("Select Roaster", style: theme.TextStyles.h1)),
                   Expanded(
                     flex: 8,
                     child: DropdownButton(
@@ -114,13 +118,32 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                       },
                     ),
                   ),
+                  if (_editRosterMode == EditModes.show)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            // _editRosterMode = EditModes.edit;
+                            // _editCoffeeMode = EditModes.show;
+                            // _editedRoaster = roaster;
+                            // form.value = _editedRoaster.toJson();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => RoasterEdit(_selectedRoasterId)),
+                            );
+                          });
+                        },
+                        child: const Text('EDIT'),
+                      ),
+                    ),
                 ],
               ),
               if (_selectedRoasterId > 0) roasterData(),
               const Divider(),
               Row(
                 children: [
-                  const Expanded(flex: 2, child: Text("Select Coffee", style: theme.TextStyles.h1)),
+                  const SizedBox(width: 150, child: Text("Select Coffee", style: theme.TextStyles.h1)),
                   Expanded(
                     flex: 8,
                     child: DropdownButton(
@@ -134,7 +157,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                           if (value == 0) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => CoffeeEdit(0)),
+                              MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
                             );
                           } else {
                             coffeeService.setSelectedRoaster(_selectedRoasterId);
@@ -144,6 +167,25 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                       },
                     ),
                   ),
+                  if (_editCoffeeMode == EditModes.show)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => CoffeeEdit(_selectedCoffeeId)),
+                            );
+                            // _editCoffeeMode = EditModes.edit;
+                            // _editRosterMode = EditModes.show;
+                            // _editedCoffee = coffee;
+                            // form.value = _editedCoffee.toJson();
+                          });
+                        },
+                        child: const Text('EDIT'),
+                      ),
+                    ),
                 ],
               ),
               if (_selectedCoffeeId > 0) coffeeData(),
@@ -178,26 +220,6 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     return coffees;
   }
 
-  Future<void> addCoffee() async {
-    var r = Roaster();
-    r.name = "Bärista";
-    r.description = "Small little company in the middle of Berlin";
-    r.address = "Franklinstr. 21, Berlin";
-    r.homepage = "https://www.google.com";
-    await coffeeService.addRoaster(r);
-    var c = Coffee();
-    c.roaster.target = r;
-    c.name = "Bärige Mischung";
-    c.acidRating = 5;
-    c.grinderSettings = 10;
-    c.description = "Cheap supermarket coffee";
-    c.intensityRating = 5;
-    c.roastLevel = 5;
-    c.price = "20€";
-    c.origin = "Columbia";
-    await coffeeService.addCoffee(c);
-  }
-
   roasterData() {
     if (_selectedRoasterId == 0) return;
 
@@ -205,26 +227,10 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        createKeyValue("Name", roaster.name),
-        if (roaster.description.isNotEmpty) createKeyValue("Description", roaster.description),
-        if (roaster.homepage.isNotEmpty) createKeyValue("Homepage", roaster.homepage),
-        if (roaster.address.isNotEmpty) createKeyValue("Address", roaster.address),
-        if (_editRosterMode == EditModes.show)
-          OutlinedButton(
-            onPressed: () {
-              setState(() {
-                // _editRosterMode = EditModes.edit;
-                // _editCoffeeMode = EditModes.show;
-                // _editedRoaster = roaster;
-                // form.value = _editedRoaster.toJson();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RoasterEdit(_selectedRoasterId)),
-                );
-              });
-            },
-            child: const Text('EDIT'),
-          ),
+        KeyValueWidget(label: "Name", value: roaster.name),
+        if (roaster.description.isNotEmpty) KeyValueWidget(label: "Description", value: roaster.description),
+        if (roaster.homepage.isNotEmpty) KeyValueWidget(label: "Homepage", value: roaster.homepage),
+        if (roaster.address.isNotEmpty) KeyValueWidget(label: "Address", value: roaster.address),
       ],
     );
   }
@@ -236,61 +242,59 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        createKeyValue("Name", coffee.name),
-        if (coffee.description.isNotEmpty) createKeyValue("Description", coffee.description),
-        createKeyValue("Tasting", coffee.taste),
-        createKeyValue("Type of Beans", coffee.type),
-        createKeyValue("Grinder", coffee.grinderSettings.toString()),
-        createKeyValue("Dose", coffee.grinderDoseWeight.toString()),
-        createKeyValue("Acidity", null),
-        RatingBarIndicator(
-          rating: coffee.acidRating,
-          itemBuilder: (context, index) => const Icon(
-            Icons.star,
-            color: Colors.amber,
+        KeyValueWidget(label: "Name", value: coffee.name),
+        if (coffee.description.isNotEmpty) KeyValueWidget(label: "Description", value: coffee.description),
+        const SizedBox(height: 10),
+        KeyValueWidget(label: "Tasting", value: coffee.taste),
+        KeyValueWidget(label: "Type of Beans", value: coffee.type),
+        const SizedBox(height: 10),
+        KeyValueWidget(label: "Grinder", value: coffee.grinderSettings.toString()),
+        KeyValueWidget(label: "Dose", value: coffee.grinderDoseWeight.toString()),
+        const SizedBox(height: 10),
+        KeyValueWidget(
+          label: "Acidity",
+          value: "",
+          widget: RatingBarIndicator(
+            rating: coffee.acidRating,
+            itemBuilder: (context, index) => const Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            itemCount: 5,
+            itemSize: 20.0,
+            direction: Axis.horizontal,
           ),
-          itemCount: 5,
-          itemSize: 20.0,
-          direction: Axis.horizontal,
         ),
-        createKeyValue("Intensity", null),
-        RatingBarIndicator(
-          rating: coffee.intensityRating,
-          itemBuilder: (context, index) => const Icon(
-            Icons.star,
-            color: Colors.red,
+        const SizedBox(height: 10),
+        KeyValueWidget(
+          label: "Intensity",
+          value: "",
+          widget: RatingBarIndicator(
+            rating: coffee.intensityRating,
+            itemBuilder: (context, index) => const Icon(
+              Icons.star,
+              color: Colors.red,
+            ),
+            itemCount: 5,
+            itemSize: 20.0,
+            direction: Axis.horizontal,
           ),
-          itemCount: 5,
-          itemSize: 20.0,
-          direction: Axis.horizontal,
         ),
-        createKeyValue("Roast Level", null),
-        RatingBarIndicator(
-          rating: coffee.roastLevel,
-          itemBuilder: (context, index) => const Icon(
-            Icons.star,
-            color: Colors.lightBlue,
+        const SizedBox(height: 10),
+        KeyValueWidget(
+          label: "Roast Level",
+          value: "",
+          widget: RatingBarIndicator(
+            rating: coffee.roastLevel,
+            itemBuilder: (context, index) => const Icon(
+              Icons.star,
+              color: Colors.lightBlue,
+            ),
+            itemCount: 5,
+            itemSize: 20.0,
+            direction: Axis.horizontal,
           ),
-          itemCount: 5,
-          itemSize: 20.0,
-          direction: Axis.horizontal,
         ),
-        if (_editCoffeeMode == EditModes.show)
-          OutlinedButton(
-            onPressed: () {
-              setState(() {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CoffeeEdit(_selectedCoffeeId)),
-                );
-                // _editCoffeeMode = EditModes.edit;
-                // _editRosterMode = EditModes.show;
-                // _editedCoffee = coffee;
-                // form.value = _editedCoffee.toJson();
-              });
-            },
-            child: const Text('EDIT'),
-          ),
       ],
     );
   }

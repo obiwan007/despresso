@@ -1,3 +1,5 @@
+import 'package:despresso/ui/widgets/height_widget.dart';
+import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -9,12 +11,11 @@ import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeEdit extends StatefulWidget {
-  CoffeeEdit(this.selectedCoffeeId, {super.key});
-  int selectedCoffeeId;
+  const CoffeeEdit(this.selectedCoffeeId, {super.key});
+  final int selectedCoffeeId;
 
   @override
   CoffeeEditState createState() => CoffeeEditState(selectedCoffeeId);
@@ -30,6 +31,11 @@ class CoffeeEditState extends State<CoffeeEdit> {
 
   Coffee _editedCoffee = Coffee();
   int selectedCoffeeId = 0;
+
+  FormGroup? currentForm;
+  List<DropdownMenuItem<int>> roasters = [];
+
+  int _selectedRoasterId = 0;
 
   FormGroup get theForm2 => fb.group(<String, Object>{
         'name': ['test', Validators.required],
@@ -55,13 +61,18 @@ class CoffeeEditState extends State<CoffeeEdit> {
     coffeeService = getIt<CoffeeService>();
     machineService = getIt<EspressoMachineService>();
     coffeeService.addListener(updateCoffee);
+    roasters = loadRoasters();
 
     if (selectedCoffeeId > 0) {
       _editedCoffee = coffeeService.coffeeBox.get(selectedCoffeeId)!;
     } else {
       _editedCoffee = Coffee();
     }
-
+    if (_editedCoffee.roaster.targetId == 0) {
+      _selectedRoasterId = coffeeService.selectedRoaster;
+    } else {
+      _selectedRoasterId = _editedCoffee.roaster.targetId;
+    }
     theForm = fb.group(<String, Object>{
       'name': [_editedCoffee.name, Validators.required],
       'description': [_editedCoffee.description],
@@ -88,17 +99,20 @@ class CoffeeEditState extends State<CoffeeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Coffee Beans'),
+        title: selectedCoffeeId == 0 ? const Text('Add new coffee beans') : const Text('Edit coffee beans'),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(
               'Save',
             ),
             onPressed: () {
-              setState(() {
-                var form = ReactiveForm.of(context);
-                Navigator.pop(context);
-              });
+              if (currentForm != null && currentForm!.valid) {
+                setState(() {
+                  log.info("${currentForm!.value}");
+                  saveFormData(currentForm!);
+                  Navigator.pop(context);
+                });
+              }
             },
           ),
         ],
@@ -106,15 +120,18 @@ class CoffeeEditState extends State<CoffeeEdit> {
       body: SingleChildScrollView(
         child: ReactiveFormBuilder(
           form: () => theForm,
-          builder: (context, form, child) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                coffeeForm(form),
-              ],
-            ),
-          ),
+          builder: (context, form, child) {
+            currentForm = form;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  coffeeForm(form),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -125,11 +142,23 @@ class CoffeeEditState extends State<CoffeeEdit> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        KeyValueWidget(label: "Roaster", value: ""),
+        DropdownButton(
+          isExpanded: true,
+          alignment: Alignment.centerLeft,
+          value: _selectedRoasterId,
+          items: roasters,
+          onChanged: (value) async {
+            _selectedRoasterId = value!;
+            coffeeService.setSelectedRoaster(_selectedRoasterId);
+          },
+        ),
+
         ReactiveTextField<String>(
           formControlName: 'name',
           keyboardType: TextInputType.text,
           decoration: const InputDecoration(
-            labelText: 'Name',
+            labelText: 'Name of bean',
           ),
           validationMessages: {
             ValidationMessage.required: (_) => 'Name must not be empty',
@@ -184,7 +213,8 @@ class CoffeeEditState extends State<CoffeeEdit> {
             labelText: 'Dose',
           ),
         ),
-        createKeyValue("Acidity", null),
+        HeightWidget(height: 20),
+        KeyValueWidget(label: "Acidity", value: ""),
         ReactiveRatingBarBuilder<double>(
           formControlName: 'acidRating',
           minRating: 1,
@@ -197,7 +227,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
             color: Colors.amber,
           ),
         ),
-        createKeyValue("Intensity", null),
+        HeightWidget(height: 20),
+
+        KeyValueWidget(label: "Intensity", value: ""),
         ReactiveRatingBarBuilder<double>(
           formControlName: 'intensityRating',
           minRating: 1,
@@ -210,7 +242,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
             color: Colors.amber,
           ),
         ),
-        createKeyValue("Roast Level", null),
+        HeightWidget(height: 20),
+        KeyValueWidget(label: "Roast Level", value: ""),
+
         ReactiveRatingBarBuilder<double>(
           formControlName: 'roastLevel',
           minRating: 1,
@@ -223,29 +257,20 @@ class CoffeeEditState extends State<CoffeeEdit> {
             color: Colors.amber,
           ),
         ),
-        ReactiveFormConsumer(
-          builder: (context, form, child) {
-            return ElevatedButton(
-              onPressed: form.valid
-                  ? () {
-                      log.info("${form.value}");
-                      saveFormData(form);
-                      Navigator.pop(context);
-                    }
-                  : null,
-              child: const Text('SAVE'),
-            );
-          },
-        ),
-        ElevatedButton(
-          onPressed: () {
-            form.reset();
-            setState(() {
-              Navigator.pop(context);
-            });
-          },
-          child: const Text('CANCEL'),
-        ),
+        // ReactiveFormConsumer(
+        //   builder: (context, form, child) {
+        //     return ElevatedButton(
+        //       onPressed: form.valid
+        //           ? () {
+        //               log.info("${form.value}");
+        //               saveFormData(form);
+        //               Navigator.pop(context);
+        //             }
+        //           : null,
+        //       child: const Text('SAVE'),
+        //     );
+        //   },
+        // ),
       ],
     );
   }
@@ -277,6 +302,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.grinderSettings = form.value["grinderSettings"] as double;
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
     _editedCoffee.grinderDoseWeight = form.value["grinderDoseWeight"] as double;
+    _editedCoffee.roaster.targetId = _selectedRoasterId;
     coffeeService.addCoffee(_editedCoffee);
     selectedCoffeeId = _editedCoffee.id;
     coffeeService.setSelectedCoffee(selectedCoffeeId);
@@ -286,5 +312,17 @@ class CoffeeEditState extends State<CoffeeEdit> {
     setState(
       () {},
     );
+  }
+
+  List<DropdownMenuItem<int>> loadRoasters() {
+    var roasters = coffeeService.roasterBox
+        .getAll()
+        .map((p) => DropdownMenuItem(
+              value: p.id,
+              child: Text(p.name),
+            ))
+        .toList();
+
+    return roasters;
   }
 }
