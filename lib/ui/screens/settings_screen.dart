@@ -356,6 +356,24 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
+        SettingsGroup(
+          title: "Privacy Settings",
+          children: [
+            ExpandableSettingsTile(
+              title: 'Sentry Error reporting',
+              expanded: false,
+              children: <Widget>[
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.useSentry.name,
+                  defaultValue: settingsService.useSentry,
+                  title: 'Send informations to sentry.io if the app crashes',
+                  onChange: (value) {},
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }

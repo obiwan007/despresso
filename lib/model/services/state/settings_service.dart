@@ -27,12 +27,10 @@ enum SettingKeys {
   smartCharging,
   hasSteamThermometer,
   hasScale,
+  useSentry,
 }
 
 class SettingsService extends ChangeNotifier {
-  // Coffee? currentCoffee;
-  // List<Coffee> knownCoffees = [];
-  // List<Roaster> knownRoasters = [];
   late SharedPreferences prefs;
 
   late ObjectBox objectBox;
@@ -43,9 +41,6 @@ class SettingsService extends ChangeNotifier {
 
   void init() async {
     objectBox = getIt<ObjectBox>();
-    // coffeeBox = objectBox.store.box<Coffee>();
-    // roasterBox = objectBox.store.box<Roaster>();
-    // shotBox = objectBox.store.box<Shot>();
 
     prefs = await SharedPreferences.getInstance();
     notifyListeners();
@@ -76,6 +71,8 @@ class SettingsService extends ChangeNotifier {
 
   bool get hasSteamThermometer => Settings.getValue<bool>(SettingKeys.hasSteamThermometer.name) ?? false;
   bool get hasScale => Settings.getValue<bool>(SettingKeys.hasScale.name) ?? true;
+
+  bool get useSentry => Settings.getValue<bool>(SettingKeys.useSentry.name) ?? true;
 
   void notifyDelayed() {
     Future.delayed(

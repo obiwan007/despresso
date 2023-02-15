@@ -13,6 +13,7 @@ import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
@@ -171,6 +172,16 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                     MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
                   );
                   // Then close the drawer
+                },
+              ),
+              ListTile(
+                title: const Text('Feedback'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  BetterFeedback.of(context).showAndUploadToSentry(
+                    name: 'Despresso Feedback', // optional
+                    email: 'foo_bar@example.com', // optional
+                  );
                 },
               ),
               ListTile(

@@ -31,12 +31,18 @@ jobs:
       - name: Version
         run: flutter --version
 
+      - name: replace sentry key
+        env: SENTRY_KEY: ${{ secrets.SENTRY_KEY }} 
+        run: |
+          export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
+          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart
+          
       - name: Update pods
         run: pod repo update
       - name: Bundle install
         run: cd ./ios && bundle install
       - uses: maierj/fastlane-action@v3.0.0        
-        env:
+        env:            
             MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
             MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
             MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

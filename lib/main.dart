@@ -1,3 +1,5 @@
+import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/service_locator.dart';
@@ -10,6 +12,7 @@ import 'objectbox.dart';
 import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
 import 'color_schemes.g.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:logging/logging.dart';
 // import 'package:logging_appenders/logging_appenders.dart';
@@ -39,8 +42,19 @@ Future<void> main() async {
   // SystemChrome.setEnabledSystemUIOverlays([
   //   SystemUiOverlay.bottom, //This line is used for showing the bottom bar
   // ]);
-  initSettings().then((_) {
-    runApp(MyApp());
+  initSettings().then((_) async {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = Settings.getValue<bool>(SettingKeys.useSentry.name, defaultValue: true)! ? '<SENTRY_KEY>' : '';
+        // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+        // We recommend adjusting this value in production.
+        options.tracesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(BetterFeedback(
+        mode: FeedbackMode.navigate,
+        child: MyApp(),
+      )),
+    );
   });
 }
 
@@ -99,6 +113,7 @@ class MyApp extends StatelessWidget {
       //   ),
 
       home: const LandingPage(title: 'despresso'),
+      navigatorObservers: [SentryNavigatorObserver()],
     );
   }
 }
