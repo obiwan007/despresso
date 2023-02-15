@@ -20,7 +20,7 @@ platform :ios do
   lane :beta do
 
     sh("bash", "./configsentry.sh")
-
+    
     get_certificates           # invokes cert
     get_provisioning_profile   # invokes sigh
     increment_build_number(
@@ -28,7 +28,12 @@ platform :ios do
         xcodeproj: "Runner.xcodeproj"
     )
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    # remove temp file
+    sh("mv ../../lib/main.dart-e ../../lib/main.dart")
+    
     upload_to_testflight
+
+
   end
 
   lane :betamatch do
