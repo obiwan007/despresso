@@ -13,8 +13,19 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+      
+      - name: Decode secrets.properties file
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
 
-      - uses: ruby/setup-ruby@v1
+      - name: restore key properties
+        env:
+          KEYPROPERTIES: ${{ secrets.KEYPROPERTIES }}
+        run: echo "$KEYPROPERTIES" > android/key.properties        
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0'
           bundler-cache: true
@@ -36,21 +47,15 @@ jobs:
           SENTRY_KEY: ${{ secrets.SENTRY_KEY }} 
         run: |
           export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
-          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart
-          
-      - name: Update pods
-        run: pod repo update
+          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart          
+      
       - name: Bundle install
-        run: cd ./ios && bundle install
+        run: cd ./android && bundle install
       - uses: maierj/fastlane-action@v3.0.0        
         env:            
-            MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
-            MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-            MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-            FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
             API_KEY: ${{ secrets.API_KEY }}
             API_KEY_ID: ${{ secrets.API_KEY_ID }}
             ISSUER_ID: ${{ secrets.ISSUER_ID }}
         with:
-          lane: 'betamatch'
-          subdirectory: 'ios'
+          lane: 'beta'
+          subdirectory: 'android'

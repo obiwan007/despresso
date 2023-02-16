@@ -16,6 +16,7 @@ Runner.app.dSYM.zip
 .pub/
 build/
 keys/
+**/report.xml
 
 # Android Studio will place build artifacts here
 android/app/debug

@@ -72,6 +72,8 @@ dependencies:
   file_picker: ^5.2.5
   share_plus: ^6.3.0
   document_file_save_plus: ^1.0.9
+  sentry_flutter: ^6.20.1
+  feedback_sentry: ^2.3.0
 
 dev_dependencies:
   flutter_test:
