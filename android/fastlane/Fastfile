@@ -60,9 +60,16 @@ lane :beta do
     # supply(track: 'internal', version_code: 5)
     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
 
-    # gradle(task: "clean assembleRelease")    
+    # gradle(task: "clean assembleRelease")
+    
+    increment_version_code(
+       gradle_file_path: "./app/build.gradle",
+    
+    sh("bash", "./configsentry.sh")
+
     gradle(task: "clean bundleRelease")    
     
+    sh("mv ../../lib/main.dart-e ../../lib/main.dart")
     upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'Closed Beta')
     # supply(track: 'Closed Beta', version_code: 2)    
     #     
