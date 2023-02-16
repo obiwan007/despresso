@@ -37,7 +37,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-          
+
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -62,7 +62,14 @@ jobs:
         run: |
           export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
           sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart          
-      
+
+      - name: Build APK  
+        run: | 
+          flutter build appbundle
+          cat android/local.properties
+          cat android/gradle.properties
+
+
       - name: Bundle install
         run: cd ./android && bundle install
       - uses: maierj/fastlane-action@v3.0.0        
