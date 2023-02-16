@@ -17,7 +17,12 @@ jobs:
       - name: Decode secrets.properties file
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
-        run: echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
+          PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY: ${{ secrets.PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY }}
+        run: |
+          mkdir keys
+          echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
+          echo "$KEYSTORE" | base64 -d > keys/upload-keystore.jks
+          echo "$PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY" > keys/pc-api-7848368376441168283-873-b09f4c9c476d.json
 
       - name: restore key properties
         env:
