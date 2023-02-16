@@ -4,6 +4,7 @@ import 'dart:async';
 // import 'dart:html';
 
 import 'package:despresso/devices/decent_scale.dart';
+import 'package:despresso/devices/felicita_scale.dart';
 import 'package:despresso/devices/meater_thermometer.dart';
 import 'package:despresso/devices/skale2_scale.dart';
 import 'package:flutter/foundation.dart';
@@ -122,6 +123,11 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('Skale')) {
           log.info('Skala 2');
           Skale2Scale(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
+        if (device.name.startsWith('FELICITA')) {
+          log.info('Felicita Scale');
+          FelicitaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
 
