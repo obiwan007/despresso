@@ -18,6 +18,7 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
       Platform.isAndroid ? Uuid.parse('0000ffe0-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffe0');
+  // ignore: non_constant_identifier_names
   static Uuid DataUUID = Platform.isAndroid ? Uuid.parse('0000ffe1-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffe1');
 
   late ScaleService scaleService;
@@ -56,36 +57,31 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
 
   void _notificationCallback(List<int> data) {
     if (data.length == 18) {
-      // var isNeg = (data[6] == 0 ? false : true);
-      // var weight = (data[7] + (data[8] << 8));
+      var weight = int.parse(data.slice(3, 9).map((value) => {value - 48}).join(''));
 
-      // weight = isNeg ? weight * -1 : weight;
-      // scaleService.setWeight((weight / 10).toDouble());
-      //  data.slice(3,9).map((value) => { return value - 48 }).join('');
-
-      // scaleService.setWeight(weight/100);
+      scaleService.setWeight(weight / 100);
       scaleService.setBattery(((data[15] - minBattLevel) / (maxBattLevel - minBattLevel) * 100).round());
     }
   }
 
   @override
   writeTare() {
-    return writeToEureka([cmdTare]);
+    return writeToFelicita([cmdTare]);
   }
 
   Future<void> startTimer() {
-    return writeToEureka([cmdStartTimer]);
+    return writeToFelicita([cmdStartTimer]);
   }
 
   Future<void> stopTimer() {
-    return writeToEureka([cmdStopTimer]);
+    return writeToFelicita([cmdStopTimer]);
   }
 
   Future<void> resetTimer() {
-    return writeToEureka([cmdResetTimer]);
+    return writeToFelicita([cmdResetTimer]);
   }
 
-  Future<void> writeToEureka(List<int> payload) async {
+  Future<void> writeToFelicita(List<int> payload) async {
     log.info("Sending to Felicita");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
@@ -120,7 +116,7 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
-        log.info('Eureka Scale disconnected. Destroying');
+        log.info('Felicita Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
 
