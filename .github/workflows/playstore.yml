@@ -31,7 +31,13 @@ jobs:
         env:
           KEYPROPERTIES: ${{ secrets.KEYPROPERTIES }}
         run: echo "$KEYPROPERTIES" > android/key.properties        
-
+      
+      - name: JavaSetup
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
