@@ -1,0 +1,61 @@
+name: Testflight
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true  
+
+jobs:
+  buildall:
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      
+      - name: Decode secrets.properties file
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
+
+      - name: restore key properties
+        env:
+          KEYPROPERTIES: ${{ secrets.KEYPROPERTIES }}
+        run: echo "$KEYPROPERTIES" > android/key.properties        
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+      
+      - name: InstallFlutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
+          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:' # optional, change this to specify the cache path
+          architecture: x64 # optional, x64 or arm64
+
+      - name: Version
+        run: flutter --version
+
+      - name: replace sentry key
+        env: 
+          SENTRY_KEY: ${{ secrets.SENTRY_KEY }} 
+        run: |
+          export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
+          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart          
+      
+      - name: Bundle install
+        run: cd ./android && bundle install
+      - uses: maierj/fastlane-action@v3.0.0        
+        env:            
+            API_KEY: ${{ secrets.API_KEY }}
+            API_KEY_ID: ${{ secrets.API_KEY_ID }}
+            ISSUER_ID: ${{ secrets.ISSUER_ID }}
+        with:
+          lane: 'beta'
+          subdirectory: 'android'
