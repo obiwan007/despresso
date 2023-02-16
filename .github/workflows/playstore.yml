@@ -1,4 +1,4 @@
-name: Testflight
+name: PlayStore
 
 on:
   workflow_dispatch:
