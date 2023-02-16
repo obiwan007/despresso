@@ -30,7 +30,7 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
   static const int cmdStopTimer = 0x53;
   static const int cmdResetTimer = 0x43;
   static const int cmdToggleTimer = 0x42;
-  static const int cmdTogglePrecistion = 0x44;
+  static const int cmdTogglePrecision = 0x44;
   static const int cmdTare = 0x54;
   static const int cmdToggleUnit = 0x55;
 
