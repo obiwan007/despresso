@@ -211,7 +211,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     if (value) {
                       mqttService.startService();
                     } else {
-                      //stop mqtt service
+                      mqttService.stopService();
                     }
                   },
                 ),
@@ -360,15 +360,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           title: "Privacy Settings",
           children: [
             ExpandableSettingsTile(
-              title: 'Sentry Error reporting',
+              title: 'Feedback and Crash reporting',
               expanded: false,
               children: <Widget>[
                 SwitchSettingsTile(
                   leading: const Icon(Icons.settings_remote),
                   settingKey: SettingKeys.useSentry.name,
                   defaultValue: settingsService.useSentry,
-                  title: 'Send informations to sentry.io if the app crashes',
-                  onChange: (value) {},
+                  title:
+                      'Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.',
+                  onChange: (value) {
+                    ShowSnackbar(context);
+                  },
                 ),
               ],
             ),
@@ -376,6 +379,19 @@ class SettingsScreenState extends State<AppSettingsScreen> {
         ),
       ],
     );
+  }
+
+  void ShowSnackbar(BuildContext context) {
+    var snackBar = SnackBar(
+        duration: const Duration(seconds: 5),
+        content: const Text('You changed critical settings. You need to restart the app to make the settings active.'),
+        action: SnackBarAction(
+          label: 'ok',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Column createKeyValue(String key, String value) {

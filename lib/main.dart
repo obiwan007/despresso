@@ -50,10 +50,7 @@ Future<void> main() async {
         // We recommend adjusting this value in production.
         options.tracesSampleRate = 1.0;
       },
-      appRunner: () => runApp(BetterFeedback(
-        mode: FeedbackMode.navigate,
-        child: MyApp(),
-      )),
+      appRunner: () => runApp(MyApp()),
     );
   });
 }
@@ -73,47 +70,49 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'despresso',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.green,
-        // colorScheme: lightColorScheme,
-        // textTheme: const TextTheme(
-        //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-        //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
-        //   bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+    return BetterFeedback(
+      child: MaterialApp(
+        title: 'despresso',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: Colors.green,
+          // colorScheme: lightColorScheme,
+          // textTheme: const TextTheme(
+          //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+          //   bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+          // ),
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, brightness: Brightness.dark),
+          colorScheme: darkColorScheme,
+          // textTheme: const TextTheme(
+          //     // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          //     // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+          //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+          //     ),
+        ),
+        themeMode: ThemeMode.dark,
+
+        // theme: ThemeData(
+        //   useMaterial3: true,
+        //   brightness: Brightness.light,
         // ),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, brightness: Brightness.dark),
-        colorScheme: darkColorScheme,
-        // textTheme: const TextTheme(
-        //     // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-        //     // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
-        //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-        //     ),
-      ),
-      themeMode: ThemeMode.dark,
+        // darkTheme: ThemeData(
+        //   useMaterial3: true,
+        //   brightness: Brightness.dark,
+        //   scaffoldBackgroundColor: theme.Colors.backgroundColor,
+        //   backgroundColor: theme.Colors.backgroundColor,
+        //   colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
+        //     primary: theme.Colors.secondaryColor,
+        //     secondary: Colors.green,
+        //     // brightness: Brightness.dark,
+        //   ),
 
-      // theme: ThemeData(
-      //   useMaterial3: true,
-      //   brightness: Brightness.light,
-      // ),
-      // darkTheme: ThemeData(
-      //   useMaterial3: true,
-      //   brightness: Brightness.dark,
-      //   scaffoldBackgroundColor: theme.Colors.backgroundColor,
-      //   backgroundColor: theme.Colors.backgroundColor,
-      //   colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
-      //     primary: theme.Colors.secondaryColor,
-      //     secondary: Colors.green,
-      //     // brightness: Brightness.dark,
-      //   ),
-
-      home: const LandingPage(title: 'despresso'),
-      navigatorObservers: [SentryNavigatorObserver()],
+        home: const LandingPage(title: 'despresso'),
+        navigatorObservers: [SentryNavigatorObserver()],
+      ),
     );
   }
 }

@@ -40,6 +40,12 @@ class MqttService extends ChangeNotifier {
     startService();
   }
 
+  stopService() {
+    if (client?.connectionStatus?.state == MqttConnectionState.connected) {
+      client.disconnect();
+    }
+  }
+
   Future<int> startService() async {
     connected = false;
     if (settingsService.mqttEnabled) {
