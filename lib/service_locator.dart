@@ -3,6 +3,7 @@ import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/graphql_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
@@ -20,4 +21,13 @@ void setupServices() {
   getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(), signalsReady: false);
   getIt.registerSingleton<MqttService>(MqttService(), signalsReady: false);
   getIt.registerSingleton<TempService>(TempService(), signalsReady: false);
+  getIt.registerSingleton<GraphQLService>(GraphQLService(), signalsReady: false);
+
+  // Future.delayed(
+  //   Duration(seconds: 2),
+  //   () {
+  //     var graphQL = getIt<GraphQLService>();
+  //     graphQL.startService();
+  //   },
+  // );
 }

@@ -74,6 +74,10 @@ dependencies:
   document_file_save_plus: ^1.0.9
   sentry_flutter: ^6.20.1
   feedback_sentry: ^2.3.0
+  angel3_graphql: ^7.0.0
+  angel3_framework: ^7.0.0    
+  network_info_plus: ^3.0.2
+  graphql_generator2: ^5.1.0
 
 dev_dependencies:
   flutter_test:
