@@ -33,6 +33,17 @@ enum SettingKeys {
   selectedCoffee,
   selectedRecipe,
   selectedShot,
+  steamSettings,
+  targetSteamTemp,
+  targetSteamLength,
+  targetMilkTemperature,
+  targetHotWaterTemp,
+  targetHotWaterVol,
+  targetHotWaterWeight,
+  targetHotWaterLength,
+  targetEspressoVol,
+  targetFlushTime,
+  targetGroupTemp,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -93,6 +104,39 @@ class SettingsService extends ChangeNotifier {
 
   int get selectedShot => Settings.getValue<int>(SettingKeys.selectedShot.name) ?? 0;
   set selectedShot(value) => Settings.setValue<int>(SettingKeys.selectedShot.name, value);
+
+  int get steamSettings => Settings.getValue<int>(SettingKeys.steamSettings.name) ?? 0;
+  set steamSettings(value) => Settings.setValue<int>(SettingKeys.steamSettings.name, value);
+
+  int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 120;
+  set targetSteamTemp(value) => Settings.setValue<int>(SettingKeys.targetSteamTemp.name, value);
+
+  int get targetSteamLength => Settings.getValue<int>(SettingKeys.targetSteamLength.name) ?? 90;
+  set targetSteamLength(value) => Settings.setValue<int>(SettingKeys.targetSteamLength.name, value);
+
+  int get targetMilkTemperature => Settings.getValue<int>(SettingKeys.targetMilkTemperature.name) ?? 55;
+  set targetMilkTemperature(value) => Settings.setValue<int>(SettingKeys.targetMilkTemperature.name, value);
+
+  int get targetHotWaterTemp => Settings.getValue<int>(SettingKeys.targetHotWaterTemp.name) ?? 85;
+  set targetHotWaterTemp(value) => Settings.setValue<int>(SettingKeys.targetHotWaterTemp.name, value);
+
+  int get targetHotWaterVol => Settings.getValue<int>(SettingKeys.targetHotWaterVol.name) ?? 120;
+  set targetHotWaterVol(value) => Settings.setValue<int>(SettingKeys.targetHotWaterVol.name, value);
+
+  int get targetHotWaterWeight => Settings.getValue<int>(SettingKeys.targetHotWaterWeight.name) ?? 120;
+  set targetHotWaterWeight(value) => Settings.setValue<int>(SettingKeys.targetHotWaterWeight.name, value);
+
+  int get targetHotWaterLength => Settings.getValue<int>(SettingKeys.targetHotWaterLength.name) ?? 45;
+  set targetHotWaterLength(value) => Settings.setValue<int>(SettingKeys.targetHotWaterLength.name, value);
+
+  int get targetEspressoVol => Settings.getValue<int>(SettingKeys.targetEspressoVol.name) ?? 35;
+  set targetEspressoVol(value) => Settings.setValue<int>(SettingKeys.targetEspressoVol.name, value);
+
+  int get targetFlushTime => Settings.getValue<int>(SettingKeys.targetFlushTime.name) ?? 3;
+  set targetFlushTime(value) => Settings.setValue<int>(SettingKeys.targetFlushTime.name, value);
+
+  int get targetGroupTemp => Settings.getValue<int>(SettingKeys.targetGroupTemp.name) ?? 98;
+  set targetGroupTemp(value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
 
   void notifyDelayed() {
     Future.delayed(

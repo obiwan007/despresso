@@ -1,5 +1,7 @@
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
@@ -17,6 +19,7 @@ class FlushScreen extends StatefulWidget {
 class FlushScreenState extends State<FlushScreen> {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
+  late SettingsService settings;
 
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
@@ -25,6 +28,9 @@ class FlushScreenState extends State<FlushScreen> {
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
+
+    settings = getIt<SettingsService>();
+
     machineService.addListener(machineStateListener);
 
     // Scale services is consumed as stream
@@ -43,8 +49,6 @@ class FlushScreenState extends State<FlushScreen> {
   }
 
   Widget _buildControls() {
-    var settings = machineService.settings;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,7 +77,7 @@ class FlushScreenState extends State<FlushScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetFlushTime = value.toInt();
-                                  machineService.updateSettings(settings);
+                                  machineService.updateSettings();
                                 });
                               },
                             ),

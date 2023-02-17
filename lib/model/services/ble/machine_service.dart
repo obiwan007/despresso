@@ -7,7 +7,7 @@ import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
-import 'package:despresso/model/settings.dart';
+
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +66,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   DE1? de1;
 
-  Settings settings = Settings();
+  late SettingsService settings;
 
   late SharedPreferences prefs;
 
@@ -151,16 +151,15 @@ class EspressoMachineService extends ChangeNotifier {
     profileService = getIt<ProfileService>();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
+    settings = getIt<SettingsService>();
 
     objectBox = getIt<ObjectBox>();
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
     coffeeService = getIt<CoffeeService>();
 
-    prefs = await SharedPreferences.getInstance();
-
     log.fine('Preferences loaded');
-    loadSettings();
+
     notifyListeners();
     loadShotData();
 
@@ -261,18 +260,6 @@ class EspressoMachineService extends ChangeNotifier {
         _controllerBattery.add(batteryLevel);
       }
     });
-  }
-
-  loadSettings() {
-    var settingsString = prefs.getString("de1Setting");
-    if (settingsString != null) {
-      settings = Settings.fromJson((jsonDecode(settingsString)));
-    }
-  }
-
-  saveSettings() {
-    var jsonString = jsonEncode(settings.toJson());
-    prefs.setString("de1Setting", jsonString);
   }
 
   loadShotData() async {
@@ -408,7 +395,7 @@ class EspressoMachineService extends ChangeNotifier {
     // check if we need to send the new water temp
     if (settings.targetGroupTemp != profile.shotFrames[0].temp) {
       profile.shotHeader.targetGroupTemp = profile.shotFrames[0].temp;
-      var bytes = Settings.encodeDe1OtherSetn(settings);
+      var bytes = encodeDe1OtherSetn();
 
       try {
         log.fine("Write Shot Settings: $bytes");
@@ -611,18 +598,43 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
-  Future<void> updateSettings(Settings settings) async {
-    this.settings = settings;
-    saveSettings();
+  Future<void> updateSettings() async {
     notifyListeners();
 
-    var bytes = Settings.encodeDe1OtherSetn(settings);
+    var bytes = encodeDe1OtherSetn();
     try {
       log.info("Write Shot Settings: $bytes");
       await de1!.writeWithResult(Endpoint.shotSettings, bytes);
     } catch (ex) {
       log.severe("Error writing shot settings $bytes");
     }
+  }
+
+  Uint8List encodeDe1OtherSetn() {
+    Uint8List data = Uint8List(9);
+
+    int index = 0;
+    data[index] = settings.steamSettings;
+    index++;
+    data[index] = settings.targetSteamTemp;
+    index++;
+    data[index] = settings.targetSteamLength;
+    index++;
+    data[index] = settings.targetHotWaterTemp;
+    index++;
+    data[index] = settings.targetHotWaterVol;
+    index++;
+    data[index] = settings.targetHotWaterLength;
+    index++;
+    data[index] = settings.targetEspressoVol;
+    index++;
+
+    data[index] = settings.targetGroupTemp.toInt();
+    index++;
+    data[index] = ((settings.targetGroupTemp - settings.targetGroupTemp.floor()) * 256.0).toInt();
+    index++;
+
+    return data;
   }
 
   void handleTemperature() {
