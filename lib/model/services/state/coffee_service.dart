@@ -9,6 +9,7 @@ import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/foundation.dart';
@@ -25,9 +26,6 @@ import '../../../service_locator.dart';
 
 class CoffeeService extends ChangeNotifier {
   final log = Logger('CoffeeService');
-
-  late SharedPreferences prefs;
-
   late ObjectBox objectBox;
 
   late Box<Coffee> coffeeBox;
@@ -43,8 +41,7 @@ class CoffeeService extends ChangeNotifier {
   late StreamController<List<Recipe>> _controllerRecipe;
   late Stream<List<Recipe>> _streamRecipe;
 
-  late ProfileService profileService;
-  late EspressoMachineService machineService;
+  late SettingsService settings;
 
   Stream<List<Recipe>> get streamRecipe => _streamRecipe;
 
@@ -53,7 +50,7 @@ class CoffeeService extends ChangeNotifier {
   }
 
   void init() async {
-    prefs = await SharedPreferences.getInstance();
+    settings = getIt<SettingsService>();
     _controllerRecipe = StreamController<List<Recipe>>();
     _streamRecipe = _controllerRecipe.stream.asBroadcastStream();
 
@@ -62,8 +59,6 @@ class CoffeeService extends ChangeNotifier {
     roasterBox = objectBox.store.box<Roaster>();
     shotBox = objectBox.store.box<Shot>();
     recipeBox = objectBox.store.box<Recipe>();
-    profileService = getIt<ProfileService>();
-    machineService = getIt<EspressoMachineService>();
 
     await load();
     notifyListeners();
@@ -103,14 +98,37 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Future load() async {
-    selectedRoaster = prefs.getInt("selectedRoaster") ?? 0;
+    selectedRoaster = settings.selectedRoaster;
 
-    selectedCoffee = prefs.getInt("selectedCoffee") ?? 0;
-    selectedRecipe = prefs.getInt("selectedRecipe") ?? 0;
+    selectedCoffee = settings.selectedCoffee;
+    selectedRecipe = settings.selectedRecipe;
 
-    selectedShot = prefs.getInt("lastShot") ?? 0;
+    selectedShot = settings.selectedShot;
 
     log.info("lastshot $selectedShot");
+
+    Future.delayed(
+      const Duration(milliseconds: 199),
+      () {
+        if (roasterBox.count() == 0) {
+          log.info("No roasters available. Creating a default one.");
+          var r = Roaster();
+          r.name = "Default Rouaster";
+          selectedRoaster = roasterBox.put(r);
+          settings.selectedRoaster = selectedRoaster;
+        }
+
+        if (coffeeBox.count() == 0) {
+          log.info("No roasters available. Creating a default one.");
+          var r = Coffee();
+          r.roaster.targetId = selectedRoaster;
+          r.name = "Default Beans";
+          selectedCoffee = coffeeBox.put(r);
+          settings.selectedCoffee = selectedCoffee;
+        }
+      },
+    );
+
     // try {
     //   log.info("Loading coffees");
     //   final directory = await getApplicationDocumentsDirectory();
@@ -197,7 +215,7 @@ class CoffeeService extends ChangeNotifier {
     if (id == 0) return;
 
     log.info('Roaster Saving');
-    await prefs.setInt("selectedRoaster", id);
+    settings.selectedRoaster = id;
     log.info('Roaster Set $id');
     selectedRoaster = id;
     log.info('Roaster Saved');
@@ -208,12 +226,15 @@ class CoffeeService extends ChangeNotifier {
     if (id == 0) return;
 
     selectedRecipe = id;
-    prefs.setInt("selectedRecipe", id);
+    settings.selectedRecipe = id;
     var recipe = recipeBox.get(id);
 
     setSelectedCoffee(recipe!.coffee.targetId);
-    profileService.setProfileFromId(recipe.profileId);
 
+    var profileService = getIt<ProfileService>();
+    var machineService = getIt<EspressoMachineService>();
+
+    profileService.setProfileFromId(recipe.profileId);
     machineService.uploadProfile(profileService.currentProfile!);
     notifyListeners();
   }
@@ -221,7 +242,7 @@ class CoffeeService extends ChangeNotifier {
   void setSelectedCoffee(int id) {
     if (id == 0) return;
 
-    prefs.setInt("selectedCoffee", id);
+    settings.selectedCoffee = id;
     selectedCoffee = id;
 
     // notifyListeners();
@@ -230,7 +251,7 @@ class CoffeeService extends ChangeNotifier {
 
   setLastShotId(int id) async {
     selectedShot = id;
-    await prefs.setInt("lastShot", id);
+    settings.selectedShot = id;
   }
 
   Coffee? get currentCoffee {

@@ -28,6 +28,11 @@ enum SettingKeys {
   hasSteamThermometer,
   hasScale,
   useSentry,
+  currentProfile,
+  selectedRoaster,
+  selectedCoffee,
+  selectedRecipe,
+  selectedShot,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -53,8 +58,8 @@ class SettingsService extends ChangeNotifier {
   String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name);
   String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name);
 
-  double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 120;
-  double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 240;
+  double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
+  double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 30;
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
   String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "192.168.178.79";
@@ -73,6 +78,21 @@ class SettingsService extends ChangeNotifier {
   bool get hasScale => Settings.getValue<bool>(SettingKeys.hasScale.name) ?? true;
 
   bool get useSentry => Settings.getValue<bool>(SettingKeys.useSentry.name) ?? true;
+
+  String get currentProfile => Settings.getValue<String>(SettingKeys.currentProfile.name) ?? "Default";
+  set currentProfile(value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
+
+  int get selectedRoaster => Settings.getValue<int>(SettingKeys.selectedRoaster.name) ?? 0;
+  set selectedRoaster(value) => Settings.setValue<int>(SettingKeys.selectedRoaster.name, value);
+
+  int get selectedCoffee => Settings.getValue<int>(SettingKeys.selectedCoffee.name) ?? 0;
+  set selectedCoffee(value) => Settings.setValue<int>(SettingKeys.selectedCoffee.name, value);
+
+  int get selectedRecipe => Settings.getValue<int>(SettingKeys.selectedRecipe.name) ?? 0;
+  set selectedRecipe(value) => Settings.setValue<int>(SettingKeys.selectedRecipe.name, value);
+
+  int get selectedShot => Settings.getValue<int>(SettingKeys.selectedShot.name) ?? 0;
+  set selectedShot(value) => Settings.setValue<int>(SettingKeys.selectedShot.name, value);
 
   void notifyDelayed() {
     Future.delayed(
