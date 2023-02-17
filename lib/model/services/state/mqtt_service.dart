@@ -104,12 +104,23 @@ class MqttService extends ChangeNotifier {
         return -1;
       }
 
-      log.info('MQTT:Subscribing to the $subTopic topic');
-      client.subscribe(subTopic, MqttQos.atMostOnce);
+      log.info('MQTT:Subscribing to the $rootTopic /de1/setstatus topic');
+      var statusRequest = '$rootTopic/de1/setstatus';
+      client.subscribe(statusRequest, MqttQos.atMostOnce);
       client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
         final recMess = c![0].payload as MqttPublishMessage;
         final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
         log.info('MQTT:Received message: topic is ${c[0].topic}, payload is $pt');
+        if (c[0].topic == statusRequest) {
+          switch (pt) {
+            case "idle":
+              machineService.de1?.switchOn();
+              break;
+            case "sleep":
+              machineService.de1?.switchOff();
+              break;
+          }
+        }
       });
 
       // client.published!.listen((MqttPublishMessage message) {

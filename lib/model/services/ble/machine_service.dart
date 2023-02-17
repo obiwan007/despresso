@@ -598,7 +598,7 @@ class EspressoMachineService extends ChangeNotifier {
 
       currentShot.pourTime = lastPourTime;
       currentShot.profileId = profileService.currentProfile?.id ?? "";
-      currentShot.pourWeight = shotList.entries.last.flowWeight;
+      currentShot.pourWeight = shotList.entries.last.weight;
 
       var id = coffeeService.shotBox.put(currentShot);
 
