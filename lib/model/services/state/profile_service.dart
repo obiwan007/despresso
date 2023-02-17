@@ -3,15 +3,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
+
+import '../../../service_locator.dart';
 
 // FrameFlag of zero and pressure of 0 means end of shot, unless we are at the tenth frame, in which case
 // it's the end of shot no matter what
@@ -34,7 +35,7 @@ class ProfileService extends ChangeNotifier {
   final log = Logger('ProfileService');
 
   De1ShotProfile? currentProfile;
-  late SharedPreferences prefs;
+  late SettingsService settings;
   List<De1ShotProfile> defaultProfiles = <De1ShotProfile>[];
 
   List<De1ShotProfile> profiles = <De1ShotProfile>[];
@@ -44,10 +45,10 @@ class ProfileService extends ChangeNotifier {
   }
 
   void init() async {
-    prefs = await SharedPreferences.getInstance();
-    log.info('Preferences loaded');
+    settings = getIt<SettingsService>();
 
-    var profileId = prefs.getString("profilename");
+    var profileId = settings.currentProfile;
+
     await loadAllDefaultProfiles();
     log.info('Profiles loaded');
 
@@ -108,7 +109,8 @@ class ProfileService extends ChangeNotifier {
 
   void setProfile(De1ShotProfile profile) {
     currentProfile = profile;
-    prefs.setString("profilename", profile.id);
+
+    settings.currentProfile = profile.id;
     log.info("Profile selected and saved ${profile.id}");
     notify();
   }

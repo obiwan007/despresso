@@ -4,6 +4,7 @@ import 'package:despresso/model/machine.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -28,10 +29,13 @@ class SteamScreenState extends State<SteamScreen> {
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
 
+  late SettingsService settings;
+
   @override
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
+    settings = getIt<SettingsService>();
     machineService.addListener(machineStateListener);
     tempService = getIt<TempService>();
     tempService.addListener(tempStateListener);
@@ -57,8 +61,6 @@ class SteamScreenState extends State<SteamScreen> {
   }
 
   Widget _buildControls() {
-    var settings = machineService.settings;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,7 +89,7 @@ class SteamScreenState extends State<SteamScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetSteamTemp = value.toInt();
-                                  machineService.updateSettings(settings);
+                                  machineService.updateSettings();
                                 });
                               },
                             ),
@@ -144,7 +146,7 @@ class SteamScreenState extends State<SteamScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetSteamLength = value.toInt();
-                                  machineService.updateSettings(settings);
+                                  machineService.updateSettings();
                                 });
                               },
                             ),
@@ -193,7 +195,7 @@ class SteamScreenState extends State<SteamScreen> {
                           onChanged: (double value) {
                             setState(() {
                               settings.targetMilkTemperature = value.toInt();
-                              machineService.updateSettings(settings);
+                              machineService.updateSettings();
                             });
                           },
                         ),

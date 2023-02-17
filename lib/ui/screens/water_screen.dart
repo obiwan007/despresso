@@ -1,5 +1,6 @@
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
@@ -17,6 +18,7 @@ class WaterScreen extends StatefulWidget {
 class WaterScreenState extends State<WaterScreen> {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
+  late SettingsService settings;
 
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
@@ -25,6 +27,7 @@ class WaterScreenState extends State<WaterScreen> {
   void initState() {
     super.initState();
     machineService = getIt<EspressoMachineService>();
+    settings = getIt<SettingsService>();
     machineService.addListener(machineStateListener);
 
     // Scale services is consumed as stream
@@ -43,8 +46,6 @@ class WaterScreenState extends State<WaterScreen> {
   }
 
   Widget _buildControls() {
-    var settings = machineService.settings;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,7 +72,7 @@ class WaterScreenState extends State<WaterScreen> {
                             onChanged: (double value) {
                               setState(() {
                                 settings.targetHotWaterTemp = value.toInt();
-                                machineService.updateSettings(settings);
+                                machineService.updateSettings();
                               });
                             },
                           ),
@@ -125,7 +126,7 @@ class WaterScreenState extends State<WaterScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetHotWaterLength = value.toInt();
-                                  machineService.updateSettings(settings);
+                                  machineService.updateSettings();
                                 });
                               },
                             ),
@@ -182,7 +183,7 @@ class WaterScreenState extends State<WaterScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetHotWaterWeight = value.toInt();
-                                  machineService.updateSettings(settings);
+                                  machineService.updateSettings();
                                 });
                               },
                             ),
