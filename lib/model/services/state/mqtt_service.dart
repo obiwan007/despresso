@@ -112,13 +112,21 @@ class MqttService extends ChangeNotifier {
         final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
         log.info('MQTT:Received message: topic is ${c[0].topic}, payload is $pt');
         if (c[0].topic == statusRequest) {
+          var validState = false;
           switch (pt) {
             case "idle":
               machineService.de1?.switchOn();
+              validState = true;
               break;
             case "sleep":
               machineService.de1?.switchOff();
+              validState = true;
               break;
+          }
+          if (validState) {
+            final builder = MqttClientPayloadBuilder();
+            builder.addString(DateTime.now().toIso8601String());
+            client.publishMessage(statusRequest, MqttQos.exactlyOnce, builder.payload!);
           }
         }
       });
