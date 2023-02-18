@@ -18,6 +18,7 @@ import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
@@ -134,13 +135,19 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Color(0xFF4F378B),
               ),
-              child: Text("despresso settings"),
+              child: Column(
+                children: [
+                  Image.asset("assets/iconStore.png", height: 80),
+                  const Text("despresso"),
+                ],
+              ),
             ),
             ListTile(
+              leading: Icon(Icons.add),
               title: const Text('Profiles'),
               onTap: () {
                 // Update the state of the app
@@ -154,6 +161,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               },
             ),
             ListTile(
+              leading: const Icon(Icons.coffee),
               title: const Text('Coffees'),
               onTap: () {
                 Navigator.pop(context);
@@ -164,6 +172,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               },
             ),
             ListTile(
+              leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {
                 Navigator.pop(context);
@@ -175,6 +184,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               },
             ),
             ListTile(
+              leading: const Icon(Icons.feedback),
               title: const Text('Feedback'),
               onTap: () async {
                 Navigator.pop(context);
@@ -192,6 +202,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               },
             ),
             ListTile(
+              leading: const Icon(Icons.privacy_tip),
               title: const Text('Privacy'),
               onTap: () async {
                 Navigator.pop(context);
@@ -203,16 +214,27 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                   throw "Could not launch $url";
               },
             ),
-            const AboutListTile(
-              icon: Icon(Icons.info),
-              applicationIcon: FlutterLogo(),
-              applicationName: 'About despresso',
-              applicationVersion: 'August 2023',
-              applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
-              // aboutBoxChildren: aboutBoxChildren,
+            FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.done:
+                    return AboutListTile(
+                      icon: const Icon(Icons.info),
+                      applicationIcon: Image.asset("assets/iconStore.png", height: 80),
+                      applicationName: 'despresso',
+                      applicationVersion: "Version ${snapshot.data!.version} (${snapshot.data!.buildNumber})",
+                      applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
+                      // aboutBoxChildren: aboutBoxChildren,
+                    );
+                  default:
+                    return const SizedBox();
+                }
+              },
             ),
             if (Platform.isAndroid)
               ListTile(
+                leading: const Icon(Icons.exit_to_app),
                 title: const Text('Exit'),
                 onTap: () {
                   Navigator.pop(context);
@@ -228,7 +250,8 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                   machineService.de1?.switchOff();
                   // Then close the drawer
                   Future.delayed(const Duration(milliseconds: 2000), () {
-                    SystemNavigator.pop();
+                    exit(0);
+                    // SystemNavigator.pop();
                   });
                 },
               ),
