@@ -11,6 +11,7 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/espresso_screen.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/screens/shot_selection.dart';
 import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
@@ -145,6 +146,20 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                   const Text("despresso"),
                 ],
               ),
+            ),
+            ListTile(
+              leading: Icon(Icons.add),
+              title: const Text('Shot Database'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ShotSelectionTab()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.add),

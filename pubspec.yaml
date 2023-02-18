@@ -75,6 +75,7 @@ dependencies:
   sentry_flutter: ^6.20.1
   feedback_sentry: ^2.3.0
   package_info_plus: ^3.0.3
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
