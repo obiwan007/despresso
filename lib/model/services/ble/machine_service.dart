@@ -151,7 +151,6 @@ class EspressoMachineService extends ChangeNotifier {
     profileService = getIt<ProfileService>();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
-    settings = getIt<SettingsService>();
 
     objectBox = getIt<ObjectBox>();
     profileService.addListener(updateProfile);
@@ -206,7 +205,7 @@ class EspressoMachineService extends ChangeNotifier {
 
       if (state.coffeeState == EspressoMachineState.idle) {
         try {
-          log.fine("Machine is still idle $idleTime ${settingsService.sleepTimer * 60}");
+          log.fine("Machine is still idle $idleTime < ${settingsService.sleepTimer * 60}");
           idleTime += 10;
 
           if (idleTime > settingsService.sleepTimer * 60 && settingsService.sleepTimer > 0.1) {

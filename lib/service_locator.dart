@@ -17,7 +17,7 @@ void setupServices() {
   getIt.registerSingleton<ScaleService>(ScaleService(), signalsReady: false);
   getIt.registerSingleton<CoffeeService>(CoffeeService(), signalsReady: false);
   getIt.registerSingleton<ProfileService>(ProfileService(), signalsReady: false);
+  getIt.registerSingleton<TempService>(TempService(), signalsReady: false);
   getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(), signalsReady: false);
   getIt.registerSingleton<MqttService>(MqttService(), signalsReady: false);
-  getIt.registerSingleton<TempService>(TempService(), signalsReady: false);
 }

@@ -74,6 +74,7 @@ dependencies:
   document_file_save_plus: ^1.0.9
   sentry_flutter: ^6.20.1
   feedback_sentry: ^2.3.0
+  package_info_plus: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -125,6 +126,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/logo.png
+    - assets/icon.png
+    - assets/iconStore.png
     - assets/profiles/
 
   # An image asset can refer to one or more resolution-specific "variants", see

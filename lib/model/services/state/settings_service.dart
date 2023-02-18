@@ -1,6 +1,9 @@
+import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../service_locator.dart';
@@ -47,6 +50,7 @@ enum SettingKeys {
 }
 
 class SettingsService extends ChangeNotifier {
+  final log = Logger('SettingsService');
   late SharedPreferences prefs;
 
   late ObjectBox objectBox;
@@ -59,6 +63,15 @@ class SettingsService extends ChangeNotifier {
     objectBox = getIt<ObjectBox>();
 
     prefs = await SharedPreferences.getInstance();
+
+    var shotBox = objectBox.store.box<Shot>();
+    var shots = shotBox.count();
+
+    if (shots > 0) {
+      var lastShot = shotBox.query().order(Shot_.date, flags: Order.descending).build().findFirst();
+      if (lastShot != null) selectedShot = lastShot.id;
+    }
+    log.info("Found $shots stored");
     notifyListeners();
   }
 
