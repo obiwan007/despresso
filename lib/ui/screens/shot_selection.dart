@@ -3,6 +3,7 @@ import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:despresso/ui/widgets/shot_graph.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -56,32 +57,36 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
       appBar: AppBar(
         title: const Text('Shot Database'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
-          );
-        },
-        // backgroundColor: Colors.green,
-        child: const Icon(Icons.add),
-      ),
-      body: Column(
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 445,
-                child: StreamBuilder<List<Shot>>(
-                    stream: getShots(),
-                    builder: (context, snapshot) => ListView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        itemCount: snapshot.hasData ? snapshot.data!.length : 0,
-                        itemBuilder: _shotListBuilder(snapshot.data ?? []))),
-              ),
-              Expanded(child: Text("Selected: $selectedShots")),
-            ],
+          SizedBox(
+            width: 445,
+            child: StreamBuilder<List<Shot>>(
+                stream: getShots(),
+                builder: (context, snapshot) => ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    itemCount: snapshot.hasData ? snapshot.data!.length : 0,
+                    itemBuilder: _shotListBuilder(snapshot.data ?? []))),
+          ),
+          Expanded(
+            child: selectedShots.length == 0
+                ? Text("Nothing selected")
+                : ListView.builder(
+                    itemCount: selectedShots.length,
+                    itemBuilder: (context, index) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          bottomLeft: Radius.circular(32),
+                        ),
+                        child: ListTile(
+                          title: ShotGraph(id: selectedShots[index]),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -149,9 +154,9 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                 //   child: Icon(Icons.delete_forever),
                 // ),
                 onTap: () {
-                  setSelection(index);
+                  setSelection(shots[index].id);
                 },
-                selected: selectedShots.contains(index),
+                selected: selectedShots.contains(shots[index].id),
               ),
             ),
           );

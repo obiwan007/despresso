@@ -137,7 +137,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFF4F378B),
               ),
               child: Column(
@@ -148,7 +148,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               ),
             ),
             ListTile(
-              leading: Icon(Icons.add),
+              leading: const Icon(Icons.auto_graph_outlined),
               title: const Text('Shot Database'),
               onTap: () {
                 // Update the state of the app
@@ -162,7 +162,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               },
             ),
             ListTile(
-              leading: Icon(Icons.add),
+              leading: const Icon(Icons.add),
               title: const Text('Profiles'),
               onTap: () {
                 // Update the state of the app

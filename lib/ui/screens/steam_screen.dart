@@ -264,7 +264,7 @@ class SteamScreenState extends State<SteamScreen> {
     var flowChart2 = LineChart(
       LineChartData(
         minY: 0,
-        maxY: machineService.settings.targetMilkTemperature.toDouble() + 15,
+        maxY: settings.targetMilkTemperature.toDouble() + 15,
         minX: data["temp1"]!.first.x,
         maxX: maxTime,
         lineTouchData: LineTouchData(enabled: false),

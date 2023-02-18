@@ -120,6 +120,28 @@ class EspressoScreenState extends State<EspressoScreen> {
     }
   }
 
+  _buildGraphs() {
+    var ranges = _createPhasesFl();
+    var data = _createDataFlCharts();
+
+    try {
+      var maxData = data["pressure"]!.last;
+      var t = maxData.x;
+
+      if (machineService.inShot == true) {
+        var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
+        maxTime = math.max(30, corrected);
+      } else {
+        maxTime = t;
+      }
+    } catch (ex) {
+      maxTime = 0;
+    }
+
+    var single = _buildGraphSingleFlCharts(data, maxTime, ranges);
+    return {"single": single};
+  }
+
   Iterable<VerticalRangeAnnotation> _createPhasesFl() {
     if (machineService.shotList.entries.isEmpty) {
       return [];
@@ -158,38 +180,6 @@ class EspressoScreenState extends State<EspressoScreen> {
     });
   }
 
-  Iterable<charts.RangeAnnotationSegment<double>> _createPhases() {
-    if (machineService.shotList.entries.isEmpty) {
-      return [];
-    }
-
-    var stateChanges = machineService.shotList.entries.where((element) => element.subState.isNotEmpty).toList();
-
-    int i = 0;
-    var maxSampleTime = machineService.shotList.entries.last.sampleTimeCorrected;
-    return stateChanges.map((from) {
-      var toSampleTime = maxSampleTime;
-
-      if (i < stateChanges.length - 1) {
-        i++;
-        toSampleTime = stateChanges[i].sampleTimeCorrected;
-      }
-
-      var col = theme.ThemeColors.statesColors[from.subState];
-      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.ThemeColors.goodColor);
-      // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
-      return charts.RangeAnnotationSegment(
-          from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
-          labelAnchor: charts.AnnotationLabelAnchor.end,
-          color: col2,
-          startLabel: from.subState,
-          labelStyleSpec: charts.TextStyleSpec(
-              fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
-          labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.info("Phase ${element.subState}");
-    });
-  }
-
   Map<String, List<FlSpot>> _createDataFlCharts() {
     return {
       "pressure": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.groupPressure)).toList(),
@@ -201,96 +191,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       "tempSet": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.setHeadTemp)).toList(),
       "weight": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.weight)).toList(),
       "flowG": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.flowWeight)).toList(),
-      // charts.Series<ShotState, double>(
-      //   id: 'Pressure [bar]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.groupPressure,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.pressureColor),
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "flow": charts.Series<ShotState, double>(
-      //   id: 'Flow [ml/s]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.groupFlow,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.flowColor),
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "temp": charts.Series<ShotState, double>(
-      //   id: 'Temp [°C]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.headTemp,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "weight": charts.Series<ShotState, double>(
-      //   id: 'Weight [g]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.weight,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.weightColor),
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "flowG": charts.Series<ShotState, double>(
-      //   id: 'Flow [g/s]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.flowWeight,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.weightColor),
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "flowSet": charts.Series<ShotState, double>(
-      //   id: 'SetFlow [ml/s]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.setGroupFlow,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.flowColor),
-      //   dashPatternFn: (_, __) => [5, 5],
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "pressureSet": charts.Series<ShotState, double>(
-      //   id: 'SetPressure [bar]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.setGroupPressure,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.pressureColor),
-      //   dashPatternFn: (datum, index) => [5, 5],
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   data: machineService.shotList.entries,
-      // ),
-      // "tempSet": charts.Series<ShotState, double>(
-      //   id: 'SetTemp [°C]',
-      //   domainFn: (ShotState point, _) => point.sampleTimeCorrected,
-      //   measureFn: (ShotState point, _) => point.setHeadTemp,
-      //   colorFn: (_, __) => charts.ColorUtil.fromDartColor(theme.ThemeColors.tempColor),
-      //   strokeWidthPxFn: (_, __) => 3,
-      //   dashPatternFn: (datum, index) => [5, 5],
-      //   data: machineService.shotList.entries,
-      // ),
     };
-  }
-
-  _buildGraphs() {
-    var ranges = _createPhasesFl();
-    var data = _createDataFlCharts();
-
-    try {
-      var maxData = data["pressure"]!.last;
-      var t = maxData.x;
-
-      if (machineService.inShot == true) {
-        var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
-        maxTime = math.max(30, corrected);
-      } else {
-        maxTime = t;
-      }
-    } catch (ex) {
-      maxTime = 0;
-    }
-
-    var single = _buildGraphSingleFlCharts(data, maxTime, ranges);
-    return {"single": single};
   }
 
   LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col) {
