@@ -1,4 +1,5 @@
 import 'package:despresso/model/shot.dart';
+import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
@@ -9,20 +10,34 @@ import 'package:despresso/ui/theme.dart' as theme;
 
 class ShotGraph extends StatefulWidget {
   int id;
-  ShotGraph({Key? key, required this.id}) : super(key: key);
+  List<int>? overlayIds;
+  ShotGraph({Key? key, required this.id, this.overlayIds}) : super(key: key);
 
   @override
-  _ShotGraphState createState() => _ShotGraphState(id);
+  _ShotGraphState createState() => _ShotGraphState(id, overlayIds);
 }
 
 class _ShotGraphState extends State<ShotGraph> {
   int id;
 
-  Shot? shot;
+  List<int>? overlayIds;
 
-  _ShotGraphState(this.id) {
+  bool _overlayMode = false;
+
+  List<Shot?> shotOverlay = [];
+
+  _ShotGraphState(this.id, this.overlayIds) {
     var shotBox = getIt<ObjectBox>().store.box<Shot>();
-    shot = shotBox.get(id);
+    if (overlayIds != null) {
+      _overlayMode = true;
+      for (var element in overlayIds!) {
+        shotOverlay.add(shotBox.get(element));
+      }
+    } else {
+      var shot = shotBox.get(id);
+      overlayIds = [id];
+      shotOverlay.add(shot);
+    }
   }
 
   @override
@@ -30,7 +45,9 @@ class _ShotGraphState extends State<ShotGraph> {
     return Container(
       child: Column(
         children: [
-          Text(id.toString()),
+          ...shotOverlay.map((e) => Text(
+                e!.date.toString(),
+              )),
           _buildGraphs()['single'],
         ],
       ),
@@ -38,26 +55,34 @@ class _ShotGraphState extends State<ShotGraph> {
   }
 
   _buildGraphs() {
-    var ranges = _createPhasesFl();
-    var data = _createDataFlCharts();
+    Iterable<VerticalRangeAnnotation> ranges = [];
+    Map<String, List<FlSpot>> datamap = {};
+
+    for (var shot in shotOverlay) {
+      if (!_overlayMode) ranges = _createPhasesFl(shot!.shotstates.toList());
+      var data = _createDataFlCharts(shot!.id, shot!.shotstates);
+      datamap.addAll(data);
+    }
+    // var data = _createDataFlCharts();
     double maxTime = 0;
+    var id = overlayIds!.first;
     try {
-      var maxData = data["pressure"]!.last;
+      var maxData = datamap["pressure$id"]!.last;
       var t = maxData.x;
       maxTime = t;
     } catch (ex) {
       maxTime = 0;
     }
 
-    var single = _buildGraphSingleFlCharts(data, maxTime, ranges);
+    var single = _buildGraphSingleFlCharts(datamap, maxTime, ranges);
     return {"single": single};
   }
 
-  Iterable<VerticalRangeAnnotation> _createPhasesFl() {
-    var stateChanges = shot!.shotstates.where((element) => element.subState.isNotEmpty).toList();
+  Iterable<VerticalRangeAnnotation> _createPhasesFl(List<ShotState> states) {
+    var stateChanges = states.where((element) => element.subState.isNotEmpty).toList();
 
     int i = 0;
-    var maxSampleTime = shot!.shotstates.last.sampleTimeCorrected;
+    var maxSampleTime = states.last.sampleTimeCorrected;
     return stateChanges.map((from) {
       var toSampleTime = maxSampleTime;
 
@@ -74,29 +99,19 @@ class _ShotGraphState extends State<ShotGraph> {
         x2: toSampleTime,
         color: col2,
       );
-
-      // return charts.RangeAnnotationSegment(
-      //     from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,
-      //     labelAnchor: charts.AnnotationLabelAnchor.end,
-      //     color: col2,
-      //     startLabel: from.subState,
-      //     labelStyleSpec: charts.TextStyleSpec(
-      //         fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
-      //     labelDirection: charts.AnnotationLabelDirection.vertical);
-      // log.info("Phase ${element.subState}");
     });
   }
 
-  Map<String, List<FlSpot>> _createDataFlCharts() {
+  Map<String, List<FlSpot>> _createDataFlCharts(int id, List<ShotState> shotstates) {
     return {
-      "pressure": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.groupPressure)).toList(),
-      "pressureSet": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setGroupPressure)).toList(),
-      "flow": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.groupFlow)).toList(),
-      "flowSet": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setGroupFlow)).toList(),
-      "temp": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.headTemp)).toList(),
-      "tempSet": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setHeadTemp)).toList(),
-      "weight": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.weight)).toList(),
-      "flowG": shot!.shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.flowWeight)).toList(),
+      "pressure$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.groupPressure)).toList(),
+      "pressureSet$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setGroupPressure)).toList(),
+      "flow$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.groupFlow)).toList(),
+      "flowSet$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setGroupFlow)).toList(),
+      "temp$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.headTemp)).toList(),
+      "tempSet$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setHeadTemp)).toList(),
+      "weight$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.weight)).toList(),
+      "flowG$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.flowWeight)).toList(),
     };
   }
 
@@ -114,11 +129,24 @@ class _ShotGraphState extends State<ShotGraph> {
 
   Widget _buildGraphSingleFlCharts(
       Map<String, List<FlSpot>> data, double maxTime, Iterable<VerticalRangeAnnotation> ranges) {
+    List<LineChartBarData> lineBarsDataFlows = [];
+    List<LineChartBarData> lineBarsDataTempWeight = [];
+    for (var id in overlayIds!) {
+      lineBarsDataFlows.add(createChartLineDatapoints(data["pressure$id"]!, 4, theme.ThemeColors.pressureColor));
+      lineBarsDataFlows.add(createChartLineDatapoints(data["pressureSet$id"]!, 2, theme.ThemeColors.pressureColor));
+      lineBarsDataFlows.add(createChartLineDatapoints(data["flow$id"]!, 4, theme.ThemeColors.flowColor));
+      lineBarsDataFlows.add(createChartLineDatapoints(data["flowSet$id"]!, 2, theme.ThemeColors.flowColor));
+      lineBarsDataFlows.add(createChartLineDatapoints(data["flowG$id"]!, 2, theme.ThemeColors.weightColor));
+      lineBarsDataTempWeight.add(createChartLineDatapoints(data["weight$id"]!, 2, theme.ThemeColors.weightColor));
+      lineBarsDataTempWeight.add(createChartLineDatapoints(data["temp$id"]!, 4, theme.ThemeColors.tempColor));
+      lineBarsDataTempWeight.add(createChartLineDatapoints(data["tempSet$id"]!, 2, theme.ThemeColors.tempColor));
+    }
+
     var flowChart1 = LineChart(
       LineChartData(
         minY: 0,
         // maxY: 15,
-        minX: data["pressure"]!.first.x,
+        minX: data["pressure${overlayIds!.first}"]!.first.x,
         maxX: maxTime,
         lineTouchData: LineTouchData(enabled: false),
         clipData: FlClipData.all(),
@@ -126,13 +154,7 @@ class _ShotGraphState extends State<ShotGraph> {
           show: true,
           drawVerticalLine: true,
         ),
-        lineBarsData: [
-          createChartLineDatapoints(data["pressure"]!, 4, theme.ThemeColors.pressureColor),
-          createChartLineDatapoints(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor),
-          createChartLineDatapoints(data["flow"]!, 4, theme.ThemeColors.flowColor),
-          createChartLineDatapoints(data["flowSet"]!, 2, theme.ThemeColors.flowColor),
-          createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor),
-        ],
+        lineBarsData: lineBarsDataFlows,
         rangeAnnotations: RangeAnnotations(
           verticalRangeAnnotations: [
             ...ranges,
@@ -190,7 +212,7 @@ class _ShotGraphState extends State<ShotGraph> {
       LineChartData(
         minY: 0,
         // maxY: 15,
-        minX: data["pressure"]!.first.x,
+        minX: data["pressure${overlayIds!.first}"]!.first.x,
         maxX: maxTime,
         lineTouchData: LineTouchData(enabled: false),
         clipData: FlClipData.all(),
@@ -198,11 +220,7 @@ class _ShotGraphState extends State<ShotGraph> {
           show: true,
           drawVerticalLine: true,
         ),
-        lineBarsData: [
-          createChartLineDatapoints(data["weight"]!, 2, theme.ThemeColors.weightColor),
-          createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor),
-          createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor),
-        ],
+        lineBarsData: lineBarsDataTempWeight,
         titlesData: FlTitlesData(
           topTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
@@ -259,7 +277,7 @@ class _ShotGraphState extends State<ShotGraph> {
           //     ],
           //   ),
           // ),
-          SizedBox(height: 200, child: flowChart1),
+          SizedBox(height: 400, child: flowChart1),
           const SizedBox(height: 20),
           SizedBox(height: 100, child: flowChart2),
         ],

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
@@ -37,6 +39,8 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
 
   List<int> selectedShots = [];
 
+  bool _overlay = false;
+
   CoffeeSelectionTabState() {}
 
   @override
@@ -74,8 +78,41 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
           Expanded(
             child: selectedShots.length == 0
                 ? Text("Nothing selected")
-                : Stack(
+                : Column(
                     children: [
+                      Row(
+                        children: [
+                          Text("Overlaymode:"),
+                          Switch(
+                            value: _overlay,
+                            onChanged: (value) {
+                              setState(() {
+                                _overlay = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _overlay ? min(selectedShots.length, 1) : selectedShots.length,
+                          itemBuilder: (context, index) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(32),
+                                bottomLeft: Radius.circular(32),
+                              ),
+                              child: ListTile(
+                                title: ShotGraph(
+                                    key: UniqueKey(),
+                                    id: selectedShots[index],
+                                    overlayIds: _overlay ? selectedShots : null),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                       LegendsListWidget(
                         legends: [
                           Legend('Pressure', theme.ThemeColors.pressureColor),
@@ -83,21 +120,6 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                           Legend('Weight', theme.ThemeColors.weightColor),
                           Legend('Temp', theme.ThemeColors.tempColor),
                         ],
-                      ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: selectedShots.length,
-                        itemBuilder: (context, index) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32),
-                              bottomLeft: Radius.circular(32),
-                            ),
-                            child: ListTile(
-                              title: ShotGraph(id: selectedShots[index]),
-                            ),
-                          );
-                        },
                       ),
                     ],
                   ),
