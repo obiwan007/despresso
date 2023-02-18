@@ -3,6 +3,7 @@ import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:despresso/ui/widgets/shot_graph.dart';
 import 'package:logging/logging.dart';
 
@@ -73,19 +74,32 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
           Expanded(
             child: selectedShots.length == 0
                 ? Text("Nothing selected")
-                : ListView.builder(
-                    itemCount: selectedShots.length,
-                    itemBuilder: (context, index) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32),
-                          bottomLeft: Radius.circular(32),
-                        ),
-                        child: ListTile(
-                          title: ShotGraph(id: selectedShots[index]),
-                        ),
-                      );
-                    },
+                : Stack(
+                    children: [
+                      LegendsListWidget(
+                        legends: [
+                          Legend('Pressure', theme.ThemeColors.pressureColor),
+                          Legend('Flow', theme.ThemeColors.flowColor),
+                          Legend('Weight', theme.ThemeColors.weightColor),
+                          Legend('Temp', theme.ThemeColors.tempColor),
+                        ],
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: selectedShots.length,
+                        itemBuilder: (context, index) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              bottomLeft: Radius.circular(32),
+                            ),
+                            child: ListTile(
+                              title: ShotGraph(id: selectedShots[index]),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
           ),
         ],
