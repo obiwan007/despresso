@@ -41,6 +41,11 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
 
   bool _overlay = false;
 
+  bool showPressure = true;
+  bool showFlow = true;
+  bool showWeight = true;
+  bool showTemp = true;
+
   CoffeeSelectionTabState() {}
 
   @override
@@ -107,7 +112,11 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                                 title: ShotGraph(
                                     key: UniqueKey(),
                                     id: selectedShots[index],
-                                    overlayIds: _overlay ? selectedShots : null),
+                                    overlayIds: _overlay ? selectedShots : null,
+                                    showFlow: showFlow,
+                                    showPressure: showPressure,
+                                    showWeight: showWeight,
+                                    showTemp: showTemp),
                               ),
                             );
                           },
@@ -115,10 +124,46 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                       ),
                       LegendsListWidget(
                         legends: [
-                          Legend('Pressure', theme.ThemeColors.pressureColor),
-                          Legend('Flow', theme.ThemeColors.flowColor),
-                          Legend('Weight', theme.ThemeColors.weightColor),
-                          Legend('Temp', theme.ThemeColors.tempColor),
+                          Legend(
+                            'Pressure',
+                            theme.ThemeColors.pressureColor,
+                            value: showPressure,
+                            onChanged: (p0) {
+                              setState(() {
+                                showPressure = p0;
+                              });
+                            },
+                          ),
+                          Legend(
+                            'Flow',
+                            theme.ThemeColors.flowColor,
+                            value: showFlow,
+                            onChanged: (p0) {
+                              setState(() {
+                                showFlow = p0;
+                              });
+                            },
+                          ),
+                          Legend(
+                            'Weight',
+                            theme.ThemeColors.weightColor,
+                            value: showWeight,
+                            onChanged: (p0) {
+                              setState(() {
+                                showWeight = p0;
+                              });
+                            },
+                          ),
+                          Legend(
+                            'Temp',
+                            theme.ThemeColors.tempColor,
+                            value: showTemp,
+                            onChanged: (p0) {
+                              setState(() {
+                                showTemp = p0;
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ],
