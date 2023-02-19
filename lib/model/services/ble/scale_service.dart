@@ -96,10 +96,11 @@ class ScaleService extends ChangeNotifier {
 
     var now = DateTime.now();
     var flow = 0.0;
-    var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch) / 1000;
+    var timeDiff = (now.millisecondsSinceEpoch - last.millisecondsSinceEpoch);
 
     // calc flow, cap on 10g/s
-    var n = math.min(10.0, (weight - _weight).abs() / timeDiff);
+    if (timeDiff == 0) return;
+    var n = math.min(10.0, (weight - _weight).abs() / (timeDiff / 1000));
 
     averaging.add(n);
 
