@@ -1,27 +1,22 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
+import 'package:csv/csv.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
-import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:despresso/ui/widgets/shot_graph.dart';
 import 'package:logging/logging.dart';
 
-import 'package:despresso/model/coffee.dart';
-import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:despresso/ui/screens/coffee_edit.dart';
-import 'package:despresso/ui/screens/roaster_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:objectbox/src/native/box.dart';
-import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
-
-import '../../model/services/ble/machine_service.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ShotSelectionTab extends StatefulWidget {
   const ShotSelectionTab({super.key});
@@ -66,6 +61,16 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shot Database'),
+        actions: [
+          Builder(
+            builder: (BuildContext context) {
+              return ElevatedButton(
+                onPressed: () => _onShare(context),
+                child: Icon(Icons.ios_share),
+              );
+            },
+          ),
+        ],
       ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,5 +255,64 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
       selectedShots.removeWhere((element) => element == id);
     }
     setState(() {});
+  }
+
+  _onShare(BuildContext context) async {
+    // _onShare method:
+    if (selectedShots.length == 0) return;
+    final box = context.findRenderObject() as RenderBox?;
+    var shot = shotBox.get(selectedShots.first);
+    var list = shot!.shotstates.toList().map((entry) {
+      return [
+        shot.date,
+        shot.coffee.target!.name,
+        shot.pourWeight,
+        shot.pourTime,
+        shot.profileId,
+        entry.sampleTimeCorrected,
+        entry.frameNumber,
+        entry.weight,
+        entry.flowWeight,
+        entry.headTemp,
+        entry.mixTemp,
+        entry.groupFlow,
+        entry.groupPressure,
+        entry.setGroupFlow,
+        entry.setGroupPressure,
+        entry.setHeadTemp,
+        entry.setMixTemp,
+      ];
+    }).toList();
+    var header = [
+      "date",
+      "name",
+      "pourWeight",
+      "pourTime",
+      "profileId",
+      "sampleTimeCorrected",
+      "frameNumber",
+      "weight",
+      "flowWeight",
+      "headTemp",
+      "mixTemp",
+      "groupFlow",
+      "groupPressure",
+      "setGroupFlow",
+      "setGroupPressure",
+      "setHeadTemp",
+      "setMixTemp",
+    ];
+    list.insert(0, header);
+    String csv = const ListToCsvConverter().convert(list, fieldDelimiter: ";");
+
+    final List<int> codeUnits = csv.codeUnits;
+    final Uint8List unit8List = Uint8List.fromList(codeUnits);
+    var xfile = XFile.fromData(unit8List, mimeType: "text/csv");
+
+    await Share.shareXFiles(
+      [xfile],
+      subject: "text/comma_separated_values/csv",
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+    );
   }
 }
