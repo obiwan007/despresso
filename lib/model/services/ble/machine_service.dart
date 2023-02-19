@@ -66,8 +66,6 @@ class EspressoMachineService extends ChangeNotifier {
 
   DE1? de1;
 
-  late SettingsService settings;
-
   late SharedPreferences prefs;
 
   late ProfileService profileService;
@@ -392,7 +390,7 @@ class EspressoMachineService extends ChangeNotifier {
     }
 
     // check if we need to send the new water temp
-    if (settings.targetGroupTemp != profile.shotFrames[0].temp) {
+    if (settingsService.targetGroupTemp != profile.shotFrames[0].temp) {
       profile.shotHeader.targetGroupTemp = profile.shotFrames[0].temp;
       var bytes = encodeDe1OtherSetn();
 
@@ -509,7 +507,8 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.water:
           if (scaleService.state == ScaleState.connected) {
-            if (settings.targetHotWaterWeight > 1 && scaleService.weight + 1 > settings.targetHotWaterWeight) {
+            if (settingsService.targetHotWaterWeight > 1 &&
+                scaleService.weight + 1 > settingsService.targetHotWaterWeight) {
               log.info(
                   "Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
 
@@ -519,9 +518,9 @@ class EspressoMachineService extends ChangeNotifier {
             }
           }
           if (state.subState == "pour" &&
-              settings.targetHotWaterLength > 1 &&
-              timer.inSeconds > settings.targetHotWaterLength) {
-            log.info("Water Timer reached ${timer.inSeconds} > ${settings.targetHotWaterLength}");
+              settingsService.targetHotWaterLength > 1 &&
+              timer.inSeconds > settingsService.targetHotWaterLength) {
+            log.info("Water Timer reached ${timer.inSeconds} > ${settingsService.targetHotWaterLength}");
 
             triggerEndOfShot();
           }
@@ -529,17 +528,19 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.steam:
           if (state.subState == "pour" &&
-              settings.targetSteamLength > 1 &&
-              timer.inSeconds > settings.targetSteamLength) {
-            log.info("Steam Timer reached ${timer.inSeconds} > ${settings.targetSteamLength}");
+              settingsService.targetSteamLength > 1 &&
+              timer.inSeconds > settingsService.targetSteamLength) {
+            log.info("Steam Timer reached ${timer.inSeconds} > ${settingsService.targetSteamLength}");
 
             triggerEndOfShot();
           }
 
           break;
         case EspressoMachineState.flush:
-          if (state.subState == "pour" && settings.targetFlushTime > 1 && timer.inSeconds > settings.targetFlushTime) {
-            log.info("Flush Timer reached ${timer.inSeconds} > ${settings.targetFlushTime}");
+          if (state.subState == "pour" &&
+              settingsService.targetFlushTime > 1 &&
+              timer.inSeconds > settingsService.targetFlushTime) {
+            log.info("Flush Timer reached ${timer.inSeconds} > ${settingsService.targetFlushTime}");
 
             triggerEndOfShot();
           }
@@ -613,24 +614,24 @@ class EspressoMachineService extends ChangeNotifier {
     Uint8List data = Uint8List(9);
 
     int index = 0;
-    data[index] = settings.steamSettings;
+    data[index] = settingsService.steamSettings;
     index++;
-    data[index] = settings.targetSteamTemp;
+    data[index] = settingsService.targetSteamTemp;
     index++;
-    data[index] = settings.targetSteamLength;
+    data[index] = settingsService.targetSteamLength;
     index++;
-    data[index] = settings.targetHotWaterTemp;
+    data[index] = settingsService.targetHotWaterTemp;
     index++;
-    data[index] = settings.targetHotWaterVol;
+    data[index] = settingsService.targetHotWaterVol;
     index++;
-    data[index] = settings.targetHotWaterLength;
+    data[index] = settingsService.targetHotWaterLength;
     index++;
-    data[index] = settings.targetEspressoVol;
+    data[index] = settingsService.targetEspressoVol;
     index++;
 
-    data[index] = settings.targetGroupTemp.toInt();
+    data[index] = settingsService.targetGroupTemp.toInt();
     index++;
-    data[index] = ((settings.targetGroupTemp - settings.targetGroupTemp.floor()) * 256.0).toInt();
+    data[index] = ((settingsService.targetGroupTemp - settingsService.targetGroupTemp.floor()) * 256.0).toInt();
     index++;
 
     return data;
@@ -642,8 +643,8 @@ class EspressoMachineService extends ChangeNotifier {
           event.state == TempState.connected &&
           state.coffeeState == EspressoMachineState.steam &&
           state.subState == "pour") {
-        if (event.temp1 >= settings.targetMilkTemperature) {
-          log.info("End of shot ${event.temp1} > ${settings.targetMilkTemperature}");
+        if (event.temp1 >= settingsService.targetMilkTemperature) {
+          log.info("End of shot ${event.temp1} > ${settingsService.targetMilkTemperature}");
           triggerEndOfShot();
         }
       }

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 class LegendWidget extends StatelessWidget {
-  const LegendWidget({
+  LegendWidget({
     super.key,
     required this.name,
     required this.color,
+    required this.onChanged,
+    this.value,
   });
   final String name;
   final Color color;
+  final void Function(bool)? onChanged;
+  bool? value;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,13 @@ class LegendWidget extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(name, style: Theme.of(context).textTheme.labelMedium),
+        if (onChanged != null)
+          Checkbox(
+            value: value,
+            onChanged: (value) {
+              if (onChanged != null) onChanged!(value!);
+            },
+          )
       ],
     );
   }
@@ -45,6 +56,8 @@ class LegendsListWidget extends StatelessWidget {
             (e) => LegendWidget(
               name: e.name,
               color: e.color,
+              value: e.value,
+              onChanged: e.onChanged,
             ),
           )
           .toList(),
@@ -53,7 +66,9 @@ class LegendsListWidget extends StatelessWidget {
 }
 
 class Legend {
-  Legend(this.name, this.color);
+  Legend(this.name, this.color, {this.onChanged, this.value});
   final String name;
   final Color color;
+  final void Function(bool)? onChanged;
+  final bool? value;
 }

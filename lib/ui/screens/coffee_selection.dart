@@ -94,101 +94,118 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                children: [
-                  const SizedBox(width: 150, child: Text("Select Roaster", style: theme.TextStyles.h1)),
-                  Expanded(
-                    flex: 8,
-                    child: DropdownButton(
-                      isExpanded: true,
-                      alignment: Alignment.centerLeft,
-                      value: _selectedRoasterId,
-                      items: roasters,
-                      onChanged: (value) async {
-                        _selectedRoasterId = value!;
-                        if (value == 0) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RoasterEdit(0)),
-                          );
-                        } else {
-                          coffeeService.setSelectedRoaster(_selectedRoasterId);
-                        }
-                        // setState(() {});
-                      },
-                    ),
-                  ),
-                  if (_editRosterMode == EditModes.show)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          setState(() {
-                            // _editRosterMode = EditModes.edit;
-                            // _editCoffeeMode = EditModes.show;
-                            // _editedRoaster = roaster;
-                            // form.value = _editedRoaster.toJson();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RoasterEdit(_selectedRoasterId)),
-                            );
-                          });
-                        },
-                        child: const Text('EDIT'),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(width: 150, child: Text("Select Roaster", style: theme.TextStyles.h2)),
+                          Expanded(
+                            flex: 8,
+                            child: DropdownButton(
+                              isExpanded: true,
+                              alignment: Alignment.centerLeft,
+                              value: _selectedRoasterId,
+                              items: roasters,
+                              onChanged: (value) async {
+                                _selectedRoasterId = value!;
+                                if (value == 0) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => RoasterEdit(0)),
+                                  );
+                                } else {
+                                  coffeeService.setSelectedRoaster(_selectedRoasterId);
+                                }
+                                // setState(() {});
+                              },
+                            ),
+                          ),
+                          if (_editRosterMode == EditModes.show)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    // _editRosterMode = EditModes.edit;
+                                    // _editCoffeeMode = EditModes.show;
+                                    // _editedRoaster = roaster;
+                                    // form.value = _editedRoaster.toJson();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => RoasterEdit(_selectedRoasterId)),
+                                    );
+                                  });
+                                },
+                                child: const Text('EDIT'),
+                              ),
+                            ),
+                        ],
                       ),
-                    ),
-                ],
-              ),
-              if (_selectedRoasterId > 0) roasterData(),
-              const Divider(),
-              Row(
-                children: [
-                  const SizedBox(width: 150, child: Text("Select Coffee", style: theme.TextStyles.h1)),
-                  Expanded(
-                    flex: 8,
-                    child: DropdownButton(
-                      isExpanded: true,
-                      alignment: Alignment.centerLeft,
-                      value: _selectedCoffeeId,
-                      items: coffees,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedCoffeeId = value!;
-                          if (value == 0) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
-                            );
-                          } else {
-                            coffeeService.setSelectedRoaster(_selectedRoasterId);
-                            coffeeService.setSelectedCoffee(_selectedCoffeeId);
-                          }
-                        });
-                      },
-                    ),
+                      if (_selectedRoasterId > 0) roasterData(),
+                    ],
                   ),
-                  if (_editCoffeeMode == EditModes.show)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          setState(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => CoffeeEdit(_selectedCoffeeId)),
-                            );
-                            // _editCoffeeMode = EditModes.edit;
-                            // _editRosterMode = EditModes.show;
-                            // _editedCoffee = coffee;
-                            // form.value = _editedCoffee.toJson();
-                          });
-                        },
-                        child: const Text('EDIT'),
-                      ),
-                    ),
-                ],
+                ),
               ),
-              if (_selectedCoffeeId > 0) coffeeData(),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(width: 150, child: Text("Select Coffee", style: theme.TextStyles.h2)),
+                          Expanded(
+                            flex: 8,
+                            child: DropdownButton(
+                              isExpanded: true,
+                              alignment: Alignment.centerLeft,
+                              value: _selectedCoffeeId,
+                              items: coffees,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedCoffeeId = value!;
+                                  if (value == 0) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
+                                    );
+                                  } else {
+                                    coffeeService.setSelectedRoaster(_selectedRoasterId);
+                                    coffeeService.setSelectedCoffee(_selectedCoffeeId);
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                          if (_editCoffeeMode == EditModes.show)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => CoffeeEdit(_selectedCoffeeId)),
+                                    );
+                                    // _editCoffeeMode = EditModes.edit;
+                                    // _editRosterMode = EditModes.show;
+                                    // _editedCoffee = coffee;
+                                    // form.value = _editedCoffee.toJson();
+                                  });
+                                },
+                                child: const Text('EDIT'),
+                              ),
+                            ),
+                        ],
+                      ),
+                      if (_selectedCoffeeId > 0) coffeeData(),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
