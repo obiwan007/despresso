@@ -267,6 +267,7 @@ class ProfileService extends ChangeNotifier {
     if (dynamic2Double(json["version"]) != 2.0) return false;
 
     profile.id = dynamic2String(json["id"]);
+
     shotHeader.hidden = dynamic2Double(json["hidden"]).toInt();
     shotHeader.type = dynamic2String(json["type"]);
     shotHeader.type = dynamic2String(json["type"]);
@@ -280,7 +281,9 @@ class ProfileService extends ChangeNotifier {
     shotHeader.author = dynamic2String(json["author"]);
     shotHeader.notes = dynamic2String(json["notes"]);
     shotHeader.beverageType = dynamic2String(json["beverage_type"]);
-
+    if (profile.id.isEmpty) {
+      profile.id = shotHeader.title;
+    }
     if (!json.containsKey("steps")) return false;
     for (Map<String, dynamic> frameData in json["steps"]) {
       if (!frameData.containsKey("name")) return false;
