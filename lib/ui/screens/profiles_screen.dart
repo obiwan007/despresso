@@ -21,6 +21,12 @@ import 'package:share_plus/share_plus.dart';
 import '../../service_locator.dart';
 import './profiles_edit_screen.dart';
 
+enum FilterModes {
+  Default,
+  Hidden,
+  Favorites,
+}
+
 class ProfilesScreen extends StatefulWidget {
   const ProfilesScreen({Key? key}) : super(key: key);
 
@@ -39,9 +45,11 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   FilePickerResult? filePickerResult;
   File? pickedFile;
 
-  List<String> filterOptions = ["All", "Hidden", "Favorites"];
+  List<String> filterOptions = [FilterModes.Default.name, FilterModes.Hidden.name];
 
-  List<String> selectedFilter = ["All"];
+  List<String> selectedFilter = [
+    FilterModes.Default.name,
+  ];
 
   @override
   void initState() {
@@ -64,7 +72,17 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var showHidden = selectedFilter.contains(FilterModes.Hidden.name);
+    var showDefault = selectedFilter.contains(FilterModes.Default.name);
+
     var items = profileService.profiles
+        .where(
+          (element) {
+            if (showDefault) return element.shotHeader.hidden == 0;
+            if (showHidden) return element.shotHeader.hidden == 1;
+            return true;
+          },
+        )
         .map((p) => DropdownMenuItem(
               value: p,
               child: Text("${p.shotHeader.title} ${p.isDefault ? '' : ' *'}"),
@@ -133,8 +151,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                               },
                               hint: const Text("Select item")),
                         ),
-                        SizedBox(
-                          width: 150,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: renderFilterDropdown(context, items),
                         ),
                       ],
@@ -240,6 +258,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         isExpanded: false, customButton: const Icon(Icons.filter_alt),
+        dropdownWidth: 160,
 
         // hint: Align(
         //   alignment: AlignmentDirectional.center,
@@ -254,6 +273,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         items: filterOptions.map((item) {
           return DropdownMenuItem<String>(
             value: item,
+
             //disable default onTap to avoid closing menu when selecting an item
             enabled: false,
             child: StatefulBuilder(
