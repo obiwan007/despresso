@@ -14,8 +14,6 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:objectbox/src/native/box.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShotSelectionTab extends StatefulWidget {
@@ -66,7 +64,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
             builder: (BuildContext context) {
               return ElevatedButton(
                 onPressed: () => _onShare(context),
-                child: Icon(Icons.ios_share),
+                child: const Icon(Icons.ios_share),
               );
             },
           ),
@@ -87,12 +85,12 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
           ),
           Expanded(
             child: selectedShots.length == 0
-                ? Text("Nothing selected")
+                ? const Text("Nothing selected")
                 : Column(
                     children: [
                       Row(
                         children: [
-                          Text("Overlaymode:"),
+                          const Text("Overlaymode:"),
                           Switch(
                             value: _overlay,
                             onChanged: (value) {
@@ -109,7 +107,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                           itemCount: _overlay ? min(selectedShots.length, 1) : selectedShots.length,
                           itemBuilder: (context, index) {
                             return ClipRRect(
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(32),
                                 bottomLeft: Radius.circular(32),
                               ),
@@ -202,9 +200,9 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
               color: Colors.red,
               margin: const EdgeInsets.symmetric(horizontal: 15),
               alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: const Icon(
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
                   Icons.delete,
                   color: Colors.white,
                 ),
@@ -226,9 +224,9 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${DateFormat().format(shots[index].date)}'),
+                    Text(DateFormat().format(shots[index].date)),
                     Text(
-                      '${shots[index].coffee.target!.name} (${shots[index].coffee.target?.roaster.target?.name})',
+                      '${shots[index].coffee.target?.name ?? 'no coffee'} (${shots[index].coffee.target?.roaster.target?.name ?? 'no roaster'})',
                     ),
                     Text(
                       '${shots[index].pourWeight.toStringAsFixed(1)}g in ${shots[index].pourTime.toStringAsFixed(1)}s ',
@@ -259,7 +257,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
 
   _onShare(BuildContext context) async {
     // _onShare method:
-    if (selectedShots.length == 0) return;
+    if (selectedShots.isEmpty) return;
     final box = context.findRenderObject() as RenderBox?;
     var shot = shotBox.get(selectedShots.first);
     var list = shot!.shotstates.toList().map((entry) {
