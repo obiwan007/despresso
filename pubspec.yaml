@@ -77,6 +77,7 @@ dependencies:
   package_info_plus: ^3.0.3
   intl: ^0.17.0
   csv: ^5.0.1
+  dropdown_button2: ^1.9.3
 
 dev_dependencies:
   flutter_test:

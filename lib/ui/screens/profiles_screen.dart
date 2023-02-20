@@ -6,13 +6,16 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:despresso/ui/widgets/labeled_checkbox.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../model/services/ble/machine_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../service_locator.dart';
@@ -35,6 +38,10 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   De1ShotProfile? _selectedProfile;
   FilePickerResult? filePickerResult;
   File? pickedFile;
+
+  List<String> filterOptions = ["All", "Hidden", "Favorites"];
+
+  List<String> selectedFilter = ["All"];
 
   @override
   void initState() {
@@ -108,20 +115,30 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    DropdownButton(
-                        isExpanded: true,
-                        alignment: Alignment.centerLeft,
-                        value: _selectedProfile,
-                        items: items,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedProfile = value!;
-                            profileService.setProfile(_selectedProfile!);
-                            // calcProfileGraph();
-                            // phases = _createPhases();
-                          });
-                        },
-                        hint: const Text("Select item")),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButton(
+                              isExpanded: true,
+                              alignment: Alignment.centerLeft,
+                              value: _selectedProfile,
+                              items: items,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedProfile = value!;
+                                  profileService.setProfile(_selectedProfile!);
+                                  // calcProfileGraph();
+                                  // phases = _createPhases();
+                                });
+                              },
+                              hint: const Text("Select item")),
+                        ),
+                        SizedBox(
+                          width: 150,
+                          child: renderFilterDropdown(context, items),
+                        ),
+                      ],
+                    ),
                     Expanded(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.vertical,
@@ -215,6 +232,79 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  DropdownButtonHideUnderline renderFilterDropdown(BuildContext context, List<DropdownMenuItem<De1ShotProfile>> items) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2(
+        isExpanded: false, customButton: const Icon(Icons.filter_alt),
+
+        // hint: Align(
+        //   alignment: AlignmentDirectional.center,
+        //   child: Text(
+        //     '',
+        //     style: TextStyle(
+        //       fontSize: 14,
+        //       color: Theme.of(context).hintColor,
+        //     ),
+        //   ),
+        // ),
+        items: filterOptions.map((item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            //disable default onTap to avoid closing menu when selecting an item
+            enabled: false,
+            child: StatefulBuilder(
+              builder: (context, menuSetState) {
+                final isSelected = selectedFilter.contains(item);
+                return Container(
+                  height: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      LabeledCheckbox(
+                        value: isSelected,
+                        label: item,
+                        onChanged: (value) {
+                          !value! ? selectedFilter.remove(item) : selectedFilter.add(item);
+                          setState(() {});
+                          menuSetState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }).toList(),
+        //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
+        value: selectedFilter.isEmpty ? null : selectedFilter.last,
+        onChanged: (value) {},
+        buttonHeight: 40,
+        buttonWidth: 140,
+        itemHeight: 40,
+        itemPadding: EdgeInsets.zero,
+        selectedItemBuilder: (context) {
+          return items.map(
+            (item) {
+              return Container(
+                alignment: AlignmentDirectional.center,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  selectedFilter.join(', '),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 1,
+                ),
+              );
+            },
+          ).toList();
+        },
       ),
     );
   }
