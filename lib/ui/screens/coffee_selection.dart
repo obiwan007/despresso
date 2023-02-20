@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:logging/logging.dart';
 
@@ -173,7 +174,6 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                                       MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
                                     );
                                   } else {
-                                    coffeeService.setSelectedRoaster(_selectedRoasterId);
                                     coffeeService.setSelectedCoffee(_selectedCoffeeId);
                                   }
                                 });
@@ -214,11 +214,18 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   }
 
   List<DropdownMenuItem<int>> loadRoasters() {
-    var roasters = coffeeService.roasterBox
-        .getAll()
+    final builder = coffeeService.roasterBox.query().order(Roaster_.name).build();
+    var found = builder.find();
+
+    var roasters = found
         .map((p) => DropdownMenuItem(
               value: p.id,
-              child: Text(p.name),
+              child: Text(
+                p.name,
+                style: (p.coffees.firstWhereOrNull((element) => element.id == _selectedCoffeeId) != null)
+                    ? TextStyle(color: Colors.amber)
+                    : TextStyle(color: Colors.white60),
+              ),
             ))
         .toList();
     roasters.insert(0, DropdownMenuItem(value: 0, child: Text(newRoaster.name)));
@@ -226,12 +233,22 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   }
 
   List<DropdownMenuItem<int>> loadCoffees() {
-    var coffees = coffeeService.coffeeBox
-        .getAll()
-        .map((p) => DropdownMenuItem(
+    // Build and watch the query,
+    // set triggerImmediately to emit the query immediately on listen.
+    final builder = coffeeService.coffeeBox.query().order(Coffee_.name).build();
+    var found = builder.find();
+
+    var coffees = found
+        .map(
+          (p) => DropdownMenuItem(
               value: p.id,
-              child: Text(p.name),
-            ))
+              child: Text(
+                p.name,
+                style: (p.roaster.targetId == _selectedRoasterId)
+                    ? TextStyle(color: Colors.amber)
+                    : TextStyle(color: Colors.white60),
+              )),
+        )
         .toList();
     coffees.insert(0, DropdownMenuItem(value: 0, child: Text(newCoffee.name)));
     return coffees;
@@ -333,11 +350,11 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   void updateCoffee() {
     setState(
       () {
+        _selectedCoffeeId = coffeeService.selectedCoffee;
+        _selectedRoasterId = coffeeService.selectedRoaster;
         roasters = loadRoasters();
         coffees = loadCoffees();
         log.info("Loaded ROasters $roasters");
-        _selectedCoffeeId = coffeeService.selectedCoffee;
-        _selectedRoasterId = coffeeService.selectedRoaster;
         if (coffees.firstWhereOrNull((element) => element.value == _selectedCoffeeId) == null) {
           _selectedCoffeeId = 0;
         }
