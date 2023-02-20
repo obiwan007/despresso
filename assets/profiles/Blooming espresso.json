@@ -1,0 +1,88 @@
+{
+  "title": "Blooming Espresso",
+  "author": "Decent",
+  "notes": "This technique causes a furor when Rao first published it.  His extraction of 24% is 2% higher than what is usually attainable with only the very best grinders, yet Rao did it with an inexpensive home grinder.  This technique is especially appropriate for lightly roasted, complex and expensive coffee beans.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion",
+      "temperature": "97.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "23.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4.00"
+      }
+    },
+    {
+      "name": "pause",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "30.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "ramp",
+      "temperature": "92.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "smooth",
+      "pressure": "4.0",
+      "flow": "2.2",
+      "seconds": "5.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "flat flow",
+      "temperature": "92.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "4.0",
+      "flow": "2.2",
+      "seconds": "20.0",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "8.6",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "reset temperature",
+      "temperature": "98.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "4.0",
+      "flow": "0.0",
+      "seconds": "1.0",
+      "volume": "500",
+      "weight": "0"
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "60",
+  "target_volume": "0",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

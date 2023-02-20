@@ -1,0 +1,83 @@
+{
+  "title": "Filter 2.0",
+  "author": "Decent",
+  "notes": "A new technique developed by Scott Rao, for making filter coffee with an espresso machine and 24g basket.  The process: (1) insert two micron 55mm paper filter into the bottom of a clean portafilter basket.  (2) Rinser the filter and basket with hot water.  (3) Fill the basket with 20g to 22g of finely ground coffee, not quite espresso grind, but far finer than any filter grind.  (4) WDT the grounds.  (5) tamping is optional.  (6) Place a metal mesh filter on top.  (7) Lock in the portafilter and make the espresso to a 5:1 ratio. (8) Dilute with 225g-250g of water.",
+  "beverage_type": "filter",
+  "steps": [
+    {
+      "name": "preinfusion",
+      "temperature": "92.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "5.0",
+      "seconds": "6.00",
+      "volume": "465.00",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "pause",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "120.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flat flow",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "4.0",
+      "flow": "3.0",
+      "seconds": "120.00",
+      "volume": "500",
+      "weight": "150.00",
+      "limiter": {
+        "value": "3.0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "reset temperature",
+      "temperature": "92.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "4.0",
+      "flow": "0.0",
+      "seconds": "1.0",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "100.0",
+  "target_volume": "100",
+  "target_volume_count_start": "1",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

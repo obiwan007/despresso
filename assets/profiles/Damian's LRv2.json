@@ -1,0 +1,106 @@
+{
+  "title": "Damian's LRv2",
+  "author": "Damian",
+  "notes": "This profile simulates a Londinium R machines extraction style. This is an advanced profile with some added steps to assist with less than ideal puck prep. Christee-Lee described it as like having a milkshake with extra syrup. Great body and flavour range. 2nd edition.  This is identical to the \"Londonium\" profile, but renamed to be easier to understand.  By Damian Brakel https:\/\/www.diy.brakel.com.au\/",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "Fill",
+      "temperature": "89.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "2.00",
+      "flow": "8",
+      "seconds": "25.00",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "1.5"
+      }
+    },
+    {
+      "name": "Infuse",
+      "temperature": "88.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "3.0",
+      "flow": "8",
+      "seconds": "12.0",
+      "volume": "100",
+      "weight": "0"
+    },
+    {
+      "name": "Pressure Up",
+      "temperature": "88.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "",
+      "seconds": "8.0",
+      "volume": "100",
+      "weight": "0"
+    },
+    {
+      "name": "Pressure Decline",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "smooth",
+      "pressure": "3.0",
+      "flow": "",
+      "seconds": "55.00",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "flow",
+        "condition": "over",
+        "value": "2.80"
+      }
+    },
+    {
+      "name": "Pressure Hold",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "3.0",
+      "flow": "",
+      "seconds": "127",
+      "volume": "100",
+      "weight": "0",
+      "exit": {
+        "type": "flow",
+        "condition": "over",
+        "value": "2.80"
+      }
+    },
+    {
+      "name": "Flow Limit",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "3.0",
+      "flow": "2.50",
+      "seconds": "127",
+      "volume": "100",
+      "weight": "0"
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "42",
+  "target_volume": "0",
+  "target_volume_count_start": "0",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

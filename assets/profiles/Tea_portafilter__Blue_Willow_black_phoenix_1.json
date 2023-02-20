@@ -1,0 +1,136 @@
+{
+  "title": "Tea portafilter\/Oolong 1st extraction",
+  "author": "Decent",
+  "notes": "This profile requires the Decent Espresso tea portafilter and is optimized for the tea named \"Black Phoenix\" from Blue Willow Tea https:\/\/www.bluewillowtea.com\/ - Taste wise, this profile created a 6oz\/180ml mug that tasted the similar, but a little bit different, as the second gongfu-style infusion. Very delicate with faint chocolate notes.  We use a 4 gram dose of leaves for this profile.",
+  "beverage_type": "tea_portafilter",
+  "steps": [
+    {
+      "name": "Fill",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "3.00"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Infuse",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0.10",
+      "flow": "4",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Flush",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.00",
+      "flow": "11",
+      "seconds": "8.00",
+      "volume": "85.00",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Infuse",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0.10",
+      "flow": "4.00",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Flush",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "0.50",
+      "flow": "11",
+      "seconds": "8.00",
+      "volume": "84.00",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "infuse",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0.1",
+      "flow": "11",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Flush",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "0.50",
+      "flow": "11",
+      "seconds": "8.00",
+      "volume": "85.00",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0",
+  "target_volume": "0",
+  "target_volume_count_start": "1",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

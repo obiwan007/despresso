@@ -1,0 +1,97 @@
+{
+  "title": "Gentle and sweet",
+  "author": "Decent",
+  "notes": "This is a very easy espresso to successfully make and is suggested if you are having difficulty making good drinks.  The pressure rises to only 6 bar and then slowly descends to 4 bar.  The resulting espresso should be free of channeling, have low acidity and quite pleasant to drink straight or with milk.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion temp boost",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "2",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4.0"
+      }
+    },
+    {
+      "name": "preinfusion",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "18",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4.0"
+      }
+    },
+    {
+      "name": "forced rise without limit",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "",
+      "seconds": "3",
+      "volume": "0",
+      "weight": "0"
+    },
+    {
+      "name": "rise and hold",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "",
+      "seconds": "13",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "4.0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "decline",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "smooth",
+      "pressure": "4.0",
+      "flow": "",
+      "seconds": "30",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "4.0",
+        "range": "1.0"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36",
+  "target_volume": "36",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2a",
+  "type": "pressure",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

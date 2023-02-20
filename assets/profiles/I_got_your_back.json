@@ -1,0 +1,119 @@
+{
+  "title": "I got your back",
+  "author": "Decent",
+  "notes": "The goal of this profile is to never fail to make an acceptable espresso, at any grinder dial setting. The profile detects the resistance by looking at the pressure. It then either it transitions to a flat 2.2ml\/s flow shot at the low resistance (low pressure) or to bloom at the high resistance (high pressure\/low flow rate).  Profile created by Shin.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion",
+      "temperature": "90.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "13.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4.00"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Low Resistance",
+      "temperature": "90.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "2.2",
+      "seconds": "30.00",
+      "volume": "500.00",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "10.00"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pause at HR",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "60.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "2.00"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "ramp",
+      "temperature": "90.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "smooth",
+      "pressure": "4.0",
+      "flow": "2.2",
+      "seconds": "5.0",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flat flow",
+      "temperature": "90.00",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "4.0",
+      "flow": "2.2",
+      "seconds": "30.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "under",
+        "value": "0"
+      },
+      "limiter": {
+        "value": "8.6",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36.0",
+  "target_volume": "0",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

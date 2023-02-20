@@ -1,0 +1,81 @@
+{
+  "title": "Classic Italian espresso",
+  "author": "Decent",
+  "notes": "This will imitate the espresso style of the majority of cafes around the world. It uses a short preinfusion with a flat 9 bar pressure profile.",
+  "beverage_type": "espresso",
+  "steps": [
+    {
+      "name": "preinfusion temp boost",
+      "temperature": "94",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4.5",
+      "seconds": "2",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4"
+      }
+    },
+    {
+      "name": "preinfusion",
+      "temperature": "94",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4.5",
+      "seconds": "6",
+      "volume": "0",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "4"
+      }
+    },
+    {
+      "name": "forced rise without limit",
+      "temperature": "94",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "",
+      "seconds": "3",
+      "volume": "0",
+      "weight": "0"
+    },
+    {
+      "name": "rise and hold",
+      "temperature": "94",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "",
+      "seconds": "32",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "4.5",
+        "range": "1.0"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "36",
+  "target_volume": "36",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2a",
+  "type": "pressure",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

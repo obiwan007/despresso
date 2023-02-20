@@ -1,0 +1,275 @@
+{
+  "title": "Tea\/in a basket",
+  "author": "Decent",
+  "notes": "This profile makes an acceptable mug of tea using a regular portafilter espresso basket.  Place half a teaspoon of loose leaf tea, or a teabag, into a basket of any size.  Works best of teas that prefer high brewing temperatures, such as English Breakfast.  For better quality brews, use a tea portafilter, but this technique works well enough if you don't own that.",
+  "beverage_type": "tea",
+  "steps": [
+    {
+      "name": "preinfusion boost",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "4.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0.5",
+      "seconds": "5.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "hold",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0.0",
+      "seconds": "10.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "hold",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "hold",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "hold",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "hold",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0.1",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "12.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "hold",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0.0",
+      "seconds": "10.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "10.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "0",
+      "seconds": "10.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "flow",
+      "temperature": "100.00",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "",
+      "flow": "3.0",
+      "seconds": "10.00",
+      "volume": "0",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0",
+  "target_volume": "295",
+  "target_volume_count_start": "0",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

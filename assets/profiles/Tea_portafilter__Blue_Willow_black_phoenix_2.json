@@ -1,0 +1,72 @@
+{
+  "title": "Tea portafilter\/Oolong 2nd extraction",
+  "author": "Decent",
+  "notes": "This profile requires the Decent Espresso tea portafilter and is optimized for the tea named \"Black Phoenix Oolong\" from Blue Willow Tea https:\/\/www.bluewillowtea.com\/ - This is an optional second extraction you can do with the same already-extracted leaves that you made a first extraction from. Taste wise, this profile created a 2oz\/60ml cup that tastes similar to a single gongfu-style infusion made several minutes after the first. Chocolate notes dominate.  You can start this profile any time (up to five minutes) after running the first extraction.",
+  "beverage_type": "tea_portafilter",
+  "steps": [
+    {
+      "name": "Fill",
+      "temperature": "93.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "1",
+      "flow": "4",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0",
+      "exit": {
+        "type": "pressure",
+        "condition": "over",
+        "value": "3.00"
+      },
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Infuse",
+      "temperature": "93.5",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0.10",
+      "flow": "4",
+      "seconds": "60.00",
+      "volume": "500",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Flush",
+      "temperature": "93.5",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.00",
+      "flow": "11",
+      "seconds": "8.00",
+      "volume": "85.00",
+      "weight": "0.0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0",
+  "target_volume": "0",
+  "target_volume_count_start": "1",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

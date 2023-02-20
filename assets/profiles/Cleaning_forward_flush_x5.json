@@ -1,0 +1,163 @@
+{
+  "title": "Cleaning\/Forward Flush x5",
+  "author": "Decent",
+  "notes": "A convenient way to 5 times flush and clean your group head.  (1) Put a blind basket in your portafilter  (2) Put 3g (1\/2 teaspoon) of espresso machine detergent in the blind basket  (3) Run this profile  (4) When it is done, remove the portafilter off Flush the DE1 until the water goes clear  (5) Put the portafilter back without detergent and run this profile again  (6) Finally, run FLUSH for 20 seconds.",
+  "beverage_type": "cleaning",
+  "steps": [
+    {
+      "name": "Pressure rise 1",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.999999999999993",
+      "flow": "4.00",
+      "seconds": "20.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0.0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pause 1",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "0",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0.0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pressure rise 2",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.999999999999993",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0.0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pause 2",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "-3.885780586188048e-16",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pressure rise 3",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.999999999999993",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pause 3",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "-5.717648576819556e-15",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pressure rise 4",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.999999999999993",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pause 4",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "-5.717648576819556e-15",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    },
+    {
+      "name": "Pressure rise 5",
+      "temperature": "85.00",
+      "sensor": "coffee",
+      "pump": "pressure",
+      "transition": "fast",
+      "pressure": "9.999999999999993",
+      "flow": "6.50",
+      "seconds": "15.00",
+      "volume": "500",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "0.6"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0.0",
+  "target_volume": "0",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "kr",
+  "hidden": "0",
+  "reference_file": "",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

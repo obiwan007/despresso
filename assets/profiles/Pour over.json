@@ -1,0 +1,103 @@
+{
+  "title": "Pour over basket\/Decent pour over",
+  "author": "Decent",
+  "notes": "You can make a pour over coffee with your espresso machine.  To do this, first remove the drip tray. Then, place a coffee mug with a filter cone on it under the espresso machine's group head.",
+  "beverage_type": "pourover",
+  "steps": [
+    {
+      "name": "Prewet",
+      "temperature": "99.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "6.0",
+      "seconds": "4.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Pause",
+      "temperature": "97.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "40.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Main water #1",
+      "temperature": "97.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "6.0",
+      "seconds": "14.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Pause",
+      "temperature": "95.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "20.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Main water #2",
+      "temperature": "95.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "5.0",
+      "seconds": "25.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Drain",
+      "temperature": "95.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "20.0",
+      "volume": "500",
+      "weight": "0"
+    },
+    {
+      "name": "Reset temperature",
+      "temperature": "99.0",
+      "sensor": "water",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "6.0",
+      "flow": "0",
+      "seconds": "1.0",
+      "volume": "500",
+      "weight": "0"
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0",
+  "target_volume": "0",
+  "target_volume_count_start": "0",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "Extractamundo_Dos",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}
