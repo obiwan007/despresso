@@ -1,349 +1,349 @@
 {
-  "title": "Gagné\/Adaptive Allongé 94C v1.0",
-  "author": "Decent",
-  "notes": "This profile is a variation on the Rao Allongé. After preinfusion, pressure raises to 8.6 bar and then detects the current flow to keep it stable ever after. I believe this might make better espresso when it is not perfectly dialed in. See it like this - you are dialing in the constant flow rate, not the pressure curve or the shape of the flow curve. Faster flow rates might taste better with longer shots. Taken to the extreme, this profile can do something similar to the Rao Allonge if you just grind coarse enough.",
-  "beverage_type": "espresso",
-  "steps": [
-    {
-      "name": "preinfusion",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "4.00",
-      "seconds": "15.00",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "4.0"
-      }
-    },
-    {
-      "name": "rise and hold",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "8.6",
-      "flow": "",
-      "seconds": "4",
-      "volume": "500",
-      "weight": "0"
-    },
-    {
-      "name": "Scan 6.0 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "6.00",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "5.90"
-      }
-    },
-    {
-      "name": "Scan 5.5 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "5.50",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "5.40"
-      }
-    },
-    {
-      "name": "Scan 5.2 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "5.20",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "5.10"
-      }
-    },
-    {
-      "name": "Scan 5.0 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "5.00",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.90"
-      }
-    },
-    {
-      "name": "Scan 4.9 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.90",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.80"
-      }
-    },
-    {
-      "name": "Scan 4.8 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.80",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.70"
-      }
-    },
-    {
-      "name": "Scan 4.7 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.70",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.60"
-      }
-    },
-    {
-      "name": "Scan 4.6 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.60",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.50"
-      }
-    },
-    {
-      "name": "Scan 4.5 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.50",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.40"
-      }
-    },
-    {
-      "name": "Scan 4.4 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.40",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.30"
-      }
-    },
-    {
-      "name": "Scan 4.3 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.30",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.20"
-      }
-    },
-    {
-      "name": "Scan 4.2 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.20",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.10"
-      }
-    },
-    {
-      "name": "Scan 4.1 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.10",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "4.00"
-      }
-    },
-    {
-      "name": "Scan 4.0 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "4.00",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "3.90"
-      }
-    },
-    {
-      "name": "Scan 3.8 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "3.80",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "3.70"
-      }
-    },
-    {
-      "name": "Scan 3.4 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "3.40",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "3.30"
-      }
-    },
-    {
-      "name": "Scan 3.0 mL.s",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "3.00",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0",
-      "exit": {
-        "type": "flow",
-        "condition": "under",
-        "value": "2.90"
-      }
-    },
-    {
-      "name": "last resort",
-      "temperature": "94.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "6.0",
-      "flow": "1.00",
-      "seconds": "127",
-      "volume": "500",
-      "weight": "0"
-    }
-  ],
-  "tank_temperature": "0",
-  "target_weight": "0",
-  "target_volume": "0",
-  "target_volume_count_start": "2",
-  "legacy_profile_type": "settings_2c",
-  "type": "advanced",
-  "lang": "en",
-  "hidden": "0",
-  "reference_file": "",
-  "changes_since_last_espresso": "",
-  "version": "2"
+    "title": "Gagné\/Adaptive Allongé 94C v1.0",
+    "author": "Decent",
+    "notes": "This profile is a variation on the Rao Allongé. After preinfusion, pressure raises to 8.6 bar and then detects the current flow to keep it stable ever after. I believe this might make better espresso when it is not perfectly dialed in. See it like this - you are dialing in the constant flow rate, not the pressure curve or the shape of the flow curve. Faster flow rates might taste better with longer shots. Taken to the extreme, this profile can do something similar to the Rao Allonge if you just grind coarse enough.",
+    "beverage_type": "espresso",
+    "steps": [
+        {
+            "name": "preinfusion",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "4.00",
+            "seconds": "15.00",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "4.0"
+            }
+        },
+        {
+            "name": "rise and hold",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "8.6",
+            "flow": "",
+            "seconds": "4",
+            "volume": "500",
+            "weight": "0"
+        },
+        {
+            "name": "Scan 6.0 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "6.00",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "5.90"
+            }
+        },
+        {
+            "name": "Scan 5.5 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "5.50",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "5.40"
+            }
+        },
+        {
+            "name": "Scan 5.2 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "5.20",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "5.10"
+            }
+        },
+        {
+            "name": "Scan 5.0 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "5.00",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.90"
+            }
+        },
+        {
+            "name": "Scan 4.9 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.90",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.80"
+            }
+        },
+        {
+            "name": "Scan 4.8 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.80",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.70"
+            }
+        },
+        {
+            "name": "Scan 4.7 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.70",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.60"
+            }
+        },
+        {
+            "name": "Scan 4.6 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.60",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.50"
+            }
+        },
+        {
+            "name": "Scan 4.5 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.50",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.40"
+            }
+        },
+        {
+            "name": "Scan 4.4 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.40",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.30"
+            }
+        },
+        {
+            "name": "Scan 4.3 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.30",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.20"
+            }
+        },
+        {
+            "name": "Scan 4.2 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.20",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.10"
+            }
+        },
+        {
+            "name": "Scan 4.1 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.10",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "4.00"
+            }
+        },
+        {
+            "name": "Scan 4.0 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "4.00",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "3.90"
+            }
+        },
+        {
+            "name": "Scan 3.8 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "3.80",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "3.70"
+            }
+        },
+        {
+            "name": "Scan 3.4 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "3.40",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "3.30"
+            }
+        },
+        {
+            "name": "Scan 3.0 mL.s",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "3.00",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0",
+            "exit": {
+                "type": "flow",
+                "condition": "under",
+                "value": "2.90"
+            }
+        },
+        {
+            "name": "last resort",
+            "temperature": "94.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "6.0",
+            "flow": "1.00",
+            "seconds": "127",
+            "volume": "500",
+            "weight": "0"
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "0",
+    "target_volume": "0",
+    "target_volume_count_start": "2",
+    "legacy_profile_type": "settings_2c",
+    "type": "advanced",
+    "lang": "en",
+    "hidden": "1",
+    "reference_file": "",
+    "changes_since_last_espresso": "",
+    "version": "2"
 }

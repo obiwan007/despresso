@@ -88,8 +88,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
               value: p,
               child: Text("${p.shotHeader.title} ${p.isDefault ? '' : ' *'}"),
             ))
-        .toList();
-
+        .toList()
+        .sortedBy((element) => element.value!.title);
     // Check if we need to fallback
     if (null ==
         items.firstWhereOrNull(

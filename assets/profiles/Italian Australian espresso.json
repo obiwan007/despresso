@@ -1,77 +1,77 @@
 {
-  "title": "Italian Australian espresso",
-  "author": "Decent",
-  "notes": "Italians in Australia have a style all their own. They still use dark roasted coffee beans and extract at 9 bar, but they lower the brew temperature so as to not overextract the coffee.  Aim for a brew ratio of 2.5x, which is to say an in-cup weight that is 2.5x the weight of the coffee ground dose.",
-  "beverage_type": "espresso",
-  "steps": [
-    {
-      "name": "preinfusion temp boost",
-      "temperature": "98.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "4.5",
-      "seconds": "2",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "4.0"
-      }
-    },
-    {
-      "name": "preinfusion",
-      "temperature": "92.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "4.5",
-      "seconds": "6",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "4.0"
-      }
-    },
-    {
-      "name": "forced rise without limit",
-      "temperature": "92.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "8.7",
-      "flow": "",
-      "seconds": "3",
-      "volume": "0",
-      "weight": "0"
-    },
-    {
-      "name": "rise and hold",
-      "temperature": "92.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "8.7",
-      "flow": "",
-      "seconds": "32",
-      "volume": "0",
-      "weight": "0"
-    }
-  ],
-  "tank_temperature": "0",
-  "target_weight": "36",
-  "target_volume": "36",
-  "target_volume_count_start": "2",
-  "legacy_profile_type": "settings_2a",
-  "type": "pressure",
-  "lang": "en",
-  "hidden": "0",
-  "reference_file": "Extractamundo_Dos",
-  "changes_since_last_espresso": "",
-  "version": "2"
+    "title": "Italian Australian espresso",
+    "author": "Decent",
+    "notes": "Italians in Australia have a style all their own. They still use dark roasted coffee beans and extract at 9 bar, but they lower the brew temperature so as to not overextract the coffee.  Aim for a brew ratio of 2.5x, which is to say an in-cup weight that is 2.5x the weight of the coffee ground dose.",
+    "beverage_type": "espresso",
+    "steps": [
+        {
+            "name": "preinfusion temp boost",
+            "temperature": "98.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "4.5",
+            "seconds": "2",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "4.0"
+            }
+        },
+        {
+            "name": "preinfusion",
+            "temperature": "92.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "4.5",
+            "seconds": "6",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "4.0"
+            }
+        },
+        {
+            "name": "forced rise without limit",
+            "temperature": "92.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "8.7",
+            "flow": "",
+            "seconds": "3",
+            "volume": "0",
+            "weight": "0"
+        },
+        {
+            "name": "rise and hold",
+            "temperature": "92.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "8.7",
+            "flow": "",
+            "seconds": "32",
+            "volume": "0",
+            "weight": "0"
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "36",
+    "target_volume": "36",
+    "target_volume_count_start": "2",
+    "legacy_profile_type": "settings_2a",
+    "type": "pressure",
+    "lang": "en",
+    "hidden": "1",
+    "reference_file": "Extractamundo_Dos",
+    "changes_since_last_espresso": "",
+    "version": "2"
 }

@@ -1,77 +1,77 @@
 {
-  "title": "E61 with fast preinfusion to 9 bar",
-  "author": "Decent",
-  "notes": "E61 machines evolved with time, with some models adding an optional, manually controlled preinfusion step.  In most cases, preinfusion will produce a more evenly extracted shot.",
-  "beverage_type": "espresso",
-  "steps": [
-    {
-      "name": "preinfusion temp boost",
-      "temperature": "90.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "4",
-      "seconds": "2",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "4.0"
-      }
-    },
-    {
-      "name": "preinfusion",
-      "temperature": "88.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "4",
-      "seconds": "4",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "4.0"
-      }
-    },
-    {
-      "name": "forced rise without limit",
-      "temperature": "88.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "9.0",
-      "flow": "",
-      "seconds": "3",
-      "volume": "0",
-      "weight": "0"
-    },
-    {
-      "name": "rise and hold",
-      "temperature": "88.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "9.0",
-      "flow": "",
-      "seconds": "27",
-      "volume": "0",
-      "weight": "0"
-    }
-  ],
-  "tank_temperature": "0",
-  "target_weight": "36",
-  "target_volume": "36",
-  "target_volume_count_start": "2",
-  "legacy_profile_type": "settings_2a",
-  "type": "pressure",
-  "lang": "en",
-  "hidden": "0",
-  "reference_file": "",
-  "changes_since_last_espresso": "",
-  "version": "2"
+    "title": "E61 with fast preinfusion to 9 bar",
+    "author": "Decent",
+    "notes": "E61 machines evolved with time, with some models adding an optional, manually controlled preinfusion step.  In most cases, preinfusion will produce a more evenly extracted shot.",
+    "beverage_type": "espresso",
+    "steps": [
+        {
+            "name": "preinfusion temp boost",
+            "temperature": "90.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "4",
+            "seconds": "2",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "4.0"
+            }
+        },
+        {
+            "name": "preinfusion",
+            "temperature": "88.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "4",
+            "seconds": "4",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "4.0"
+            }
+        },
+        {
+            "name": "forced rise without limit",
+            "temperature": "88.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "9.0",
+            "flow": "",
+            "seconds": "3",
+            "volume": "0",
+            "weight": "0"
+        },
+        {
+            "name": "rise and hold",
+            "temperature": "88.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "9.0",
+            "flow": "",
+            "seconds": "27",
+            "volume": "0",
+            "weight": "0"
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "36",
+    "target_volume": "36",
+    "target_volume_count_start": "2",
+    "legacy_profile_type": "settings_2a",
+    "type": "pressure",
+    "lang": "en",
+    "hidden": "1",
+    "reference_file": "",
+    "changes_since_last_espresso": "",
+    "version": "2"
 }

@@ -1,77 +1,77 @@
 {
-  "title": "Innovative long preinfusion",
-  "author": "Decent",
-  "notes": "Another approach created by a famously innovative Seattle-based espresso machine manufacturer, this technique requires you to grind your coffee very finely.  Try this with very lightly roasted coffee beans.  The resulting flavor is more like a pour-over than espresso.",
-  "beverage_type": "espresso",
-  "steps": [
-    {
-      "name": "preinfusion boost",
-      "temperature": "98.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "1.5",
-      "seconds": "2",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "1.0"
-      }
-    },
-    {
-      "name": "preinfusion",
-      "temperature": "92.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "1.5",
-      "seconds": "35",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "1.0"
-      }
-    },
-    {
-      "name": "hold",
-      "temperature": "92.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "",
-      "flow": "2.5",
-      "seconds": "25",
-      "volume": "0",
-      "weight": "0"
-    },
-    {
-      "name": "decline",
-      "temperature": "92.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "smooth",
-      "pressure": "",
-      "flow": "1.8",
-      "seconds": "0",
-      "volume": "0",
-      "weight": "0"
-    }
-  ],
-  "tank_temperature": "0",
-  "target_weight": "36",
-  "target_volume": "0",
-  "target_volume_count_start": "2",
-  "legacy_profile_type": "settings_2b",
-  "type": "flow",
-  "lang": "en",
-  "hidden": "0",
-  "reference_file": "Extractamundo_Dos",
-  "changes_since_last_espresso": "",
-  "version": "2"
+    "title": "Innovative long preinfusion",
+    "author": "Decent",
+    "notes": "Another approach created by a famously innovative Seattle-based espresso machine manufacturer, this technique requires you to grind your coffee very finely.  Try this with very lightly roasted coffee beans.  The resulting flavor is more like a pour-over than espresso.",
+    "beverage_type": "espresso",
+    "steps": [
+        {
+            "name": "preinfusion boost",
+            "temperature": "98.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "1.5",
+            "seconds": "2",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "1.0"
+            }
+        },
+        {
+            "name": "preinfusion",
+            "temperature": "92.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "1.5",
+            "seconds": "35",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "1.0"
+            }
+        },
+        {
+            "name": "hold",
+            "temperature": "92.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "",
+            "flow": "2.5",
+            "seconds": "25",
+            "volume": "0",
+            "weight": "0"
+        },
+        {
+            "name": "decline",
+            "temperature": "92.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "smooth",
+            "pressure": "",
+            "flow": "1.8",
+            "seconds": "0",
+            "volume": "0",
+            "weight": "0"
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "36",
+    "target_volume": "0",
+    "target_volume_count_start": "2",
+    "legacy_profile_type": "settings_2b",
+    "type": "flow",
+    "lang": "en",
+    "hidden": "1",
+    "reference_file": "Extractamundo_Dos",
+    "changes_since_last_espresso": "",
+    "version": "2"
 }

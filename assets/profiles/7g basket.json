@@ -1,80 +1,80 @@
 {
-  "title": "7g basket",
-  "author": "Decent",
-  "notes": "This profile is optimized for the 7g Decent Basket.  You should weigh 7g of beans and dose them into the center mini-basket at the bottom.  You'll need a small 36mm tamper.  The flow rate is slowed down to prevent disturbing the puck.  A lower pressure is used to compensate for the lower puck integrity.  Final shot weight should be 18 to 28 grams.",
-  "beverage_type": "espresso",
-  "steps": [
-    {
-      "name": "preinfusion",
-      "temperature": "90.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "1",
-      "flow": "2.4",
-      "seconds": "8",
-      "volume": "0",
-      "weight": "0",
-      "exit": {
-        "type": "pressure",
-        "condition": "over",
-        "value": "4.5"
-      }
-    },
-    {
-      "name": "forced rise without limit",
-      "temperature": "90.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "7.5",
-      "flow": "",
-      "seconds": "3",
-      "volume": "0",
-      "weight": "0"
-    },
-    {
-      "name": "rise and hold",
-      "temperature": "90.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "fast",
-      "pressure": "7.5",
-      "flow": "",
-      "seconds": "3",
-      "volume": "0",
-      "weight": "0",
-      "limiter": {
-        "value": "6.0",
-        "range": "1.0"
-      }
-    },
-    {
-      "name": "decline",
-      "temperature": "90.0",
-      "sensor": "coffee",
-      "pump": "pressure",
-      "transition": "smooth",
-      "pressure": "4.5",
-      "flow": "",
-      "seconds": "10",
-      "volume": "0",
-      "weight": "0",
-      "limiter": {
-        "value": "6.0",
-        "range": "1.0"
-      }
-    }
-  ],
-  "tank_temperature": "0",
-  "target_weight": "35",
-  "target_volume": "36",
-  "target_volume_count_start": "1",
-  "legacy_profile_type": "settings_2a",
-  "type": "pressure",
-  "lang": "en",
-  "hidden": "0",
-  "reference_file": "",
-  "changes_since_last_espresso": "",
-  "version": "2"
+    "title": "7g basket",
+    "author": "Decent",
+    "notes": "This profile is optimized for the 7g Decent Basket.  You should weigh 7g of beans and dose them into the center mini-basket at the bottom.  You'll need a small 36mm tamper.  The flow rate is slowed down to prevent disturbing the puck.  A lower pressure is used to compensate for the lower puck integrity.  Final shot weight should be 18 to 28 grams.",
+    "beverage_type": "espresso",
+    "steps": [
+        {
+            "name": "preinfusion",
+            "temperature": "90.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "1",
+            "flow": "2.4",
+            "seconds": "8",
+            "volume": "0",
+            "weight": "0",
+            "exit": {
+                "type": "pressure",
+                "condition": "over",
+                "value": "4.5"
+            }
+        },
+        {
+            "name": "forced rise without limit",
+            "temperature": "90.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "7.5",
+            "flow": "",
+            "seconds": "3",
+            "volume": "0",
+            "weight": "0"
+        },
+        {
+            "name": "rise and hold",
+            "temperature": "90.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "fast",
+            "pressure": "7.5",
+            "flow": "",
+            "seconds": "3",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "value": "6.0",
+                "range": "1.0"
+            }
+        },
+        {
+            "name": "decline",
+            "temperature": "90.0",
+            "sensor": "coffee",
+            "pump": "pressure",
+            "transition": "smooth",
+            "pressure": "4.5",
+            "flow": "",
+            "seconds": "10",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "value": "6.0",
+                "range": "1.0"
+            }
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "35",
+    "target_volume": "36",
+    "target_volume_count_start": "1",
+    "legacy_profile_type": "settings_2a",
+    "type": "pressure",
+    "lang": "en",
+    "hidden": "1",
+    "reference_file": "",
+    "changes_since_last_espresso": "",
+    "version": "2"
 }

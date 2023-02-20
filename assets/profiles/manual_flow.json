@@ -1,51 +1,51 @@
 {
-  "title": "GHC\/manual flow control",
-  "author": "Decent",
-  "notes": "For use with machines that have a group head controller (GHC).  Hold your finger on the GHC for the flow you want.",
-  "beverage_type": "manual",
-  "steps": [
-    {
-      "name": "hold",
-      "temperature": "88.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "fast",
-      "pressure": "",
-      "flow": "0.0",
-      "seconds": "60",
-      "volume": "0",
-      "weight": "0",
-      "limiter": {
-        "value": "9.0",
-        "range": "0.9"
-      }
-    },
-    {
-      "name": "decline",
-      "temperature": "88.0",
-      "sensor": "coffee",
-      "pump": "flow",
-      "transition": "smooth",
-      "pressure": "",
-      "flow": "0.0",
-      "seconds": "60",
-      "volume": "0",
-      "weight": "0",
-      "limiter": {
-        "value": "9.0",
-        "range": "0.9"
-      }
-    }
-  ],
-  "tank_temperature": "0",
-  "target_weight": "0",
-  "target_volume": "0",
-  "target_volume_count_start": "0",
-  "legacy_profile_type": "settings_2b",
-  "type": "flow",
-  "lang": "en",
-  "hidden": "0",
-  "reference_file": "Extractamundo_Dos",
-  "changes_since_last_espresso": "",
-  "version": "2"
+    "title": "GHC\/manual flow control",
+    "author": "Decent",
+    "notes": "For use with machines that have a group head controller (GHC).  Hold your finger on the GHC for the flow you want.",
+    "beverage_type": "manual",
+    "steps": [
+        {
+            "name": "hold",
+            "temperature": "88.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "fast",
+            "pressure": "",
+            "flow": "0.0",
+            "seconds": "60",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "value": "9.0",
+                "range": "0.9"
+            }
+        },
+        {
+            "name": "decline",
+            "temperature": "88.0",
+            "sensor": "coffee",
+            "pump": "flow",
+            "transition": "smooth",
+            "pressure": "",
+            "flow": "0.0",
+            "seconds": "60",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "value": "9.0",
+                "range": "0.9"
+            }
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "0",
+    "target_volume": "0",
+    "target_volume_count_start": "0",
+    "legacy_profile_type": "settings_2b",
+    "type": "flow",
+    "lang": "en",
+    "hidden": "1",
+    "reference_file": "Extractamundo_Dos",
+    "changes_since_last_espresso": "",
+    "version": "2"
 }
