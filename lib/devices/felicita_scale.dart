@@ -57,8 +57,7 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
 
   void _notificationCallback(List<int> data) {
     if (data.length == 18) {
-      var weight = int.parse(data.slice(3, 9).map((value) => {value - 48}).join(''));
-
+      var weight = int.parse(data.slice(3, 9).map((value) => value - 48).join(''));
       scaleService.setWeight(weight / 100);
       scaleService.setBattery(((data[15] - minBattLevel) / (maxBattLevel - minBattLevel) * 100).round());
     }
