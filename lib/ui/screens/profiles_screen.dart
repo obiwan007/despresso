@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -89,6 +90,15 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             ))
         .toList();
 
+    // Check if we need to fallback
+    if (null ==
+        items.firstWhereOrNull(
+          (element) {
+            return element.value!.id == _selectedProfile!.id;
+          },
+        )) {
+      _selectedProfile = items[0].value;
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profiles'),
