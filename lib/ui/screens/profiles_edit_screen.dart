@@ -142,7 +142,9 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         Expanded(
                           flex: 5, // takes 30% of available width
                           child: Card(
-                            child: buildRiseAndHold(riseAndHold, forcedRise),
+                            child: riseAndHold != null
+                                ? buildRiseAndHold(riseAndHold!, forcedRise)
+                                : const Text("No rise and hold"),
                           ),
                         ),
                         Expanded(
@@ -189,7 +191,9 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         Expanded(
                           flex: 5, // takes 30% of available width
                           child: Card(
-                            child: buildRiseAndHold(riseAndHold, forcedRise),
+                            child: riseAndHold != null
+                                ? buildRiseAndHold(riseAndHold!, forcedRise)
+                                : const Text("No rise and hold"),
                           ),
                         ),
                         Expanded(
@@ -307,7 +311,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     );
   }
 
-  Padding buildRiseAndHold(De1ShotFrameClass? riseAndHold, De1ShotFrameClass? forcedRise) {
+  Padding buildRiseAndHold(De1ShotFrameClass riseAndHold, De1ShotFrameClass? forcedRise) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -323,11 +327,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                     children: [
                       Column(
                         children: [
-                          Text("Time (${riseAndHold?.frameLen.round()} s)"),
+                          Text("Time (${riseAndHold.frameLen.round()} s)"),
                           SfSlider(
                             min: 0.0,
                             max: 100.0,
-                            value: riseAndHold!.frameLen,
+                            value: riseAndHold?.frameLen ?? 0,
                             interval: 20,
                             showTicks: true,
                             showLabels: true,
@@ -336,7 +340,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                             onChanged: (dynamic value) {
                               setState(() {
                                 var v = (value * 10).round() / 10;
-                                riseAndHold!.frameLen = v;
+                                riseAndHold.frameLen = v;
                               });
                             },
                           ),
@@ -346,17 +350,21 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         padding: const EdgeInsets.only(top: 28.0),
                         child: Column(
                           children: [
-                            Text("Limit flow (${riseAndHold?.setVal.round()} ml/s)"),
+                            Text(
+                                "Limit flow (${(riseAndHold.pump == "flow" ? riseAndHold.setVal : riseAndHold.triggerVal).round()} ml/s)"),
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
-                              value: riseAndHold!.pump == "flow" ? riseAndHold!.setVal : riseAndHold!.triggerVal,
+                              value: riseAndHold.pump == "flow" ? riseAndHold.setVal : riseAndHold.triggerVal,
                               interval: 1,
                               showTicks: true,
                               showLabels: true,
                               enableTooltip: true,
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
+                                riseAndHold.pump == "flow"
+                                    ? riseAndHold.setVal = value
+                                    : riseAndHold.triggerVal = value;
                                 setState(() {});
                               },
                             ),
@@ -370,11 +378,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                   flex: 2,
                   child: Column(
                     children: [
-                      Text("Pressure (${riseAndHold?.setVal.round()} bar)"),
+                      Text("Pressure (${riseAndHold.setVal.round()} bar)"),
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
-                        value: riseAndHold!.pump == "pressure" ? riseAndHold!.setVal : riseAndHold!.triggerVal,
+                        value: riseAndHold.pump == "pressure" ? riseAndHold.setVal : riseAndHold.triggerVal,
                         interval: 2,
                         showTicks: true,
                         showLabels: true,
@@ -384,7 +392,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                           setState(() {
                             riseAndHold!.setVal = value;
                             if (forcedRise != null) {
-                              forcedRise!.setVal = value;
+                              forcedRise.setVal = value;
                             }
                           });
                         },
