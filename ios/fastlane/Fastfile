@@ -36,18 +36,6 @@ platform :ios do
 
   end
 
-  lane sync_match do 
-    match(type: "appstore", readonly: true,
-    keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-        username: 'obiwan007',
-        git_user_email: 'markus.miertschink@hotmail.com',
-        )
-    match(type: "development", readonly: true,
-    keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-        username: 'obiwan007',
-        git_user_email: 'markus.miertschink@hotmail.com',)
-  end
-
   lane :betamatch do
     disable_automatic_code_signing(path: "Running.xcodeproj")
     match(
