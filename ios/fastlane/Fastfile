@@ -35,18 +35,11 @@ platform :ios do
 
 
   end
-
+  
   lane :betamatch do
     disable_automatic_code_signing(path: "Runner.xcodeproj")
+
     match(
-        type: "appstore",
-        readonly: is_ci,
-        # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
-        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-        username: 'obiwan007',
-        git_user_email: 'markus.miertschink@hotmail.com',
-      )
-      match(
         type: "development",
         readonly: is_ci,
         # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
@@ -55,6 +48,15 @@ platform :ios do
         git_user_email: 'markus.miertschink@hotmail.com',
       )
 
+    match(
+        type: "appstore",
+        readonly: is_ci,
+        # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
+        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+        username: 'obiwan007',
+        git_user_email: 'markus.miertschink@hotmail.com',
+      )
+      
     # get_certificates           # invokes cert
     # get_provisioning_profile   # invokes sigh
     app_store_connect_api_key(
@@ -67,8 +69,8 @@ platform :ios do
         build_number: latest_testflight_build_number + 1,
         xcodeproj: "Runner.xcodeproj"
     )
-    # build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-    gym(scheme: "Runner",
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+    
     workspace: "Runner.xcworkspace",
     export_method: "app-store")
     upload_to_testflight(api_key:  lane_context[SharedValues::APP_STORE_CONNECT_API_KEY])
