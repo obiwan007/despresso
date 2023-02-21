@@ -38,12 +38,14 @@ platform :ios do
   
   lane :betamatch do
     disable_automatic_code_signing(path: "Runner.xcodeproj")
+    
+    setup_ci
 
     match(
         type: "development",
         readonly: is_ci,
         # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
-        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+        # keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
         username: 'obiwan007',
         git_user_email: 'markus.miertschink@hotmail.com',
       )
@@ -52,7 +54,7 @@ platform :ios do
         type: "appstore",
         readonly: is_ci,
         # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
-        keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+        # keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
         username: 'obiwan007',
         git_user_email: 'markus.miertschink@hotmail.com',
       )
