@@ -37,7 +37,7 @@ platform :ios do
   end
 
   lane :betamatch do
-    disable_automatic_code_signing(path: "Running.xcodeproj")
+    disable_automatic_code_signing(path: "Runner.xcodeproj")
     match(
         type: "appstore",
         readonly: is_ci,
