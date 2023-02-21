@@ -221,41 +221,44 @@ class EspressoMachineService extends ChangeNotifier {
 
   handleBattery() async {
 // Access current battery level
-    var state = await _battery.batteryLevel;
-    log.fine("Battery: $state");
+    // var state = await _battery.batteryLevel;
+    // log.fine("Battery: $state");
 
 // Be informed when the state (full, charging, discharging) changes
     _battery.onBatteryStateChanged.listen((BatteryState state) async {
       // Do something with new state
-      final batteryLevel = await _battery.batteryLevel;
-      log.info("Battery: changed: $state $batteryLevel");
-      //_controllerBattery.add(batteryLevel);
-      if (de1 == null) {
-        log.severe("Battery: DE1 not connected yet");
-        _controllerBattery.add(batteryLevel);
-        return;
-      }
-      if (settingsService.smartCharging) {
-        if (batteryLevel < 60) {
-          log.info("Battery: below 60");
-          de1!.setUsbChargerMode(1);
-        } else if (batteryLevel > 70) {
-          log.info("Battery: above 70");
-          de1!.setUsbChargerMode(0);
-        } else {
-          de1!.setUsbChargerMode(de1!.usbChargerMode);
-        }
+      try {
+        final batteryLevel = await _battery.batteryLevel;
+        log.info("Battery: changed: $state $batteryLevel");
 
-        Future.delayed(
-          const Duration(seconds: 1),
-          () {
-            _controllerBattery.add(batteryLevel);
-          },
-        );
-      } else {
-        log.info("Battery: SmartCharging off");
-        _controllerBattery.add(batteryLevel);
-      }
+        //_controllerBattery.add(batteryLevel);
+        if (de1 == null) {
+          log.severe("Battery: DE1 not connected yet");
+          _controllerBattery.add(batteryLevel);
+          return;
+        }
+        if (settingsService.smartCharging) {
+          if (batteryLevel < 60) {
+            log.info("Battery: below 60");
+            de1!.setUsbChargerMode(1);
+          } else if (batteryLevel > 70) {
+            log.info("Battery: above 70");
+            de1!.setUsbChargerMode(0);
+          } else {
+            de1!.setUsbChargerMode(de1!.usbChargerMode);
+          }
+
+          Future.delayed(
+            const Duration(seconds: 1),
+            () {
+              _controllerBattery.add(batteryLevel);
+            },
+          );
+        } else {
+          log.info("Battery: SmartCharging off");
+          _controllerBattery.add(batteryLevel);
+        }
+      } catch (e) {}
     });
   }
 
