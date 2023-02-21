@@ -245,7 +245,7 @@ class CoffeeService extends ChangeNotifier {
     settings.selectedCoffee = id;
     selectedCoffee = id;
 
-    // notifyListeners();
+    notifyListeners();
     log.info('Coffee Saved');
   }
 
