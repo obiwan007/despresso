@@ -41,14 +41,14 @@ platform :ios do
     
     setup_ci
 
-    match(
-        type: "development",
-        readonly: is_ci,
-        # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
-        # keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-        username: 'obiwan007',
-        git_user_email: 'markus.miertschink@hotmail.com',
-      )
+    # match(
+    #     type: "development",
+    #     readonly: is_ci,
+    #     # keychain_name: ENV['MATCH_KEYCHAIN_NAME'],
+    #     # keychain_password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+    #     username: 'obiwan007',
+    #     git_user_email: 'markus.miertschink@hotmail.com',
+    #   )
 
     match(
         type: "appstore",
@@ -73,6 +73,6 @@ platform :ios do
     )
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")    
 
-    upload_to_testflight(api_key:  lane_context[SharedValues::APP_STORE_CONNECT_API_KEY])
+    upload_to_testflight(skip_waiting_for_build_processing: true, api_key:  lane_context[SharedValues::APP_STORE_CONNECT_API_KEY])
   end
 end
