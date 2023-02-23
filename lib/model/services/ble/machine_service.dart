@@ -582,7 +582,7 @@ class EspressoMachineService extends ChangeNotifier {
     log.info("Save last shot");
     try {
       currentShot = Shot();
-      currentShot.coffee.targetId = coffeeService.selectedCoffee;
+      currentShot.coffee.targetId = coffeeService.selectedCoffeeId;
 
       currentShot.shotstates.addAll(shotList.entries);
 

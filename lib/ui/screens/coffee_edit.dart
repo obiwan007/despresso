@@ -69,7 +69,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
       _editedCoffee = Coffee();
     }
     if (_editedCoffee.roaster.targetId == 0) {
-      _selectedRoasterId = coffeeService.selectedRoaster;
+      _selectedRoasterId = coffeeService.selectedRoasterId;
     } else {
       _selectedRoasterId = _editedCoffee.roaster.targetId;
     }

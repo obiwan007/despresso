@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/widgets/increment_decrement.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 
@@ -147,7 +148,7 @@ class RecipeScreenState extends State<RecipeScreen> {
       subtitle: Text(
         data.profileId + " " + data.coffee.target!.name,
       ),
-      selected: coffeeService.selectedRecipe == data.id,
+      selected: coffeeService.selectedRecipeId == data.id,
       onTap: () {
         coffeeService.setSelectedRecipe(data.id);
       },
@@ -199,6 +200,9 @@ class RecipeDetails extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(40), // NEW
+                                    ),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -235,6 +239,9 @@ class RecipeDetails extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(40), // NEW
+                                    ),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -251,18 +258,68 @@ class RecipeDetails extends StatelessWidget {
                           ],
                         ),
                         const Divider(),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text("Add as Favorite"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            coffeeService.addRecipe(
-                                name: profileService.currentProfile!.title + "/" + coffeeService.currentCoffee!.name,
-                                coffeeId: coffeeService.selectedCoffee,
-                                profileId: profileService.currentProfile!.id);
-                          },
-                          child: Text("Save Recipe"),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(40), // NEW
+                                    ),
+                                    child: Text("Add as Favorite"),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(40), // NEW
+                                    ),
+                                    onPressed: () {
+                                      coffeeService.addRecipe(
+                                          name: profileService.currentProfile!.title +
+                                              "/" +
+                                              coffeeService.currentCoffee!.name,
+                                          coffeeId: coffeeService.selectedCoffeeId,
+                                          profileId: profileService.currentProfile!.id);
+                                    },
+                                    child: Text("Save Recipe"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  IncrementDecrement(
+                                    key: UniqueKey(),
+                                    initialValue: coffeeService.getSelectedRecipe()?.adjustedWeight ?? 10,
+                                    onChanged: (value) {
+                                      var r = coffeeService.getSelectedRecipe();
+                                      if (r != null) {
+                                        r.adjustedWeight = value;
+                                        coffeeService.updateRecipe(r);
+                                      }
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(40), // NEW
+                                    ),
+                                    onPressed: () {
+                                      coffeeService.addRecipe(
+                                          name: profileService.currentProfile!.title +
+                                              "/" +
+                                              coffeeService.currentCoffee!.name,
+                                          coffeeId: coffeeService.selectedCoffeeId,
+                                          profileId: profileService.currentProfile!.id);
+                                    },
+                                    child: Text("Save Recipe"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ]),
                 ),

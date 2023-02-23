@@ -350,8 +350,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   void updateCoffee() {
     setState(
       () {
-        _selectedCoffeeId = coffeeService.selectedCoffee;
-        _selectedRoasterId = coffeeService.selectedRoaster;
+        _selectedCoffeeId = coffeeService.selectedCoffeeId;
+        _selectedRoasterId = coffeeService.selectedRoasterId;
         roasters = loadRoasters();
         coffees = loadCoffees();
         log.info("Loaded ROasters $roasters");

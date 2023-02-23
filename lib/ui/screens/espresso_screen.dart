@@ -395,8 +395,8 @@ class EspressoScreenState extends State<EspressoScreen> {
           KeyValueWidget(label: "Profile", value: profileService.currentProfile!.title),
           KeyValueWidget(
               label: "Coffee",
-              value: coffeeSelectionService.selectedCoffee > 0
-                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""
+              value: coffeeSelectionService.selectedCoffeeId > 0
+                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
                   : "No Beans"),
           KeyValueWidget(label: "Target", value: '${profileService.currentProfile?.shotHeader.targetWeight} g'),
           const Divider(
