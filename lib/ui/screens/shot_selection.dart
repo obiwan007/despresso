@@ -191,10 +191,14 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
 
   Dismissible Function(BuildContext, int) _shotListBuilder(List<Shot> shots) =>
       (BuildContext context, int index) => Dismissible(
-            key: Key('list_item_$index'),
+            key: UniqueKey(),
             direction: DismissDirection.startToEnd,
             onDismissed: (_) {
-              setState(() {});
+              setState(() {
+                var id = shots[index].id;
+                selectedShots.removeWhere((element) => element == id);
+                shotBox.remove(id);
+              });
             },
             background: Container(
               color: Colors.red,
@@ -211,15 +215,9 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
             child: Card(
               margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: ListTile(
-                key: Key('list_item_$index'),
+                key: Key('list_item_${shots[index].id}'),
                 title: Text(
                   shots[index].profileId,
-                  // style: const TextStyle(
-                  //   fontSize: 15.0,
-                  // ),
-
-                  // Provide a Key for the integration test
-                  key: Key('list_item_$index'),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
