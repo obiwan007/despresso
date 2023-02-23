@@ -555,6 +555,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.3-null-safety+2"
+  flutter_spinbox:
+    dependency: "direct main"
+    description:
+      name: flutter_spinbox
+      sha256: fca77cefea5586ba5fcc3a21e8f5a1b3be2f38b0fef3562ee511cdfae5208a6f
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter

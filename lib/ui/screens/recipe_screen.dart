@@ -9,6 +9,7 @@ import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/widgets/increment_decrement.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinbox/flutter_spinbox.dart';
 
 import '../../model/shotstate.dart';
 
@@ -265,9 +266,9 @@ class RecipeDetails extends StatelessWidget {
                             Expanded(
                               child: Column(
                                 children: [
-                                  IncrementDecrement(
-                                    key: UniqueKey(),
-                                    initialValue: coffeeService.getSelectedRecipe()?.adjustedWeight ?? 10,
+                                  SpinBox(
+                                    keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
+                                    textInputAction: TextInputAction.done,
                                     onChanged: (value) {
                                       var r = coffeeService.getSelectedRecipe();
                                       if (r != null) {
@@ -275,7 +276,31 @@ class RecipeDetails extends StatelessWidget {
                                         coffeeService.updateRecipe(r);
                                       }
                                     },
+                                    max: 120.0,
+                                    value: coffeeService.getSelectedRecipe()?.adjustedWeight ?? 10,
+                                    decimals: 1,
+                                    step: 0.5,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                                      suffix: Text('g'),
+                                    ),
                                   ),
+                                  // IncrementDecrement(
+                                  //   key: UniqueKey(),
+                                  //   initialValue: coffeeService.getSelectedRecipe()?.adjustedWeight ?? 10,
+                                  //   onChanged: (value) {
+                                  //     var r = coffeeService.getSelectedRecipe();
+                                  //     if (r != null) {
+                                  //       r.adjustedWeight = value;
+                                  //       coffeeService.updateRecipe(r);
+                                  //     }
+                                  //   },
+                                  // ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: const Size.fromHeight(40), // NEW
