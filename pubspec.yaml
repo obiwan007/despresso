@@ -78,6 +78,7 @@ dependencies:
   intl: ^0.17.0
   csv: ^5.0.1
   dropdown_button2: ^1.9.3
+  flutter_spinbox: ^0.12.0
 
 dev_dependencies:
   flutter_test:

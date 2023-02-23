@@ -107,6 +107,11 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
+  De1ShotProfile? getProfile(String profileId) {
+    var found = profiles.firstWhereOrNull((element) => profileId == element.id);
+    return found;
+  }
+
   void setProfile(De1ShotProfile profile) {
     currentProfile = profile;
 

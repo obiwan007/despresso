@@ -395,10 +395,10 @@ class EspressoScreenState extends State<EspressoScreen> {
           KeyValueWidget(label: "Profile", value: profileService.currentProfile!.title),
           KeyValueWidget(
               label: "Coffee",
-              value: coffeeSelectionService.selectedCoffee > 0
-                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffee)?.name ?? ""
+              value: coffeeSelectionService.selectedCoffeeId > 0
+                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
                   : "No Beans"),
-          KeyValueWidget(label: "Target", value: '${profileService.currentProfile?.shotHeader.targetWeight} g'),
+          KeyValueWidget(label: "Target", value: '${settingsService.targetEspressoWeight} g'),
           const Divider(
             height: 20,
             thickness: 5,
@@ -409,8 +409,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         ],
       );
     } else {
-      insights = Text("${machineService.state.coffeeState.name} ${machineService.state.subState}",
-          style: theme.TextStyles.tabPrimary);
+      insights = Text("");
     }
     return insights;
   }
