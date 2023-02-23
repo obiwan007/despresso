@@ -497,10 +497,12 @@ class EspressoMachineService extends ChangeNotifier {
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
           if (scaleService.state == ScaleState.connected) {
-            if (profileService.currentProfile!.shotHeader.targetWeight > 1 &&
-                shot.weight + 1 > profileService.currentProfile!.shotHeader.targetWeight) {
-              log.info(
-                  "Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
+            var weight = settingsService.targetEspressoWeight;
+            if (weight < 1) {
+              weight = profileService.currentProfile!.shotHeader.targetWeight;
+            }
+            if (weight > 1 && shot.weight + 1 > weight) {
+              log.info("Shot Weight reached ${shot.weight} > $weight");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();

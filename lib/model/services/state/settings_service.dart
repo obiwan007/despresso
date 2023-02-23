@@ -47,6 +47,7 @@ enum SettingKeys {
   targetEspressoVol,
   targetFlushTime,
   targetGroupTemp,
+  targetEspressoWeight,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -144,6 +145,9 @@ class SettingsService extends ChangeNotifier {
 
   int get targetEspressoVol => Settings.getValue<int>(SettingKeys.targetEspressoVol.name) ?? 35;
   set targetEspressoVol(value) => Settings.setValue<int>(SettingKeys.targetEspressoVol.name, value);
+
+  double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 35;
+  set targetEspressoWeight(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
 
   int get targetFlushTime => Settings.getValue<int>(SettingKeys.targetFlushTime.name) ?? 3;
   set targetFlushTime(value) => Settings.setValue<int>(SettingKeys.targetFlushTime.name, value);

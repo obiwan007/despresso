@@ -189,7 +189,7 @@ class CoffeeService extends ChangeNotifier {
     recipe.name = name;
     recipe.coffee.targetId = coffeeId;
     recipe.profileId = profileId;
-    recipe.adjustedWeight = coffeeBox.get(coffeeId)?.grinderDoseWeight ?? 35;
+    recipe.adjustedWeight = getIt<ProfileService>().getProfile(profileId)?.shotHeader.targetWeight ?? 35;
     recipeBox.put(recipe);
     notifyListeners();
     _controllerRecipe.add(getRecipes());
@@ -209,6 +209,7 @@ class CoffeeService extends ChangeNotifier {
 
   void updateRecipe(Recipe recipe) {
     recipeBox.put(recipe);
+    settings.targetEspressoWeight = recipe.adjustedWeight;
     notifyListeners();
   }
 
