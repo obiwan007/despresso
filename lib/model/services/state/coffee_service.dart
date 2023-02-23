@@ -70,7 +70,7 @@ class CoffeeService extends ChangeNotifier {
     if (selectedShot > 0) {
       return shotBox.get(selectedShot);
     } else {
-      return Shot();
+      return (allshots.isNotEmpty) ? allshots.last : Shot();
     }
   }
 
