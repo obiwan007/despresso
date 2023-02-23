@@ -80,8 +80,8 @@ class SettingsService extends ChangeNotifier {
   bool get shotAutoTare => Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
 
   bool get vizualizerUpload => Settings.getValue(SettingKeys.vizualizerUpload.name) ?? false;
-  String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name);
-  String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name);
+  String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name) ?? "";
+  String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name) ?? "";
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 30;
