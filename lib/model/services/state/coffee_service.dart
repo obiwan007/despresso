@@ -155,9 +155,11 @@ class CoffeeService extends ChangeNotifier {
 
     var profileService = getIt<ProfileService>();
     var machineService = getIt<EspressoMachineService>();
+    settings.targetEspressoWeight = recipe.adjustedWeight;
 
     profileService.setProfileFromId(recipe.profileId);
     machineService.uploadProfile(profileService.currentProfile!);
+    settings.notifyListeners;
     notifyListeners();
   }
 
@@ -189,7 +191,7 @@ class CoffeeService extends ChangeNotifier {
     recipe.name = name;
     recipe.coffee.targetId = coffeeId;
     recipe.profileId = profileId;
-    recipe.adjustedWeight = getIt<ProfileService>().getProfile(profileId)?.shotHeader.targetWeight ?? 35;
+    recipe.adjustedWeight = settings.targetEspressoWeight;
     recipeBox.put(recipe);
     notifyListeners();
     _controllerRecipe.add(getRecipes());
@@ -204,7 +206,11 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Recipe? getSelectedRecipe() {
-    return recipeBox.get(selectedRecipeId);
+    if (selectedRecipeId > 0) {
+      return recipeBox.get(selectedRecipeId);
+    } else {
+      return null;
+    }
   }
 
   void updateRecipe(Recipe recipe) {

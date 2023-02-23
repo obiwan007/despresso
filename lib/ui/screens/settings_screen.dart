@@ -127,7 +127,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               children: <Widget>[
                 SwitchSettingsTile(
                   settingKey: SettingKeys.shotStopOnWeight.name,
-                  defaultValue: true,
+                  defaultValue: settingsService.shotStopOnWeight,
                   title: 'Stop on Weight if scale detected',
                   subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
                   enabledLabel: 'Enabled',
@@ -138,7 +138,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 ),
                 SwitchSettingsTile(
                   settingKey: SettingKeys.shotAutoTare.name,
-                  defaultValue: true,
+                  defaultValue: settingsService.shotAutoTare,
                   title: 'Auto Tare',
                   subtitle: 'If a shot is starting, auto-tare the scale',
                   enabledLabel: 'Enabled',
@@ -158,7 +158,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               SliderSettingsTile(
                 title: 'Switch Off After',
                 settingKey: SettingKeys.sleepTimer.name,
-                defaultValue: 120,
+                defaultValue: settingsService.sleepTimer,
                 min: 0,
                 max: 240,
                 step: 5,
@@ -170,7 +170,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               SliderSettingsTile(
                 title: 'Screen Lock',
                 settingKey: SettingKeys.screenLockTimer.name,
-                defaultValue: 120,
+                defaultValue: settingsService.screenLockTimer,
                 min: 0,
                 max: 240,
                 step: 5,
@@ -221,19 +221,16 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   initialValue: settingsService.mqttServer,
                 ),
                 TextInputSettingsTile(
-                  title: 'MQTT Port',
-                  settingKey: SettingKeys.mqttPort.name,
-                  initialValue: '1883',
-                ),
+                    title: 'MQTT Port', settingKey: SettingKeys.mqttPort.name, initialValue: settingsService.mqttPort),
                 TextInputSettingsTile(
                   title: 'MQTT User',
                   settingKey: SettingKeys.mqttUser.name,
-                  initialValue: 'user',
+                  initialValue: settingsService.mqttUser,
                 ),
                 TextInputSettingsTile(
                   title: 'MQTT Password',
                   settingKey: SettingKeys.mqttPassword.name,
-                  initialValue: '',
+                  initialValue: settingsService.mqttPassword,
                   obscureText: true,
                 ),
                 TextInputSettingsTile(
@@ -284,7 +281,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   SwitchSettingsTile(
                     leading: const Icon(Icons.usb),
                     settingKey: SettingKeys.vizualizerUpload.name,
-                    defaultValue: false,
+                    defaultValue: settingsService.vizualizerUpload,
                     title: 'Upload Shots to Vizualizer',
                     onChange: (value) {
                       debugPrint('USB Debugging: $value');
@@ -293,7 +290,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   TextInputSettingsTile(
                     title: 'User Name/email',
                     settingKey: SettingKeys.vizualizerUser.name,
-                    initialValue: 'admin',
+                    initialValue: settingsService.vizualizerUser,
                     validator: (String? username) {
                       if (username != null && username.length > 3) {
                         return null;
@@ -305,6 +302,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   ),
                   TextInputSettingsTile(
                     title: 'password',
+                    initialValue: settingsService.vizualizerPwd,
                     settingKey: SettingKeys.vizualizerPwd.name,
                     obscureText: true,
                     validator: (String? password) {
@@ -370,7 +368,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   title:
                       'Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.',
                   onChange: (value) {
-                    ShowSnackbar(context);
+                    showSnackbar(context);
                   },
                 ),
               ],
@@ -381,7 +379,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     );
   }
 
-  void ShowSnackbar(BuildContext context) {
+  void showSnackbar(BuildContext context) {
     var snackBar = SnackBar(
         duration: const Duration(seconds: 5),
         content: const Text('You changed critical settings. You need to restart the app to make the settings active.'),

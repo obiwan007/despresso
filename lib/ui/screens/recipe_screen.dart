@@ -3,6 +3,7 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
@@ -25,6 +26,7 @@ class RecipeScreenState extends State<RecipeScreen> {
   late ProfileService profileService;
   late CoffeeService coffeeService;
   late ScaleService scaleService;
+  late SettingsService settingsService;
 
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
@@ -38,6 +40,7 @@ class RecipeScreenState extends State<RecipeScreen> {
     scaleService = getIt<ScaleService>();
     profileService = getIt<ProfileService>();
     coffeeService = getIt<CoffeeService>();
+    settingsService = getIt<SettingsService>();
     coffeeService.addListener(coffeeServiceListener);
     profileService.addListener(profileServiceListener);
   }
@@ -84,7 +87,11 @@ class RecipeScreenState extends State<RecipeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Container(
                 child: SingleChildScrollView(
-                    child: RecipeDetails(profileService: profileService, coffeeService: coffeeService))),
+                    child: RecipeDetails(
+              profileService: profileService,
+              coffeeService: coffeeService,
+              settingsService: settingsService,
+            ))),
           ),
         ),
         Expanded(
@@ -169,10 +176,12 @@ class RecipeDetails extends StatelessWidget {
     Key? key,
     required this.profileService,
     required this.coffeeService,
+    required this.settingsService,
   }) : super(key: key);
 
   final ProfileService profileService;
   final CoffeeService coffeeService;
+  final SettingsService settingsService;
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +226,7 @@ class RecipeDetails extends StatelessWidget {
                                   child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
                                 ),
                                 Text(
-                                    "Stop weight: ${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g")
+                                    "Suggested stop weight: ${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
                               ],
                             ),
                           ),
@@ -278,10 +287,11 @@ class RecipeDetails extends StatelessWidget {
                                     if (r != null) {
                                       r.adjustedWeight = value;
                                       coffeeService.updateRecipe(r);
+                                      settingsService.targetEspressoWeight = value;
                                     }
                                   },
                                   max: 120.0,
-                                  value: coffeeService.getSelectedRecipe()?.adjustedWeight ?? 10,
+                                  value: settingsService.targetEspressoWeight,
                                   decimals: 1,
                                   step: 0.5,
                                   decoration: const InputDecoration(
