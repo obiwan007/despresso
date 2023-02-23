@@ -261,33 +261,7 @@ class RecipeDetails extends StatelessWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size.fromHeight(40), // NEW
-                                    ),
-                                    child: Text("Add as Favorite"),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size.fromHeight(40), // NEW
-                                    ),
-                                    onPressed: () {
-                                      coffeeService.addRecipe(
-                                          name: profileService.currentProfile!.title +
-                                              "/" +
-                                              coffeeService.currentCoffee!.name,
-                                          coffeeId: coffeeService.selectedCoffeeId,
-                                          profileId: profileService.currentProfile!.id);
-                                    },
-                                    child: Text("Save Recipe"),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            Expanded(child: Text("Stop on Weight")),
                             Expanded(
                               child: Column(
                                 children: [
