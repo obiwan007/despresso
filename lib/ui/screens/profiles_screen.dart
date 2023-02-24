@@ -41,6 +41,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   late ProfileService profileService;
 
   late EspressoMachineService machineService;
+  late TextEditingController shortCodeController;
 
   De1ShotProfile? _selectedProfile;
   FilePickerResult? filePickerResult;
@@ -57,6 +58,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
+    shortCodeController = TextEditingController();
 
     profileService.addListener(profileListener);
     log.info(profileService.currentProfile.toString());
@@ -112,7 +114,14 @@ class ProfilesScreenState extends State<ProfilesScreen> {
               );
             },
           ),
-
+          ElevatedButton(
+            child: const Icon(Icons.cloud_download),
+            onPressed: () async {
+              final shortCode = await _openShortCodeDiaglog();
+              if (shortCode == null || shortCode.isEmpty) return;
+              profileService.getJsonProfileFromVisualizerShortCode(shortCode);
+            },
+          ),
           ElevatedButton(
             child: const Icon(Icons.file_download),
             onPressed: () {
@@ -394,6 +403,33 @@ class ProfilesScreenState extends State<ProfilesScreen> {
       profileAsString,
       subject: _selectedProfile!.title,
       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+    );
+  }
+
+  Future<String?> _openShortCodeDiaglog() async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Visualizer Profile Import'),
+          content: TextField(
+            autofocus: true,
+            controller: shortCodeController,
+            decoration: InputDecoration(hintText: '4-digit visualizer short code'),
+            maxLength: 4,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Import'),
+              onPressed: () {
+                Navigator.of(context).pop(shortCodeController.text);
+                shortCodeController.clear();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

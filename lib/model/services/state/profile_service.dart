@@ -430,7 +430,7 @@ class ProfileService extends ChangeNotifier {
         var response = await http.get(url);
         var profileUrl = jsonDecode(response.body)['profile_url'] + '.json';
         var profileResponse = await http.get(Uri.parse(profileUrl));
-        defaultProfiles.add(parseDefaultProfile(profileResponse.body, false));
+        defaultProfiles.add(parseDefaultProfile(profileResponse.body, true));
       } catch (e) {
         log.warning(e);
       }
