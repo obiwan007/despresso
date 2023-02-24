@@ -365,7 +365,9 @@ class EspressoMachineService extends ChangeNotifier {
     for (var fr in profile.shotFrames) {
       try {
         log.fine("Write Frame: $fr");
-        await de1!.writeWithResult(Endpoint.frameWrite, fr.bytes);
+        fr.temp += settingsService.targetTempCorrection;
+        var bytes = De1ShotFrameClass.encodeDe1ShotFrame(fr);
+        await de1!.writeWithResult(Endpoint.frameWrite, bytes);
       } catch (ex) {
         return "Error writing shot frame $fr";
       }

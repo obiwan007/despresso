@@ -313,6 +313,43 @@ class RecipeDetails extends StatelessWidget {
                           ),
                         ],
                       ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(child: Text("Adjust temperature")),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SpinBox(
+                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (value) {
+                                    var r = coffeeService.getSelectedRecipe();
+                                    if (r != null) {
+                                      r.adjustedTemp = value;
+                                      coffeeService.updateRecipe(r);
+                                    }
+                                  },
+                                  min: -5.0,
+                                  max: 5.0,
+                                  value: settingsService.targetTempCorrection.toDouble(),
+                                  decimals: 1,
+                                  step: 0.1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                                    suffix: Text('°C'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ]),
               ),
             )
