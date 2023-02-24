@@ -110,7 +110,9 @@ class RecipeScreenState extends State<RecipeScreen> {
                   if (profileService.currentProfile != null)
                     AspectRatio(
                       aspectRatio: 1.3,
-                      child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: profileService.currentProfile!),
+                      child: ProfileGraphWidget(
+                          key: Key(profileService.currentProfile?.id ?? UniqueKey().toString()),
+                          selectedProfile: profileService.currentProfile!),
                     ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
