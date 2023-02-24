@@ -237,4 +237,22 @@ class CoffeeService extends ChangeNotifier {
     log.info("Data read ${data.length}");
     return data;
   }
+
+  void setSelectedRecipeProfile(String profileId) {
+    var res = getSelectedRecipe();
+    if (res != null) {
+      res.profileId = profileId;
+      updateRecipe(res);
+      notifyListeners();
+    }
+  }
+
+  void setSelectedRecipeCoffee(int coffeeId) {
+    var res = getSelectedRecipe();
+    if (res != null) {
+      res.coffee.targetId = coffeeId;
+      updateRecipe(res);
+      notifyListeners();
+    }
+  }
 }

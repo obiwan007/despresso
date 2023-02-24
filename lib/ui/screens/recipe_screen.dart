@@ -232,7 +232,10 @@ class RecipeDetails extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                                      MaterialPageRoute(
+                                          builder: (context) => ProfilesScreen(
+                                                saveToRecipe: true,
+                                              )),
                                     );
                                   },
                                   child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
@@ -244,17 +247,6 @@ class RecipeDetails extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // Row(
-                      //   children: [
-                      //     Expanded(child: Text("Dial In Layer")),
-                      //     Expanded(
-                      //       child: ElevatedButton(
-                      //         onPressed: () {},
-                      //         child: Text("Reduced Flow"),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       const Divider(),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +263,7 @@ class RecipeDetails extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
+                                      MaterialPageRoute(builder: (context) => CoffeeSelectionTab(saveToRecipe: true)),
                                     );
                                   },
                                   child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
@@ -287,12 +279,12 @@ class RecipeDetails extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(child: Text("Stop on Weight")),
+                          const Expanded(child: Text("Stop on Weight")),
                           Expanded(
                             child: Column(
                               children: [
                                 SpinBox(
-                                  keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
+                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
                                     var r = coffeeService.getSelectedRecipe();
@@ -316,31 +308,6 @@ class RecipeDetails extends StatelessWidget {
                                     suffix: Text('g'),
                                   ),
                                 ),
-                                // IncrementDecrement(
-                                //   key: UniqueKey(),
-                                //   initialValue: coffeeService.getSelectedRecipe()?.adjustedWeight ?? 10,
-                                //   onChanged: (value) {
-                                //     var r = coffeeService.getSelectedRecipe();
-                                //     if (r != null) {
-                                //       r.adjustedWeight = value;
-                                //       coffeeService.updateRecipe(r);
-                                //     }
-                                //   },
-                                // ),
-                                // ElevatedButton(
-                                //   style: ElevatedButton.styleFrom(
-                                //     minimumSize: const Size.fromHeight(40), // NEW
-                                //   ),
-                                //   onPressed: () {
-                                //     coffeeService.addRecipe(
-                                //         name: profileService.currentProfile!.title +
-                                //             "/" +
-                                //             coffeeService.currentCoffee!.name,
-                                //         coffeeId: coffeeService.selectedCoffeeId,
-                                //         profileId: profileService.currentProfile!.id);
-                                //   },
-                                //   child: Text("Save Recipe"),
-                                // ),
                               ],
                             ),
                           ),

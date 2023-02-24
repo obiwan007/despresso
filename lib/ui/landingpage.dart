@@ -171,7 +171,10 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => ProfilesScreen(
+                            saveToRecipe: false,
+                          )),
                 );
               },
             ),
@@ -182,7 +185,10 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
+                  MaterialPageRoute(
+                      builder: (context) => CoffeeSelectionTab(
+                            saveToRecipe: false,
+                          )),
                 );
               },
             ),

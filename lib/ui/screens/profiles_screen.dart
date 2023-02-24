@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/logger_util.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
@@ -29,7 +30,8 @@ enum FilterModes {
 }
 
 class ProfilesScreen extends StatefulWidget {
-  const ProfilesScreen({Key? key}) : super(key: key);
+  bool saveToRecipe = false;
+  ProfilesScreen({Key? key, required this.saveToRecipe}) : super(key: key);
 
   @override
   ProfilesScreenState createState() => ProfilesScreenState();
@@ -39,8 +41,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   final log = Logger('ProfilesScreenState');
 
   late ProfileService profileService;
-
   late EspressoMachineService machineService;
+  late CoffeeService coffeeService;
 
   De1ShotProfile? _selectedProfile;
   FilePickerResult? filePickerResult;
@@ -57,6 +59,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
+    coffeeService = getIt<CoffeeService>();
 
     profileService.addListener(profileListener);
     log.info(profileService.currentProfile.toString());
@@ -66,6 +69,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   @override
   void dispose() {
     super.dispose();
+
+    if (widget.saveToRecipe) coffeeService.setSelectedRecipeProfile(_selectedProfile!.id);
 
     machineService.removeListener(profileListener);
     log.info('Disposed profile');
