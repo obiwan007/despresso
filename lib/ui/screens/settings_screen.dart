@@ -279,7 +279,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 expanded: false,
                 children: <Widget>[
                   SwitchSettingsTile(
-                    leading: const Icon(Icons.usb),
+                    leading: const Icon(Icons.cloud_upload),
                     settingKey: SettingKeys.vizualizerUpload.name,
                     defaultValue: settingsService.vizualizerUpload,
                     title: 'Upload Shots to Vizualizer',
@@ -287,33 +287,33 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       debugPrint('USB Debugging: $value');
                     },
                   ),
-                  TextInputSettingsTile(
-                    title: 'User Name/email',
-                    settingKey: SettingKeys.vizualizerUser.name,
-                    initialValue: settingsService.vizualizerUser,
-                    validator: (String? username) {
-                      if (username != null && username.length > 3) {
-                        return null;
-                      }
-                      return "User Name can't be smaller than 4 letters";
-                    },
-                    borderColor: Colors.blueAccent,
-                    errorColor: Colors.deepOrangeAccent,
-                  ),
-                  TextInputSettingsTile(
-                    title: 'password',
-                    initialValue: settingsService.vizualizerPwd,
-                    settingKey: SettingKeys.vizualizerPwd.name,
-                    obscureText: true,
-                    validator: (String? password) {
-                      if (password != null && password.length > 6) {
-                        return null;
-                      }
-                      return "Password can't be smaller than 7 letters";
-                    },
-                    borderColor: Colors.blueAccent,
-                    errorColor: Colors.deepOrangeAccent,
-                  ),
+                  //   TextInputSettingsTile(
+                  //     title: 'User Name/email',
+                  //     settingKey: SettingKeys.vizualizerUser.name,
+                  //     initialValue: settingsService.vizualizerUser,
+                  //     validator: (String? username) {
+                  //       if (username != null && username.length > 3) {
+                  //         return null;
+                  //       }
+                  //       return "User Name can't be smaller than 4 letters";
+                  //     },
+                  //     borderColor: Colors.blueAccent,
+                  //     errorColor: Colors.deepOrangeAccent,
+                  //   ),
+                  //   TextInputSettingsTile(
+                  //     title: 'password',
+                  //     initialValue: settingsService.vizualizerPwd,
+                  //     settingKey: SettingKeys.vizualizerPwd.name,
+                  //     obscureText: true,
+                  //     validator: (String? password) {
+                  //       if (password != null && password.length > 6) {
+                  //         return null;
+                  //       }
+                  //       return "Password can't be smaller than 7 letters";
+                  //     },
+                  //     borderColor: Colors.blueAccent,
+                  //     errorColor: Colors.deepOrangeAccent,
+                  //   ),
                 ]),
           ],
         ),
