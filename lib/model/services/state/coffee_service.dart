@@ -223,6 +223,7 @@ class CoffeeService extends ChangeNotifier {
     settings.targetEspressoWeight = recipe.adjustedWeight;
     settings.targetTempCorrection = recipe.adjustedTemp;
     notifyListeners();
+    _controllerRecipe.add(getRecipes());
   }
 
   void removeRecipe(int id) {

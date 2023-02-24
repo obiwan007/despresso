@@ -7,6 +7,7 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
@@ -199,20 +200,33 @@ class RecipeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var nameOfRecipe = coffeeService.getSelectedRecipe()?.name ?? "no name";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          "Current Shot Recipe",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        // Text(
+        //   "Current Shot Recipe",
+        //   style: Theme.of(context).textTheme.titleMedium,
+        // ),
+        IconEditableText(
+            key: Key(nameOfRecipe),
+            initialValue: nameOfRecipe,
+            style: Theme.of(context).textTheme.titleMedium,
+            textAlign: TextAlign.center,
+            onChanged: (value) {
+              var res = coffeeService.getSelectedRecipe();
+              if (res != null) {
+                res.name = value;
+                coffeeService.updateRecipe(res);
+              }
+            }),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              color: Colors.black38,
+            Card(
+              // color: Colors.black38,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -220,7 +234,7 @@ class RecipeDetails extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Selected Base Profile")),
                           Expanded(
@@ -251,7 +265,7 @@ class RecipeDetails extends StatelessWidget {
                       ),
                       const Divider(),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Selected Bean")),
                           Expanded(
@@ -279,7 +293,7 @@ class RecipeDetails extends StatelessWidget {
                       ),
                       const Divider(),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Stop on Weight")),
                           Expanded(
@@ -316,7 +330,7 @@ class RecipeDetails extends StatelessWidget {
                         ],
                       ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Adjust temperature")),
                           Expanded(
