@@ -12,6 +12,7 @@ import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:despresso/devices/eureka_scale.dart';
+import 'package:despresso/devices/hiroia_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
@@ -128,6 +129,11 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('FELICITA')) {
           log.info('Felicita Scale');
           FelicitaScale(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
+        if (device.name.startsWith('HIROIA')) {
+          log.info('Hiroia Scale');
+          HiroiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         }
 
