@@ -7,7 +7,6 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
-import 'package:despresso/ui/widgets/increment_decrement.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
@@ -137,8 +136,21 @@ class RecipeScreenState extends State<RecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: _buildControls(context),
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          coffeeService.addRecipe(
+              name: "${profileService.currentProfile!.title}/${coffeeService.currentCoffee!.name}",
+              coffeeId: coffeeService.selectedCoffeeId,
+              profileId: profileService.currentProfile!.id);
+        },
+        // backgroundColor: Colors.green,
+        label: const Text('Add recipe'),
+        icon: const Icon(Icons.add),
+      ),
+      body: Container(
+        child: _buildControls(context),
+      ),
     );
   }
 
@@ -153,10 +165,10 @@ class RecipeScreenState extends State<RecipeScreen> {
   buildItem(BuildContext context, Recipe data) {
     return ListTile(
       title: Text(
-        data.name ?? "noname",
+        data.name,
       ),
       subtitle: Text(
-        data.profileId + " " + data.coffee.target!.name,
+        "${data.profileId} ${data.coffee.target!.name}",
       ),
       selected: coffeeService.selectedRecipeId == data.id,
       onTap: () {
@@ -166,7 +178,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           onPressed: () {
             coffeeService.removeRecipe(data.id);
           },
-          child: Icon(Icons.delete_forever)),
+          child: const Icon(Icons.delete_forever)),
     );
   }
 }
@@ -315,20 +327,20 @@ class RecipeDetails extends StatelessWidget {
                                 //     }
                                 //   },
                                 // ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size.fromHeight(40), // NEW
-                                  ),
-                                  onPressed: () {
-                                    coffeeService.addRecipe(
-                                        name: profileService.currentProfile!.title +
-                                            "/" +
-                                            coffeeService.currentCoffee!.name,
-                                        coffeeId: coffeeService.selectedCoffeeId,
-                                        profileId: profileService.currentProfile!.id);
-                                  },
-                                  child: Text("Save Recipe"),
-                                ),
+                                // ElevatedButton(
+                                //   style: ElevatedButton.styleFrom(
+                                //     minimumSize: const Size.fromHeight(40), // NEW
+                                //   ),
+                                //   onPressed: () {
+                                //     coffeeService.addRecipe(
+                                //         name: profileService.currentProfile!.title +
+                                //             "/" +
+                                //             coffeeService.currentCoffee!.name,
+                                //         coffeeId: coffeeService.selectedCoffeeId,
+                                //         profileId: profileService.currentProfile!.id);
+                                //   },
+                                //   child: Text("Save Recipe"),
+                                // ),
                               ],
                             ),
                           ),

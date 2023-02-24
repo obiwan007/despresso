@@ -192,7 +192,11 @@ class CoffeeService extends ChangeNotifier {
     recipe.coffee.targetId = coffeeId;
     recipe.profileId = profileId;
     recipe.adjustedWeight = settings.targetEspressoWeight;
-    recipeBox.put(recipe);
+    var id = recipeBox.put(recipe);
+
+    settings.selectedRecipe = id;
+    selectedRecipeId = id;
+    settings.notifyListeners();
     notifyListeners();
     _controllerRecipe.add(getRecipes());
   }
