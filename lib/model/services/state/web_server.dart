@@ -86,7 +86,7 @@ class WebService extends ChangeNotifier {
             // See https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
             .addHandler(cascade.handler),
         InternetAddress.anyIPv4,
-        8080,
+        8888,
       );
 
       // Enable content compression

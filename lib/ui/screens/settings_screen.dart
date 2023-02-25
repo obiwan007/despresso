@@ -203,6 +203,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               title: "Message Queue Broadcast",
               children: [
                 SwitchSettingsTile(
+                  defaultValue: settingsService.mqttEnabled,
                   leading: const Icon(Icons.settings_remote),
                   settingKey: SettingKeys.mqttEnabled.name,
                   title: 'Enable MQTT',
@@ -319,9 +320,12 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               title: "Mini Website",
               children: [
                 SwitchSettingsTile(
+                  defaultValue: settingsService.webServer,
                   leading: const Icon(Icons.settings_remote),
                   settingKey: SettingKeys.webServer.name,
-                  title: 'Enable Mini Website with port 8080',
+                  title: 'Enable Mini Website with port 888',
+                  subtitle:
+                      "Check your router for IP adress of your tablet. Open browser under http://<IP-OF-TABLET>:8888",
                   onChange: (value) {
                     settingsService.notifyDelayed();
                   },
