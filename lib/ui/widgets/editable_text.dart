@@ -6,8 +6,12 @@ class IconEditableText extends StatefulWidget {
     super.key,
     this.initialValue,
     this.onChanged,
+    this.style,
+    this.textAlign,
   });
   String? initialValue;
+  TextStyle? style;
+  TextAlign? textAlign;
   ValueChanged<String>? onChanged;
 
   @override
@@ -30,7 +34,11 @@ class _IconEditableTextState extends State<IconEditableText> {
     return Row(children: [
       Expanded(
           child: !isEditable
-              ? Text(initialValue!)
+              ? Text(
+                  initialValue!,
+                  style: widget.style,
+                  textAlign: widget.textAlign,
+                )
               : TextFormField(
                   initialValue: initialValue,
                   textInputAction: TextInputAction.done,

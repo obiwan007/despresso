@@ -1,6 +1,8 @@
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
+import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:despresso/ui/theme.dart' as theme;
@@ -17,10 +19,18 @@ class ProfileGraphWidget extends StatefulWidget {
 }
 
 class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
-  ProfileGraphWidgetState(this._selectedProfile);
+  late SettingsService settingsService;
 
   ShotList shotList = ShotList([]);
   final De1ShotProfile? _selectedProfile;
+
+  ProfileGraphWidgetState(this._selectedProfile);
+
+  @override
+  void initState() {
+    super.initState();
+    settingsService = getIt<SettingsService>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +146,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
 
     shotList.entries.add(shotState);
     double lastVal = 0;
+    var dt = settingsService.targetTempCorrection;
     for (var frame in _selectedProfile!.shotFrames) {
       double defaultPressure = -1;
       double defaultFlow = -1;
@@ -149,10 +160,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time,
             frame.pump == "pressure" ? lastVal : defaultPressure,
             frame.pump == "flow" ? lastVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
@@ -165,10 +176,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time + 1.5,
             frame.pump == "pressure" ? frame.setVal : defaultPressure,
             frame.pump == "flow" ? frame.setVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
@@ -182,10 +193,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time,
             frame.pump == "pressure" ? frame.setVal : defaultPressure,
             frame.pump == "flow" ? frame.setVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
@@ -199,10 +210,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time,
             frame.pump == "pressure" ? lastVal : defaultPressure,
             frame.pump == "flow" ? lastVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
@@ -215,10 +226,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time + 2.5,
             frame.pump == "pressure" ? frame.setVal : defaultPressure,
             frame.pump == "flow" ? frame.setVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
@@ -231,10 +242,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time,
             frame.pump == "pressure" ? frame.setVal : defaultPressure,
             frame.pump == "flow" ? frame.setVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
@@ -248,10 +259,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time,
             frame.pump == "pressure" ? frame.setVal : defaultPressure,
             frame.pump == "flow" ? frame.setVal : defaultFlow,
-            frame.temp,
-            frame.temp,
-            frame.temp,
-            frame.temp,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
+            frame.temp + dt,
             0,
             0,
             0,
