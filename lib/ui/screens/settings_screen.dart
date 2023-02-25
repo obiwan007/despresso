@@ -315,6 +315,19 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     errorColor: Colors.deepOrangeAccent,
                   ),
                 ]),
+            ExpandableSettingsTile(
+              title: "Mini Website",
+              children: [
+                SwitchSettingsTile(
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.webServer.name,
+                  title: 'Enable Mini Website with port 8080',
+                  onChange: (value) {
+                    settingsService.notifyDelayed();
+                  },
+                ),
+              ],
+            ),
           ],
         ),
         SettingsGroup(

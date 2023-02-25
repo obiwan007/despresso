@@ -79,6 +79,9 @@ dependencies:
   csv: ^5.0.1
   dropdown_button2: ^1.9.3
   flutter_spinbox: ^0.12.0
+  shelf: ^1.4.0
+  shelf_static: ^1.1.1
+  shelf_router: ^1.1.3
 
 dev_dependencies:
   flutter_test:
@@ -133,6 +136,7 @@ flutter:
     - assets/icon.png
     - assets/iconStore.png
     - assets/profiles/
+    - assets/website/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

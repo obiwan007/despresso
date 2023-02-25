@@ -48,6 +48,7 @@ enum SettingKeys {
   targetFlushTime,
   targetGroupTemp,
   targetEspressoWeight,
+  webServer,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -154,6 +155,9 @@ class SettingsService extends ChangeNotifier {
 
   int get targetGroupTemp => Settings.getValue<int>(SettingKeys.targetGroupTemp.name) ?? 98;
   set targetGroupTemp(value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
+
+  bool get webServer => Settings.getValue<bool>(SettingKeys.webServer.name) ?? true;
+  set webServer(value) => Settings.setValue<bool>(SettingKeys.webServer.name, value);
 
   void notifyDelayed() {
     Future.delayed(

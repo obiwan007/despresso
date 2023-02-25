@@ -9,6 +9,8 @@ import 'package:despresso/model/services/state/mqtt_service.dart';
 
 import 'package:get_it/get_it.dart';
 
+import 'model/services/state/web_server.dart';
+
 final getIt = GetIt.instance;
 
 void setupServices() {
@@ -20,4 +22,5 @@ void setupServices() {
   getIt.registerSingleton<TempService>(TempService(), signalsReady: false);
   getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(), signalsReady: false);
   getIt.registerSingleton<MqttService>(MqttService(), signalsReady: false);
+  getIt.registerSingleton<WebService>(WebService(), signalsReady: false);
 }
