@@ -141,7 +141,6 @@ flutter:
     - assets/website/static/
     - assets/website/static/js/
     - assets/website/static/css/
-    - assets/website/static/media/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

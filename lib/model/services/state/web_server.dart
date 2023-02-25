@@ -37,6 +37,11 @@ class WebService extends ChangeNotifier {
   bool isRunning = false;
   bool isStarting = false;
 
+  final Map<String, String> header = {
+    "content-type": 'application/json',
+    "Access-Control-Allow-Origin": "*",
+  };
+
   WebService() {
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
@@ -73,12 +78,12 @@ class WebService extends ChangeNotifier {
         // If a corresponding file is not found, send requests to a `Router`
         .add(_router);
 
-    _router.get('/hello', (Request request) {
-      return Response.ok('hello-world');
+    _router.get('/api/hello', (Request request) {
+      return Response.ok('{"text": "hello-world"}', headers: header);
     });
 
-    _router.get('/user/<user>', (Request request, String user) {
-      return Response.ok('hello $user');
+    _router.get('/api/user/<user>', (Request request, String user) {
+      return Response.ok('{"text": "hello $user}"');
     });
     try {
       server = await shelf_io.serve(

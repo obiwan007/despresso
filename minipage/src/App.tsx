@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './assets/logo.png';
 import './App.css';
 import Button from '@mui/material/Button';
@@ -26,7 +26,32 @@ const bull = (
     </Box>
 );
 
-function App() {
+let uri = window.location.origin;
+uri = "http://192.168.178.98:8888";
+
+
+
+const App = () => {
+    const [posts, setPosts] = useState<string>();
+
+    useEffect(() => {
+        fetch(uri + "/api/hello", {
+            method: "GET"
+        })
+            .then((response) => {
+                console.log("Resp:", response);
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Response", data);
+                setPosts(data);
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    }, []);
+
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -75,20 +100,9 @@ function App() {
                     <Grid item xs={6}>
                         <Card sx={{ minWidth: 275 }}>
                             <CardContent>
-                                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                    Word of the Day
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    be{bull}nev{bull}o{bull}lent
-                                </Typography>
-                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                    adjective
-                                </Typography>
-                                <Typography variant="body2">
-                                    well meaning and kindly.
-                                    <br />
-                                    {'"a benevolent smile"'}
-                                </Typography>
+                                <div className="posts-container">
+                                    <pre>{JSON.stringify(posts, null, 2)}</pre>
+                                </div>
                             </CardContent>
                             <CardActions>
                                 <Button size="small">Learn More</Button>
