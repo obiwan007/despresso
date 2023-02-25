@@ -25,6 +25,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
+        "predeploy": "rm -r ../assets/website/",
         "deploy": "react-scripts build",
         "postdeploy": "cd build && cp -r . ../../assets/website/",
         "test": "react-scripts test",
