@@ -17,6 +17,7 @@ Runner.app.dSYM.zip
 build/
 keys/
 **/report.xml
+**/node_modules
 
 # Android Studio will place build artifacts here
 android/app/debug
@@ -24,6 +25,7 @@ android/app/profile
 android/app/release
 
 # See https://www.dartlang.org/guides/libraries/private-files
+minipage/build/
 
 # Files and directories created by pub
 .dart_tool/

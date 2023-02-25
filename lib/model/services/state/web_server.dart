@@ -127,7 +127,9 @@ class WebService extends ChangeNotifier {
         log.info("Copy $element");
         var assetFile = element.replaceFirst("assets/website/", "");
         List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-        await File("$webPath/$assetFile").writeAsBytes(bytes);
+        var file = File("$webPath/$assetFile");
+        await file.create(recursive: true);
+        await file.writeAsBytes(bytes);
       } catch (e) {
         log.severe("Error writing file $e");
       }
