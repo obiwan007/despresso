@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../service_locator.dart';
 
@@ -32,13 +33,21 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late BLEService bleService;
   late MqttService mqttService;
 
+  String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
+
   @override
-  void initState() {
+  initState() {
     super.initState();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
     settingsService.addListener(settingsServiceListener);
     bleService.addListener(settingsServiceListener);
+    getIpAdress();
+  }
+
+  Future<void> getIpAdress() async {
+    ownIpAdress = await NetworkInfo().getWifiIP();
+    setState(() {});
   }
 
   @override
@@ -323,9 +332,9 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   defaultValue: settingsService.webServer,
                   leading: const Icon(Icons.settings_remote),
                   settingKey: SettingKeys.webServer.name,
-                  title: 'Enable Mini Website with port 888',
+                  title: 'Enable Mini Website with port 8888',
                   subtitle:
-                      "Check your router for IP adress of your tablet. Open browser under http://<IP-OF-TABLET>:8888",
+                      "Check your router for IP adress of your tablet. Open browser under http://$ownIpAdress:8888",
                   onChange: (value) {
                     settingsService.notifyDelayed();
                   },
