@@ -268,7 +268,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 ),
                 SwitchSettingsTile(
                   leading: const Icon(Icons.settings_remote),
-                  settingKey: SettingKeys.mqttSendShot.name,
+                  settingKey: SettingKeys.mqttSendWater.name,
                   defaultValue: settingsService.mqttSendWater,
                   title: 'Send de1 water level updates',
                   subtitle: "This can lead to a higher load on your MQTT server.",
