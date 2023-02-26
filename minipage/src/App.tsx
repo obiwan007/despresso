@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from './assets/logo.png';
 import './App.css';
 import Button from '@mui/material/Button';
-import { AppBar, Box, Container, Grid, IconButton, Paper, styled, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Container, createTheme, Grid, IconButton, Paper, styled, ThemeProvider, Toolbar, Typography } from '@mui/material';
 import { color } from '@mui/system';
 import MenuIcon from '@mui/icons-material/Menu';
 import Card from '@mui/material/Card';
@@ -29,9 +29,18 @@ const bull = (
 );
 
 let uri = window.location.origin;
-uri = "http://192.168.178.98:8888";
+console.log("Origin", uri);
 
+// Only for debugging
+if (uri.startsWith("http://localhost:300")) {
+    uri = "http://192.168.178.98:8888";
+}
 
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+    },
+});
 
 const App = () => {
     const [state, setState] = useState<State>();
@@ -57,116 +66,117 @@ const App = () => {
     }, []);
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        despresso
-                    </Typography>
-                    {/* <Button color="inherit">Login</Button> */}
-                </Toolbar>
-            </AppBar>
-            <br></br>
-            <Container>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
+        <ThemeProvider theme={darkTheme}>
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton
+                            size="large"
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            sx={{ mr: 2 }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <img height="40px" src={logo}></img>
 
-                        <Card sx={{ minWidth: 275 }}>
-                            <CardContent>
-                                <ul>
-                                    <li>
-                                        {state?.state}
-                                    </li>
-                                    {(state?.subState !== "no_state" && state?.subState !== "") &&
+                        {/* <Button color="inherit">Login</Button> */}
+                    </Toolbar>
+                </AppBar>
+                <br></br>
+
+                <Container>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+
+                            <Card sx={{ minWidth: 275 }}>
+                                <CardContent>
+                                    <ul>
                                         <li>
-                                            {state?.subState}
+                                            {state?.state}
                                         </li>
+                                        {(state?.subState !== "no_state" && state?.subState !== "") &&
+                                            <li>
+                                                {state?.subState}
+                                            </li>
+                                        }
+                                    </ul>
+                                </CardContent>
+                                <CardActions>
+                                    {(state?.state === EspressoMachineState.idle) &&
+                                        <Button onClick={() => setMachineState(EspressoMachineState.sleep)}>Switch off</Button>
                                     }
-                                </ul>
+                                    {(state?.state === EspressoMachineState.sleep) &&
+                                        <Button onClick={() => setMachineState(EspressoMachineState.idle)}>Switch on</Button>
+                                    }
+                                    <Button onClick={() => getState()}>Get State</Button>
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={6}>
 
-                            </CardContent>
-                            <CardActions>
-                                {(state?.state === EspressoMachineState.idle) &&
-                                    <Button onClick={() => setMachineState(EspressoMachineState.sleep)}>Switch off</Button>
-                                }
-                                {(state?.state === EspressoMachineState.sleep) &&
-                                    <Button onClick={() => setMachineState(EspressoMachineState.idle)}>Switch on</Button>
-                                }
-                                <Button onClick={() => getState()}>Get State</Button>
-                            </CardActions>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={6}>
+                            <Card >
+                                <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                        <CardContent>
 
-                        <Card >
-                            <Grid container spacing={2}>
-                                <Grid item xs={6}>
-                                    <CardContent>
+                                            <Typography variant="caption" color="text.secondary" gutterBottom>
+                                                Head temp
+                                            </Typography>
+                                            <Typography variant="body1" color="text.primary" gutterBottom>
+                                                {shot?.headTemp.toFixed(1)} °C
+                                            </Typography>
 
-                                        <Typography variant="caption" color="text.secondary" gutterBottom>
-                                            Head temp
-                                        </Typography>
-                                        <Typography variant="body1" color="text.primary" gutterBottom>
-                                            {shot?.headTemp.toFixed(1)} °C
-                                        </Typography>
+                                            <Typography variant="caption" color="text.secondary" gutterBottom>
+                                                Set group pressure
+                                            </Typography>
+                                            <Typography variant="body1" color="text.primary" gutterBottom>
+                                                {shot?.setGroupPressure.toFixed(1)} bar
+                                            </Typography>
 
-                                        <Typography variant="caption" color="text.secondary" gutterBottom>
-                                            Set group pressure
-                                        </Typography>
-                                        <Typography variant="body1" color="text.primary" gutterBottom>
-                                            {shot?.setGroupPressure.toFixed(1)} bar
-                                        </Typography>
+                                            <Typography variant="caption" color="text.secondary" gutterBottom>
+                                                Flow
+                                            </Typography>
+                                            <Typography variant="body1" color="text.primary" gutterBottom>
+                                                {shot?.groupFlow.toFixed(1)} ml/s
+                                            </Typography>
+                                        </CardContent>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <CardContent>
 
-                                        <Typography variant="caption" color="text.secondary" gutterBottom>
-                                            Flow
-                                        </Typography>
-                                        <Typography variant="body1" color="text.primary" gutterBottom>
-                                            {shot?.groupFlow.toFixed(1)} ml/s
-                                        </Typography>
-                                    </CardContent>
+
+                                            <Typography variant="caption" color="text.secondary" gutterBottom>
+                                                Mix temp
+                                            </Typography>
+                                            <Typography variant="body1" color="text.primary" gutterBottom>
+                                                {shot?.mixTemp.toFixed(1)} °C
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary" gutterBottom>
+                                                Current group pressure
+                                            </Typography>
+                                            <Typography variant="body1" color="text.primary" gutterBottom>
+                                                {shot?.groupPressure.toFixed(1)} bar
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary" gutterBottom>
+                                                Weight
+                                            </Typography>
+                                            <Typography variant="body1" color="text.primary" gutterBottom>
+                                                {shot?.weight.toFixed(1)} g
+                                            </Typography>
+                                        </CardContent>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={6}>
-                                    <CardContent>
-
-
-                                        <Typography variant="caption" color="text.secondary" gutterBottom>
-                                            Mix temp
-                                        </Typography>
-                                        <Typography variant="body1" color="text.primary" gutterBottom>
-                                            {shot?.mixTemp.toFixed(1)} °C
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary" gutterBottom>
-                                            Current group pressure
-                                        </Typography>
-                                        <Typography variant="body1" color="text.primary" gutterBottom>
-                                            {shot?.groupPressure.toFixed(1)} bar
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary" gutterBottom>
-                                            Weight
-                                        </Typography>
-                                        <Typography variant="body1" color="text.primary" gutterBottom>
-                                            {shot?.weight.toFixed(1)} g
-                                        </Typography>
-                                    </CardContent>
-                                </Grid>
-                            </Grid>
 
 
 
-                        </Card>
+                            </Card>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Container>
-        </Box >
+                </Container>
+            </Box >
+        </ThemeProvider>
     );
 
     function getState() {
@@ -174,11 +184,9 @@ const App = () => {
             method: "GET"
         })
             .then((response) => {
-                console.log("Resp:", response);
                 return response.json();
             })
             .then((data) => {
-                console.log("Response", data);
                 setState(State.fromRaw(data));
             })
             .catch((err) => {
@@ -191,11 +199,9 @@ const App = () => {
             method: "GET"
         })
             .then((response) => {
-                console.log("Resp:", response);
                 return response.json();
             })
             .then((data) => {
-                console.log("Response", data);
                 setShot(Shot.fromRaw(data));
             })
             .catch((err) => {
@@ -212,11 +218,9 @@ const App = () => {
 
         })
             .then((response) => {
-                console.log("Resp:", response);
                 return response.json();
             })
             .then((data) => {
-                console.log("Response", data);
                 setState(State.fromRaw(data));
             })
             .catch((err) => {
