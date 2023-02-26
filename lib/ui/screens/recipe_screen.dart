@@ -7,6 +7,7 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
@@ -110,7 +111,9 @@ class RecipeScreenState extends State<RecipeScreen> {
                   if (profileService.currentProfile != null)
                     AspectRatio(
                       aspectRatio: 1.3,
-                      child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: profileService.currentProfile!),
+                      child: ProfileGraphWidget(
+                          key: Key(profileService.currentProfile?.id ?? UniqueKey().toString()),
+                          selectedProfile: profileService.currentProfile!),
                     ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -197,20 +200,33 @@ class RecipeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var nameOfRecipe = coffeeService.getSelectedRecipe()?.name ?? "no name";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          "Current Shot Recipe",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        // Text(
+        //   "Current Shot Recipe",
+        //   style: Theme.of(context).textTheme.titleMedium,
+        // ),
+        IconEditableText(
+            key: Key(nameOfRecipe),
+            initialValue: nameOfRecipe,
+            style: Theme.of(context).textTheme.titleMedium,
+            textAlign: TextAlign.center,
+            onChanged: (value) {
+              var res = coffeeService.getSelectedRecipe();
+              if (res != null) {
+                res.name = value;
+                coffeeService.updateRecipe(res);
+              }
+            }),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              color: Colors.black38,
+            Card(
+              // color: Colors.black38,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -218,7 +234,7 @@ class RecipeDetails extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Selected Base Profile")),
                           Expanded(
@@ -249,7 +265,7 @@ class RecipeDetails extends StatelessWidget {
                       ),
                       const Divider(),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Selected Bean")),
                           Expanded(
@@ -277,7 +293,7 @@ class RecipeDetails extends StatelessWidget {
                       ),
                       const Divider(),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Expanded(child: Text("Stop on Weight")),
                           Expanded(
@@ -306,6 +322,43 @@ class RecipeDetails extends StatelessWidget {
                                     disabledBorder: InputBorder.none,
                                     contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
                                     suffix: Text('g'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text("Adjust temperature")),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SpinBox(
+                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (value) {
+                                    var r = coffeeService.getSelectedRecipe();
+                                    if (r != null) {
+                                      r.adjustedTemp = value;
+                                      coffeeService.updateRecipe(r);
+                                    }
+                                  },
+                                  min: -5.0,
+                                  max: 5.0,
+                                  value: settingsService.targetTempCorrection.toDouble(),
+                                  decimals: 1,
+                                  step: 0.1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                                    suffix: Text('°C'),
                                   ),
                                 ),
                               ],
