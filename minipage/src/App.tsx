@@ -97,7 +97,7 @@ const App = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
 
-                            <Card sx={{ minWidth: 275 }}>
+                            <Card >
                                 <CardContent>
                                     <ul>
                                         <li>
