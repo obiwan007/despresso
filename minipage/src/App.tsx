@@ -9,6 +9,8 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
+import { EspressoMachineState, State } from './models/state';
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -32,25 +34,23 @@ uri = "http://192.168.178.98:8888";
 
 
 const App = () => {
-    const [posts, setPosts] = useState<string>();
+    const [state, setState] = useState<State>();
+    const [timerId, setTimerId] = useState<NodeJS.Timer>();
 
+
+    // getState();
     useEffect(() => {
-        fetch(uri + "/api/hello", {
-            method: "GET"
-        })
-            .then((response) => {
-                console.log("Resp:", response);
-                return response.json();
-            })
-            .then((data) => {
-                console.log("Response", data);
-                setPosts(data);
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
+        getState();
     }, []);
 
+    useEffect(() => {
+        const timerId = setInterval(() => getState(), 1000);
+        setTimerId(timerId);
+        return () => {
+            console.log('Clean Timer');
+            clearInterval(timerId);
+        }
+    }, []);
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -77,42 +77,70 @@ const App = () => {
                     <Grid item xs={6}>
                         <Card sx={{ minWidth: 275 }}>
                             <CardContent>
-                                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                    Word of the Day
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    be{bull}nev{bull}o{bull}lent
-                                </Typography>
-                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                    adjective
-                                </Typography>
-                                <Typography variant="body2">
-                                    well meaning and kindly.
-                                    <br />
-                                    {'"a benevolent smile"'}
-                                </Typography>
+                                <ul>
+                                    <li>
+                                        {state?.state}
+                                    </li>
+                                    {(state?.subState !== "no_state" && state?.subState !== "") &&
+                                        <li>
+                                            {state?.subState}
+                                        </li>
+                                    }
+                                </ul>
+
                             </CardContent>
                             <CardActions>
-                                <Button size="small">Learn More</Button>
-                            </CardActions>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Card sx={{ minWidth: 275 }}>
-                            <CardContent>
-                                <div className="posts-container">
-                                    <pre>{JSON.stringify(posts, null, 2)}</pre>
-                                </div>
-                            </CardContent>
-                            <CardActions>
-                                <Button size="small">Learn More</Button>
+                                {(state?.state === EspressoMachineState.idle) &&
+                                    <Button onClick={() => setMachineState(EspressoMachineState.sleep)}>Switch off</Button>
+                                }
+                                {(state?.state === EspressoMachineState.sleep) &&
+                                    <Button onClick={() => setMachineState(EspressoMachineState.idle)}>Switch on</Button>
+                                }
+                                <Button onClick={() => getState()}>Get State</Button>
                             </CardActions>
                         </Card>
                     </Grid>
                 </Grid>
             </Container>
-        </Box>
+        </Box >
     );
+
+    function getState() {
+        fetch(uri + "/api/state", {
+            method: "GET"
+        })
+            .then((response) => {
+                console.log("Resp:", response);
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Response", data);
+                setState(State.fromRaw(data));
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    }
+    function setMachineState(state: EspressoMachineState) {
+        const s = new State();
+        s.state = state;
+        fetch(uri + "/api/state", {
+            method: "POST",
+            body: JSON.stringify(s),
+
+        })
+            .then((response) => {
+                console.log("Resp:", response);
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Response", data);
+                setState(State.fromRaw(data));
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    }
 }
 
 export default App;

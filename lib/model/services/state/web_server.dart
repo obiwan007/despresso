@@ -5,16 +5,12 @@ import 'dart:io';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'settings_service.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
@@ -85,6 +81,17 @@ class WebService extends ChangeNotifier {
     _router.get('/api/user/<user>', (Request request, String user) {
       return Response.ok('{"text": "hello $user}"');
     });
+
+    _router.get('/api/state', (Request request) {
+      var s = machineService.currentFullState;
+      var res = Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
+      return res;
+    });
+
+    _router.post('/api/state', (Request request) {
+      return setMachineState(request);
+    });
+
     try {
       server = await shelf_io.serve(
         logRequests()
@@ -105,6 +112,25 @@ class WebService extends ChangeNotifier {
     }
     isStarting = false;
     return 0;
+  }
+
+  Future<Response> setMachineState(Request request) async {
+    var data = await request.readAsString();
+    var js = jsonDecode(data);
+    String newState = js['state'];
+    switch (newState) {
+      case 'idle':
+        machineService.de1?.switchOn();
+        break;
+      case 'sleep':
+        machineService.de1?.switchOff();
+        break;
+    }
+    await Future.delayed(Duration(milliseconds: 1000));
+    var s = machineService.currentFullState;
+    log.info("post: ${data} ${js['state']}");
+    var res = Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
+    return res;
   }
 
   stopService() async {
