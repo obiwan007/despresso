@@ -37,8 +37,13 @@ platform :ios do
   end
   
   lane :betamatch do
-    disable_automatic_code_signing(path: "Runner.xcodeproj")
-    
+    # disable_automatic_code_signing(path: "Runner.xcodeproj")
+    update_code_signing_settings(
+        use_automatic_signing: false,
+        path: "Runner.xcodeproj"
+    )
+
+
     setup_ci
 
     # match(
