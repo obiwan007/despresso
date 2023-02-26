@@ -92,6 +92,12 @@ class WebService extends ChangeNotifier {
       return setMachineState(request);
     });
 
+    _router.get('/api/shot', (Request request) {
+      var s = jsonEncode(machineService.state.shot?.toJson());
+      var res = Response.ok(s, headers: header);
+      return res;
+    });
+
     try {
       server = await shelf_io.serve(
         logRequests()

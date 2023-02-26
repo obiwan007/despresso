@@ -9,7 +9,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
-import { EspressoMachineState, State } from './models/state';
+import { EspressoMachineState, Shot, State } from './models/state';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -35,6 +35,7 @@ uri = "http://192.168.178.98:8888";
 
 const App = () => {
     const [state, setState] = useState<State>();
+    const [shot, setShot] = useState<Shot>();
     const [timerId, setTimerId] = useState<NodeJS.Timer>();
 
 
@@ -44,8 +45,11 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        const timerId = setInterval(() => getState(), 1000);
-        setTimerId(timerId);
+        const t = setInterval(() => {
+            getState();
+            getShot();
+        }, 1000);
+        setTimerId(t);
         return () => {
             console.log('Clean Timer');
             clearInterval(timerId);
@@ -75,6 +79,7 @@ const App = () => {
             <Container>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
+
                         <Card sx={{ minWidth: 275 }}>
                             <CardContent>
                                 <ul>
@@ -100,6 +105,65 @@ const App = () => {
                             </CardActions>
                         </Card>
                     </Grid>
+                    <Grid item xs={6}>
+
+                        <Card >
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <CardContent>
+
+                                        <Typography variant="caption" color="text.secondary" gutterBottom>
+                                            Head temp
+                                        </Typography>
+                                        <Typography variant="body1" color="text.primary" gutterBottom>
+                                            {shot?.headTemp.toFixed(1)} °C
+                                        </Typography>
+
+                                        <Typography variant="caption" color="text.secondary" gutterBottom>
+                                            Set group pressure
+                                        </Typography>
+                                        <Typography variant="body1" color="text.primary" gutterBottom>
+                                            {shot?.setGroupPressure.toFixed(1)} bar
+                                        </Typography>
+
+                                        <Typography variant="caption" color="text.secondary" gutterBottom>
+                                            Flow
+                                        </Typography>
+                                        <Typography variant="body1" color="text.primary" gutterBottom>
+                                            {shot?.groupFlow.toFixed(1)} ml/s
+                                        </Typography>
+                                    </CardContent>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <CardContent>
+
+
+                                        <Typography variant="caption" color="text.secondary" gutterBottom>
+                                            Mix temp
+                                        </Typography>
+                                        <Typography variant="body1" color="text.primary" gutterBottom>
+                                            {shot?.mixTemp.toFixed(1)} °C
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary" gutterBottom>
+                                            Current group pressure
+                                        </Typography>
+                                        <Typography variant="body1" color="text.primary" gutterBottom>
+                                            {shot?.groupPressure.toFixed(1)} bar
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary" gutterBottom>
+                                            Weight
+                                        </Typography>
+                                        <Typography variant="body1" color="text.primary" gutterBottom>
+                                            {shot?.weight.toFixed(1)} g
+                                        </Typography>
+                                    </CardContent>
+                                </Grid>
+                            </Grid>
+
+
+
+                        </Card>
+                    </Grid>
                 </Grid>
             </Container>
         </Box >
@@ -121,6 +185,24 @@ const App = () => {
                 console.log(err.message);
             });
     }
+
+    function getShot() {
+        fetch(uri + "/api/shot", {
+            method: "GET"
+        })
+            .then((response) => {
+                console.log("Resp:", response);
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Response", data);
+                setShot(Shot.fromRaw(data));
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
+    }
+
     function setMachineState(state: EspressoMachineState) {
         const s = new State();
         s.state = state;
