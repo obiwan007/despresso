@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from './assets/logo.png';
 import './App.css';
 import Button from '@mui/material/Button';
-import { AppBar, Box, Container, createTheme, Grid, IconButton, Paper, styled, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Container, createTheme, CssBaseline, Grid, IconButton, Paper, styled, ThemeProvider, Toolbar, Typography } from '@mui/material';
 import { color } from '@mui/system';
 import MenuIcon from '@mui/icons-material/Menu';
 import Card from '@mui/material/Card';
@@ -39,6 +39,12 @@ if (uri.startsWith("http://localhost:300")) {
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
+        primary: {
+            main: '#FFC000',
+        },
+        secondary: {
+            main: '#FF7756',
+        },
     },
 });
 
@@ -67,6 +73,7 @@ const App = () => {
 
     return (
         <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
