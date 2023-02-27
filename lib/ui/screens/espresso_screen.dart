@@ -410,7 +410,13 @@ class EspressoScreenState extends State<EspressoScreen> {
           endIndent: 0,
         ),
         KeyValueWidget(width: width, label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
-        ElevatedButton(
+        const Divider(
+          height: 20,
+          thickness: 5,
+          indent: 0,
+          endIndent: 0,
+        ),
+        TextButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
@@ -420,7 +426,8 @@ class EspressoScreenState extends State<EspressoScreen> {
                         )),
               );
             },
-            child: const Text("DYE"))
+            icon: const Icon(Icons.edit),
+            label: const Text("DYE"))
       ],
     );
 

@@ -66,7 +66,7 @@ class _ShotGraphState extends State<ShotGraph> {
             (e) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(
                   '${DateFormat.Hm().format(e!.date)} ${DateFormat.yMd().format(e!.date)} ${e!.pourWeight.toStringAsFixed(1)}g in ${e!.pourTime.toStringAsFixed(1)}s'),
-              ElevatedButton(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -76,7 +76,8 @@ class _ShotGraphState extends State<ShotGraph> {
                               )),
                     );
                   },
-                  child: const SizedBox(width: 100, child: Center(child: Text("DYE"))))
+                  icon: const Icon(Icons.edit),
+                  label: const Text("DYE"))
             ]),
           ),
           _buildGraphs()['single'],

@@ -12,6 +12,7 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -66,12 +67,15 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Shot? getLastShot() {
-    var allshots = shotBox.getAll();
-    log.info("Number of stored shots: ${allshots.length}");
+    final builder = shotBox.query().order(Shot_.id, flags: Order.descending).build();
+    var found = builder.findFirst();
+    // var allshots = shotBox.getAll();
+    selectedShotId = found?.id ?? 0;
+    // log.info("Number of stored shots: ${allshots.length}");
     if (selectedShotId > 0) {
-      return shotBox.get(selectedShotId);
+      return found;
     } else {
-      return (allshots.isNotEmpty) ? allshots.last : Shot();
+      return Shot();
     }
   }
 

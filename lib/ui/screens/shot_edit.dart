@@ -122,8 +122,18 @@ class ShotEditState extends State<ShotEdit> {
         title: Text(
             'Describe your experience with shot from ${DateFormat.yMd().format(_editedShot.date)} ${DateFormat.Hm().format(_editedShot.date)} '),
         actions: <Widget>[
-          ElevatedButton(
-            child: const Text(
+          Builder(
+            builder: (BuildContext context) {
+              return TextButton.icon(
+                onPressed: () => _onShare(context),
+                icon: const Icon(Icons.ios_share),
+                label: Text("Vizualizer"),
+              );
+            },
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.save_alt),
+            label: const Text(
               'Save',
             ),
             onPressed: () {
@@ -288,13 +298,6 @@ class ShotEditState extends State<ShotEdit> {
                     labelText: 'Grinder settings',
                   ),
                 ),
-                ReactiveTextField<double>(
-                  formControlName: 'grinderSettings',
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Grinder',
-                  ),
-                ),
               ]),
             ),
           ),
@@ -396,3 +399,5 @@ class ShotEditState extends State<ShotEdit> {
     return roasters;
   }
 }
+
+_onShare(BuildContext context) {}
