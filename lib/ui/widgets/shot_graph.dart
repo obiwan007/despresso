@@ -2,6 +2,7 @@ import 'package:despresso/model/shot.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/service_locator.dart';
+import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -62,9 +63,20 @@ class _ShotGraphState extends State<ShotGraph> {
       child: Column(
         children: [
           ...shotOverlay.map(
-            (e) => Row(children: [
+            (e) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(
                   '${DateFormat.Hm().format(e!.date)} ${DateFormat.yMd().format(e!.date)} ${e!.pourWeight.toStringAsFixed(1)}g in ${e!.pourTime.toStringAsFixed(1)}s'),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShotEdit(
+                                e.id,
+                              )),
+                    );
+                  },
+                  child: const SizedBox(width: 100, child: Center(child: Text("DYE"))))
             ]),
           ),
           _buildGraphs()['single'],
