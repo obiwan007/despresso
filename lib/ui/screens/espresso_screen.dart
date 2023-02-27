@@ -1,3 +1,4 @@
+import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
@@ -409,6 +410,17 @@ class EspressoScreenState extends State<EspressoScreen> {
           endIndent: 0,
         ),
         KeyValueWidget(width: width, label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ShotEdit(
+                          coffeeSelectionService.selectedShotId,
+                        )),
+              );
+            },
+            child: const Text("DYE"))
       ],
     );
 

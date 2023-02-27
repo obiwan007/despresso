@@ -34,7 +34,7 @@ class Shot {
   String description = "";
   String grinderName = "";
   DateTime roastingDate = DateTime.now();
-  double totalDissolvedSolidss = 0;
+  double totalDissolvedSolids = 0;
   double extractionYield = 0;
   double enjoyment = 0;
   String barrista = "";

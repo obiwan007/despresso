@@ -195,6 +195,14 @@ class CoffeeService extends ChangeNotifier {
 // code to return members
   }
 
+  Shot? get currentShot {
+    if (selectedShotId > 0) {
+      return shotBox.get(selectedShotId);
+    }
+    return null;
+// code to return members
+  }
+
   void addRecipe({required String name, required int coffeeId, required String profileId}) {
     var recipe = Recipe();
     recipe.name = name;
@@ -216,6 +224,15 @@ class CoffeeService extends ChangeNotifier {
 
   Recipe? getRecipe(int id) {
     return recipeBox.get(id);
+  }
+
+  Shot? getShot(int id) {
+    return shotBox.get(id);
+  }
+
+  void updateShot(Shot shot) {
+    shotBox.put(shot);
+    notifyListeners();
   }
 
   void updateRecipe(Recipe recipe) {
