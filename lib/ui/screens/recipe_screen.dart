@@ -166,22 +166,36 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 
   buildItem(BuildContext context, Recipe data) {
-    return ListTile(
-      title: Text(
-        data.name,
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+        color: Colors.red,
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+        alignment: Alignment.centerLeft,
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+        ),
       ),
-      subtitle: Text(
-        "${data.profileId} ${data.coffee.target!.name}",
-      ),
-      selected: coffeeService.selectedRecipeId == data.id,
-      onTap: () {
-        coffeeService.setSelectedRecipe(data.id);
+      onDismissed: (_) {
+        coffeeService.removeRecipe(data.id);
+        setState(() {});
       },
-      trailing: ElevatedButton(
-          onPressed: () {
-            coffeeService.removeRecipe(data.id);
-          },
-          child: const Icon(Icons.delete_forever)),
+      child: ListTile(
+        title: Text(
+          data.name,
+        ),
+        subtitle: Text(
+          "${data.profileId} ${data.coffee.target!.name}",
+        ),
+        selected: coffeeService.selectedRecipeId == data.id,
+        onTap: () {
+          coffeeService.setSelectedRecipe(data.id);
+        },
+      ),
     );
   }
 }
