@@ -1,4 +1,5 @@
 import 'package:despresso/model/coffee.dart';
+import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:objectbox/objectbox.dart';
 
@@ -17,9 +18,25 @@ class Shot {
   String profileId = "";
 
   final coffee = ToOne<Coffee>();
+  final recipe = ToOne<Recipe>();
 
   final shotstates = ToMany<ShotState>();
 
   double pourTime = 0;
   double pourWeight = 0;
+  double targetEspressoWeight = 0;
+  double targetTempCorrection = 0;
+  double doseWeight = 0;
+  double drinkWeight = 0;
+
+  double grinderSettings = 0;
+
+  String description = "";
+  String grinderName = "";
+  DateTime roastingDate = DateTime.now();
+  double totalDissolvedSolidss = 0;
+  double extractionYield = 0;
+  double enjoyment = 0;
+  String barrista = "";
+  String drinker = "";
 }

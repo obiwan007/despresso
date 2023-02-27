@@ -13,6 +13,8 @@ class Recipe {
   double adjustedWeight = 0;
   double adjustedPressure = 0;
   double adjustedTemp = 0;
+  double grinderDoseWeight = 0;
+  double grinderSettings = 0;
 
   String name = "Espresso";
 }

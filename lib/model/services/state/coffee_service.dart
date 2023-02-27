@@ -187,6 +187,14 @@ class CoffeeService extends ChangeNotifier {
 // code to return members
   }
 
+  Recipe? get currentRecipe {
+    if (selectedRecipeId > 0) {
+      return recipeBox.get(selectedRecipeId);
+    }
+    return null;
+// code to return members
+  }
+
   void addRecipe({required String name, required int coffeeId, required String profileId}) {
     var recipe = Recipe();
     recipe.name = name;
@@ -208,14 +216,6 @@ class CoffeeService extends ChangeNotifier {
 
   Recipe? getRecipe(int id) {
     return recipeBox.get(id);
-  }
-
-  Recipe? getSelectedRecipe() {
-    if (selectedRecipeId > 0) {
-      return recipeBox.get(selectedRecipeId);
-    } else {
-      return null;
-    }
   }
 
   void updateRecipe(Recipe recipe) {
@@ -242,7 +242,7 @@ class CoffeeService extends ChangeNotifier {
   }
 
   void setSelectedRecipeProfile(String profileId) {
-    var res = getSelectedRecipe();
+    var res = currentRecipe;
     if (res != null) {
       res.profileId = profileId;
       updateRecipe(res);
@@ -251,7 +251,7 @@ class CoffeeService extends ChangeNotifier {
   }
 
   void setSelectedRecipeCoffee(int coffeeId) {
-    var res = getSelectedRecipe();
+    var res = currentRecipe;
     if (res != null) {
       res.coffee.targetId = coffeeId;
       updateRecipe(res);

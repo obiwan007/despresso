@@ -214,7 +214,7 @@ class RecipeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var nameOfRecipe = coffeeService.getSelectedRecipe()?.name ?? "no name";
+    var nameOfRecipe = coffeeService.currentRecipe?.name ?? "no name";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -229,7 +229,7 @@ class RecipeDetails extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
             onChanged: (value) {
-              var res = coffeeService.getSelectedRecipe();
+              var res = coffeeService.currentRecipe;
               if (res != null) {
                 res.name = value;
                 coffeeService.updateRecipe(res);
@@ -317,7 +317,7 @@ class RecipeDetails extends StatelessWidget {
                                   keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
-                                    var r = coffeeService.getSelectedRecipe();
+                                    var r = coffeeService.currentRecipe;
                                     if (r != null) {
                                       r.adjustedWeight = value;
                                       coffeeService.updateRecipe(r);
@@ -354,7 +354,7 @@ class RecipeDetails extends StatelessWidget {
                                   keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
-                                    var r = coffeeService.getSelectedRecipe();
+                                    var r = coffeeService.currentRecipe;
                                     if (r != null) {
                                       r.adjustedTemp = value;
                                       coffeeService.updateRecipe(r);

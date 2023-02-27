@@ -26,7 +26,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 5050282589413394899),
       name: 'Shot',
-      lastPropertyId: const IdUid(6, 3371539309151542209),
+      lastPropertyId: const IdUid(20, 1949502433090459020),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -60,6 +60,78 @@ final _entities = <ModelEntity>[
             id: const IdUid(6, 3371539309151542209),
             name: 'pourWeight',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 2364668778724218869),
+            name: 'targetEspressoWeight',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 3676925190157138581),
+            name: 'targetTempCorrection',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 111349150896732313),
+            name: 'recipeId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(6, 446388852719725051),
+            relationTarget: 'Recipe'),
+        ModelProperty(
+            id: const IdUid(10, 7125372405899859202),
+            name: 'doseWeight',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 3218706867177652460),
+            name: 'drinkWeight',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 843222103065987409),
+            name: 'grinderSettings',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 3391691028545881063),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 7115326853722345534),
+            name: 'grinderName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 1080541265960096120),
+            name: 'roastingDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 4933890882353956688),
+            name: 'totalDissolvedSolidss',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 8073143111153977311),
+            name: 'extractionYield',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 6900766595761360168),
+            name: 'enjoyment',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 1657747884825847241),
+            name: 'barrista',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 1949502433090459020),
+            name: 'drinker',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[
@@ -314,7 +386,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 7693652674048295668),
       name: 'Recipe',
-      lastPropertyId: const IdUid(7, 647131839827812853),
+      lastPropertyId: const IdUid(9, 3336924770577751042),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -353,6 +425,16 @@ final _entities = <ModelEntity>[
             id: const IdUid(7, 647131839827812853),
             name: 'profileId',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 3008075691008235314),
+            name: 'grinderDoseWeight',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 3336924770577751042),
+            name: 'grinderSettings',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -380,7 +462,7 @@ ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
       lastEntityId: const IdUid(9, 7693652674048295668),
-      lastIndexId: const IdUid(5, 7106111853969068341),
+      lastIndexId: const IdUid(6, 446388852719725051),
       lastRelationId: const IdUid(1, 2516218059471133212),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -423,7 +505,7 @@ ModelDefinition getObjectBoxModel() {
   final bindings = <Type, EntityDefinition>{
     Shot: EntityDefinition<Shot>(
         model: _entities[0],
-        toOneRelations: (Shot object) => [object.coffee],
+        toOneRelations: (Shot object) => [object.coffee, object.recipe],
         toManyRelations: (Shot object) =>
             {RelInfo<Shot>.toMany(1, object.id): object.shotstates},
         getId: (Shot object) => object.id,
@@ -432,13 +514,31 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Shot object, fb.Builder fbb) {
           final profileIdOffset = fbb.writeString(object.profileId);
-          fbb.startTable(7);
+          final descriptionOffset = fbb.writeString(object.description);
+          final grinderNameOffset = fbb.writeString(object.grinderName);
+          final barristaOffset = fbb.writeString(object.barrista);
+          final drinkerOffset = fbb.writeString(object.drinker);
+          fbb.startTable(21);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.date.millisecondsSinceEpoch);
           fbb.addInt64(2, object.coffee.targetId);
           fbb.addOffset(3, profileIdOffset);
           fbb.addFloat64(4, object.pourTime);
           fbb.addFloat64(5, object.pourWeight);
+          fbb.addFloat64(6, object.targetEspressoWeight);
+          fbb.addFloat64(7, object.targetTempCorrection);
+          fbb.addInt64(8, object.recipe.targetId);
+          fbb.addFloat64(9, object.doseWeight);
+          fbb.addFloat64(10, object.drinkWeight);
+          fbb.addFloat64(11, object.grinderSettings);
+          fbb.addOffset(12, descriptionOffset);
+          fbb.addOffset(13, grinderNameOffset);
+          fbb.addInt64(14, object.roastingDate.millisecondsSinceEpoch);
+          fbb.addFloat64(15, object.totalDissolvedSolidss);
+          fbb.addFloat64(16, object.extractionYield);
+          fbb.addFloat64(17, object.enjoyment);
+          fbb.addOffset(18, barristaOffset);
+          fbb.addOffset(19, drinkerOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -455,10 +555,39 @@ ModelDefinition getObjectBoxModel() {
             ..pourTime =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
             ..pourWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
+            ..targetEspressoWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0)
+            ..targetTempCorrection =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
+            ..doseWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0)
+            ..drinkWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0)
+            ..grinderSettings =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0)
+            ..description = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 28, '')
+            ..grinderName = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 30, '')
+            ..roastingDate = DateTime.fromMillisecondsSinceEpoch(
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0))
+            ..totalDissolvedSolidss =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0)
+            ..extractionYield =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0)
+            ..enjoyment =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0)
+            ..barrista = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 40, '')
+            ..drinker = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 42, '');
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.coffee.attach(store);
+          object.recipe.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          object.recipe.attach(store);
           InternalToManyAccess.setRelInfo(object.shotstates, store,
               RelInfo<Shot>.toMany(1, object.id), store.box<Shot>());
           return object;
@@ -683,7 +812,7 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Recipe object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
           final profileIdOffset = fbb.writeString(object.profileId);
-          fbb.startTable(8);
+          fbb.startTable(10);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.coffee.targetId);
           fbb.addFloat64(2, object.adjustedWeight);
@@ -691,6 +820,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(4, object.adjustedTemp);
           fbb.addOffset(5, nameOffset);
           fbb.addOffset(6, profileIdOffset);
+          fbb.addFloat64(7, object.grinderDoseWeight);
+          fbb.addFloat64(8, object.grinderSettings);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -709,7 +840,11 @@ ModelDefinition getObjectBoxModel() {
             ..name = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 14, '')
             ..profileId = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 16, '');
+                .vTableGet(buffer, rootOffset, 16, '')
+            ..grinderDoseWeight =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
+            ..grinderSettings =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0);
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
@@ -742,6 +877,61 @@ class Shot_ {
   /// see [Shot.pourWeight]
   static final pourWeight =
       QueryDoubleProperty<Shot>(_entities[0].properties[5]);
+
+  /// see [Shot.targetEspressoWeight]
+  static final targetEspressoWeight =
+      QueryDoubleProperty<Shot>(_entities[0].properties[6]);
+
+  /// see [Shot.targetTempCorrection]
+  static final targetTempCorrection =
+      QueryDoubleProperty<Shot>(_entities[0].properties[7]);
+
+  /// see [Shot.recipe]
+  static final recipe =
+      QueryRelationToOne<Shot, Recipe>(_entities[0].properties[8]);
+
+  /// see [Shot.doseWeight]
+  static final doseWeight =
+      QueryDoubleProperty<Shot>(_entities[0].properties[9]);
+
+  /// see [Shot.drinkWeight]
+  static final drinkWeight =
+      QueryDoubleProperty<Shot>(_entities[0].properties[10]);
+
+  /// see [Shot.grinderSettings]
+  static final grinderSettings =
+      QueryDoubleProperty<Shot>(_entities[0].properties[11]);
+
+  /// see [Shot.description]
+  static final description =
+      QueryStringProperty<Shot>(_entities[0].properties[12]);
+
+  /// see [Shot.grinderName]
+  static final grinderName =
+      QueryStringProperty<Shot>(_entities[0].properties[13]);
+
+  /// see [Shot.roastingDate]
+  static final roastingDate =
+      QueryIntegerProperty<Shot>(_entities[0].properties[14]);
+
+  /// see [Shot.totalDissolvedSolidss]
+  static final totalDissolvedSolidss =
+      QueryDoubleProperty<Shot>(_entities[0].properties[15]);
+
+  /// see [Shot.extractionYield]
+  static final extractionYield =
+      QueryDoubleProperty<Shot>(_entities[0].properties[16]);
+
+  /// see [Shot.enjoyment]
+  static final enjoyment =
+      QueryDoubleProperty<Shot>(_entities[0].properties[17]);
+
+  /// see [Shot.barrista]
+  static final barrista =
+      QueryStringProperty<Shot>(_entities[0].properties[18]);
+
+  /// see [Shot.drinker]
+  static final drinker = QueryStringProperty<Shot>(_entities[0].properties[19]);
 
   /// see [Shot.shotstates]
   static final shotstates =
@@ -937,4 +1127,12 @@ class Recipe_ {
   /// see [Recipe.profileId]
   static final profileId =
       QueryStringProperty<Recipe>(_entities[5].properties[6]);
+
+  /// see [Recipe.grinderDoseWeight]
+  static final grinderDoseWeight =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[7]);
+
+  /// see [Recipe.grinderSettings]
+  static final grinderSettings =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[8]);
 }
