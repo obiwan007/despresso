@@ -1,6 +1,7 @@
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/ui/widgets/height_widget.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -118,7 +119,8 @@ class ShotEditState extends State<ShotEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Describe your experience with Shot'),
+        title: Text(
+            'Describe your experience with shot from ${DateFormat.yMd().format(_editedShot.date)} ${DateFormat.Hm().format(_editedShot.date)} '),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(
@@ -146,7 +148,7 @@ class ShotEditState extends State<ShotEdit> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  coffeeForm(form),
+                  shotForm(form),
                 ],
               ),
             );
@@ -156,122 +158,187 @@ class ShotEditState extends State<ShotEdit> {
     );
   }
 
-  coffeeForm(FormGroup form) {
+  shotForm(FormGroup form) {
     var width = 70.0;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        KeyValueWidget(width: width, label: "Recipe", value: _editedShot.recipe.target?.name ?? "No Recipe"),
-        KeyValueWidget(width: width, label: "Profile", value: _editedShot.profileId),
-        KeyValueWidget(
-            width: width,
-            label: "Coffee",
-            value: (_editedShot.recipe.target?.coffee.targetId ?? 0) > 0
-                ? _editedShot.recipe.target?.coffee.target?.name ?? ""
-                : "No Beans"),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: [
+                KeyValueWidget(width: width, label: "Recipe", value: _editedShot.recipe.target?.name ?? "No Recipe"),
+                KeyValueWidget(width: width, label: "Profile", value: _editedShot.profileId),
+                KeyValueWidget(
+                    width: width,
+                    label: "Coffee",
+                    value: (_editedShot.recipe.target?.coffee.targetId ?? 0) > 0
+                        ? _editedShot.recipe.target?.coffee.target?.name ?? ""
+                        : "No Beans"),
+              ]),
+            ),
+          ),
+        ),
 
-        ReactiveTextField<String>(
-          formControlName: 'description',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Describe your experience',
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: [
+                ReactiveTextField<String>(
+                  formControlName: 'description',
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Describe your experience',
+                  ),
+                  validationMessages: {
+                    ValidationMessage.required: (_) => 'Name must not be empty',
+                  },
+                ),
+                HeightWidget(height: 20),
+                KeyValueWidget(label: "Enjoyment", value: ""),
+                ReactiveRatingBarBuilder<double>(
+                  formControlName: 'enjoyment',
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                ),
+              ]),
+            ),
           ),
-          validationMessages: {
-            ValidationMessage.required: (_) => 'Name must not be empty',
-          },
         ),
-        KeyValueWidget(label: "Enjoyment", value: ""),
-        ReactiveRatingBarBuilder<double>(
-          formControlName: 'enjoyment',
-          minRating: 1,
-          direction: Axis.horizontal,
-          allowHalfRating: true,
-          itemCount: 5,
-          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          itemBuilder: (context, _) => const Icon(
-            Icons.star,
-            color: Colors.amber,
-          ),
-        ),
+
         HeightWidget(height: 20),
-        ReactiveTextField<String>(
-          keyboardType: TextInputType.text,
-          formControlName: 'drinker',
-          decoration: const InputDecoration(
-            labelText: 'Drinker',
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: [
+                ReactiveTextField<String>(
+                  keyboardType: TextInputType.text,
+                  formControlName: 'drinker',
+                  decoration: const InputDecoration(
+                    labelText: 'Drinker',
+                  ),
+                ),
+                ReactiveTextField<String>(
+                  formControlName: 'barrista',
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Barrista',
+                  ),
+                ),
+              ]),
+            ),
           ),
         ),
-        ReactiveTextField<String>(
-          formControlName: 'barrista',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Barrista',
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                ReactiveTextField<double>(
+                  formControlName: 'totalDissolvedSolids',
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Total Dissolved Solidss (TDS)',
+                  ),
+                ),
+                ReactiveTextField<double>(
+                  formControlName: 'extractionYield',
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                    labelText: 'Extraction yield',
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: [
+                ReactiveTextField<String>(
+                  formControlName: 'grinderName',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Grinder',
+                  ),
+                ),
+                ReactiveTextField<double>(
+                  formControlName: 'grinderSettings',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Grinder settings',
+                  ),
+                ),
+                ReactiveTextField<double>(
+                  formControlName: 'grinderSettings',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Grinder',
+                  ),
+                ),
+              ]),
+            ),
           ),
         ),
-        ReactiveTextField<double>(
-          formControlName: 'totalDissolvedSolids',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Total Dissolved Solidss (TDS)',
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: [
+                ReactiveTextField<double>(
+                  formControlName: 'doseWeight',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Dose weight [g]',
+                  ),
+                ),
+                ReactiveTextField<double>(
+                  formControlName: 'drinkWeight',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Drink weight [g]',
+                  ),
+                ),
+                ReactiveTextField<double>(
+                  formControlName: 'pourTime',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Pouring time [s]',
+                  ),
+                ),
+                ReactiveTextField<double>(
+                  formControlName: 'pourWeight',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Pouring weight [g]',
+                  ),
+                ),
+              ]),
+            ),
           ),
         ),
-        ReactiveTextField<double>(
-          formControlName: 'extractionYield',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Extraction yield',
-          ),
-        ),
-        ReactiveTextField<String>(
-          formControlName: 'grinderName',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Grinder',
-          ),
-        ),
-        ReactiveTextField<double>(
-          formControlName: 'grinderSettings',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Grinder settings',
-          ),
-        ),
-        ReactiveTextField<double>(
-          formControlName: 'grinderSettings',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Grinder',
-          ),
-        ),
-        ReactiveTextField<double>(
-          formControlName: 'doseWeight',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Dose weight [g]',
-          ),
-        ),
-        ReactiveTextField<double>(
-          formControlName: 'drinkWeight',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Drink weight [g]',
-          ),
-        ),
-        ReactiveTextField<double>(
-          formControlName: 'pourTime',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Pouring time [s]',
-          ),
-        ),
-        ReactiveTextField<double>(
-          formControlName: 'pourWeight',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Pouring weight [g]',
-          ),
-        ),
+
         HeightWidget(height: 20),
 
         // ReactiveFormConsumer(
@@ -289,20 +356,6 @@ class ShotEditState extends State<ShotEdit> {
         //   },
         // ),
       ],
-    );
-  }
-
-  Widget createKeyValue(String key, String? value) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(key, style: theme.TextStyles.tabHeading),
-          if (value != null) Text(value, style: theme.TextStyles.tabPrimary),
-        ],
-      ),
     );
   }
 
