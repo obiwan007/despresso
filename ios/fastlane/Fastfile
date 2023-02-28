@@ -65,7 +65,7 @@ platform :ios do
       )
       
       match(type: "adhoc",
-        app_identifier: "match AppStore com.mmmedia.despresso")
+        app_identifier: "com.mmmedia.despresso")
 
     # get_certificates           # invokes cert
     # get_provisioning_profile   # invokes sigh
