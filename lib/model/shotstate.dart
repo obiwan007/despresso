@@ -1,4 +1,3 @@
-import 'package:despresso/logger_util.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:logging/logging.dart';

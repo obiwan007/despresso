@@ -14,10 +14,8 @@ import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:objectbox/internal.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
@@ -254,7 +252,7 @@ class CoffeeService extends ChangeNotifier {
   }
 
   getBackupData() {
-    String file = objectBox.store.directoryPath + "/data.mdb";
+    String file = "${objectBox.store.directoryPath}/data.mdb";
     var f = File(file);
 
     Uint8List data = f.readAsBytesSync();

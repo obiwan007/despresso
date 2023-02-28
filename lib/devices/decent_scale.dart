@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:logging/logging.dart';
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -26,8 +24,6 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   late ScaleService scaleService;
 
   final DiscoveredDevice device;
-
-  late DeviceConnectionState _state;
 
   final flutterReactiveBle = FlutterReactiveBle();
 
@@ -69,6 +65,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     return payload[0] ^ payload[1] ^ payload[2] ^ payload[3] ^ payload[4] ^ payload[5];
   }
 
+  @override
   writeTare() {
     List<int> payload = [0x03, 0x0F, 0xFD, 0x00, 0x00, 0x00];
     payload.add(getXOR(payload));
@@ -115,7 +112,6 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   void _onStateChange(DeviceConnectionState state) async {
     log.info('SCALE State changed to $state');
-    _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:

@@ -10,7 +10,6 @@ import 'package:logging/logging.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'settings_service.dart';
-import 'package:despresso/logger_util.dart';
 
 // final client = MqttServerClient(mqttServer, mqttPort.toString());
 
@@ -41,7 +40,7 @@ class MqttService extends ChangeNotifier {
   }
 
   stopService() {
-    if (client?.connectionStatus?.state == MqttConnectionState.connected) {
+    if (client.connectionStatus?.state == MqttConnectionState.connected) {
       client.disconnect();
     }
   }
