@@ -66,8 +66,6 @@ platform :ios do
 
     update_project_provisioning(
         xcodeproj: "Runner.xcodeproj",
-        build_configuration: "Release",
-        profile: "match AppStore com.mmmedia.despresso"
     )
    
     # get_certificates           # invokes cert
