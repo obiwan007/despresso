@@ -65,7 +65,7 @@ platform :ios do
       )
 
     update_project_provisioning(
-        xcodeproj: "Runner.xcworkspace",
+        xcodeproj: "Runner.xcodeproj",
         build_configuration: "Release",
         code_signing_identity: "match AppStore com.mmmedia.despresso"
     )
