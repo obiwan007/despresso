@@ -64,6 +64,9 @@ platform :ios do
         git_user_email: 'markus.miertschink@hotmail.com',
       )
       
+      match(type: "adhoc",
+        app_identifier: "match AppStore com.mmmedia.despresso")
+
     # get_certificates           # invokes cert
     # get_provisioning_profile   # invokes sigh
     app_store_connect_api_key(
@@ -76,6 +79,13 @@ platform :ios do
         build_number: latest_testflight_build_number + 1,
         xcodeproj: "Runner.xcodeproj"
     )
+
+    # update_project_provisioning(
+    #     xcodeproj: "Runner.xcworkspace",
+    #     build_configuration: "Release",
+    #     code_signing_identity: "match AppStore com.mmmedia.despresso"
+    # )
+
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")    
 
     upload_to_testflight(skip_waiting_for_build_processing: false, api_key:  lane_context[SharedValues::APP_STORE_CONNECT_API_KEY])

@@ -76,8 +76,8 @@ class _ShotGraphState extends State<ShotGraph> {
                               )),
                     );
                   },
-                  icon: const Icon(Icons.edit),
-                  label: const Text("DYE"))
+                  icon: const Icon(Icons.note_add),
+                  label: const Text("Diary"))
             ]),
           ),
           _buildGraphs()['single'],

@@ -426,8 +426,8 @@ class EspressoScreenState extends State<EspressoScreen> {
                         )),
               );
             },
-            icon: const Icon(Icons.edit),
-            label: const Text("DYE"))
+            icon: const Icon(Icons.note_add),
+            label: const Text("Espresso Diary"))
       ],
     );
 
