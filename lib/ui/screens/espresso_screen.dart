@@ -1,3 +1,4 @@
+import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
@@ -389,28 +390,47 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   Widget _buildLiveInsights() {
     Widget insights;
-    if (machineService.state.shot != null) {
-      insights = Column(
-        children: [
-          KeyValueWidget(label: "Profile", value: profileService.currentProfile!.title),
-          KeyValueWidget(
-              label: "Coffee",
-              value: coffeeSelectionService.selectedCoffeeId > 0
-                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
-                  : "No Beans"),
-          KeyValueWidget(label: "Target", value: '${settingsService.targetEspressoWeight} g'),
-          const Divider(
-            height: 20,
-            thickness: 5,
-            indent: 0,
-            endIndent: 0,
-          ),
-          KeyValueWidget(label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
-        ],
-      );
-    } else {
-      insights = Text("");
-    }
+    const width = 70.0;
+    insights = Column(
+      children: [
+        if (machineService.state.coffeeState == EspressoMachineState.disconnected) Icon(Icons.bluetooth_disabled),
+        KeyValueWidget(width: width, label: "Recipe", value: coffeeSelectionService.currentRecipe?.name ?? ""),
+        KeyValueWidget(width: width, label: "Profile", value: profileService.currentProfile!.title),
+        KeyValueWidget(
+            width: width,
+            label: "Coffee",
+            value: coffeeSelectionService.selectedCoffeeId > 0
+                ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
+                : "No Beans"),
+        KeyValueWidget(width: width, label: "Target", value: '${settingsService.targetEspressoWeight} g'),
+        const Divider(
+          height: 20,
+          thickness: 5,
+          indent: 0,
+          endIndent: 0,
+        ),
+        KeyValueWidget(width: width, label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        const Divider(
+          height: 20,
+          thickness: 5,
+          indent: 0,
+          endIndent: 0,
+        ),
+        TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ShotEdit(
+                          coffeeSelectionService.selectedShotId,
+                        )),
+              );
+            },
+            icon: const Icon(Icons.note_add),
+            label: const Text("Espresso Diary"))
+      ],
+    );
+
     return insights;
   }
 

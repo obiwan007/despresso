@@ -166,22 +166,36 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 
   buildItem(BuildContext context, Recipe data) {
-    return ListTile(
-      title: Text(
-        data.name,
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+        color: Colors.red,
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+        alignment: Alignment.centerLeft,
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+        ),
       ),
-      subtitle: Text(
-        "${data.profileId} ${data.coffee.target!.name}",
-      ),
-      selected: coffeeService.selectedRecipeId == data.id,
-      onTap: () {
-        coffeeService.setSelectedRecipe(data.id);
+      onDismissed: (_) {
+        coffeeService.removeRecipe(data.id);
+        setState(() {});
       },
-      trailing: ElevatedButton(
-          onPressed: () {
-            coffeeService.removeRecipe(data.id);
-          },
-          child: const Icon(Icons.delete_forever)),
+      child: ListTile(
+        title: Text(
+          data.name,
+        ),
+        subtitle: Text(
+          "${data.profileId} ${data.coffee.target!.name}",
+        ),
+        selected: coffeeService.selectedRecipeId == data.id,
+        onTap: () {
+          coffeeService.setSelectedRecipe(data.id);
+        },
+      ),
     );
   }
 }
@@ -200,7 +214,7 @@ class RecipeDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var nameOfRecipe = coffeeService.getSelectedRecipe()?.name ?? "no name";
+    var nameOfRecipe = coffeeService.currentRecipe?.name ?? "no name";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -215,7 +229,7 @@ class RecipeDetails extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
             onChanged: (value) {
-              var res = coffeeService.getSelectedRecipe();
+              var res = coffeeService.currentRecipe;
               if (res != null) {
                 res.name = value;
                 coffeeService.updateRecipe(res);
@@ -303,7 +317,7 @@ class RecipeDetails extends StatelessWidget {
                                   keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
-                                    var r = coffeeService.getSelectedRecipe();
+                                    var r = coffeeService.currentRecipe;
                                     if (r != null) {
                                       r.adjustedWeight = value;
                                       coffeeService.updateRecipe(r);
@@ -340,7 +354,7 @@ class RecipeDetails extends StatelessWidget {
                                   keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
-                                    var r = coffeeService.getSelectedRecipe();
+                                    var r = coffeeService.currentRecipe;
                                     if (r != null) {
                                       r.adjustedTemp = value;
                                       coffeeService.updateRecipe(r);
