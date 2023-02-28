@@ -64,9 +64,9 @@ platform :ios do
         git_user_email: 'markus.miertschink@hotmail.com',
       )
 
-    update_project_provisioning(
-        xcodeproj: "Runner.xcodeproj",
-    )
+    # update_project_provisioning(
+    #     xcodeproj: "Runner.xcodeproj",
+    # )
    
     # get_certificates           # invokes cert
     # get_provisioning_profile   # invokes sigh
