@@ -7,6 +7,7 @@ import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,14 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late SettingsService settingsService;
   late BLEService bleService;
   late MqttService mqttService;
+  late VisualizerService visualizerService;
 
   @override
   void initState() {
     super.initState();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
+    visualizerService = getIt<VisualizerService>();
     settingsService.addListener(settingsServiceListener);
     bleService.addListener(settingsServiceListener);
   }
@@ -274,46 +277,46 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               ],
             ),
             ExpandableSettingsTile(
-                title: 'Vizualizer',
+                title: 'Visualizer',
                 subtitle: 'Cloud shot upload',
                 expanded: false,
                 children: <Widget>[
                   SwitchSettingsTile(
                     leading: const Icon(Icons.cloud_upload),
-                    settingKey: SettingKeys.vizualizerUpload.name,
-                    defaultValue: settingsService.vizualizerUpload,
-                    title: 'Upload Shots to Vizualizer',
+                    settingKey: SettingKeys.visualizerUpload.name,
+                    defaultValue: settingsService.visualizerUpload,
+                    title: 'Upload Shots to Visualizer',
                     onChange: (value) {
                       debugPrint('USB Debugging: $value');
                     },
                   ),
-                  //   TextInputSettingsTile(
-                  //     title: 'User Name/email',
-                  //     settingKey: SettingKeys.vizualizerUser.name,
-                  //     initialValue: settingsService.vizualizerUser,
-                  //     validator: (String? username) {
-                  //       if (username != null && username.length > 3) {
-                  //         return null;
-                  //       }
-                  //       return "User Name can't be smaller than 4 letters";
-                  //     },
-                  //     borderColor: Colors.blueAccent,
-                  //     errorColor: Colors.deepOrangeAccent,
-                  //   ),
-                  //   TextInputSettingsTile(
-                  //     title: 'password',
-                  //     initialValue: settingsService.vizualizerPwd,
-                  //     settingKey: SettingKeys.vizualizerPwd.name,
-                  //     obscureText: true,
-                  //     validator: (String? password) {
-                  //       if (password != null && password.length > 6) {
-                  //         return null;
-                  //       }
-                  //       return "Password can't be smaller than 7 letters";
-                  //     },
-                  //     borderColor: Colors.blueAccent,
-                  //     errorColor: Colors.deepOrangeAccent,
-                  //   ),
+                  TextInputSettingsTile(
+                    title: 'User Name/email',
+                    settingKey: SettingKeys.visualizerUser.name,
+                    initialValue: settingsService.visualizerUser,
+                    validator: (String? username) {
+                      if (username != null && username.length > 3) {
+                        return null;
+                      }
+                      return "User Name can't be smaller than 4 letters";
+                    },
+                    borderColor: Colors.blueAccent,
+                    errorColor: Colors.deepOrangeAccent,
+                  ),
+                  TextInputSettingsTile(
+                    title: 'password',
+                    initialValue: settingsService.visualizerPwd,
+                    settingKey: SettingKeys.visualizerPwd.name,
+                    obscureText: true,
+                    validator: (String? password) {
+                      if (password != null && password.length > 6) {
+                        return null;
+                      }
+                      return "Password can't be smaller than 7 letters";
+                    },
+                    borderColor: Colors.blueAccent,
+                    errorColor: Colors.deepOrangeAccent,
+                  ),
                 ]),
           ],
         ),
