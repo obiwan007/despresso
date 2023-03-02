@@ -1,6 +1,7 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'package:logging/logging.dart';
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -14,21 +15,16 @@ import 'package:logging/logging.dart' as l;
 class Skale2Scale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('Skale2Scale');
 
-  // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
       Platform.isAndroid ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
-  // ignore: non_constant_identifier_names
   static Uuid WeightCharacteristicUUID =
       Platform.isAndroid ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
-  // ignore: non_constant_identifier_names
 
   static Uuid BatteryServiceUUID =
       Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // Platform.isAndroid ? Uuid.parse('0000180F-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
-  // ignore: non_constant_identifier_names
   static Uuid BatteryCharacteristicUUID =
       Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
-  // ignore: non_constant_identifier_names
   static Uuid CommandUUID =
       Platform.isAndroid ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
 

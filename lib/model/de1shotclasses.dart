@@ -2,7 +2,6 @@
 
 import 'dart:typed_data';
 
-import 'package:despresso/logger_util.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 

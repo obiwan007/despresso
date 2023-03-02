@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'dart:math' as math;
 import 'package:collection/collection.dart';
-import 'package:despresso/devices/acaia_scale.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 

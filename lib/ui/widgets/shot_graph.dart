@@ -3,7 +3,6 @@ import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
-import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +41,7 @@ class _ShotGraphState extends State<ShotGraph> {
 
   List<Shot?> shotOverlay = [];
 
-  _ShotGraphState() {}
+  _ShotGraphState();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,7 @@ class _ShotGraphState extends State<ShotGraph> {
           ...shotOverlay.map(
             (e) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(
-                  '${DateFormat.Hm().format(e!.date)} ${DateFormat.yMd().format(e!.date)} ${e!.pourWeight.toStringAsFixed(1)}g in ${e!.pourTime.toStringAsFixed(1)}s'),
+                  '${DateFormat.Hm().format(e!.date)} ${DateFormat.yMd().format(e.date)} ${e.pourWeight.toStringAsFixed(1)}g in ${e.pourTime.toStringAsFixed(1)}s'),
               TextButton.icon(
                   onPressed: () {
                     Navigator.push(
@@ -92,7 +91,7 @@ class _ShotGraphState extends State<ShotGraph> {
 
     for (var shot in shotOverlay) {
       if (!_overlayMode) ranges = _createPhasesFl(shot!.shotstates.toList());
-      var data = _createDataFlCharts(shot!.id, shot!.shotstates);
+      var data = _createDataFlCharts(shot!.id, shot.shotstates);
       datamap.addAll(data);
     }
     // var data = _createDataFlCharts();

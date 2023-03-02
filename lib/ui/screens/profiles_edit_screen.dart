@@ -1,12 +1,8 @@
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
-import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -263,10 +259,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
                                 var v = (value * 10).round() / 10;
-                                if (preInfusion!.pump == "flow")
+                                if (preInfusion!.pump == "flow") {
                                   preInfusion!.setVal = v;
-                                else
+                                } else {
                                   preInfusion!.triggerVal = v;
+                                }
                                 setState(() {});
                               },
                             ),
@@ -293,10 +290,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         onChanged: (dynamic value) {
                           setState(() {
                             var v = (value * 10).round() / 10;
-                            if (preInfusion!.pump == "pressure")
+                            if (preInfusion!.pump == "pressure") {
                               preInfusion!.setVal = v;
-                            else
+                            } else {
                               preInfusion!.triggerVal = v;
+                            }
                           });
                         },
                       ),
@@ -316,7 +314,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Text("Rise and hold (${riseAndHold?.frameLen.round()} s)"),
+          Text("Rise and hold (${riseAndHold.frameLen.round()} s)"),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -331,7 +329,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                           SfSlider(
                             min: 0.0,
                             max: 100.0,
-                            value: riseAndHold?.frameLen ?? 0,
+                            value: riseAndHold.frameLen,
                             interval: 20,
                             showTicks: true,
                             showLabels: true,
@@ -390,7 +388,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         minorTicksPerInterval: 1,
                         onChanged: (dynamic value) {
                           setState(() {
-                            riseAndHold!.setVal = value;
+                            riseAndHold.setVal = value;
                             if (forcedRise != null) {
                               forcedRise.setVal = value;
                             }
@@ -485,10 +483,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         onChanged: (dynamic value) {
                           setState(() {
                             var v = (value * 10).round() / 10;
-                            if (decline!.pump == "pressure")
+                            if (decline!.pump == "pressure") {
                               decline!.setVal = v;
-                            else
+                            } else {
                               decline!.triggerVal = v;
+                            }
                           });
                         },
                       ),

@@ -1,10 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
-import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/objectbox.dart';
@@ -469,7 +465,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     if (filePickerResult != null) {
       var objectBox = getIt<ObjectBox>();
       try {
-        await objectBox.restoreBackupData(filePickerResult!.files.single.path.toString());
+        await objectBox.restoreBackupData(filePickerResult.files.single.path.toString());
         showRestartNowScreen();
         var snackBar = SnackBar(
             content: const Text('Restored backup'),
