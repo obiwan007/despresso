@@ -61,29 +61,31 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     var declineObject = De1ShotFrameClass();
     declineObject.frameToWrite = _profile.shotFrames.length;
     declineObject.temp = _profile.shotFrames.first.temp;
+    try {
+      var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
+      preInfusion = pre.toList().first;
 
-    var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
-    preInfusion = pre.toList().first;
+      var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold" || element.name == "hold"));
+      riseAndHold = riseW.isNotEmpty ? riseW.first : null;
+      var forcedRiseWhere = _profile.shotFrames.where((element) => (element.name == "forced rise without limit"));
+      forcedRise = forcedRiseWhere.isNotEmpty ? forcedRiseWhere.first : null;
+      var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
+      if (declineArray.isNotEmpty) {
+        decline = declineArray.first;
+      } else {
+        _profile.shotFrames.add(declineObject);
+        decline = declineObject;
+      }
+      log.info("Decline: $decline");
+    } catch (e) {}
 
-    var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold" || element.name == "hold"));
-    riseAndHold = riseW.isNotEmpty ? riseW.first : null;
-    var forcedRiseWhere = _profile.shotFrames.where((element) => (element.name == "forced rise without limit"));
-    forcedRise = forcedRiseWhere.isNotEmpty ? forcedRiseWhere.first : null;
-    var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
-    if (declineArray.isNotEmpty) {
-      decline = declineArray.first;
-    } else {
-      _profile.shotFrames.add(declineObject);
-      decline = declineObject;
-    }
-    log.info("Decline: $decline");
     switch (_profile.shotHeader.type) {
       case "pressure":
       case "flow":
-        _tabController = TabController(length: 3 * 4 + 2, vsync: this, initialIndex: 1);
+        _tabController = TabController(length: 3 * 4 + 2, vsync: this, initialIndex: 0);
         break;
       default:
-        _tabController = TabController(length: 1, vsync: this, initialIndex: 1);
+        _tabController = TabController(length: 1, vsync: this, initialIndex: 0);
     }
   }
 
@@ -135,37 +137,38 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                 child: ProfileGraphWidget(selectedProfile: _profile),
               ),
             ),
-            SizedBox(height: 155, child: createTabBar()),
-            Expanded(
-              child: IntrinsicHeight(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    ...handleChanges(preInfusion!),
-                    ...handleChanges(riseAndHold!),
-                    ...handleChanges(decline!),
-                    changeValue(
-                        title: "Max. Volume",
-                        min: 0,
-                        max: 100,
-                        De1ShotFrameClass(),
-                        _profile.shotHeader.targetVolume, (value) {
-                      setState(() => _profile.shotHeader.targetVolume = value);
-                      log.info("Changed");
-                    }),
-                    changeValue(
-                        title: "Max. Weight",
-                        min: 0,
-                        max: 100,
-                        De1ShotFrameClass(),
-                        _profile.shotHeader.targetWeight, (value) {
-                      setState(() => _profile.shotHeader.targetWeight = value);
-                      log.info("Changed");
-                    }),
-                  ],
+            if (_profile.shotHeader.type != "advanced") SizedBox(height: 155, child: createTabBar()),
+            if (_profile.shotHeader.type != "advanced")
+              Expanded(
+                child: IntrinsicHeight(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      ...handleChanges(preInfusion!),
+                      ...handleChanges(riseAndHold!),
+                      ...handleChanges(decline!),
+                      changeValue(
+                          title: "Max. Volume",
+                          min: 0,
+                          max: 100,
+                          De1ShotFrameClass(),
+                          _profile.shotHeader.targetVolume, (value) {
+                        setState(() => _profile.shotHeader.targetVolume = value);
+                        log.info("Changed");
+                      }),
+                      changeValue(
+                          title: "Max. Weight",
+                          min: 0,
+                          max: 100,
+                          De1ShotFrameClass(),
+                          _profile.shotHeader.targetWeight, (value) {
+                        setState(() => _profile.shotHeader.targetWeight = value);
+                        log.info("Changed");
+                      }),
+                    ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
