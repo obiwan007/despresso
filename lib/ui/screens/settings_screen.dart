@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../service_locator.dart';
 
@@ -32,13 +33,21 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late BLEService bleService;
   late MqttService mqttService;
 
+  String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
+
   @override
-  void initState() {
+  initState() {
     super.initState();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
     settingsService.addListener(settingsServiceListener);
     bleService.addListener(settingsServiceListener);
+    getIpAdress();
+  }
+
+  Future<void> getIpAdress() async {
+    ownIpAdress = await NetworkInfo().getWifiIP();
+    setState(() {});
   }
 
   @override
@@ -127,7 +136,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               children: <Widget>[
                 SwitchSettingsTile(
                   settingKey: SettingKeys.shotStopOnWeight.name,
-                  defaultValue: true,
+                  defaultValue: settingsService.shotStopOnWeight,
                   title: 'Stop on Weight if scale detected',
                   subtitle: 'If the scale is connected it is used to stop the shot if the profile has a limit given.',
                   enabledLabel: 'Enabled',
@@ -138,7 +147,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 ),
                 SwitchSettingsTile(
                   settingKey: SettingKeys.shotAutoTare.name,
-                  defaultValue: true,
+                  defaultValue: settingsService.shotAutoTare,
                   title: 'Auto Tare',
                   subtitle: 'If a shot is starting, auto-tare the scale',
                   enabledLabel: 'Enabled',
@@ -158,7 +167,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               SliderSettingsTile(
                 title: 'Switch Off After',
                 settingKey: SettingKeys.sleepTimer.name,
-                defaultValue: 120,
+                defaultValue: settingsService.sleepTimer,
                 min: 0,
                 max: 240,
                 step: 5,
@@ -170,7 +179,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               SliderSettingsTile(
                 title: 'Screen Lock',
                 settingKey: SettingKeys.screenLockTimer.name,
-                defaultValue: 120,
+                defaultValue: settingsService.screenLockTimer,
                 min: 0,
                 max: 240,
                 step: 5,
@@ -203,6 +212,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               title: "Message Queue Broadcast",
               children: [
                 SwitchSettingsTile(
+                  defaultValue: settingsService.mqttEnabled,
                   leading: const Icon(Icons.settings_remote),
                   settingKey: SettingKeys.mqttEnabled.name,
                   title: 'Enable MQTT',
@@ -221,19 +231,16 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   initialValue: settingsService.mqttServer,
                 ),
                 TextInputSettingsTile(
-                  title: 'MQTT Port',
-                  settingKey: SettingKeys.mqttPort.name,
-                  initialValue: '1883',
-                ),
+                    title: 'MQTT Port', settingKey: SettingKeys.mqttPort.name, initialValue: settingsService.mqttPort),
                 TextInputSettingsTile(
                   title: 'MQTT User',
                   settingKey: SettingKeys.mqttUser.name,
-                  initialValue: 'user',
+                  initialValue: settingsService.mqttUser,
                 ),
                 TextInputSettingsTile(
                   title: 'MQTT Password',
                   settingKey: SettingKeys.mqttPassword.name,
-                  initialValue: '',
+                  initialValue: settingsService.mqttPassword,
                   obscureText: true,
                 ),
                 TextInputSettingsTile(
@@ -261,7 +268,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 ),
                 SwitchSettingsTile(
                   leading: const Icon(Icons.settings_remote),
-                  settingKey: SettingKeys.mqttSendShot.name,
+                  settingKey: SettingKeys.mqttSendWater.name,
                   defaultValue: settingsService.mqttSendWater,
                   title: 'Send de1 water level updates',
                   subtitle: "This can lead to a higher load on your MQTT server.",
@@ -284,7 +291,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   SwitchSettingsTile(
                     leading: const Icon(Icons.usb),
                     settingKey: SettingKeys.vizualizerUpload.name,
-                    defaultValue: false,
+                    defaultValue: settingsService.vizualizerUpload,
                     title: 'Upload Shots to Vizualizer',
                     onChange: (value) {
                       debugPrint('USB Debugging: $value');
@@ -293,7 +300,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   TextInputSettingsTile(
                     title: 'User Name/email',
                     settingKey: SettingKeys.vizualizerUser.name,
-                    initialValue: 'admin',
+                    initialValue: settingsService.vizualizerUser,
                     validator: (String? username) {
                       if (username != null && username.length > 3) {
                         return null;
@@ -305,6 +312,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   ),
                   TextInputSettingsTile(
                     title: 'password',
+                    initialValue: settingsService.vizualizerPwd,
                     settingKey: SettingKeys.vizualizerPwd.name,
                     obscureText: true,
                     validator: (String? password) {
@@ -317,6 +325,22 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     errorColor: Colors.deepOrangeAccent,
                   ),
                 ]),
+            ExpandableSettingsTile(
+              title: "Mini Website",
+              children: [
+                SwitchSettingsTile(
+                  defaultValue: settingsService.webServer,
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.webServer.name,
+                  title: 'Enable Mini Website with port 8888',
+                  subtitle:
+                      "Check your router for IP adress of your tablet. Open browser under http://$ownIpAdress:8888",
+                  onChange: (value) {
+                    settingsService.notifyDelayed();
+                  },
+                ),
+              ],
+            ),
           ],
         ),
         SettingsGroup(
@@ -370,7 +394,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   title:
                       'Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.',
                   onChange: (value) {
-                    ShowSnackbar(context);
+                    showSnackbar(context);
                   },
                 ),
               ],
@@ -381,7 +405,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     );
   }
 
-  void ShowSnackbar(BuildContext context) {
+  void showSnackbar(BuildContext context) {
     var snackBar = SnackBar(
         duration: const Duration(seconds: 5),
         content: const Text('You changed critical settings. You need to restart the app to make the settings active.'),

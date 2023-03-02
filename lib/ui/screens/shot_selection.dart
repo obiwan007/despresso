@@ -14,6 +14,7 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
+import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShotSelectionTab extends StatefulWidget {
@@ -62,9 +63,10 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
         actions: [
           Builder(
             builder: (BuildContext context) {
-              return ElevatedButton(
+              return TextButton.icon(
                 onPressed: () => _onShare(context),
-                child: const Icon(Icons.ios_share),
+                icon: const Icon(Icons.ios_share),
+                label: const Text("CSV"),
               );
             },
           ),
@@ -191,10 +193,14 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
 
   Dismissible Function(BuildContext, int) _shotListBuilder(List<Shot> shots) =>
       (BuildContext context, int index) => Dismissible(
-            key: Key('list_item_$index'),
+            key: UniqueKey(),
             direction: DismissDirection.startToEnd,
             onDismissed: (_) {
-              setState(() {});
+              setState(() {
+                var id = shots[index].id;
+                selectedShots.removeWhere((element) => element == id);
+                shotBox.remove(id);
+              });
             },
             background: Container(
               color: Colors.red,
@@ -211,15 +217,9 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
             child: Card(
               margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               child: ListTile(
-                key: Key('list_item_$index'),
+                key: Key('list_item_${shots[index].id}'),
                 title: Text(
                   shots[index].profileId,
-                  // style: const TextStyle(
-                  //   fontSize: 15.0,
-                  // ),
-
-                  // Provide a Key for the integration test
-                  key: Key('list_item_$index'),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,8 +228,24 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                     Text(
                       '${shots[index].coffee.target?.name ?? 'no coffee'} (${shots[index].coffee.target?.roaster.target?.name ?? 'no roaster'})',
                     ),
-                    Text(
-                      '${shots[index].pourWeight.toStringAsFixed(1)}g in ${shots[index].pourTime.toStringAsFixed(1)}s ',
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${shots[index].pourWeight.toStringAsFixed(1)}g in ${shots[index].pourTime.toStringAsFixed(1)}s ',
+                        ),
+                        if (shots[index].enjoyment > 0)
+                          RatingBarIndicator(
+                            rating: shots[index].enjoyment,
+                            itemBuilder: (context, index) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            itemCount: 5,
+                            itemSize: 20.0,
+                            direction: Axis.horizontal,
+                          ),
+                      ],
                     ),
                   ],
                 ),

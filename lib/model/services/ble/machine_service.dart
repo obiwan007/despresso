@@ -221,41 +221,44 @@ class EspressoMachineService extends ChangeNotifier {
 
   handleBattery() async {
 // Access current battery level
-    var state = await _battery.batteryLevel;
-    log.fine("Battery: $state");
+    // var state = await _battery.batteryLevel;
+    // log.fine("Battery: $state");
 
 // Be informed when the state (full, charging, discharging) changes
     _battery.onBatteryStateChanged.listen((BatteryState state) async {
       // Do something with new state
-      final batteryLevel = await _battery.batteryLevel;
-      log.info("Battery: changed: $state $batteryLevel");
-      //_controllerBattery.add(batteryLevel);
-      if (de1 == null) {
-        log.severe("Battery: DE1 not connected yet");
-        _controllerBattery.add(batteryLevel);
-        return;
-      }
-      if (settingsService.smartCharging) {
-        if (batteryLevel < 60) {
-          log.info("Battery: below 60");
-          de1!.setUsbChargerMode(1);
-        } else if (batteryLevel > 70) {
-          log.info("Battery: above 70");
-          de1!.setUsbChargerMode(0);
-        } else {
-          de1!.setUsbChargerMode(de1!.usbChargerMode);
-        }
+      try {
+        final batteryLevel = await _battery.batteryLevel;
+        log.info("Battery: changed: $state $batteryLevel");
 
-        Future.delayed(
-          const Duration(seconds: 1),
-          () {
-            _controllerBattery.add(batteryLevel);
-          },
-        );
-      } else {
-        log.info("Battery: SmartCharging off");
-        _controllerBattery.add(batteryLevel);
-      }
+        //_controllerBattery.add(batteryLevel);
+        if (de1 == null) {
+          log.severe("Battery: DE1 not connected yet");
+          _controllerBattery.add(batteryLevel);
+          return;
+        }
+        if (settingsService.smartCharging) {
+          if (batteryLevel < 60) {
+            log.info("Battery: below 60");
+            de1!.setUsbChargerMode(1);
+          } else if (batteryLevel > 70) {
+            log.info("Battery: above 70");
+            de1!.setUsbChargerMode(0);
+          } else {
+            de1!.setUsbChargerMode(de1!.usbChargerMode);
+          }
+
+          Future.delayed(
+            const Duration(seconds: 1),
+            () {
+              _controllerBattery.add(batteryLevel);
+            },
+          );
+        } else {
+          log.info("Battery: SmartCharging off");
+          _controllerBattery.add(batteryLevel);
+        }
+      } catch (e) {}
     });
   }
 
@@ -362,7 +365,9 @@ class EspressoMachineService extends ChangeNotifier {
     for (var fr in profile.shotFrames) {
       try {
         log.fine("Write Frame: $fr");
-        await de1!.writeWithResult(Endpoint.frameWrite, fr.bytes);
+        fr.temp += settingsService.targetTempCorrection;
+        var bytes = De1ShotFrameClass.encodeDe1ShotFrame(fr);
+        await de1!.writeWithResult(Endpoint.frameWrite, bytes);
       } catch (ex) {
         return "Error writing shot frame $fr";
       }
@@ -494,10 +499,12 @@ class EspressoMachineService extends ChangeNotifier {
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
           if (scaleService.state == ScaleState.connected) {
-            if (profileService.currentProfile!.shotHeader.targetWeight > 1 &&
-                shot.weight + 1 > profileService.currentProfile!.shotHeader.targetWeight) {
-              log.info(
-                  "Shot Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
+            var weight = settingsService.targetEspressoWeight;
+            if (weight < 1) {
+              weight = profileService.currentProfile!.shotHeader.targetWeight;
+            }
+            if (weight > 1 && shot.weight + 1 > weight) {
+              log.info("Shot Weight reached ${shot.weight} > $weight");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();
@@ -579,13 +586,18 @@ class EspressoMachineService extends ChangeNotifier {
     log.info("Save last shot");
     try {
       currentShot = Shot();
-      currentShot.coffee.targetId = coffeeService.selectedCoffee;
+      currentShot.coffee.targetId = coffeeService.selectedCoffeeId;
+      currentShot.recipe.targetId = coffeeService.selectedRecipeId;
 
       currentShot.shotstates.addAll(shotList.entries);
 
       currentShot.pourTime = lastPourTime;
       currentShot.profileId = profileService.currentProfile?.id ?? "";
       currentShot.pourWeight = shotList.entries.last.weight;
+      currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
+      currentShot.targetTempCorrection = settingsService.targetTempCorrection;
+      currentShot.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
+      currentShot.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
 
       var id = coffeeService.shotBox.put(currentShot);
 

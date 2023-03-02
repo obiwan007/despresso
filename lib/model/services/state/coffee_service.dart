@@ -12,9 +12,11 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:objectbox/internal.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
@@ -33,10 +35,10 @@ class CoffeeService extends ChangeNotifier {
   late Box<Recipe> recipeBox;
   late Box<Shot> shotBox;
 
-  int selectedRoaster = 0;
-  int selectedCoffee = 0;
-  int selectedShot = 0;
-  int selectedRecipe = 0;
+  int selectedRoasterId = 0;
+  int selectedCoffeeId = 0;
+  int selectedShotId = 0;
+  int selectedRecipeId = 0;
 
   late StreamController<List<Recipe>> _controllerRecipe;
   late Stream<List<Recipe>> _streamRecipe;
@@ -65,10 +67,13 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Shot? getLastShot() {
-    var allshots = shotBox.getAll();
-    log.info("Number of stored shots: ${allshots.length}");
-    if (selectedShot > 0) {
-      return shotBox.get(selectedShot);
+    final builder = shotBox.query().order(Shot_.id, flags: Order.descending).build();
+    var found = builder.findFirst();
+    // var allshots = shotBox.getAll();
+    selectedShotId = found?.id ?? 0;
+    // log.info("Number of stored shots: ${allshots.length}");
+    if (selectedShotId > 0) {
+      return found;
     } else {
       return Shot();
     }
@@ -98,14 +103,14 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Future load() async {
-    selectedRoaster = settings.selectedRoaster;
+    selectedRoasterId = settings.selectedRoaster;
 
-    selectedCoffee = settings.selectedCoffee;
-    selectedRecipe = settings.selectedRecipe;
+    selectedCoffeeId = settings.selectedCoffee;
+    selectedRecipeId = settings.selectedRecipe;
 
-    selectedShot = settings.selectedShot;
+    selectedShotId = settings.selectedShot;
 
-    log.info("lastshot $selectedShot");
+    log.info("lastshot $selectedShotId");
 
     Future.delayed(
       const Duration(milliseconds: 199),
@@ -114,102 +119,23 @@ class CoffeeService extends ChangeNotifier {
           log.info("No roasters available. Creating a default one.");
           var r = Roaster();
           r.name = "Default Rouaster";
-          selectedRoaster = roasterBox.put(r);
-          settings.selectedRoaster = selectedRoaster;
+          selectedRoasterId = roasterBox.put(r);
+          settings.selectedRoaster = selectedRoasterId;
         }
 
         if (coffeeBox.count() == 0) {
           log.info("No roasters available. Creating a default one.");
           var r = Coffee();
-          r.roaster.targetId = selectedRoaster;
+          r.roaster.targetId = selectedRoasterId;
           r.name = "Default Beans";
-          selectedCoffee = coffeeBox.put(r);
-          settings.selectedCoffee = selectedCoffee;
+          selectedCoffeeId = coffeeBox.put(r);
+          settings.selectedCoffee = selectedCoffeeId;
         }
       },
     );
-
-    // try {
-    //   log.info("Loading coffees");
-    //   final directory = await getApplicationDocumentsDirectory();
-    //   log.info("Storing to path:${directory.path}");
-    //   var file = File('${directory.path}/db/coffee.json');
-    //   if (await file.exists()) {
-    //     var json = file.readAsStringSync();
-    //     log.info("Loaded: ${json}");
-    //     List<dynamic> l = jsonDecode(json);
-    //     var data = l.map((value) => Coffee.fromJson(value));
-    //     //knownCoffees = data;
-    //     this.knownCoffees = data.toList();
-    //     log.info("Loaded Coffee entries: ${data.length}");
-    //   } else {
-    //     log.info("File not existing");
-    //   }
-
-    //   var file2 = File('${directory.path}/db/roasters.json');
-    //   if (await file2.exists()) {
-    //     var json = file2.readAsStringSync();
-    //     log.info("Loaded: ${json}");
-    //     List<dynamic> l = jsonDecode(json);
-    //     var data = l.map((value) => Roaster.fromJson(value));
-    //     //knownCoffees = data;
-    //     this.knownRoasters = data.toList();
-    //     log.info("Loaded Roasters: ${data.length}");
-    //   } else {
-    //     log.info("Roasters File not existing");
-    //   }
-    // } catch (ex) {
-    //   log.info("loading error");
-    // }
-
-    // var id = prefs.getString("selectedRoaster");
-    // if (id != null) {
-    //   selectedRoaster = knownRoasters.firstWhere((element) => element.id == id);
-    // } else {
-    //   selectedRoaster = knownRoasters.isNotEmpty ? knownRoasters.first : null;
-    // }
-
-    // id = prefs.getString("selectedCoffee");
-    // if (id != null) {
-    //   selectedCoffee = knownCoffees.firstWhere((element) => element.id == id);
-    // } else {
-    //   selectedCoffee = knownCoffees.isNotEmpty ? knownCoffees.first : null;
-    // }
   }
 
-  save() async {
-    // try {
-    //   log.info("Storing coffee");
-
-    //   final directory = await getApplicationDocumentsDirectory();
-    //   log.info("Storing to path:${directory.path}");
-
-    //   final Directory _appDocDirFolder = Directory('${directory.path}/db/');
-
-    //   if (!_appDocDirFolder.existsSync()) {
-    //     await _appDocDirFolder.create(recursive: true);
-    //     log.info("Directory created");
-    //   }
-
-    //   var file = File('${directory.path}/db/coffee.json');
-    //   if (await file.exists()) {
-    //     file.deleteSync();
-    //   } else {}
-    //   var encoded = jsonEncode(knownCoffees);
-    //   log.info("Coffee: $encoded");
-    //   file.writeAsStringSync(encoded);
-
-    //   file = File('${directory.path}/db/roasters.json');
-    //   if (await file.exists()) {
-    //     file.deleteSync();
-    //   } else {}
-    //   encoded = jsonEncode(knownRoasters);
-    //   log.info("Roasters: $encoded");
-    //   file.writeAsStringSync(encoded);
-    // } catch (ex) {
-    //   log.info("save error $ex");
-    // }
-  }
+  save() async {}
 
   Future<void> setSelectedRoaster(int id) async {
     if (id == 0) return;
@@ -217,7 +143,7 @@ class CoffeeService extends ChangeNotifier {
     log.info('Roaster Saving');
     settings.selectedRoaster = id;
     log.info('Roaster Set $id');
-    selectedRoaster = id;
+    selectedRoasterId = id;
     log.info('Roaster Saved');
     notifyListeners();
   }
@@ -225,7 +151,7 @@ class CoffeeService extends ChangeNotifier {
   Future<void> setSelectedRecipe(int id) async {
     if (id == 0) return;
 
-    selectedRecipe = id;
+    selectedRecipeId = id;
     settings.selectedRecipe = id;
     var recipe = recipeBox.get(id);
 
@@ -233,9 +159,12 @@ class CoffeeService extends ChangeNotifier {
 
     var profileService = getIt<ProfileService>();
     var machineService = getIt<EspressoMachineService>();
+    settings.targetEspressoWeight = recipe.adjustedWeight;
+    settings.targetTempCorrection = recipe.adjustedTemp;
 
     profileService.setProfileFromId(recipe.profileId);
     machineService.uploadProfile(profileService.currentProfile!);
+    settings.notifyListeners;
     notifyListeners();
   }
 
@@ -243,20 +172,36 @@ class CoffeeService extends ChangeNotifier {
     if (id == 0) return;
 
     settings.selectedCoffee = id;
-    selectedCoffee = id;
+    selectedCoffeeId = id;
 
-    // notifyListeners();
+    notifyListeners();
     log.info('Coffee Saved');
   }
 
   setLastShotId(int id) async {
-    selectedShot = id;
+    selectedShotId = id;
     settings.selectedShot = id;
   }
 
   Coffee? get currentCoffee {
-    if (selectedCoffee > 0) {
-      return coffeeBox.get(selectedCoffee);
+    if (selectedCoffeeId > 0) {
+      return coffeeBox.get(selectedCoffeeId);
+    }
+    return null;
+// code to return members
+  }
+
+  Recipe? get currentRecipe {
+    if (selectedRecipeId > 0) {
+      return recipeBox.get(selectedRecipeId);
+    }
+    return null;
+// code to return members
+  }
+
+  Shot? get currentShot {
+    if (selectedShotId > 0) {
+      return shotBox.get(selectedShotId);
     }
     return null;
 // code to return members
@@ -267,13 +212,39 @@ class CoffeeService extends ChangeNotifier {
     recipe.name = name;
     recipe.coffee.targetId = coffeeId;
     recipe.profileId = profileId;
-    recipeBox.put(recipe);
+    recipe.adjustedWeight = settings.targetEspressoWeight;
+    var id = recipeBox.put(recipe);
+
+    settings.selectedRecipe = id;
+    selectedRecipeId = id;
+    settings.notifyListeners();
     notifyListeners();
     _controllerRecipe.add(getRecipes());
   }
 
   List<Recipe> getRecipes() {
     return recipeBox.getAll();
+  }
+
+  Recipe? getRecipe(int id) {
+    return recipeBox.get(id);
+  }
+
+  Shot? getShot(int id) {
+    return shotBox.get(id);
+  }
+
+  void updateShot(Shot shot) {
+    shotBox.put(shot);
+    notifyListeners();
+  }
+
+  void updateRecipe(Recipe recipe) {
+    recipeBox.put(recipe);
+    settings.targetEspressoWeight = recipe.adjustedWeight;
+    settings.targetTempCorrection = recipe.adjustedTemp;
+    notifyListeners();
+    _controllerRecipe.add(getRecipes());
   }
 
   void removeRecipe(int id) {
@@ -289,5 +260,23 @@ class CoffeeService extends ChangeNotifier {
     Uint8List data = f.readAsBytesSync();
     log.info("Data read ${data.length}");
     return data;
+  }
+
+  void setSelectedRecipeProfile(String profileId) {
+    var res = currentRecipe;
+    if (res != null) {
+      res.profileId = profileId;
+      updateRecipe(res);
+      notifyListeners();
+    }
+  }
+
+  void setSelectedRecipeCoffee(int coffeeId) {
+    var res = currentRecipe;
+    if (res != null) {
+      res.coffee.targetId = coffeeId;
+      updateRecipe(res);
+      notifyListeners();
+    }
   }
 }

@@ -15,14 +15,9 @@ import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
-class CoffeeSelection {
-  Widget getTabContent() {
-    return const CoffeeSelectionTab();
-  }
-}
-
 class CoffeeSelectionTab extends StatefulWidget {
-  const CoffeeSelectionTab({super.key});
+  bool saveToRecipe = false;
+  CoffeeSelectionTab({super.key, required this.saveToRecipe});
 
   @override
   CoffeeSelectionTabState createState() => CoffeeSelectionTabState();
@@ -69,6 +64,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   @override
   void dispose() {
     super.dispose();
+    if (widget.saveToRecipe) coffeeService.setSelectedRecipeCoffee(_selectedCoffeeId);
     coffeeService.removeListener(updateCoffee);
     log.info('Disposed coffeeselection');
   }
@@ -350,8 +346,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   void updateCoffee() {
     setState(
       () {
-        _selectedCoffeeId = coffeeService.selectedCoffee;
-        _selectedRoasterId = coffeeService.selectedRoaster;
+        _selectedCoffeeId = coffeeService.selectedCoffeeId;
+        _selectedRoasterId = coffeeService.selectedRoasterId;
         roasters = loadRoasters();
         coffees = loadCoffees();
         log.info("Loaded ROasters $roasters");

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/logger_util.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/shotstate.dart';
@@ -26,10 +27,14 @@ enum FilterModes {
   Default,
   Hidden,
   Favorites,
+  Flow,
+  Pressure,
+  Advanced,
 }
 
 class ProfilesScreen extends StatefulWidget {
-  const ProfilesScreen({Key? key}) : super(key: key);
+  bool saveToRecipe = false;
+  ProfilesScreen({Key? key, required this.saveToRecipe}) : super(key: key);
 
   @override
   ProfilesScreenState createState() => ProfilesScreenState();
@@ -39,15 +44,21 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   final log = Logger('ProfilesScreenState');
 
   late ProfileService profileService;
-
   late EspressoMachineService machineService;
   late TextEditingController shortCodeController;
+  late CoffeeService coffeeService;
 
   De1ShotProfile? _selectedProfile;
   FilePickerResult? filePickerResult;
   File? pickedFile;
 
-  List<String> filterOptions = [FilterModes.Default.name, FilterModes.Hidden.name];
+  List<String> filterOptions = [
+    FilterModes.Default.name,
+    FilterModes.Hidden.name,
+    FilterModes.Flow.name,
+    FilterModes.Pressure.name,
+    FilterModes.Advanced.name,
+  ];
 
   List<String> selectedFilter = [
     FilterModes.Default.name,
@@ -58,6 +69,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     super.initState();
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
+    coffeeService = getIt<CoffeeService>();
     shortCodeController = TextEditingController();
 
     profileService.addListener(profileListener);
@@ -69,6 +81,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   void dispose() {
     super.dispose();
 
+    if (widget.saveToRecipe) coffeeService.setSelectedRecipeProfile(_selectedProfile!.id);
+
     machineService.removeListener(profileListener);
     log.info('Disposed profile');
   }
@@ -77,13 +91,26 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   Widget build(BuildContext context) {
     var showHidden = selectedFilter.contains(FilterModes.Hidden.name);
     var showDefault = selectedFilter.contains(FilterModes.Default.name);
+    var showFlow = selectedFilter.contains(FilterModes.Flow.name);
+    var showPressure = selectedFilter.contains(FilterModes.Pressure.name);
+    var showAdvanced = selectedFilter.contains(FilterModes.Advanced.name);
 
     var items = profileService.profiles
         .where(
           (element) {
-            if (showDefault) return element.shotHeader.hidden == 0;
-            if (showHidden) return element.shotHeader.hidden == 1;
-            return true;
+            bool res1 = false;
+            bool res2 = false;
+            bool res3 = false;
+            bool res4 = false;
+            bool res5 = false;
+
+            if (showDefault) res1 = element.shotHeader.hidden == 0;
+            if (showHidden) res2 = element.shotHeader.hidden == 1;
+            if (showFlow) res3 = element.shotHeader.type == 'flow';
+            if (showPressure) res4 = element.shotHeader.type == 'pressure';
+            if (showAdvanced) res5 = element.shotHeader.type == 'advanced';
+
+            return res1 || res2 || (res3 || res4 || res5);
           },
         )
         .map((p) => DropdownMenuItem(
@@ -99,7 +126,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             return element.value!.id == _selectedProfile!.id;
           },
         )) {
-      _selectedProfile = items[0].value;
+      if (items.length > 0) _selectedProfile = items[0].value;
     }
     return Scaffold(
       appBar: AppBar(
@@ -155,20 +182,22 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: DropdownButton(
-                              isExpanded: true,
-                              alignment: Alignment.centerLeft,
-                              value: _selectedProfile,
-                              items: items,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedProfile = value!;
-                                  profileService.setProfile(_selectedProfile!);
-                                  // calcProfileGraph();
-                                  // phases = _createPhases();
-                                });
-                              },
-                              hint: const Text("Select item")),
+                          child: items.isNotEmpty
+                              ? DropdownButton(
+                                  isExpanded: true,
+                                  alignment: Alignment.centerLeft,
+                                  value: _selectedProfile,
+                                  items: items,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedProfile = value!;
+                                      profileService.setProfile(_selectedProfile!);
+                                      // calcProfileGraph();
+                                      // phases = _createPhases();
+                                    });
+                                  },
+                                  hint: const Text("Select item"))
+                              : Text("No profiles found for selection"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -176,96 +205,99 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                         ),
                       ],
                     ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
-                                KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
-                                KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
-                                KeyValueWidget(
-                                    label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
-                                KeyValueWidget(
-                                    label: "Max Pressure",
-                                    value: _selectedProfile!.shotHeader.minimumPressure.toString()),
-                                KeyValueWidget(
-                                    label: "Target Volume",
-                                    value: _selectedProfile!.shotHeader.targetVolume.toString()),
-                                KeyValueWidget(
-                                    label: "Target Weight",
-                                    value: _selectedProfile!.shotHeader.targetWeight.toString()),
-                              ],
-                            )),
+                    if (items.isNotEmpty)
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
+                                  KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
+                                  KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
+                                  KeyValueWidget(
+                                      label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
+                                  KeyValueWidget(
+                                      label: "Max Pressure",
+                                      value: _selectedProfile!.shotHeader.minimumPressure.toString()),
+                                  KeyValueWidget(
+                                      label: "Target Volume",
+                                      value: _selectedProfile!.shotHeader.targetVolume.toString()),
+                                  KeyValueWidget(
+                                      label: "Target Weight",
+                                      value: _selectedProfile!.shotHeader.targetWeight.toString()),
+                                ],
+                              )),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
             Expanded(
               flex: 6, // takes 30% of available width
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!),
-                  ),
-                  Expanded(
-                    flex: 6,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+              child: !items.isNotEmpty
+                  ? Container()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!),
+                        ),
+                        Expanded(
+                          flex: 6,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                ...createSteps(),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                ElevatedButton.icon(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () async {
-                                    var messenger = ScaffoldMessenger.of(context);
-                                    var result = await machineService.uploadProfile(_selectedProfile!);
-
-                                    var snackBar = SnackBar(
-                                        content: Text('Profile is selected: $result'),
-                                        action: SnackBarAction(
-                                          label: 'Ok',
-                                          onPressed: () {
-                                            // Some code to undo the change.
-                                          },
-                                        ));
-
-                                    messenger.showSnackBar(snackBar);
-                                  },
-                                  label: const Text(
-                                    "Save to Decent",
+                                Expanded(
+                                  flex: 4,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ...createSteps(),
+                                    ],
                                   ),
-                                )
+                                ),
+                                Expanded(
+                                  flex: 4,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () async {
+                                          var messenger = ScaffoldMessenger.of(context);
+                                          var result = await machineService.uploadProfile(_selectedProfile!);
+
+                                          var snackBar = SnackBar(
+                                              content: Text('Profile is selected: $result'),
+                                              action: SnackBarAction(
+                                                label: 'Ok',
+                                                onPressed: () {
+                                                  // Some code to undo the change.
+                                                },
+                                              ));
+
+                                          messenger.showSnackBar(snackBar);
+                                        },
+                                        label: const Text(
+                                          "Save to Decent",
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),

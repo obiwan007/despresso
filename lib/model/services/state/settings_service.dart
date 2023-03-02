@@ -47,6 +47,9 @@ enum SettingKeys {
   targetEspressoVol,
   targetFlushTime,
   targetGroupTemp,
+  targetEspressoWeight,
+  webServer,
+  targetTempCorrection,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -79,8 +82,8 @@ class SettingsService extends ChangeNotifier {
   bool get shotAutoTare => Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
 
   bool get vizualizerUpload => Settings.getValue(SettingKeys.vizualizerUpload.name) ?? false;
-  String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name);
-  String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name);
+  String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name) ?? "";
+  String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name) ?? "";
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 30;
@@ -145,11 +148,22 @@ class SettingsService extends ChangeNotifier {
   int get targetEspressoVol => Settings.getValue<int>(SettingKeys.targetEspressoVol.name) ?? 35;
   set targetEspressoVol(value) => Settings.setValue<int>(SettingKeys.targetEspressoVol.name, value);
 
+  double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 35;
+  set targetEspressoWeight(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
+
   int get targetFlushTime => Settings.getValue<int>(SettingKeys.targetFlushTime.name) ?? 3;
   set targetFlushTime(value) => Settings.setValue<int>(SettingKeys.targetFlushTime.name, value);
 
   int get targetGroupTemp => Settings.getValue<int>(SettingKeys.targetGroupTemp.name) ?? 98;
   set targetGroupTemp(value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
+
+
+  bool get webServer => Settings.getValue<bool>(SettingKeys.webServer.name) ?? true;
+  set webServer(value) => Settings.setValue<bool>(SettingKeys.webServer.name, value);
+
+  double get targetTempCorrection => Settings.getValue<double>(SettingKeys.targetTempCorrection.name) ?? 0;
+  set targetTempCorrection(value) => Settings.setValue<double>(SettingKeys.targetTempCorrection.name, value);
+
 
   void notifyDelayed() {
     Future.delayed(
