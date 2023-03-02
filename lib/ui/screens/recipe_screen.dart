@@ -185,6 +185,13 @@ class RecipeScreenState extends State<RecipeScreen> {
         setState(() {});
       },
       child: ListTile(
+        trailing: IconButton(
+          icon: data.isFavorite ? const Icon(color: Colors.yellow, Icons.star) : const Icon(Icons.star_border_outlined),
+          tooltip: 'Favorite',
+          onPressed: () {
+            coffeeService.recipeFavoriteToggle(data);
+          },
+        ),
         title: Text(
           data.name,
         ),
