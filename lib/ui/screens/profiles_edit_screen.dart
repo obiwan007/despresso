@@ -137,7 +137,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                 child: ProfileGraphWidget(selectedProfile: _profile),
               ),
             ),
-            if (_profile.shotHeader.type != "advanced") SizedBox(height: 155, child: createTabBar()),
+            if (_profile.shotHeader.type != "advanced") SizedBox(height: 195, child: createTabBar()),
             if (_profile.shotHeader.type != "advanced")
               Expanded(
                 child: IntrinsicHeight(
@@ -148,6 +148,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                       ...handleChanges(riseAndHold!),
                       ...handleChanges(decline!),
                       changeValue(
+                          unit: "ml",
                           title: "Max. Volume",
                           min: 0,
                           max: 100,
@@ -157,6 +158,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                         log.info("Changed");
                       }),
                       changeValue(
+                          unit: "g",
                           title: "Max. Weight",
                           min: 0,
                           max: 100,
@@ -239,6 +241,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
         ),
         TabBar(
           controller: _tabController,
+
           // indicator: BoxDecoration(color: _tabController.index < 4 ? Colors.red : Colors.green),
           // indicator:
           //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
@@ -247,28 +250,38 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
             ...createTabs(riseAndHold, color: phaseColors[1]),
             ...createTabs(decline, color: phaseColors[2]),
             Tab(
-              height: 75,
+              height: 85,
               child: Column(
                 children: [
                   SizedBox(
-                    height: 45,
+                    height: 30,
                     child: Text("Vol",
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
                   ),
-                  Text("${_profile.shotHeader.targetVolume}ml"),
+                  Text("${_profile.shotHeader.targetVolume}",
+                      style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
+                  Text(
+                    "ml",
+                    style: TextStyle(color: phaseColors[3]),
+                  ),
                 ],
               ),
             ),
             Tab(
-              height: 75,
+              height: 85,
               child: Column(
                 children: [
                   SizedBox(
-                    height: 40,
+                    height: 30,
                     child: Text("Weight",
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
                   ),
-                  Text("${_profile.shotHeader.targetWeight} g"),
+                  Text("${_profile.shotHeader.targetWeight}",
+                      style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
+                  Text(
+                    "g",
+                    style: TextStyle(color: phaseColors[3]),
+                  ),
                 ],
               ),
             ),
@@ -280,76 +293,90 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
   }
 
   createTabs(De1ShotFrameClass? frame, {required MaterialColor color}) {
+    var h = 30.0;
+    var hTab = 85.0;
+    var fontsize = 20.0;
+    var style1 = TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: fontsize);
+    var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
+    var style3 = TextStyle(color: color);
     return [
       Tab(
-        height: 75,
+        height: hTab,
         child: Column(
           children: [
             SizedBox(
-              height: 45,
+              height: h,
               child: FittedBox(
                 child: Text(
                   "Time",
-                  style: TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: 20),
+                  style: style1,
                 ),
               ),
             ),
-            Text("${(frame?.frameLen.round() ?? 0)} s"),
+            Text(
+              "${(frame?.frameLen.round() ?? 0)}",
+              style: style1,
+            ),
+            Text(
+              "sec",
+              style: style3,
+            ),
           ],
         ),
       ),
       Tab(
-        height: 75,
+        height: hTab,
         child: Column(
           children: [
             SizedBox(
-              height: 45,
+              height: h,
               child: FittedBox(
                 child: Text(
                   "Pres.",
-                  style: (frame!.pump == "pressure")
-                      ? TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: 20)
-                      : null,
+                  style: (frame!.pump == "pressure") ? style1 : style2,
                 ),
               ),
             ),
-            Text("${(frame!.pump == "pressure" ? frame!.setVal : frame!.triggerVal)} bar"),
+            Text("${(frame.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
+                style: (frame!.pump == "pressure") ? style1 : style2),
+            Text("bar", style: (frame!.pump == "pressure") ? style3 : null),
           ],
         ),
       ),
       Tab(
-        height: 75,
+        height: hTab,
         child: Column(
           children: [
             SizedBox(
-              height: 45,
+              height: h,
               child: FittedBox(
                 child: Text(
                   "Flow",
-                  style: (frame!.pump == "flow")
-                      ? TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: 20)
-                      : null,
+                  style: (frame.pump == "flow") ? style1 : style2,
                 ),
               ),
             ),
-            Text("${(frame!.pump == "flow" ? frame.setVal : frame.triggerVal)}"),
+            Text("${(frame.pump == "flow" ? frame.setVal : frame.triggerVal)}",
+                style: (frame!.pump == "flow") ? style1 : style2),
+            Text("ml/s", style: (frame!.pump == "flow") ? style3 : null),
           ],
         ),
       ),
       Tab(
-        height: 75,
+        height: hTab,
         child: Column(
           children: [
             SizedBox(
-              height: 45,
+              height: h,
               child: FittedBox(
                 child: Text(
                   "Temp",
-                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 20),
+                  style: style2,
                 ),
               ),
             ),
-            Text("${(frame.temp.round())} °C"),
+            Text("${(frame.temp.round())}", style: style2),
+            Text("°C"),
           ],
         ),
       ),
@@ -672,11 +699,12 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
 
   handleChanges(De1ShotFrameClass frame) {
     return [
-      changeValue(title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
+      changeValue(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
         setState(() => frame.frameLen = value);
         log.info("Changed");
       }),
       changeValue(
+          unit: "bar",
           title: "Pressure",
           min: 0,
           max: 16,
@@ -693,6 +721,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
         log.info("Changed");
       }),
       changeValue(
+          unit: "ml/s",
           title: "Flow",
           min: 0,
           max: 16,
@@ -708,7 +737,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
         setState(() {});
         log.info("Changed");
       }),
-      changeValue(title: "Temperature", min: 80, max: 100, interval: 1, frame, frame.temp, (value) {
+      changeValue(unit: "°C", title: "Temperature", min: 80, max: 100, interval: 1, frame, frame.temp, (value) {
         frame.temp = (value * 10).round() / 10;
 
         setState(() {});
@@ -718,7 +747,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
   }
 
   changeValue(De1ShotFrameClass frame, double value, Function(double value) valueChanged,
-      {required double max, required double min, double? interval, String? title}) {
+      {required String unit, required double max, required double min, double? interval, String? title}) {
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -739,14 +768,14 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                   value: value,
                   decimals: 1,
                   step: 0.5,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                    suffix: Text('g'),
+                    contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                    suffix: Text(unit),
                   ),
                 ),
               ),
