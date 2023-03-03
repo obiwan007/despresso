@@ -76,11 +76,11 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
           ),
           TextButton.icon(
             icon: const Icon(Icons.cloud_upload),
-            label: Text("Visualizer"),
+            label: const Text("Visualizer"),
             onPressed: () async {
               if (selectedShots.isEmpty) {
                 var snackBar = SnackBar(
-                    content: Text("No shots to upload selected"),
+                    content: const Text("No shots to upload selected"),
                     action: SnackBarAction(
                       label: 'Ok',
                       onPressed: () {
@@ -107,7 +107,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               } catch (e) {
                 var snackBar = SnackBar(
-                    backgroundColor: Color.fromARGB(255, 250, 141, 141),
+                    backgroundColor: const Color.fromARGB(255, 250, 141, 141),
                     content: Text("Error uploading shots: $e"),
                     action: SnackBarAction(
                       label: 'Ok',

@@ -150,7 +150,7 @@ class VisualizerService extends ChangeNotifier {
     buffer.writeln("grinder_dose_weight {${shot.doseWeight}}");
 
     buffer.writeln("profile_title ${prof!.title}");
-    buffer.writeln("profile_notes  {${prof!.shotHeader.notes}}");
+    buffer.writeln("profile_notes  {${prof.shotHeader.notes}}");
 
     buffer.writeln("roast_level {${shot.coffee.target?.roastLevel ?? 0}}");
     buffer.writeln("running_weight {${shot.pourWeight}}");
