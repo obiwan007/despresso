@@ -251,7 +251,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
             ...createTabs(riseAndHold, color: phaseColors[1]),
             ...createTabs(decline, color: phaseColors[2]),
             Tab(
-              height: 85,
+              height: 95,
               child: Column(
                 children: [
                   SizedBox(
@@ -269,7 +269,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Tab(
-              height: 85,
+              height: 95,
               child: Column(
                 children: [
                   SizedBox(
@@ -295,7 +295,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
 
   createTabs(De1ShotFrameClass? frame, {required MaterialColor color}) {
     var h = 30.0;
-    var hTab = 85.0;
+    var hTab = 95.0;
     var fontsize = 20.0;
     var style1 = TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: fontsize);
     var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
