@@ -22,7 +22,7 @@ class ObjectBox {
   }
 
   getBackupData() {
-    String file = store.directoryPath + "/data.mdb";
+    String file = "${store.directoryPath}/data.mdb";
     var f = File(file);
 
     Uint8List data = f.readAsBytesSync();
@@ -30,7 +30,7 @@ class ObjectBox {
   }
 
   restoreBackupData(String fileSrc) async {
-    String fileDestination = store.directoryPath + "/data.mdb";
+    String fileDestination = "${store.directoryPath}/data.mdb";
     store.close();
     var f = File(fileSrc);
 

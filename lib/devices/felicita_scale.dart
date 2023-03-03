@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:collection/collection.dart';
-import 'package:logging/logging.dart';
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -35,8 +34,6 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
   static const int cmdToggleUnit = 0x55;
 
   final DiscoveredDevice device;
-
-  late DeviceConnectionState _state;
 
   List<int> commandBuffer = [];
   final flutterReactiveBle = FlutterReactiveBle();
@@ -90,7 +87,6 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
 
   void _onStateChange(DeviceConnectionState state) async {
     log.info('SCALE State changed to $state');
-    _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:

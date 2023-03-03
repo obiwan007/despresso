@@ -12,17 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
-import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
-class CoffeeSelection {
-  Widget getTabContent() {
-    return const CoffeeSelectionTab();
-  }
-}
-
 class CoffeeSelectionTab extends StatefulWidget {
-  const CoffeeSelectionTab({super.key});
+  bool saveToRecipe = false;
+  CoffeeSelectionTab({super.key, required this.saveToRecipe});
 
   @override
   CoffeeSelectionTabState createState() => CoffeeSelectionTabState();
@@ -69,6 +63,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   @override
   void dispose() {
     super.dispose();
+    if (widget.saveToRecipe) coffeeService.setSelectedRecipeCoffee(_selectedCoffeeId);
     coffeeService.removeListener(updateCoffee);
     log.info('Disposed coffeeselection');
   }
@@ -223,8 +218,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
               child: Text(
                 p.name,
                 style: (p.coffees.firstWhereOrNull((element) => element.id == _selectedCoffeeId) != null)
-                    ? TextStyle(color: Colors.amber)
-                    : TextStyle(color: Colors.white60),
+                    ? const TextStyle(color: Colors.amber)
+                    : const TextStyle(color: Colors.white60),
               ),
             ))
         .toList();
@@ -245,8 +240,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
               child: Text(
                 p.name,
                 style: (p.roaster.targetId == _selectedRoasterId)
-                    ? TextStyle(color: Colors.amber)
-                    : TextStyle(color: Colors.white60),
+                    ? const TextStyle(color: Colors.amber)
+                    : const TextStyle(color: Colors.white60),
               )),
         )
         .toList();

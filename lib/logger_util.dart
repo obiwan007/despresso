@@ -16,8 +16,10 @@ Future<void> initLogger() async {
   try {
     dir = await getDirectory();
     await dir?.create(recursive: true);
+    // ignore: avoid_print
     print("Store log to ${dir?.path}");
   } catch (ex) {
+    // ignore: avoid_print
     print("Error creating logfiles");
   }
   RotatingFileAppender(formatter: const DefaultLogRecordFormatter(), baseFilePath: "${dir!.path}/logs.txt")
@@ -34,7 +36,7 @@ Future<Directory?> getDirectory() async {
   if (Platform.isAndroid) {
     dir = Directory('/storage/emulated/0/Download/despresso');
     try {
-      await dir?.create(recursive: true);
+      await dir.create(recursive: true);
     } catch (e) {
       dir = await getExternalStorageDirectory();
     }
@@ -42,6 +44,7 @@ Future<Directory?> getDirectory() async {
     try {
       dir = await getExternalStorageDirectory();
     } on UnsupportedError catch (ex) {
+      // ignore: avoid_print
       print("Not possible to store to external $ex");
       dir = await getApplicationDocumentsDirectory();
     }

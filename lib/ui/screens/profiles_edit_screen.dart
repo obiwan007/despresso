@@ -1,13 +1,10 @@
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
-import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:flutter_spinbox/material.dart';
 import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../model/services/ble/machine_service.dart';
@@ -24,7 +21,7 @@ class ProfilesEditScreen extends StatefulWidget {
   }
 }
 
-class ProfilesEditScreenState extends State<ProfilesEditScreen> {
+class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTickerProviderStateMixin {
   final log = Logger('ProfilesEditScreenState');
 
   late ProfileService profileService;
@@ -40,17 +37,22 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
   De1ShotFrameClass? forcedRise;
 
+  late TabController _tabController;
+
+  List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.yellow];
+
   ProfilesEditScreenState(this._profile);
 
   @override
   void initState() {
     super.initState();
+
     log.info('Init State ${_profile.shotHeader.title}');
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
 
     profileService.addListener(profileListener);
-
+    // _tabController = TabController(length: 5, vsync: this, initialIndex: 1);
     for (var element in _profile.shotFrames) {
       log.info("Profile: $element");
     }
@@ -58,22 +60,34 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
     var declineObject = De1ShotFrameClass();
     declineObject.frameToWrite = _profile.shotFrames.length;
     declineObject.temp = _profile.shotFrames.first.temp;
+    try {
+      var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
+      preInfusion = pre.toList().first;
 
-    var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
-    preInfusion = pre.toList().first;
-
-    var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold"));
-    riseAndHold = riseW.isNotEmpty ? riseW.first : null;
-    var forcedRiseWhere = _profile.shotFrames.where((element) => (element.name == "forced rise without limit"));
-    forcedRise = forcedRiseWhere.isNotEmpty ? forcedRiseWhere.first : null;
-    var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
-    if (declineArray.isNotEmpty) {
-      decline = declineArray.first;
-    } else {
-      _profile.shotFrames.add(declineObject);
-      decline = declineObject;
+      var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold" || element.name == "hold"));
+      riseAndHold = riseW.isNotEmpty ? riseW.first : null;
+      var forcedRiseWhere = _profile.shotFrames.where((element) => (element.name == "forced rise without limit"));
+      forcedRise = forcedRiseWhere.isNotEmpty ? forcedRiseWhere.first : null;
+      var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
+      if (declineArray.isNotEmpty) {
+        decline = declineArray.first;
+      } else {
+        _profile.shotFrames.add(declineObject);
+        decline = declineObject;
+      }
+      log.info("Decline: $decline");
+    } catch (e) {
+      log.severe("Preparing edit failed: $e");
     }
-    log.info("Decline: $decline");
+
+    switch (_profile.shotHeader.type) {
+      case "pressure":
+      case "flow":
+        _tabController = TabController(length: 3 * 4 + 2, vsync: this, initialIndex: 0);
+        break;
+      default:
+        _tabController = TabController(length: 1, vsync: this, initialIndex: 0);
+    }
   }
 
   @override
@@ -124,93 +138,250 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                 child: ProfileGraphWidget(selectedProfile: _profile),
               ),
             ),
-            Container(
-              color: Colors.white10,
+            if (_profile.shotHeader.type != "advanced") SizedBox(height: 195, child: createTabBar()),
+            if (_profile.shotHeader.type != "advanced")
+              Expanded(
+                child: IntrinsicHeight(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      ...handleChanges(preInfusion!),
+                      ...handleChanges(riseAndHold!),
+                      ...handleChanges(decline!),
+                      changeValue(
+                          unit: "ml",
+                          title: "Max. Volume",
+                          min: 0,
+                          max: 100,
+                          De1ShotFrameClass(),
+                          _profile.shotHeader.targetVolume, (value) {
+                        setState(() => _profile.shotHeader.targetVolume = value);
+                        log.info("Changed");
+                      }),
+                      changeValue(
+                          unit: "g",
+                          title: "Max. Weight",
+                          min: 0,
+                          max: 100,
+                          De1ShotFrameClass(),
+                          _profile.shotHeader.targetWeight, (value) {
+                        setState(() => _profile.shotHeader.targetWeight = value);
+                        log.info("Changed");
+                      }),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  createTabBar() {
+    var tb = Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              flex: 4,
+              child: ColoredBox(
+                color: phaseColors[0],
+                child: const SizedBox(
+                  height: 20,
+                  width: 100,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 4,
+              child: ColoredBox(
+                color: phaseColors[1],
+                child: const SizedBox(
+                  height: 20,
+                  width: 100,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 4,
+              child: ColoredBox(
+                color: phaseColors[2],
+                child: const SizedBox(
+                  height: 20,
+                  width: 100,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: ColoredBox(
+                color: phaseColors[3],
+                child: const SizedBox(
+                  height: 20,
+                  width: 100,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 50,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                  flex: 4, child: Center(child: Text("Preinfusion", style: Theme.of(context).textTheme.bodyLarge))),
+              Expanded(
+                  flex: 4, child: Center(child: Text("Rise and hold", style: Theme.of(context).textTheme.bodyLarge))),
+              Expanded(flex: 4, child: Center(child: Text("Decline", style: Theme.of(context).textTheme.bodyLarge))),
+              Expanded(flex: 2, child: Center(child: Text("Stop", style: Theme.of(context).textTheme.bodyLarge))),
+            ],
+          ),
+        ),
+        TabBar(
+          controller: _tabController,
+
+          // indicator: BoxDecoration(color: _tabController.index < 4 ? Colors.red : Colors.green),
+          // indicator:
+          //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
+          tabs: <Widget>[
+            ...createTabs(preInfusion, color: phaseColors[0]),
+            ...createTabs(riseAndHold, color: phaseColors[1]),
+            ...createTabs(decline, color: phaseColors[2]),
+            Tab(
+              height: 95,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if (_profile.shotHeader.type == "pressure")
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: Card(
-                            child: buildPreinfusion(),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5, // takes 30% of available width
-                          child: Card(
-                            child: riseAndHold != null
-                                ? buildRiseAndHold(riseAndHold!, forcedRise)
-                                : const Text("No rise and hold"),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5, // takes 30% of available width
-                          child: Card(
-                            child: buildDecline(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  if (_profile.shotHeader.type == "flow")
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: Card(
-                            child: buildPreinfusion(),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5, // takes 30% of available width
-                          child: Card(
-                            child: buildRiseAndHold(
-                                _profile.shotFrames.where((element) => (element.name == "hold")).first, forcedRise),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5, // takes 30% of available width
-                          child: Card(
-                            child: buildDecline(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  if (_profile.shotHeader.type == "advanced")
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: Card(
-                            child: buildPreinfusion(),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5, // takes 30% of available width
-                          child: Card(
-                            child: riseAndHold != null
-                                ? buildRiseAndHold(riseAndHold!, forcedRise)
-                                : const Text("No rise and hold"),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5, // takes 30% of available width
-                          child: Card(
-                            child: buildDecline(),
-                          ),
-                        ),
-                      ],
-                    ),
+                  SizedBox(
+                    height: 30,
+                    child: Text("Vol",
+                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
+                  ),
+                  Text("${_profile.shotHeader.targetVolume}",
+                      style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
+                  Text(
+                    "ml",
+                    style: TextStyle(color: phaseColors[3]),
+                  ),
+                ],
+              ),
+            ),
+            Tab(
+              height: 95,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 30,
+                    child: Text("Weight",
+                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
+                  ),
+                  Text("${_profile.shotHeader.targetWeight}",
+                      style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
+                  Text(
+                    "g",
+                    style: TextStyle(color: phaseColors[3]),
+                  ),
                 ],
               ),
             ),
           ],
         ),
-      ),
+      ],
     );
+    return tb;
+  }
+
+  createTabs(De1ShotFrameClass? frame, {required MaterialColor color}) {
+    var h = 30.0;
+    var hTab = 95.0;
+    var fontsize = 20.0;
+    var style1 = TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: fontsize);
+    var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
+    var style3 = TextStyle(color: color);
+    return [
+      Tab(
+        height: hTab,
+        child: Column(
+          children: [
+            SizedBox(
+              height: h,
+              child: FittedBox(
+                child: Text(
+                  "Time",
+                  style: style1,
+                ),
+              ),
+            ),
+            Text(
+              "${(frame?.frameLen.round() ?? 0)}",
+              style: style1,
+            ),
+            Text(
+              "sec",
+              style: style3,
+            ),
+          ],
+        ),
+      ),
+      Tab(
+        height: hTab,
+        child: Column(
+          children: [
+            SizedBox(
+              height: h,
+              child: FittedBox(
+                child: Text(
+                  "Pres.",
+                  style: (frame!.pump == "pressure") ? style1 : style2,
+                ),
+              ),
+            ),
+            Text("${(frame.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
+                style: (frame.pump == "pressure") ? style1 : style2),
+            Text("bar", style: (frame.pump == "pressure") ? style3 : null),
+          ],
+        ),
+      ),
+      Tab(
+        height: hTab,
+        child: Column(
+          children: [
+            SizedBox(
+              height: h,
+              child: FittedBox(
+                child: Text(
+                  "Flow",
+                  style: (frame.pump == "flow") ? style1 : style2,
+                ),
+              ),
+            ),
+            Text("${(frame.pump == "flow" ? frame.setVal : frame.triggerVal)}",
+                style: (frame.pump == "flow") ? style1 : style2),
+            Text("ml/s", style: (frame.pump == "flow") ? style3 : null),
+          ],
+        ),
+      ),
+      Tab(
+        height: hTab,
+        child: Column(
+          children: [
+            SizedBox(
+              height: h,
+              child: FittedBox(
+                child: Text(
+                  "Temp",
+                  style: style2,
+                ),
+              ),
+            ),
+            Text("${(frame.temp.round())}", style: style2),
+            const Text("°C"),
+          ],
+        ),
+      ),
+    ];
   }
 
   Widget buildPreinfusion() {
@@ -263,10 +434,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
                                 var v = (value * 10).round() / 10;
-                                if (preInfusion!.pump == "flow")
+                                if (preInfusion!.pump == "flow") {
                                   preInfusion!.setVal = v;
-                                else
+                                } else {
                                   preInfusion!.triggerVal = v;
+                                }
                                 setState(() {});
                               },
                             ),
@@ -293,10 +465,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         onChanged: (dynamic value) {
                           setState(() {
                             var v = (value * 10).round() / 10;
-                            if (preInfusion!.pump == "pressure")
+                            if (preInfusion!.pump == "pressure") {
                               preInfusion!.setVal = v;
-                            else
+                            } else {
                               preInfusion!.triggerVal = v;
+                            }
                           });
                         },
                       ),
@@ -316,7 +489,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Text("Rise and hold (${riseAndHold?.frameLen.round()} s)"),
+          Text("Rise and hold (${riseAndHold.frameLen.round()} s)"),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -331,7 +504,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                           SfSlider(
                             min: 0.0,
                             max: 100.0,
-                            value: riseAndHold?.frameLen ?? 0,
+                            value: riseAndHold.frameLen,
                             interval: 20,
                             showTicks: true,
                             showLabels: true,
@@ -390,7 +563,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         minorTicksPerInterval: 1,
                         onChanged: (dynamic value) {
                           setState(() {
-                            riseAndHold!.setVal = value;
+                            riseAndHold.setVal = value;
                             if (forcedRise != null) {
                               forcedRise.setVal = value;
                             }
@@ -485,10 +658,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
                         onChanged: (dynamic value) {
                           setState(() {
                             var v = (value * 10).round() / 10;
-                            if (decline!.pump == "pressure")
+                            if (decline!.pump == "pressure") {
                               decline!.setVal = v;
-                            else
+                            } else {
                               decline!.triggerVal = v;
+                            }
                           });
                         },
                       ),
@@ -522,5 +696,105 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> {
 
   void profileListener() {
     log.info('Profile updated');
+  }
+
+  handleChanges(De1ShotFrameClass frame) {
+    return [
+      changeValue(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
+        setState(() => frame.frameLen = value);
+        log.info("Changed");
+      }),
+      changeValue(
+          unit: "bar",
+          title: "Pressure",
+          min: 0,
+          max: 16,
+          interval: 1,
+          frame,
+          frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value) {
+        var v = (value * 10).round() / 10;
+        if (frame.pump == "pressure") {
+          frame.setVal = v;
+        } else {
+          frame.triggerVal = v;
+        }
+        setState(() {});
+        log.info("Changed");
+      }),
+      changeValue(
+          unit: "ml/s",
+          title: "Flow",
+          min: 0,
+          max: 16,
+          interval: 1,
+          frame,
+          frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
+        var v = (value * 10).round() / 10;
+        if (frame.pump == "flow") {
+          frame.setVal = v;
+        } else {
+          frame.triggerVal = v;
+        }
+        setState(() {});
+        log.info("Changed");
+      }),
+      changeValue(unit: "°C", title: "Temperature", min: 80, max: 100, interval: 1, frame, frame.temp, (value) {
+        frame.temp = (value * 10).round() / 10;
+
+        setState(() {});
+        log.info("Changed");
+      })
+    ];
+  }
+
+  changeValue(De1ShotFrameClass frame, double value, Function(double value) valueChanged,
+      {required String unit, required double max, required double min, double? interval, String? title}) {
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
+            SizedBox(
+              width: 240,
+              child: SpinBox(
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                textInputAction: TextInputAction.done,
+                onChanged: (value) {
+                  valueChanged(value);
+                },
+                min: min,
+                max: max,
+                value: value,
+                decimals: 1,
+                step: 0.5,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                  suffix: Text(unit),
+                ),
+              ),
+            ),
+            SfSlider(
+              min: min,
+              max: max,
+              value: value,
+              interval: interval ?? max / 10,
+              showTicks: false,
+              showLabels: true,
+              enableTooltip: true,
+              minorTicksPerInterval: 10,
+              onChanged: (dynamic value) {
+                valueChanged(value);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

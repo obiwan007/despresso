@@ -14,6 +14,7 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
+import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShotSelectionTab extends StatefulWidget {
@@ -62,9 +63,10 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
         actions: [
           Builder(
             builder: (BuildContext context) {
-              return ElevatedButton(
+              return TextButton.icon(
                 onPressed: () => _onShare(context),
-                child: const Icon(Icons.ios_share),
+                icon: const Icon(Icons.ios_share),
+                label: const Text("CSV"),
               );
             },
           ),
@@ -84,7 +86,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                     itemBuilder: _shotListBuilder(snapshot.data ?? []))),
           ),
           Expanded(
-            child: selectedShots.length == 0
+            child: selectedShots.isEmpty
                 ? const Text("Nothing selected")
                 : Column(
                     children: [
@@ -226,8 +228,24 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                     Text(
                       '${shots[index].coffee.target?.name ?? 'no coffee'} (${shots[index].coffee.target?.roaster.target?.name ?? 'no roaster'})',
                     ),
-                    Text(
-                      '${shots[index].pourWeight.toStringAsFixed(1)}g in ${shots[index].pourTime.toStringAsFixed(1)}s ',
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${shots[index].pourWeight.toStringAsFixed(1)}g in ${shots[index].pourTime.toStringAsFixed(1)}s ',
+                        ),
+                        if (shots[index].enjoyment > 0)
+                          RatingBarIndicator(
+                            rating: shots[index].enjoyment,
+                            itemBuilder: (context, index) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            itemCount: 5,
+                            itemSize: 20.0,
+                            direction: Axis.horizontal,
+                          ),
+                      ],
                     ),
                   ],
                 ),

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/decent_de1.dart';
@@ -365,7 +364,9 @@ class EspressoMachineService extends ChangeNotifier {
     for (var fr in profile.shotFrames) {
       try {
         log.fine("Write Frame: $fr");
-        await de1!.writeWithResult(Endpoint.frameWrite, fr.bytes);
+        fr.temp += settingsService.targetTempCorrection;
+        var bytes = De1ShotFrameClass.encodeDe1ShotFrame(fr);
+        await de1!.writeWithResult(Endpoint.frameWrite, bytes);
       } catch (ex) {
         return "Error writing shot frame $fr";
       }
@@ -585,12 +586,17 @@ class EspressoMachineService extends ChangeNotifier {
     try {
       currentShot = Shot();
       currentShot.coffee.targetId = coffeeService.selectedCoffeeId;
+      currentShot.recipe.targetId = coffeeService.selectedRecipeId;
 
       currentShot.shotstates.addAll(shotList.entries);
 
       currentShot.pourTime = lastPourTime;
       currentShot.profileId = profileService.currentProfile?.id ?? "";
       currentShot.pourWeight = shotList.entries.last.weight;
+      currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
+      currentShot.targetTempCorrection = settingsService.targetTempCorrection;
+      currentShot.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
+      currentShot.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
 
       var id = coffeeService.shotBox.put(currentShot);
 

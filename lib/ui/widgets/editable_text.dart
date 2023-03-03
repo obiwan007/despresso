@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 class IconEditableText extends StatefulWidget {
   IconEditableText({
     super.key,
     this.initialValue,
     this.onChanged,
+    this.style,
+    this.textAlign,
   });
   String? initialValue;
+  TextStyle? style;
+  TextAlign? textAlign;
   ValueChanged<String>? onChanged;
 
   @override
-  _IconEditableTextState createState() =>
-      _IconEditableTextState(initialValue: this.initialValue, onChanged: this.onChanged);
+  _IconEditableTextState createState() => _IconEditableTextState(initialValue: initialValue, onChanged: onChanged);
 }
 
 class _IconEditableTextState extends State<IconEditableText> {
@@ -30,7 +32,11 @@ class _IconEditableTextState extends State<IconEditableText> {
     return Row(children: [
       Expanded(
           child: !isEditable
-              ? Text(initialValue!)
+              ? Text(
+                  initialValue!,
+                  style: widget.style,
+                  textAlign: widget.textAlign,
+                )
               : TextFormField(
                   initialValue: initialValue,
                   textInputAction: TextInputAction.done,

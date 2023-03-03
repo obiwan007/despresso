@@ -1,10 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
-import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
@@ -16,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../service_locator.dart';
 
@@ -34,14 +31,22 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late MqttService mqttService;
   late VisualizerService visualizerService;
 
+  String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
+
   @override
-  void initState() {
+  initState() {
     super.initState();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
     visualizerService = getIt<VisualizerService>();
     settingsService.addListener(settingsServiceListener);
     bleService.addListener(settingsServiceListener);
+    getIpAdress();
+  }
+
+  Future<void> getIpAdress() async {
+    ownIpAdress = await NetworkInfo().getWifiIP();
+    setState(() {});
   }
 
   @override
@@ -206,6 +211,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               title: "Message Queue Broadcast",
               children: [
                 SwitchSettingsTile(
+                  defaultValue: settingsService.mqttEnabled,
                   leading: const Icon(Icons.settings_remote),
                   settingKey: SettingKeys.mqttEnabled.name,
                   title: 'Enable MQTT',
@@ -261,7 +267,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 ),
                 SwitchSettingsTile(
                   leading: const Icon(Icons.settings_remote),
-                  settingKey: SettingKeys.mqttSendShot.name,
+                  settingKey: SettingKeys.mqttSendWater.name,
                   defaultValue: settingsService.mqttSendWater,
                   title: 'Send de1 water level updates',
                   subtitle: "This can lead to a higher load on your MQTT server.",
@@ -318,6 +324,22 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     errorColor: Colors.deepOrangeAccent,
                   ),
                 ]),
+            ExpandableSettingsTile(
+              title: "Mini Website",
+              children: [
+                SwitchSettingsTile(
+                  defaultValue: settingsService.webServer,
+                  leading: const Icon(Icons.settings_remote),
+                  settingKey: SettingKeys.webServer.name,
+                  title: 'Enable Mini Website with port 8888',
+                  subtitle:
+                      "Check your router for IP adress of your tablet. Open browser under http://$ownIpAdress:8888",
+                  onChange: (value) {
+                    settingsService.notifyDelayed();
+                  },
+                ),
+              ],
+            ),
           ],
         ),
         SettingsGroup(
@@ -446,7 +468,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     if (filePickerResult != null) {
       var objectBox = getIt<ObjectBox>();
       try {
-        await objectBox.restoreBackupData(filePickerResult!.files.single.path.toString());
+        await objectBox.restoreBackupData(filePickerResult.files.single.path.toString());
         showRestartNowScreen();
         var snackBar = SnackBar(
             content: const Text('Restored backup'),

@@ -1,14 +1,13 @@
+import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
@@ -16,10 +15,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 
-import 'package:fl_chart/fl_chart.dart';
-
 import '../../devices/decent_de1.dart';
-import '../../model/shotstate.dart';
 import '../widgets/start_stop_button.dart';
 
 class EspressoScreen extends StatefulWidget {
@@ -389,28 +385,47 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   Widget _buildLiveInsights() {
     Widget insights;
-    if (machineService.state.shot != null) {
-      insights = Column(
-        children: [
-          KeyValueWidget(label: "Profile", value: profileService.currentProfile!.title),
-          KeyValueWidget(
-              label: "Coffee",
-              value: coffeeSelectionService.selectedCoffeeId > 0
-                  ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
-                  : "No Beans"),
-          KeyValueWidget(label: "Target", value: '${settingsService.targetEspressoWeight} g'),
-          const Divider(
-            height: 20,
-            thickness: 5,
-            indent: 0,
-            endIndent: 0,
-          ),
-          KeyValueWidget(label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
-        ],
-      );
-    } else {
-      insights = Text("");
-    }
+    const width = 70.0;
+    insights = Column(
+      children: [
+        if (machineService.state.coffeeState == EspressoMachineState.disconnected) const Icon(Icons.bluetooth_disabled),
+        KeyValueWidget(width: width, label: "Recipe", value: coffeeSelectionService.currentRecipe?.name ?? "no recipe"),
+        KeyValueWidget(width: width, label: "Profile", value: profileService.currentProfile?.title ?? "no profile"),
+        KeyValueWidget(
+            width: width,
+            label: "Coffee",
+            value: coffeeSelectionService.selectedCoffeeId > 0
+                ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
+                : "No Beans"),
+        KeyValueWidget(width: width, label: "Target", value: '${settingsService.targetEspressoWeight} g'),
+        const Divider(
+          height: 20,
+          thickness: 5,
+          indent: 0,
+          endIndent: 0,
+        ),
+        KeyValueWidget(width: width, label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        const Divider(
+          height: 20,
+          thickness: 5,
+          indent: 0,
+          endIndent: 0,
+        ),
+        TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ShotEdit(
+                          coffeeSelectionService.selectedShotId,
+                        )),
+              );
+            },
+            icon: const Icon(Icons.note_add),
+            label: const Text("Espresso Diary"))
+      ],
+    );
+
     return insights;
   }
 

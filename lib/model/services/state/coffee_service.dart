@@ -12,11 +12,10 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:objectbox/internal.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
@@ -66,12 +65,15 @@ class CoffeeService extends ChangeNotifier {
   }
 
   Shot? getLastShot() {
-    var allshots = shotBox.getAll();
-    log.info("Number of stored shots: ${allshots.length}");
+    final builder = shotBox.query().order(Shot_.id, flags: Order.descending).build();
+    var found = builder.findFirst();
+    // var allshots = shotBox.getAll();
+    selectedShotId = found?.id ?? 0;
+    // log.info("Number of stored shots: ${allshots.length}");
     if (selectedShotId > 0) {
-      return shotBox.get(selectedShotId);
+      return found;
     } else {
-      return (allshots.isNotEmpty) ? allshots.last : Shot();
+      return Shot();
     }
   }
 
@@ -156,6 +158,7 @@ class CoffeeService extends ChangeNotifier {
     var profileService = getIt<ProfileService>();
     var machineService = getIt<EspressoMachineService>();
     settings.targetEspressoWeight = recipe.adjustedWeight;
+    settings.targetTempCorrection = recipe.adjustedTemp;
 
     profileService.setProfileFromId(recipe.profileId);
     machineService.uploadProfile(profileService.currentProfile!);
@@ -186,51 +189,112 @@ class CoffeeService extends ChangeNotifier {
 // code to return members
   }
 
+  Recipe? get currentRecipe {
+    if (selectedRecipeId > 0) {
+      return recipeBox.get(selectedRecipeId);
+    }
+    return null;
+// code to return members
+  }
+
+  Shot? get currentShot {
+    if (selectedShotId > 0) {
+      return shotBox.get(selectedShotId);
+    }
+    return null;
+// code to return members
+  }
+
   void addRecipe({required String name, required int coffeeId, required String profileId}) {
     var recipe = Recipe();
     recipe.name = name;
     recipe.coffee.targetId = coffeeId;
     recipe.profileId = profileId;
     recipe.adjustedWeight = settings.targetEspressoWeight;
-    recipeBox.put(recipe);
+    var id = recipeBox.put(recipe);
+
+    settings.selectedRecipe = id;
+    selectedRecipeId = id;
+    settings.notifyListeners();
     notifyListeners();
     _controllerRecipe.add(getRecipes());
   }
 
   List<Recipe> getRecipes() {
-    return recipeBox.getAll();
+    final builder = recipeBox
+        .query(Recipe_.isDeleted.isNull() | Recipe_.isDeleted.equals(false))
+        .order(Recipe_.isFavorite, flags: Order.descending)
+        .order(Recipe_.name)
+        .build();
+
+    //
+    var d = builder.find();
+    builder.close();
+
+    return d;
   }
 
   Recipe? getRecipe(int id) {
     return recipeBox.get(id);
   }
 
-  Recipe? getSelectedRecipe() {
-    if (selectedRecipeId > 0) {
-      return recipeBox.get(selectedRecipeId);
-    } else {
-      return null;
-    }
+  Shot? getShot(int id) {
+    return shotBox.get(id);
+  }
+
+  void updateShot(Shot shot) {
+    shotBox.put(shot);
+    notifyListeners();
   }
 
   void updateRecipe(Recipe recipe) {
     recipeBox.put(recipe);
     settings.targetEspressoWeight = recipe.adjustedWeight;
+    settings.targetTempCorrection = recipe.adjustedTemp;
     notifyListeners();
+    _controllerRecipe.add(getRecipes());
   }
 
   void removeRecipe(int id) {
-    recipeBox.remove(id);
+    var r = recipeBox.get(id);
+    if (r != null) {
+      r.isDeleted = true;
+      updateRecipe(r);
+    }
+
     notifyListeners();
     _controllerRecipe.add(getRecipes());
   }
 
   getBackupData() {
-    String file = objectBox.store.directoryPath + "/data.mdb";
+    String file = "${objectBox.store.directoryPath}/data.mdb";
     var f = File(file);
 
     Uint8List data = f.readAsBytesSync();
     log.info("Data read ${data.length}");
     return data;
+  }
+
+  void setSelectedRecipeProfile(String profileId) {
+    var res = currentRecipe;
+    if (res != null) {
+      res.profileId = profileId;
+      updateRecipe(res);
+      notifyListeners();
+    }
+  }
+
+  void setSelectedRecipeCoffee(int coffeeId) {
+    var res = currentRecipe;
+    if (res != null) {
+      res.coffee.targetId = coffeeId;
+      updateRecipe(res);
+      notifyListeners();
+    }
+  }
+
+  void recipeFavoriteToggle(Recipe data) {
+    data.isFavorite = !data.isFavorite;
+    updateRecipe(data);
   }
 }

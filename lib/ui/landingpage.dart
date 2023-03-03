@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -17,7 +16,6 @@ import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -171,7 +169,10 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => ProfilesScreen(
+                            saveToRecipe: false,
+                          )),
                 );
               },
             ),
@@ -182,7 +183,10 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CoffeeSelectionTab()),
+                  MaterialPageRoute(
+                      builder: (context) => CoffeeSelectionTab(
+                            saveToRecipe: false,
+                          )),
                 );
               },
             ),
@@ -224,9 +228,9 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else
-                  // can't launch url, there is some error
+                } else {
                   throw "Could not launch $url";
+                }
               },
             ),
             FutureBuilder<PackageInfo>(

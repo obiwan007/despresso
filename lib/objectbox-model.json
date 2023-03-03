@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "3:5050282589413394899",
-      "lastPropertyId": "6:3371539309151542209",
+      "lastPropertyId": "21:3188265368046958522",
       "name": "Shot",
       "properties": [
         {
@@ -40,6 +40,79 @@
         {
           "id": "6:3371539309151542209",
           "name": "pourWeight",
+          "type": 8
+        },
+        {
+          "id": "7:2364668778724218869",
+          "name": "targetEspressoWeight",
+          "type": 8
+        },
+        {
+          "id": "8:3676925190157138581",
+          "name": "targetTempCorrection",
+          "type": 8
+        },
+        {
+          "id": "9:111349150896732313",
+          "name": "recipeId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "6:446388852719725051",
+          "relationTarget": "Recipe"
+        },
+        {
+          "id": "10:7125372405899859202",
+          "name": "doseWeight",
+          "type": 8
+        },
+        {
+          "id": "11:3218706867177652460",
+          "name": "drinkWeight",
+          "type": 8
+        },
+        {
+          "id": "12:843222103065987409",
+          "name": "grinderSettings",
+          "type": 8
+        },
+        {
+          "id": "13:3391691028545881063",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "14:7115326853722345534",
+          "name": "grinderName",
+          "type": 9
+        },
+        {
+          "id": "15:1080541265960096120",
+          "name": "roastingDate",
+          "type": 10
+        },
+        {
+          "id": "17:8073143111153977311",
+          "name": "extractionYield",
+          "type": 8
+        },
+        {
+          "id": "18:6900766595761360168",
+          "name": "enjoyment",
+          "type": 8
+        },
+        {
+          "id": "19:1657747884825847241",
+          "name": "barrista",
+          "type": 9
+        },
+        {
+          "id": "20:1949502433090459020",
+          "name": "drinker",
+          "type": 9
+        },
+        {
+          "id": "21:3188265368046958522",
+          "name": "totalDissolvedSolids",
           "type": 8
         }
       ],
@@ -295,7 +368,7 @@
     },
     {
       "id": "9:7693652674048295668",
-      "lastPropertyId": "7:647131839827812853",
+      "lastPropertyId": "11:4204171820753323126",
       "name": "Recipe",
       "properties": [
         {
@@ -336,13 +409,33 @@
           "id": "7:647131839827812853",
           "name": "profileId",
           "type": 9
+        },
+        {
+          "id": "8:3008075691008235314",
+          "name": "grinderDoseWeight",
+          "type": 8
+        },
+        {
+          "id": "9:3336924770577751042",
+          "name": "grinderSettings",
+          "type": 8
+        },
+        {
+          "id": "10:3868213321838280891",
+          "name": "isDeleted",
+          "type": 1
+        },
+        {
+          "id": "11:4204171820753323126",
+          "name": "isFavorite",
+          "type": 1
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "9:7693652674048295668",
-  "lastIndexId": "5:7106111853969068341",
+  "lastIndexId": "6:446388852719725051",
   "lastRelationId": "1:2516218059471133212",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -377,7 +470,8 @@
     7453959482162594558,
     4587334211713455012,
     6520200225208100644,
-    6062984101281118472
+    6062984101281118472,
+    4933890882353956688
   ],
   "retiredRelationUids": [],
   "version": 1

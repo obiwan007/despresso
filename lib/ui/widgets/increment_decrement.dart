@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 class IncrementDecrement extends StatefulWidget {
   IncrementDecrement({
@@ -47,7 +46,7 @@ class _IncrementDecrementState extends State<IncrementDecrement> {
           if (widget.onChanged != null) widget.onChanged!(widget.initialValue);
         });
       },
-      child: new Icon(Icons.remove),
+      child: const Icon(Icons.remove),
     );
   }
 
@@ -59,7 +58,7 @@ class _IncrementDecrementState extends State<IncrementDecrement> {
           if (widget.onChanged != null) widget.onChanged!(widget.initialValue);
         });
       },
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
     );
   }
 }
