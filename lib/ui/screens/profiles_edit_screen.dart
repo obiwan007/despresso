@@ -1,6 +1,5 @@
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +76,9 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
         decline = declineObject;
       }
       log.info("Decline: $decline");
-    } catch (e) {}
+    } catch (e) {
+      log.severe("Preparing edit failed: $e");
+    }
 
     switch (_profile.shotHeader.type) {
       case "pressure":
@@ -186,7 +187,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               flex: 4,
               child: ColoredBox(
                 color: phaseColors[0],
-                child: SizedBox(
+                child: const SizedBox(
                   height: 20,
                   width: 100,
                 ),
@@ -196,7 +197,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               flex: 4,
               child: ColoredBox(
                 color: phaseColors[1],
-                child: SizedBox(
+                child: const SizedBox(
                   height: 20,
                   width: 100,
                 ),
@@ -206,7 +207,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               flex: 4,
               child: ColoredBox(
                 color: phaseColors[2],
-                child: SizedBox(
+                child: const SizedBox(
                   height: 20,
                   width: 100,
                 ),
@@ -216,7 +217,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               flex: 2,
               child: ColoredBox(
                 color: phaseColors[3],
-                child: SizedBox(
+                child: const SizedBox(
                   height: 20,
                   width: 100,
                 ),
@@ -338,8 +339,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Text("${(frame.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
-                style: (frame!.pump == "pressure") ? style1 : style2),
-            Text("bar", style: (frame!.pump == "pressure") ? style3 : null),
+                style: (frame.pump == "pressure") ? style1 : style2),
+            Text("bar", style: (frame.pump == "pressure") ? style3 : null),
           ],
         ),
       ),
@@ -357,8 +358,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Text("${(frame.pump == "flow" ? frame.setVal : frame.triggerVal)}",
-                style: (frame!.pump == "flow") ? style1 : style2),
-            Text("ml/s", style: (frame!.pump == "flow") ? style3 : null),
+                style: (frame.pump == "flow") ? style1 : style2),
+            Text("ml/s", style: (frame.pump == "flow") ? style3 : null),
           ],
         ),
       ),
@@ -376,7 +377,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Text("${(frame.temp.round())}", style: style2),
-            Text("°C"),
+            const Text("°C"),
           ],
         ),
       ),
@@ -751,49 +752,47 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          child: Column(
-            children: [
-              if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
-              SizedBox(
-                width: 240,
-                child: SpinBox(
-                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                  textInputAction: TextInputAction.done,
-                  onChanged: (value) {
-                    valueChanged(value);
-                  },
-                  min: min,
-                  max: max,
-                  value: value,
-                  decimals: 1,
-                  step: 0.5,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                    suffix: Text(unit),
-                  ),
-                ),
-              ),
-              SfSlider(
+        child: Column(
+          children: [
+            if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
+            SizedBox(
+              width: 240,
+              child: SpinBox(
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                textInputAction: TextInputAction.done,
+                onChanged: (value) {
+                  valueChanged(value);
+                },
                 min: min,
                 max: max,
                 value: value,
-                interval: interval ?? max / 10,
-                showTicks: false,
-                showLabels: true,
-                enableTooltip: true,
-                minorTicksPerInterval: 10,
-                onChanged: (dynamic value) {
-                  valueChanged(value);
-                },
+                decimals: 1,
+                step: 0.5,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                  suffix: Text(unit),
+                ),
               ),
-            ],
-          ),
+            ),
+            SfSlider(
+              min: min,
+              max: max,
+              value: value,
+              interval: interval ?? max / 10,
+              showTicks: false,
+              showLabels: true,
+              enableTooltip: true,
+              minorTicksPerInterval: 10,
+              onChanged: (dynamic value) {
+                valueChanged(value);
+              },
+            ),
+          ],
         ),
       ),
     );

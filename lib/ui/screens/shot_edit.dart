@@ -4,11 +4,9 @@ import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
-import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';

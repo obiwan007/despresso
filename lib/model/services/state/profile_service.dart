@@ -87,7 +87,7 @@ class ProfileService extends ChangeNotifier {
     }
 
     currentProfile = profiles.first;
-    if (profileId != null && profileId.isNotEmpty) {
+    if (profileId.isNotEmpty) {
       try {
         currentProfile = profiles.where((element) => element.id == profileId).first;
       } catch (_) {}

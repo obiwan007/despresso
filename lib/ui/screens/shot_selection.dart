@@ -86,7 +86,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                     itemBuilder: _shotListBuilder(snapshot.data ?? []))),
           ),
           Expanded(
-            child: selectedShots.length == 0
+            child: selectedShots.isEmpty
                 ? const Text("Nothing selected")
                 : Column(
                     children: [

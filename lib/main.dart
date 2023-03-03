@@ -14,7 +14,6 @@ import 'package:wakelock/wakelock.dart';
 import 'color_schemes.g.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'package:logging/logging.dart';
 // import 'package:logging_appenders/logging_appenders.dart';
 
 late ObjectBox objectbox;

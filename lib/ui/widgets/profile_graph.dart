@@ -1,5 +1,4 @@
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
@@ -60,7 +59,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         charts.RangeAnnotation([...phases], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       primaryMeasureAxis: charts.NumericAxisSpec(
-        viewport: charts.NumericExtents(0, 10),
+        viewport: const charts.NumericExtents(0, 10),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
@@ -309,7 +308,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
           labelStyleSpec: charts.TextStyleSpec(
               fontSize: 10,
               // color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-              color: charts.ColorUtil.fromDartColor(Color(0xFFD0BCFF))),
+              color: charts.ColorUtil.fromDartColor(const Color(0xFFD0BCFF))),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log.info("Phase ${element.subState}");
     });

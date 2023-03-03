@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
-import '../../logger_util.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeSelectionTab extends StatefulWidget {
@@ -219,8 +218,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
               child: Text(
                 p.name,
                 style: (p.coffees.firstWhereOrNull((element) => element.id == _selectedCoffeeId) != null)
-                    ? TextStyle(color: Colors.amber)
-                    : TextStyle(color: Colors.white60),
+                    ? const TextStyle(color: Colors.amber)
+                    : const TextStyle(color: Colors.white60),
               ),
             ))
         .toList();
@@ -241,8 +240,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
               child: Text(
                 p.name,
                 style: (p.roaster.targetId == _selectedRoasterId)
-                    ? TextStyle(color: Colors.amber)
-                    : TextStyle(color: Colors.white60),
+                    ? const TextStyle(color: Colors.amber)
+                    : const TextStyle(color: Colors.white60),
               )),
         )
         .toList();

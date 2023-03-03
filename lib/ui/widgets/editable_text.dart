@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 class IconEditableText extends StatefulWidget {
   IconEditableText({
@@ -15,8 +14,7 @@ class IconEditableText extends StatefulWidget {
   ValueChanged<String>? onChanged;
 
   @override
-  _IconEditableTextState createState() =>
-      _IconEditableTextState(initialValue: this.initialValue, onChanged: this.onChanged);
+  _IconEditableTextState createState() => _IconEditableTextState(initialValue: initialValue, onChanged: onChanged);
 }
 
 class _IconEditableTextState extends State<IconEditableText> {

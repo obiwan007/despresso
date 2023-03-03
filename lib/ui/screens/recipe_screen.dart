@@ -73,7 +73,7 @@ class RecipeScreenState extends State<RecipeScreen> {
                   initialData: coffeeService.getRecipes(),
                   builder: (context, snapshot) {
                     return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
                       itemCount: snapshot.data?.length ?? 0,
                     );

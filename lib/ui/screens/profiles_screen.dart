@@ -1,18 +1,16 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/labeled_checkbox.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
@@ -126,7 +124,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             return element.value!.id == _selectedProfile!.id;
           },
         )) {
-      if (items.length > 0) _selectedProfile = items[0].value;
+      if (items.isNotEmpty) _selectedProfile = items[0].value;
     }
     return Scaffold(
       appBar: AppBar(
@@ -137,7 +135,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             builder: (BuildContext context) {
               return ElevatedButton(
                 onPressed: () => _onShare(context),
-                child: Icon(Icons.ios_share),
+                child: const Icon(Icons.ios_share),
               );
             },
           ),
@@ -222,7 +220,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                       });
                                     },
                                     hint: const Text("Select item"))
-                                : Text("No profiles found for selection"),
+                                : const Text("No profiles found for selection"),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -474,7 +472,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           content: TextField(
             autofocus: true,
             controller: shortCodeController,
-            decoration: InputDecoration(hintText: '4-digit visualizer short code'),
+            decoration: const InputDecoration(hintText: '4-digit visualizer short code'),
             maxLength: 4,
           ),
           actions: <Widget>[
