@@ -39,4 +39,6 @@ class Shot {
   double enjoyment = 0;
   String barrista = "";
   String drinker = "";
+
+  String visualizerId = "";
 }

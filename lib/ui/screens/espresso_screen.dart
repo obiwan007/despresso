@@ -14,6 +14,7 @@ import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../devices/decent_de1.dart';
 import '../widgets/start_stop_button.dart';
@@ -412,17 +413,45 @@ class EspressoScreenState extends State<EspressoScreen> {
           endIndent: 0,
         ),
         TextButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ShotEdit(
+                        coffeeSelectionService.selectedShotId,
+                      )),
+            );
+          },
+          icon: const Icon(Icons.note_add),
+          label: const Text("Espresso Diary"),
+        ),
+        const Divider(
+          height: 20,
+          thickness: 5,
+          indent: 0,
+          endIndent: 0,
+        ),
+        if (machineService.currentShot.visualizerId.isNotEmpty)
+          TextButton.icon(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ShotEdit(
-                          coffeeSelectionService.selectedShotId,
-                        )),
-              );
+              launchUrl(Uri.parse('https://visualizer.coffee/shots/${machineService.currentShot.visualizerId}'));
             },
-            icon: const Icon(Icons.note_add),
-            label: const Text("Espresso Diary"))
+            icon: const Icon(Icons.cloud),
+            label: const Text("Visualizer.coffee"),
+          ),
+        // KeyValueWidget(
+        //   width: width,
+        //   label: "",
+        //   value: "",
+        //   widget: InkWell(
+        //     onTap: () =>
+        //         launchUrl(Uri.parse('https://visualizer.coffee/shots/${machineService.currentShot.visualizerId}')),
+        //     child: const Text(
+        //       'Open Visualizer.coffee',
+        //       style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+        //     ),
+        //   ),
+        // ),
       ],
     );
 

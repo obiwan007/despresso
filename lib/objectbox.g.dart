@@ -26,7 +26,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 5050282589413394899),
       name: 'Shot',
-      lastPropertyId: const IdUid(21, 3188265368046958522),
+      lastPropertyId: const IdUid(22, 7608631056957421432),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -132,6 +132,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(21, 3188265368046958522),
             name: 'totalDissolvedSolids',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 7608631056957421432),
+            name: 'visualizerId',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[
@@ -529,7 +534,8 @@ ModelDefinition getObjectBoxModel() {
           final grinderNameOffset = fbb.writeString(object.grinderName);
           final barristaOffset = fbb.writeString(object.barrista);
           final drinkerOffset = fbb.writeString(object.drinker);
-          fbb.startTable(22);
+          final visualizerIdOffset = fbb.writeString(object.visualizerId);
+          fbb.startTable(23);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.date.millisecondsSinceEpoch);
           fbb.addInt64(2, object.coffee.targetId);
@@ -550,6 +556,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(18, barristaOffset);
           fbb.addOffset(19, drinkerOffset);
           fbb.addFloat64(20, object.totalDissolvedSolids);
+          fbb.addOffset(21, visualizerIdOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -592,7 +599,9 @@ ModelDefinition getObjectBoxModel() {
             ..drinker = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 42, '')
             ..totalDissolvedSolids =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0);
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0)
+            ..visualizerId = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 46, '');
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.coffee.attach(store);
@@ -949,6 +958,10 @@ class Shot_ {
   /// see [Shot.totalDissolvedSolids]
   static final totalDissolvedSolids =
       QueryDoubleProperty<Shot>(_entities[0].properties[19]);
+
+  /// see [Shot.visualizerId]
+  static final visualizerId =
+      QueryStringProperty<Shot>(_entities[0].properties[20]);
 
   /// see [Shot.shotstates]
   static final shotstates =
