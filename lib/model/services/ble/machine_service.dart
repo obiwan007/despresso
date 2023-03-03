@@ -598,9 +598,7 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
       currentShot.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
 
-      var id = coffeeService.shotBox.put(currentShot);
-
-      await coffeeService.setLastShotId(id);
+      await coffeeService.addNewShot(currentShot);
 
       shotList.saveData();
       // currentShot = Shot();

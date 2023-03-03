@@ -10,6 +10,7 @@ import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
@@ -296,5 +297,23 @@ class CoffeeService extends ChangeNotifier {
   void recipeFavoriteToggle(Recipe data) {
     data.isFavorite = !data.isFavorite;
     updateRecipe(data);
+  }
+
+  /// Shot is added to database and
+  /// to visualizer if enabled in settings
+  Future<int> addNewShot(Shot currentShot) async {
+    var id = shotBox.put(currentShot);
+    await setLastShotId(id);
+    if (settings.visualizerUpload) {
+      try {
+        VisualizerService vis = getIt<VisualizerService>();
+        currentShot.visualizerId = await vis.sendShotToVisualizer(currentShot);
+        shotBox.put(currentShot);
+      } catch (e) {
+        log.severe("Visualizer uploading error $e");
+      }
+    }
+    notifyListeners();
+    return id;
   }
 }

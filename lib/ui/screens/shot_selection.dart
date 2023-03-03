@@ -3,17 +3,18 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
+import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:despresso/ui/widgets/shot_graph.dart';
 import 'package:logging/logging.dart';
-
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -40,12 +41,19 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
   bool showWeight = true;
   bool showTemp = true;
 
+  late VisualizerService visualizerService;
+
+  bool _busy = false;
+
+  double _busyProgress = 0;
+
   CoffeeSelectionTabState() {}
 
   @override
   void initState() {
     super.initState();
     shotBox = getIt<ObjectBox>().store.box<Shot>();
+    visualizerService = getIt<VisualizerService>();
   }
 
   @override
@@ -70,111 +78,176 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
               );
             },
           ),
+          TextButton.icon(
+            icon: const Icon(Icons.cloud_upload),
+            label: const Text("Visualizer"),
+            onPressed: () async {
+              if (selectedShots.isEmpty) {
+                var snackBar = SnackBar(
+                    content: const Text("No shots to upload selected"),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                return;
+              }
+              try {
+                setState(() {
+                  _busy = true;
+                });
+                for (var element in selectedShots) {
+                  setState(() {
+                    _busyProgress += 1 / selectedShots.length;
+                  });
+                  var shot = shotBox.get(element);
+                  var id = await visualizerService.sendShotToVisualizer(shot!);
+                  shot.visualizerId = id;
+                  shotBox.put(shot);
+                }
+                var snackBar = SnackBar(
+                    backgroundColor: Colors.greenAccent,
+                    content: const Text("Success uploading your shots"),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              } catch (e) {
+                var snackBar = SnackBar(
+                    backgroundColor: const Color.fromARGB(255, 250, 141, 141),
+                    content: Text("Error uploading shots: $e"),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                log.severe("Error uploading shots $e");
+              }
+              setState(() {
+                _busy = false;
+                _busyProgress = 0;
+              });
+            },
+          ),
         ],
       ),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 445,
-            child: StreamBuilder<List<Shot>>(
-                stream: getShots(),
-                builder: (context, snapshot) => ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    itemCount: snapshot.hasData ? snapshot.data!.length : 0,
-                    itemBuilder: _shotListBuilder(snapshot.data ?? []))),
-          ),
-          Expanded(
-            child: selectedShots.isEmpty
-                ? const Text("Nothing selected")
-                : Column(
-                    children: [
-                      Row(
-                        children: [
-                          const Text("Overlaymode:"),
-                          Switch(
-                            value: _overlay,
-                            onChanged: (value) {
-                              setState(() {
-                                _overlay = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _overlay ? min(selectedShots.length, 1) : selectedShots.length,
-                          itemBuilder: (context, index) {
-                            return ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(32),
-                                bottomLeft: Radius.circular(32),
-                              ),
-                              child: ListTile(
-                                title: ShotGraph(
-                                    key: UniqueKey(),
-                                    id: selectedShots[index],
-                                    overlayIds: _overlay ? selectedShots : null,
-                                    showFlow: showFlow,
-                                    showPressure: showPressure,
-                                    showWeight: showWeight,
-                                    showTemp: showTemp),
-                              ),
-                            );
-                          },
+      body: ModalProgressHUD(
+        inAsyncCall: _busy,
+        progressIndicator: CircularProgressIndicator(
+          // strokeWidth: 15,
+          value: _busyProgress,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 445,
+              child: StreamBuilder<List<Shot>>(
+                  stream: getShots(),
+                  builder: (context, snapshot) => ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      itemCount: snapshot.hasData ? snapshot.data!.length : 0,
+                      itemBuilder: _shotListBuilder(snapshot.data ?? []))),
+            ),
+            Expanded(
+              child: selectedShots.isEmpty
+                  ? const Text("Nothing selected")
+                  : Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Text("Overlaymode:"),
+                            Switch(
+                              value: _overlay,
+                              onChanged: (value) {
+                                setState(() {
+                                  _overlay = value;
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                      ),
-                      LegendsListWidget(
-                        legends: [
-                          Legend(
-                            'Pressure',
-                            theme.ThemeColors.pressureColor,
-                            value: showPressure,
-                            onChanged: (p0) {
-                              setState(() {
-                                showPressure = p0;
-                              });
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _overlay ? min(selectedShots.length, 1) : selectedShots.length,
+                            itemBuilder: (context, index) {
+                              return ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(32),
+                                  bottomLeft: Radius.circular(32),
+                                ),
+                                child: ListTile(
+                                  title: ShotGraph(
+                                      key: UniqueKey(),
+                                      id: selectedShots[index],
+                                      overlayIds: _overlay ? selectedShots : null,
+                                      showFlow: showFlow,
+                                      showPressure: showPressure,
+                                      showWeight: showWeight,
+                                      showTemp: showTemp),
+                                ),
+                              );
                             },
                           ),
-                          Legend(
-                            'Flow',
-                            theme.ThemeColors.flowColor,
-                            value: showFlow,
-                            onChanged: (p0) {
-                              setState(() {
-                                showFlow = p0;
-                              });
-                            },
-                          ),
-                          Legend(
-                            'Weight',
-                            theme.ThemeColors.weightColor,
-                            value: showWeight,
-                            onChanged: (p0) {
-                              setState(() {
-                                showWeight = p0;
-                              });
-                            },
-                          ),
-                          Legend(
-                            'Temp',
-                            theme.ThemeColors.tempColor,
-                            value: showTemp,
-                            onChanged: (p0) {
-                              setState(() {
-                                showTemp = p0;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-          ),
-        ],
+                        ),
+                        LegendsListWidget(
+                          legends: [
+                            Legend(
+                              'Pressure',
+                              theme.ThemeColors.pressureColor,
+                              value: showPressure,
+                              onChanged: (p0) {
+                                setState(() {
+                                  showPressure = p0;
+                                });
+                              },
+                            ),
+                            Legend(
+                              'Flow',
+                              theme.ThemeColors.flowColor,
+                              value: showFlow,
+                              onChanged: (p0) {
+                                setState(() {
+                                  showFlow = p0;
+                                });
+                              },
+                            ),
+                            Legend(
+                              'Weight',
+                              theme.ThemeColors.weightColor,
+                              value: showWeight,
+                              onChanged: (p0) {
+                                setState(() {
+                                  showWeight = p0;
+                                });
+                              },
+                            ),
+                            Legend(
+                              'Temp',
+                              theme.ThemeColors.tempColor,
+                              value: showTemp,
+                              onChanged: (p0) {
+                                setState(() {
+                                  showTemp = p0;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

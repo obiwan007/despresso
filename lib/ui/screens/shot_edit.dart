@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/services/ble/machine_service.dart';
 
@@ -120,15 +121,15 @@ class ShotEditState extends State<ShotEdit> {
         title: Text(
             'Describe your experience with shot from ${DateFormat.yMd().format(_editedShot.date)} ${DateFormat.Hm().format(_editedShot.date)} '),
         actions: <Widget>[
-          Builder(
-            builder: (BuildContext context) {
-              return TextButton.icon(
-                onPressed: () => _onShare(context),
-                icon: const Icon(Icons.ios_share),
-                label: Text("Vizualizer"),
-              );
-            },
-          ),
+          // Builder(
+          //   builder: (BuildContext context) {
+          //     return TextButton.icon(
+          //       onPressed: () => _onShare(context),
+          //       icon: const Icon(Icons.ios_share),
+          //       label: const Text("Share shot"),
+          //     );
+          //   },
+          // ),
           TextButton.icon(
             icon: const Icon(Icons.save_alt),
             label: const Text(
@@ -167,7 +168,7 @@ class ShotEditState extends State<ShotEdit> {
   }
 
   shotForm(FormGroup form) {
-    var width = 70.0;
+    var width = 100.0;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,6 +187,19 @@ class ShotEditState extends State<ShotEdit> {
                     value: (_editedShot.recipe.target?.coffee.targetId ?? 0) > 0
                         ? _editedShot.recipe.target?.coffee.target?.name ?? ""
                         : "No Beans"),
+                if (_editedShot.visualizerId.isNotEmpty)
+                  KeyValueWidget(
+                    width: width,
+                    label: "Visualizer",
+                    value: "",
+                    widget: InkWell(
+                      onTap: () => launchUrl(Uri.parse('https://visualizer.coffee/shots/${_editedShot.visualizerId}')),
+                      child: const Text(
+                        'Open in Visualizer.coffee',
+                        style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                      ),
+                    ),
+                  ),
               ]),
             ),
           ),

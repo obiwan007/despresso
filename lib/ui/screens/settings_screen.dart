@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late SettingsService settingsService;
   late BLEService bleService;
   late MqttService mqttService;
+  late VisualizerService visualizerService;
 
   String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
 
@@ -36,6 +38,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     super.initState();
     settingsService = getIt<SettingsService>();
     bleService = getIt<BLEService>();
+    visualizerService = getIt<VisualizerService>();
     settingsService.addListener(settingsServiceListener);
     bleService.addListener(settingsServiceListener);
     getIpAdress();
@@ -280,23 +283,23 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               ],
             ),
             ExpandableSettingsTile(
-                title: 'Vizualizer',
+                title: 'Visualizer',
                 subtitle: 'Cloud shot upload',
                 expanded: false,
                 children: <Widget>[
                   SwitchSettingsTile(
-                    leading: const Icon(Icons.usb),
-                    settingKey: SettingKeys.vizualizerUpload.name,
-                    defaultValue: settingsService.vizualizerUpload,
-                    title: 'Upload Shots to Vizualizer',
+                    leading: const Icon(Icons.cloud_upload),
+                    settingKey: SettingKeys.visualizerUpload.name,
+                    defaultValue: settingsService.visualizerUpload,
+                    title: 'Upload Shots to Visualizer',
                     onChange: (value) {
                       debugPrint('USB Debugging: $value');
                     },
                   ),
                   TextInputSettingsTile(
                     title: 'User Name/email',
-                    settingKey: SettingKeys.vizualizerUser.name,
-                    initialValue: settingsService.vizualizerUser,
+                    settingKey: SettingKeys.visualizerUser.name,
+                    initialValue: settingsService.visualizerUser,
                     validator: (String? username) {
                       if (username != null && username.length > 3) {
                         return null;
@@ -308,8 +311,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   ),
                   TextInputSettingsTile(
                     title: 'password',
-                    initialValue: settingsService.vizualizerPwd,
-                    settingKey: SettingKeys.vizualizerPwd.name,
+                    initialValue: settingsService.visualizerPwd,
+                    settingKey: SettingKeys.visualizerPwd.name,
                     obscureText: true,
                     validator: (String? password) {
                       if (password != null && password.length > 6) {

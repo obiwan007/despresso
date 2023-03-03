@@ -11,9 +11,9 @@ import '../../../service_locator.dart';
 enum SettingKeys {
   shotStopOnWeight,
   shotAutoTare,
-  vizualizerUpload,
-  vizualizerUser,
-  vizualizerPwd,
+  visualizerUpload,
+  visualizerUser,
+  visualizerPwd,
   sleepTimer,
   screenLockTimer,
   graphSingle,
@@ -81,9 +81,9 @@ class SettingsService extends ChangeNotifier {
   bool get shotStopOnWeight => Settings.getValue<bool>(SettingKeys.shotStopOnWeight.name) ?? true;
   bool get shotAutoTare => Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
 
-  bool get vizualizerUpload => Settings.getValue(SettingKeys.vizualizerUpload.name) ?? false;
-  String get vizualizerUser => Settings.getValue(SettingKeys.vizualizerUser.name) ?? "";
-  String get vizualizerPwd => Settings.getValue(SettingKeys.vizualizerPwd.name) ?? "";
+  bool get visualizerUpload => Settings.getValue(SettingKeys.visualizerUpload.name) ?? false;
+  String get visualizerUser => Settings.getValue(SettingKeys.visualizerUser.name) ?? "";
+  String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
   double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 30;

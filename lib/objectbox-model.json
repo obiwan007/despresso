@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "3:5050282589413394899",
-      "lastPropertyId": "21:3188265368046958522",
+      "lastPropertyId": "22:7608631056957421432",
       "name": "Shot",
       "properties": [
         {
@@ -114,6 +114,11 @@
           "id": "21:3188265368046958522",
           "name": "totalDissolvedSolids",
           "type": 8
+        },
+        {
+          "id": "22:7608631056957421432",
+          "name": "visualizerId",
+          "type": 9
         }
       ],
       "relations": [
