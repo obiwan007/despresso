@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
+import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
@@ -40,12 +41,15 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
   bool showWeight = true;
   bool showTemp = true;
 
+  late VisualizerService visualizerService;
+
   CoffeeSelectionTabState() {}
 
   @override
   void initState() {
     super.initState();
     shotBox = getIt<ObjectBox>().store.box<Shot>();
+    visualizerService = getIt<VisualizerService>();
   }
 
   @override
@@ -68,6 +72,52 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                 icon: const Icon(Icons.ios_share),
                 label: const Text("CSV"),
               );
+            },
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.cloud_upload),
+            label: Text("Visualizer"),
+            onPressed: () async {
+              if (selectedShots.isEmpty) {
+                var snackBar = SnackBar(
+                    content: Text("No shots to upload selected"),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                return;
+              }
+              try {
+                for (var element in selectedShots) {
+                  var shot = shotBox.get(element);
+                  await visualizerService.sendShotToVisualizer(shot!);
+                }
+                var snackBar = SnackBar(
+                    backgroundColor: Colors.greenAccent,
+                    content: const Text("Success uploading your shots"),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              } catch (e) {
+                var snackBar = SnackBar(
+                    backgroundColor: Color.fromARGB(255, 250, 141, 141),
+                    content: Text("Error uploading shots: $e"),
+                    action: SnackBarAction(
+                      label: 'Ok',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                log.severe("Error uploading shots $e");
+              }
             },
           ),
         ],
