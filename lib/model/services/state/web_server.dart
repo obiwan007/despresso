@@ -132,9 +132,9 @@ class WebService extends ChangeNotifier {
         machineService.de1?.switchOff();
         break;
     }
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
     var s = machineService.currentFullState;
-    log.info("post: ${data} ${js['state']}");
+    log.info("post: $data ${js['state']}");
     var res = Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
     return res;
   }

@@ -1,5 +1,4 @@
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
@@ -60,7 +59,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         charts.RangeAnnotation([...phases], defaultLabelPosition: charts.AnnotationLabelPosition.margin),
       ],
       primaryMeasureAxis: charts.NumericAxisSpec(
-        viewport: charts.NumericExtents(0, 10),
+        viewport: const charts.NumericExtents(0, 10),
         renderSpec: charts.GridlineRendererSpec(
           labelStyle: charts.TextStyleSpec(
               fontSize: 10, color: charts.ColorUtil.fromDartColor(Theme.of(context).colorScheme.primary)),
@@ -159,7 +158,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
             time,
             time,
             frame.pump == "pressure" ? lastVal : defaultPressure,
-            frame.pump == "flow" ? lastVal : defaultFlow,
+            frame.pump == "flow" ? lastVal : frame.triggerVal,
             frame.temp + dt,
             frame.temp + dt,
             frame.temp + dt,
@@ -174,8 +173,8 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         shotState = ShotState(
             time + 1.5,
             time + 1.5,
-            frame.pump == "pressure" ? frame.setVal : defaultPressure,
-            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.pump == "pressure" ? frame.setVal : frame.triggerVal,
+            frame.pump == "flow" ? frame.setVal : frame.triggerVal,
             frame.temp + dt,
             frame.temp + dt,
             frame.temp + dt,
@@ -191,8 +190,8 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         shotState = ShotState(
             time,
             time,
-            frame.pump == "pressure" ? frame.setVal : defaultPressure,
-            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.pump == "pressure" ? frame.setVal : frame.triggerVal,
+            frame.pump == "flow" ? frame.setVal : frame.triggerVal,
             frame.temp + dt,
             frame.temp + dt,
             frame.temp + dt,
@@ -208,8 +207,8 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         ShotState shotState = ShotState(
             time,
             time,
-            frame.pump == "pressure" ? lastVal : defaultPressure,
-            frame.pump == "flow" ? lastVal : defaultFlow,
+            frame.pump == "pressure" ? lastVal : frame.triggerVal,
+            frame.pump == "flow" ? lastVal : frame.triggerVal,
             frame.temp + dt,
             frame.temp + dt,
             frame.temp + dt,
@@ -224,8 +223,8 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         shotState = ShotState(
             time + 2.5,
             time + 2.5,
-            frame.pump == "pressure" ? frame.setVal : defaultPressure,
-            frame.pump == "flow" ? frame.setVal : defaultFlow,
+            frame.pump == "pressure" ? frame.setVal : frame.triggerVal,
+            frame.pump == "flow" ? frame.setVal : frame.triggerVal,
             frame.temp + dt,
             frame.temp + dt,
             frame.temp + dt,
@@ -309,7 +308,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
           labelStyleSpec: charts.TextStyleSpec(
               fontSize: 10,
               // color: charts.ColorUtil.fromDartColor(theme.ThemeColors.secondaryColor)),
-              color: charts.ColorUtil.fromDartColor(Color(0xFFD0BCFF))),
+              color: charts.ColorUtil.fromDartColor(const Color(0xFFD0BCFF))),
           labelDirection: charts.AnnotationLabelDirection.vertical);
       // log.info("Phase ${element.subState}");
     });

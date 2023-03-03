@@ -73,7 +73,7 @@ class RecipeScreenState extends State<RecipeScreen> {
                   initialData: coffeeService.getRecipes(),
                   builder: (context, snapshot) {
                     return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
                       itemCount: snapshot.data?.length ?? 0,
                     );
@@ -185,6 +185,13 @@ class RecipeScreenState extends State<RecipeScreen> {
         setState(() {});
       },
       child: ListTile(
+        trailing: IconButton(
+          icon: data.isFavorite ? const Icon(color: Colors.yellow, Icons.star) : const Icon(Icons.star_border_outlined),
+          tooltip: 'Favorite',
+          onPressed: () {
+            coffeeService.recipeFavoriteToggle(data);
+          },
+        ),
         title: Text(
           data.name,
         ),

@@ -221,7 +221,17 @@ class CoffeeService extends ChangeNotifier {
   }
 
   List<Recipe> getRecipes() {
-    return recipeBox.getAll();
+    final builder = recipeBox
+        .query(Recipe_.isDeleted.isNull() | Recipe_.isDeleted.equals(false))
+        .order(Recipe_.isFavorite, flags: Order.descending)
+        .order(Recipe_.name)
+        .build();
+
+    //
+    var d = builder.find();
+    builder.close();
+
+    return d;
   }
 
   Recipe? getRecipe(int id) {
@@ -246,7 +256,12 @@ class CoffeeService extends ChangeNotifier {
   }
 
   void removeRecipe(int id) {
-    recipeBox.remove(id);
+    var r = recipeBox.get(id);
+    if (r != null) {
+      r.isDeleted = true;
+      updateRecipe(r);
+    }
+
     notifyListeners();
     _controllerRecipe.add(getRecipes());
   }
@@ -276,5 +291,10 @@ class CoffeeService extends ChangeNotifier {
       updateRecipe(res);
       notifyListeners();
     }
+  }
+
+  void recipeFavoriteToggle(Recipe data) {
+    data.isFavorite = !data.isFavorite;
+    updateRecipe(data);
   }
 }

@@ -1,18 +1,16 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/labeled_checkbox.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
@@ -126,7 +124,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             return element.value!.id == _selectedProfile!.id;
           },
         )) {
-      if (items.length > 0) _selectedProfile = items[0].value;
+      if (items.isNotEmpty) _selectedProfile = items[0].value;
     }
     return Scaffold(
       appBar: AppBar(
@@ -137,7 +135,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             builder: (BuildContext context) {
               return ElevatedButton(
                 onPressed: () => _onShare(context),
-                child: Icon(Icons.ios_share),
+                child: const Icon(Icons.ios_share),
               );
             },
           ),
@@ -146,7 +144,30 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             onPressed: () async {
               final shortCode = await _openShortCodeDiaglog();
               if (shortCode == null || shortCode.isEmpty) return;
-              profileService.getJsonProfileFromVisualizerShortCode(shortCode);
+
+              try {
+                var profile = await profileService.getJsonProfileFromVisualizerShortCode(shortCode);
+                profile.isDefault = false;
+                profile.id = const Uuid().v1().toString();
+                log.info("Loaded Profile: ${profile.id} ${profile.title}");
+                setState(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilesEditScreen(profile)),
+                  );
+                });
+              } catch (e) {
+                var snackBar = SnackBar(
+                    content: Text("Error loading profile: $e"),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        // Some code to undo the change.
+                      },
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                log.severe("Error loading profile $e");
+              }
             },
           ),
           ElevatedButton(
@@ -169,137 +190,140 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         ],
       ),
       body: Scaffold(
-        body: Row(
-          children: [
-            Expanded(
-              flex: 4, // takes 30% of available width
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: items.isNotEmpty
-                              ? DropdownButton(
-                                  isExpanded: true,
-                                  alignment: Alignment.centerLeft,
-                                  value: _selectedProfile,
-                                  items: items,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedProfile = value!;
-                                      profileService.setProfile(_selectedProfile!);
-                                      // calcProfileGraph();
-                                      // phases = _createPhases();
-                                    });
-                                  },
-                                  hint: const Text("Select item"))
-                              : Text("No profiles found for selection"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: renderFilterDropdown(context, items),
-                        ),
-                      ],
-                    ),
-                    if (items.isNotEmpty)
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
-                                  KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
-                                  KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
-                                  KeyValueWidget(
-                                      label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
-                                  KeyValueWidget(
-                                      label: "Max Pressure",
-                                      value: _selectedProfile!.shotHeader.minimumPressure.toString()),
-                                  KeyValueWidget(
-                                      label: "Target Volume",
-                                      value: _selectedProfile!.shotHeader.targetVolume.toString()),
-                                  KeyValueWidget(
-                                      label: "Target Weight",
-                                      value: _selectedProfile!.shotHeader.targetWeight.toString()),
-                                ],
-                              )),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 6, // takes 30% of available width
-              child: !items.isNotEmpty
-                  ? Container()
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!),
-                        ),
-                        Expanded(
-                          flex: 6,
-                          child: Padding(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4, // takes 30% of available width
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: items.isNotEmpty
+                                ? DropdownButton(
+                                    isExpanded: true,
+                                    alignment: Alignment.centerLeft,
+                                    value: _selectedProfile,
+                                    items: items,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedProfile = value!;
+                                        profileService.setProfile(_selectedProfile!);
+                                        // calcProfileGraph();
+                                        // phases = _createPhases();
+                                      });
+                                    },
+                                    hint: const Text("Select item"))
+                                : const Text("No profiles found for selection"),
+                          ),
+                          Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      ...createSteps(),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 4,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      ElevatedButton.icon(
-                                        icon: const Icon(Icons.add),
-                                        onPressed: () async {
-                                          var messenger = ScaffoldMessenger.of(context);
-                                          var result = await machineService.uploadProfile(_selectedProfile!);
-
-                                          var snackBar = SnackBar(
-                                              content: Text('Profile is selected: $result'),
-                                              action: SnackBarAction(
-                                                label: 'Ok',
-                                                onPressed: () {
-                                                  // Some code to undo the change.
-                                                },
-                                              ));
-
-                                          messenger.showSnackBar(snackBar);
-                                        },
-                                        label: const Text(
-                                          "Save to Decent",
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            child: renderFilterDropdown(context, items),
+                          ),
+                        ],
+                      ),
+                      if (items.isNotEmpty)
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
+                                    KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
+                                    KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
+                                    KeyValueWidget(
+                                        label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
+                                    KeyValueWidget(
+                                        label: "Max Pressure",
+                                        value: _selectedProfile!.shotHeader.minimumPressure.toString()),
+                                    KeyValueWidget(
+                                        label: "Target Volume",
+                                        value: _selectedProfile!.shotHeader.targetVolume.toString()),
+                                    KeyValueWidget(
+                                        label: "Target Weight",
+                                        value: _selectedProfile!.shotHeader.targetWeight.toString()),
+                                  ],
+                                )),
                           ),
                         ),
-                      ],
-                    ),
-            ),
-          ],
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 6, // takes 30% of available width
+                child: !items.isNotEmpty
+                    ? Container()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!),
+                          ),
+                          Expanded(
+                            flex: 6,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ...createSteps(),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 4,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        ElevatedButton.icon(
+                                          icon: const Icon(Icons.add),
+                                          onPressed: () async {
+                                            var messenger = ScaffoldMessenger.of(context);
+                                            var result = await machineService.uploadProfile(_selectedProfile!);
+
+                                            var snackBar = SnackBar(
+                                                content: Text('Profile is selected: $result'),
+                                                action: SnackBarAction(
+                                                  label: 'Ok',
+                                                  onPressed: () {
+                                                    // Some code to undo the change.
+                                                  },
+                                                ));
+
+                                            messenger.showSnackBar(snackBar);
+                                          },
+                                          label: const Text(
+                                            "Save to Decent",
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -448,7 +472,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           content: TextField(
             autofocus: true,
             controller: shortCodeController,
-            decoration: InputDecoration(hintText: '4-digit visualizer short code'),
+            decoration: const InputDecoration(hintText: '4-digit visualizer short code'),
             maxLength: 4,
           ),
           actions: <Widget>[

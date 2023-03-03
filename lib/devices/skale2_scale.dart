@@ -39,8 +39,6 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   final DiscoveredDevice device;
 
-  late DeviceConnectionState _state;
-
   List<int> commandBuffer = [];
   final flutterReactiveBle = FlutterReactiveBle();
 
@@ -67,10 +65,10 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
     ByteData bytes = ByteData(20);
     var i = 0;
     var list = bytes.buffer.asUint8List();
-    buffer.forEach((element) {
+    for (var element in buffer) {
       list[i] = buffer[i];
       i++;
-    });
+    }
     return bytes.getInt32(0, Endian.little);
   }
 
@@ -98,7 +96,6 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   void _onStateChange(DeviceConnectionState state) async {
     log.info('SCALE2 State changed to $state');
-    _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:

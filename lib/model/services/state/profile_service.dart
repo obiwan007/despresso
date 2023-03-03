@@ -87,7 +87,7 @@ class ProfileService extends ChangeNotifier {
     }
 
     currentProfile = profiles.first;
-    if (profileId != null && profileId.isNotEmpty) {
+    if (profileId.isNotEmpty) {
       try {
         currentProfile = profiles.where((element) => element.id == profileId).first;
       } catch (_) {}
@@ -428,17 +428,24 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  getJsonProfileFromVisualizerShortCode(String shortCode) async {
+  Future<De1ShotProfile> getJsonProfileFromVisualizerShortCode(String shortCode) async {
     if (shortCode.length == 4) {
       try {
         var url = Uri.https('visualizer.coffee', '/api/shots/shared', {'code': shortCode});
         var response = await http.get(url);
+        if (response.statusCode != 200) {
+          throw ("Shot not found");
+        }
         var profileUrl = jsonDecode(response.body)['profile_url'] + '.json';
         var profileResponse = await http.get(Uri.parse(profileUrl));
-        defaultProfiles.add(parseDefaultProfile(profileResponse.body, true));
+
+        return parseDefaultProfile(profileResponse.body, false);
       } catch (e) {
         log.warning(e);
+        rethrow;
       }
+    } else {
+      throw ("Error in code");
     }
   }
 }

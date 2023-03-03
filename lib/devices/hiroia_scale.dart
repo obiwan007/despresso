@@ -14,7 +14,8 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('HiroiaScale');
 
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Platform.isAndroid ? Uuid.parse('06c31822-8682-4744-9211-febc93e3bece') : Uuid.parse('1822');
+  static Uuid ServiceUUID =
+      Platform.isAndroid ? Uuid.parse('06c31822-8682-4744-9211-febc93e3bece') : Uuid.parse('1822');
   // ignore: non_constant_identifier_names
   static Uuid DataUUID = Platform.isAndroid ? Uuid.parse('06c31823-8682-4744-9211-febc93e3bece') : Uuid.parse('1823');
   // ignore: non_constant_identifier_names
@@ -25,8 +26,6 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
   static const List<int> cmdTare = [0x07, 0x00];
 
   final DiscoveredDevice device;
-
-  late DeviceConnectionState _state;
 
   List<int> commandBuffer = [];
   final flutterReactiveBle = FlutterReactiveBle();
@@ -81,13 +80,14 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
 
   Future<void> writeToHiroia(List<int> payload) async {
     log.info("Sending to Hiroia");
-    final characteristic = QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteUUID, deviceId: device.id);
+    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
+        value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
     log.info('SCALE State changed to $state');
-    _state = state;
 
     switch (state) {
       case DeviceConnectionState.connecting:
@@ -99,7 +99,8 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
         log.info('Connected');
         scaleService.setState(ScaleState.connected);
 
-        final characteristic = QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
+        final characteristic =
+            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data

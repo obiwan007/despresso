@@ -1,7 +1,6 @@
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
-import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
