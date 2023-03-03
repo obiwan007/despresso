@@ -128,6 +128,9 @@ class RecipeScreenState extends State<RecipeScreen> {
                       ),
                     ),
                   Text(coffeeService.currentCoffee?.description ?? ""),
+
+                  /// To make it possible to read because of Add recipe overlay button
+                  const SizedBox(height: 80),
                 ],
               ),
             ),
