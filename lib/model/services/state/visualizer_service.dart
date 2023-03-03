@@ -26,7 +26,7 @@ class VisualizerService extends ChangeNotifier {
     settingsService = getIt<SettingsService>();
     profileService = getIt<ProfileService>();
   }
-  Future sendShotToVisualizer(Shot shot) async {
+  Future<String> sendShotToVisualizer(Shot shot) async {
     if (settingsService.visualizerUser.isNotEmpty && settingsService.visualizerPwd.isNotEmpty) {
       String username = settingsService.visualizerUser;
       String password = settingsService.visualizerPwd;
@@ -54,7 +54,12 @@ class VisualizerService extends ChangeNotifier {
           throw ("Error in uploading: ${response.statusCode}");
         }
       }
-      return response;
+      var resBody = await response.stream.bytesToString();
+      if (resBody.isNotEmpty) {
+        var ret = jsonDecode(resBody);
+        return ret["id"];
+      }
+      return "";
     } else {
       throw ("No username and/or password configured in settings");
     }
