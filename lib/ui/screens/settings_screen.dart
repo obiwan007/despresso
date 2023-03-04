@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:despresso/model/services/ble/ble_service.dart';
@@ -13,7 +14,7 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-
+import 'package:screen_brightness/screen_brightness.dart';
 import '../../service_locator.dart';
 
 class AppSettingsScreen extends StatefulWidget {
@@ -32,6 +33,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late VisualizerService visualizerService;
 
   String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
+
+  Timer? _resetBrightness;
 
   @override
   initState() {
@@ -164,7 +167,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           children: [
             ExpandableSettingsTile(title: "Sleep Timer", children: [
               SliderSettingsTile(
-                title: 'Switch Off After',
+                title: 'Switch de1 to sleep mode after',
                 settingKey: SettingKeys.sleepTimer.name,
                 defaultValue: settingsService.sleepTimer,
                 min: 0,
@@ -176,7 +179,60 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 },
               ),
               SliderSettingsTile(
-                title: 'Screen Lock',
+                title: 'Reduce brightness after [min]',
+                settingKey: SettingKeys.screenBrightnessTimer.name,
+                defaultValue: settingsService.screenBrightnessTimer,
+                min: 0,
+                max: 240,
+                step: 1,
+                leading: const Icon(Icons.lock),
+                onChange: (value) {
+                  debugPrint('key-slider-volume: $value');
+                },
+              ),
+              SliderSettingsTile(
+                title: 'Reduce brightness to',
+                settingKey: SettingKeys.screenBrightnessValue.name,
+                defaultValue: settingsService.screenBrightnessValue,
+                min: 0,
+                max: 1,
+                step: 0.1,
+                leading: const Icon(Icons.lock),
+                onChange: (value) async {
+                  try {
+                    await ScreenBrightness().setScreenBrightness(value);
+                    if (_resetBrightness != null) {
+                      _resetBrightness!.cancel();
+                      _resetBrightness = null;
+                    }
+                    _resetBrightness = Timer(
+                      const Duration(seconds: 2),
+                      () async {
+                        log.info("Release");
+                        await ScreenBrightness().resetScreenBrightness();
+                      },
+                    );
+                  } catch (e) {
+                    log.severe('Failed to set brightness');
+                  }
+                },
+              ),
+              SwitchSettingsTile(
+                title: 'Wake up de1 if screen tapped',
+                settingKey: SettingKeys.screenTapWake.name,
+                defaultValue: settingsService.screenTapWake,
+                leading: const Icon(Icons.lock),
+                onChange: (value) async {},
+              ),
+              SwitchSettingsTile(
+                title: 'Go to Recipe if timeout occured',
+                settingKey: SettingKeys.screenTimoutGoToRecipe.name,
+                defaultValue: settingsService.screenTimoutGoToRecipe,
+                leading: const Icon(Icons.lock),
+                onChange: (value) async {},
+              ),
+              SliderSettingsTile(
+                title: 'Do not let tablet go to screen lock for (usually the tablet goes off then)',
                 settingKey: SettingKeys.screenLockTimer.name,
                 defaultValue: settingsService.screenLockTimer,
                 min: 0,

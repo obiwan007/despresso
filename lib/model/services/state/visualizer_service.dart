@@ -4,13 +4,12 @@ import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:logging/logging.dart';
 import '../../../service_locator.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../../shotstate.dart';
 import '../ble/machine_service.dart';
 
 class VisualizerService extends ChangeNotifier {
@@ -105,7 +104,7 @@ class VisualizerService extends ChangeNotifier {
     //   "espresso_temperature_basket": shot.shotstates.map((element) => element.headTemp).toList(),
     // };
 
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
     // buffer.writeln("local_time {${shot.date.toIso8601String()}}");
 
     buffer.writeln("clock ${(shot.date.millisecondsSinceEpoch / 1000).toInt()}");

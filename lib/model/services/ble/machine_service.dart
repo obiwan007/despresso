@@ -14,7 +14,6 @@ import 'package:flutter/services.dart';
 
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wakelock/wakelock.dart';
 
 import 'package:battery_plus/battery_plus.dart';
 
@@ -173,31 +172,31 @@ class EspressoMachineService extends ChangeNotifier {
           log.fine("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
           sleepTime += 10;
 
-          if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
-            try {
-              if (await Wakelock.enabled) {
-                log.info('Disable WakeLock');
-                Wakelock.disable();
-              }
-            } on MissingPluginException catch (e) {
-              log.severe('Failed to set wakelock: $e');
-            }
-          }
+          // if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
+          //   try {
+          //     if (await Wakelock.enabled) {
+          //       log.info('Disable WakeLock');
+          //       Wakelock.disable();
+          //     }
+          //   } on MissingPluginException catch (e) {
+          //     log.severe('Failed to set wakelock: $e');
+          //   }
+          // }
         } catch (e) {
           log.severe("Error $e");
         }
       } else {
         sleepTime = 0;
-        try {
-          if ((await Wakelock.enabled) == false) {
-            log.info('enable WakeLock');
-            Wakelock.enable();
-          } else {
-            log.fine('is enabled WakeLock');
-          }
-        } on MissingPluginException catch (e) {
-          log.severe('Failed to set wakelock enable: $e');
-        }
+        // try {
+        //   if ((await Wakelock.enabled) == false) {
+        //     log.info('enable WakeLock');
+        //     Wakelock.enable();
+        //   } else {
+        //     log.fine('is enabled WakeLock');
+        //   }
+        // } on MissingPluginException catch (e) {
+        //   log.severe('Failed to set wakelock enable: $e');
+        // }
       }
 
       if (state.coffeeState == EspressoMachineState.idle) {
