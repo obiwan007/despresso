@@ -128,17 +128,16 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
             serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
-          // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
-          // code to handle errors
+          log.severe("Subscribe to $characteristic failed: $error");
         });
 
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
-        log.info('Eureka Scale disconnected. Destroying');
-        // await device.disconnectOrCancelConnection();
+        scaleService.setBattery(0);
+        log.info('Decent Scale disconnected. Destroying');
         _characteristicsSubscription.cancel();
 
         _deviceListener.cancel();
