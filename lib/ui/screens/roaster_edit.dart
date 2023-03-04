@@ -1,4 +1,3 @@
-import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';

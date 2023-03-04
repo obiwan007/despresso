@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
 import 'package:despresso/ui/screens/settings_screen.dart';
@@ -48,6 +49,8 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   late TabController _tabController;
 
+  late ScreensaverService _screensaver;
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +64,9 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
     profileService = getIt<ProfileService>();
     profileService.addListener(updatedProfile);
+
+    _screensaver = getIt<ScreensaverService>();
+    _screensaver.addListener(screenSaverEvent);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
     //   log.info("Print after 5 seconds");
     //   selectedPage++;
@@ -75,13 +81,19 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     _tabController.dispose();
     machineService.removeListener(updatedMachine);
     profileService.removeListener(updatedProfile);
+    _screensaver.removeListener(screenSaverEvent);
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
-      child: scaffoldNewLayout(context),
+      child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            _screensaver.handleTap();
+          },
+          child: scaffoldNewLayout(context)),
     );
   }
 
@@ -149,23 +161,19 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
               leading: const Icon(Icons.auto_graph_outlined),
               title: const Text('Shot Database'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
+                _screensaver.pause();
                 Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ShotSelectionTab()),
-                );
+                ).then((value) => _screensaver.resume());
               },
             ),
             ListTile(
               leading: const Icon(Icons.add),
               title: const Text('Profiles'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
+                _screensaver.pause();
                 Navigator.pop(context);
                 Navigator.push(
                   context,
@@ -173,13 +181,14 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                       builder: (context) => ProfilesScreen(
                             saveToRecipe: false,
                           )),
-                );
+                ).then((value) => _screensaver.resume());
               },
             ),
             ListTile(
               leading: const Icon(Icons.coffee),
               title: const Text('Coffees'),
               onTap: () {
+                _screensaver.pause();
                 Navigator.pop(context);
                 Navigator.push(
                   context,
@@ -187,18 +196,19 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                       builder: (context) => CoffeeSelectionTab(
                             saveToRecipe: false,
                           )),
-                );
+                ).then((value) => _screensaver.resume());
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {
+                _screensaver.pause();
                 Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
-                );
+                ).then((value) => _screensaver.resume());
                 // Then close the drawer
               },
             ),
@@ -394,6 +404,17 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
         // DefaultTabController.of(context)!
         //     .animateTo(currentPageIndex, duration: const Duration(milliseconds: 100), curve: Curves.ease);
       });
+    }
+  }
+
+  void screenSaverEvent() {
+    if (_screensaver.screenSaverOn == true) {
+      var settings = getIt<SettingsService>();
+      if (settings.screenTimoutGoToRecipe) {
+        setState(() {
+          _tabController.index = 0;
+        });
+      }
     }
   }
 }

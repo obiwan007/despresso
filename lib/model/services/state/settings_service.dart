@@ -50,6 +50,10 @@ enum SettingKeys {
   targetEspressoWeight,
   webServer,
   targetTempCorrection,
+  screenBrightnessTimer,
+  screenBrightnessValue,
+  screenTapWake,
+  screenTimoutGoToRecipe,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -157,13 +161,24 @@ class SettingsService extends ChangeNotifier {
   int get targetGroupTemp => Settings.getValue<int>(SettingKeys.targetGroupTemp.name) ?? 98;
   set targetGroupTemp(value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
 
-
   bool get webServer => Settings.getValue<bool>(SettingKeys.webServer.name) ?? true;
   set webServer(value) => Settings.setValue<bool>(SettingKeys.webServer.name, value);
 
   double get targetTempCorrection => Settings.getValue<double>(SettingKeys.targetTempCorrection.name) ?? 0;
   set targetTempCorrection(value) => Settings.setValue<double>(SettingKeys.targetTempCorrection.name, value);
 
+  double get screenBrightnessTimer => Settings.getValue<double>(SettingKeys.screenBrightnessTimer.name) ?? 10;
+  set screenBrightnessTimer(value) => Settings.setValue<double>(SettingKeys.screenBrightnessTimer.name, value);
+
+  double get screenBrightnessValue => Settings.getValue<double>(SettingKeys.screenBrightnessValue.name) ?? 0.8;
+  set screenBrightnessValue(value) => Settings.setValue<double>(SettingKeys.screenBrightnessValue.name, value);
+
+  /// Wake de1 if tapped out of screensaver/dim mode
+  bool get screenTapWake => Settings.getValue<bool>(SettingKeys.screenTapWake.name) ?? true;
+  set screenTapWake(value) => Settings.setValue<bool>(SettingKeys.screenTapWake.name, value);
+
+  bool get screenTimoutGoToRecipe => Settings.getValue<bool>(SettingKeys.screenTimoutGoToRecipe.name) ?? true;
+  set screenTimoutGoToRecipe(value) => Settings.setValue<bool>(SettingKeys.screenTimoutGoToRecipe.name, value);
 
   void notifyDelayed() {
     Future.delayed(

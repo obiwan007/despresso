@@ -431,7 +431,8 @@ class EspressoScreenState extends State<EspressoScreen> {
           indent: 0,
           endIndent: 0,
         ),
-        if (machineService.currentShot.visualizerId.isNotEmpty)
+        if (machineService.state.coffeeState != EspressoMachineState.espresso &&
+            machineService.currentShot.visualizerId.isNotEmpty)
           TextButton.icon(
             onPressed: () {
               launchUrl(Uri.parse('https://visualizer.coffee/shots/${machineService.currentShot.visualizerId}'));

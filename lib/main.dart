@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:logging/logging.dart';
@@ -38,9 +40,6 @@ Future<void> main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
 
-  // SystemChrome.setEnabledSystemUIOverlays([
-  //   SystemUiOverlay.bottom, //This line is used for showing the bottom bar
-  // ]);
   initSettings().then((_) async {
     await SentryFlutter.init(
       (options) {
@@ -74,8 +73,8 @@ class MyApp extends StatelessWidget {
         title: 'despresso',
         theme: ThemeData(
           useMaterial3: true,
-          colorSchemeSeed: Colors.green,
-          // colorScheme: lightColorScheme,
+
+          colorScheme: lightColorScheme,
           // textTheme: const TextTheme(
           //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
           //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
