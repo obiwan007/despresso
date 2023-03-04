@@ -102,15 +102,15 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
-          // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
-          // code to handle errors
+          log.severe("Subscribe to $characteristic failed: $error");
         });
 
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
+        scaleService.setBattery(0);
         log.info('Felicita Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();

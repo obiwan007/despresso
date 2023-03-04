@@ -137,6 +137,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
         log.info('Skale2 disconnected. Destroying');
+        scaleService.setBattery(0);
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
 

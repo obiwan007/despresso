@@ -286,7 +286,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
           _notificationCallback(data);
         }, onError: (dynamic error) {
           // code to handle errors
-          log.severe("Error in subscription $error");
+          log.severe("Subscribe to $characteristic failed: $error");
         });
 
         Timer(const Duration(seconds: 1), _sendIdent);

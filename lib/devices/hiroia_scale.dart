@@ -106,12 +106,13 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
-          // code to handle errors
+          log.severe("Subscribe to $characteristic failed: $error");
         });
 
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected);
+        scaleService.setBattery(0);
         log.info('Hiroia Scale disconnected. Destroying');
         _characteristicsSubscription.cancel();
 

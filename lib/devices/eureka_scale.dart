@@ -110,7 +110,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
-          // code to handle errors
+          log.severe("Subscribe to $characteristic failed: $error");
         });
 
         final batteryCharacteristic = QualifiedCharacteristic(
