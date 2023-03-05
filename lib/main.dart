@@ -85,13 +85,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    var schemaLight = lightColorSchemes[int.parse(_services.screenThemeIndex)];
+    var themeDark = darkColorSchemes[int.parse(_services.screenThemeIndex)];
     return BetterFeedback(
       child: MaterialApp(
         title: 'despresso',
-        theme: ThemeData.from(useMaterial3: true, colorScheme: lightColorScheme),
+        theme: ThemeData.from(
+          useMaterial3: true,
+          colorScheme: schemaLight,
+        ),
         darkTheme: ThemeData.from(
           useMaterial3: true,
-          colorScheme: darkColorScheme,
+          colorScheme: themeDark,
         ),
 
         // ThemeData(

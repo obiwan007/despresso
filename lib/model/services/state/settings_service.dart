@@ -55,6 +55,7 @@ enum SettingKeys {
   screenTapWake,
   screenTimoutGoToRecipe,
   screenDarkTheme,
+  screenThemeIndex,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -183,6 +184,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get screenDarkTheme => Settings.getValue<bool>(SettingKeys.screenDarkTheme.name) ?? true;
   set screenDarkTheme(value) => Settings.setValue<bool>(SettingKeys.screenDarkTheme.name, value);
+
+  String get screenThemeIndex => Settings.getValue<String>(SettingKeys.screenThemeIndex.name) ?? "0";
+  set screenThemeIndex(value) => Settings.setValue<String>(SettingKeys.screenThemeIndex.name, value);
 
   void notifyDelayed() {
     Future.delayed(
