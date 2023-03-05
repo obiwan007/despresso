@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/machine.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -224,9 +225,9 @@ class SteamScreenState extends State<SteamScreen> {
                             ))
                           : const Text("No data");
                     }),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: StartStopButton(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: StartStopButton(requestedState: De1StateEnum.steam),
               ),
             ],
           ),

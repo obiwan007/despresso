@@ -1,3 +1,4 @@
+import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -223,8 +224,8 @@ class WaterScreenState extends State<WaterScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              StartStopButton(),
+            children: [
+              StartStopButton(requestedState: De1StateEnum.hotWater),
             ],
           ),
         ),

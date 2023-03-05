@@ -500,9 +500,9 @@ class EspressoScreenState extends State<EspressoScreen> {
                   //   child: _buildScaleInsight(),
                   // ),
                   const Spacer(),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(5.0),
-                    child: StartStopButton(),
+                    child: StartStopButton(requestedState: De1StateEnum.espresso),
                   ),
                   // _buildButtons()
                 ]),
