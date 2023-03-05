@@ -39,7 +39,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
 
   late TabController _tabController;
 
-  List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.yellow];
+  List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
   ProfilesEditScreenState(this._profile);
 

@@ -189,7 +189,7 @@ class RecipeScreenState extends State<RecipeScreen> {
       },
       child: ListTile(
         trailing: IconButton(
-          icon: data.isFavorite ? const Icon(color: Colors.yellow, Icons.star) : const Icon(Icons.star_border_outlined),
+          icon: data.isFavorite ? const Icon(color: Colors.orange, Icons.star) : const Icon(Icons.star_border_outlined),
           tooltip: 'Favorite',
           onPressed: () {
             coffeeService.recipeFavoriteToggle(data);

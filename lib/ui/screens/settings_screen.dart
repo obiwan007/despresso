@@ -165,6 +165,15 @@ class SettingsScreenState extends State<AppSettingsScreen> {
         SettingsGroup(
           title: "Tablet",
           children: [
+            SwitchSettingsTile(
+              title: settingsService.screenDarkTheme ? 'Dark theme' : "Light theme",
+              settingKey: SettingKeys.screenDarkTheme.name,
+              defaultValue: settingsService.screenDarkTheme,
+              leading: const Icon(Icons.smart_screen),
+              onChange: (value) async {
+                settingsService.notifyDelayed();
+              },
+            ),
             ExpandableSettingsTile(title: "Sleep Timer", children: [
               SliderSettingsTile(
                 title: 'Switch de1 to sleep mode after',
@@ -471,17 +480,6 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           },
         ));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  Column createKeyValue(String key, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(key, style: theme.TextStyles.tabHeading),
-        Text(value, style: theme.TextStyles.tabPrimary),
-      ],
-    );
   }
 
   void settingsServiceListener() {

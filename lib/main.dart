@@ -59,39 +59,62 @@ Future<void> initSettings() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key}) {
     getIt.registerSingleton<ObjectBox>(objectbox, signalsReady: false);
     setupServices();
   }
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  late SettingsService _services;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _services = getIt<SettingsService>();
+    _services.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BetterFeedback(
       child: MaterialApp(
         title: 'despresso',
-        theme: ThemeData(
+        theme: ThemeData.from(useMaterial3: true, colorScheme: lightColorScheme),
+        darkTheme: ThemeData.from(
           useMaterial3: true,
-
-          colorScheme: lightColorScheme,
-          // textTheme: const TextTheme(
-          //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
-          //   bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-          // ),
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, brightness: Brightness.dark),
           colorScheme: darkColorScheme,
-          // textTheme: const TextTheme(
-          //     // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          //     // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
-          //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-          //     ),
         ),
-        themeMode: ThemeMode.dark,
+
+        // ThemeData(
+        //   useMaterial3: true,
+
+        //   colorScheme: lightColorScheme,
+        //   // textTheme: const TextTheme(
+        //   //   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+        //   //   titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+        //   //   bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        //   // ),
+        // ),
+        // darkTheme: ThemeData(
+        //   useMaterial3: true,
+        //   // colorScheme: ColorScheme.fromSeed(seedColor: Colors.red, brightness: Brightness.dark),
+        //   colorScheme: darkColorScheme,
+        //   // textTheme: const TextTheme(
+        //   //     // displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+        //   //     // titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal),
+        //   //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        //   //     ),
+        // ),
+        themeMode: _services.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
 
         // theme: ThemeData(
         //   useMaterial3: true,

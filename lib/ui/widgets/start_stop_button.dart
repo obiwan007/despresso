@@ -148,15 +148,15 @@ class _StartStopButtonState extends State<StartStopButton> {
                     children: [
                       Text(
                         title,
-                        style: theme.TextStyles.statusbuttonMain,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       Text(
                         mainState,
-                        style: theme.TextStyles.statusButtonSecondary,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
                         subState,
-                        style: theme.TextStyles.statusButtonSecondary,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
                   ),
