@@ -7,8 +7,11 @@ import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 
 class StartStopButton extends StatefulWidget {
-  const StartStopButton({
+  De1StateEnum requestedState;
+
+  StartStopButton({
     Key? key,
+    required this.requestedState,
   }) : super(key: key);
 
   @override
@@ -126,7 +129,7 @@ class _StartStopButtonState extends State<StartStopButton> {
                     } else {
                       if (!isBusy) {
                         log.info("Start");
-                        machineService.de1?.requestState(De1StateEnum.espresso);
+                        machineService.de1?.requestState(widget.requestedState);
                       } else {
                         machineService.de1?.setIdleState();
                       }
@@ -148,15 +151,15 @@ class _StartStopButtonState extends State<StartStopButton> {
                     children: [
                       Text(
                         title,
-                        style: theme.TextStyles.statusbuttonMain,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       Text(
                         mainState,
-                        style: theme.TextStyles.statusButtonSecondary,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
                         subState,
-                        style: theme.TextStyles.statusButtonSecondary,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
                   ),

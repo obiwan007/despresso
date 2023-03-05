@@ -94,7 +94,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(8.0),
       ),
-      child: flowChart,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: flowChart,
+      ),
     );
   }
 

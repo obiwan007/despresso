@@ -65,7 +65,9 @@ class _MachineFooterState extends State<MachineFooter> {
   Widget build(BuildContext context) {
     return Container(
       height: 70,
-      color: Colors.white10,
+      color: MediaQuery.of(context).platformBrightness == Brightness.dark
+          ? Colors.white12
+          : Colors.black12, // .of(context).colorScheme.background,
       child: Row(
         children: [
           StreamBuilder<WaterLevel>(
@@ -177,13 +179,14 @@ class ThermprobeFooter extends StatelessWidget {
                                       ? Text(
                                           textAlign: TextAlign.right,
                                           "${snapshot.data?.temp1.toStringAsFixed(1)} °C",
-                                          style: theme.TextStyles.headingFooter)
+                                          style: Theme.of(context).textTheme.headlineSmall,
+                                        )
                                       : FittedBox(
                                           fit: BoxFit.fitWidth,
                                           child: Text(
                                             textAlign: TextAlign.right,
                                             machineService.tempService.state.name,
-                                            style: Theme.of(context).textTheme.labelSmall,
+                                            style: Theme.of(context).textTheme.headlineSmall,
                                           ),
                                         ),
                                 ),
@@ -278,7 +281,8 @@ class ScaleFooter extends StatelessWidget {
                                     ? Text(
                                         textAlign: TextAlign.right,
                                         "${snapshot.data?.weight.toStringAsFixed(1)} g",
-                                        style: theme.TextStyles.headingFooter)
+                                        style: Theme.of(context).textTheme.headlineSmall,
+                                      )
                                     : FittedBox(
                                         fit: BoxFit.fitWidth,
                                         child: Text(
@@ -296,7 +300,7 @@ class ScaleFooter extends StatelessWidget {
                                 machineService.scaleService.state == ScaleState.connected
                                     ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
                                     : "",
-                                style: theme.TextStyles.headingFooterSmall,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
                           ],
@@ -311,9 +315,9 @@ class ScaleFooter extends StatelessWidget {
                   );
                 }),
           ),
-          const Text(
+          Text(
             'Scale',
-            style: theme.TextStyles.subHeadingFooter,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
           StreamBuilder<Object>(
               stream: machineService.scaleService.streamBattery,
@@ -349,11 +353,13 @@ class FooterValue extends StatelessWidget {
         children: [
           Text(
             value,
-            style: theme.TextStyles.headingFooter,
+            // style: theme.TextStyles.headingFooter,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           Text(
             label,
-            style: theme.TextStyles.subHeadingFooter,
+            // style: theme.TextStyles.subHeadingFooter,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
         ],
       ),

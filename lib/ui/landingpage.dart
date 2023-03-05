@@ -243,6 +243,14 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
                 }
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip),
+              title: const Text('Test'),
+              onTap: () async {
+                Navigator.pop(context);
+                showScreenSaver();
+              },
+            ),
             FutureBuilder<PackageInfo>(
               future: PackageInfo.fromPlatform(),
               builder: (context, snapshot) {
@@ -415,6 +423,39 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
           _tabController.index = 0;
         });
       }
+      setState(
+        () => showScreenSaver(),
+      );
     }
+  }
+
+  showScreenSaver() {
+    return showGeneralDialog(
+      context: context,
+      pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: Text(
+                        "Screensaver",
+                      )),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              Navigator.pop(context);
+              _screensaver.handleTap();
+            }),
+      ),
+    );
   }
 }
