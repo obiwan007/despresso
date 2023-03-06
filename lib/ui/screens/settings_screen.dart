@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -502,9 +503,20 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   Future<void> backupDatabase() async {
     try {
       var objectBox = getIt<ObjectBox>();
-      var data = objectBox.getBackupData();
-      await DocumentFileSavePlus.saveFile(data, "despresso_backup.bak", "application/octet-stream");
-      log.info("Backupdata saved ${data.length}");
+      List<Uint8List> data = [];
+      data.add(objectBox.getBackupData());
+      data.add(await getLoggerBackupData());
+
+      var dateStr = DateTime.now().toLocal();
+
+      await DocumentFileSavePlus.saveMultipleFiles(data, [
+        "despresso_backup_$dateStr.bak",
+        "logs_$dateStr.txt"
+      ], [
+        "application/octet-stream",
+        "application/octet-stream",
+      ]);
+      log.info("Backupdata saved ${data[0].length + data[1].length}");
 
       var snackBar = SnackBar(
           content: const Text('Saved backup'),

@@ -561,21 +561,21 @@ class DE1 extends ChangeNotifier {
   }
 
   Future<int> getGhcInfo() async {
-    log.info('Reading whether the group head controller is installed or not');
+    log.info('getGhcInfo');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.GHCInfo]!, 0));
     log.info("ghc Info: ${toHexString(data)}");
     return data;
   }
 
   Future<int> getSerialNumber() async {
-    log.info('Reading whether the group head controller is installed or not');
+    log.info('getSerialNumber');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.SerialN]!, 0));
     log.info("SerialNo: $data ${toHexString(data)}");
     return data;
   }
 
   Future<int> getFirmwareBuild() async {
-    log.info('Reading whether the group head controller is installed or not');
+    log.info('getFirmwareBuild');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CPUFirmwareBuild]!, 0));
     log.info("Firmware Version: $data ${toHexString(data)}");
     return data;
