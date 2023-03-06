@@ -308,6 +308,8 @@ class DE1 extends ChangeNotifier {
 
   int usbChargerMode = 0;
 
+  double steamFlow = 0.5;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -587,10 +589,23 @@ class DE1 extends ChangeNotifier {
     return data;
   }
 
+  Future<double> getSteamFlow() async {
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.TargetSteamFlow]!, 0));
+    log.info("TargetSteamFlow: $data ${toHexString(data)}");
+    return data / 100;
+  }
+
   setFanThreshhold(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
     mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
+  }
+
+  setSteamFlow(double newFlow) {
+    ByteData bytes = ByteData(4);
+    bytes.setUint32(0, (newFlow * 100).toInt(), Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.TargetSteamFlow]!, bytes.buffer.asUint8List());
+    steamFlow = newFlow;
   }
 
   Future<int> getUsbChargerMode() async {
@@ -713,16 +728,22 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.readFromMMR, mmrNotification);
         enableNotification(Endpoint.writeToMMR, mmrNotification);
 
-        ghcInfo = await getGhcInfo();
-        ghcMode = await getGhcMode();
+        try {
+          ghcInfo = await getGhcInfo();
+          ghcMode = await getGhcMode();
 
-        machineSerial = await getSerialNumber();
+          machineSerial = await getSerialNumber();
 
-        firmware = await getFirmwareBuild();
-        var fan = await getFanThreshhold();
-        if (fan < 50) setFanThreshhold(50);
+          firmware = await getFirmwareBuild();
+          var fan = await getFanThreshhold();
+          if (fan < 50) setFanThreshhold(50);
 
-        log.info("Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial");
+          steamFlow = await getSteamFlow();
+          log.info(
+              "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow");
+        } catch (e) {
+          log.severe("Error getting machine details $e");
+        }
 
         return;
       case DeviceConnectionState.disconnected:
