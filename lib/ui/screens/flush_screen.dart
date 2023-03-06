@@ -117,10 +117,13 @@ class FlushScreenState extends State<FlushScreen> {
         Expanded(
           flex: 1,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              StartStopButton(requestedState: De1StateEnum.hotWaterRinse),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: StartStopButton(requestedState: De1StateEnum.hotWaterRinse),
+              ),
             ],
           ),
         ),

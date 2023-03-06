@@ -203,6 +203,40 @@ class SteamScreenState extends State<SteamScreen> {
                       ],
                     ),
                   ),
+                const Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            Text("Steam Flowrate ${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
+                                style: theme.TextStyles.tabHeading),
+                            Slider(
+                              value: machineService.de1?.steamFlow ?? 0.5,
+                              max: 2.5,
+                              min: 0.5,
+                              divisions: 60,
+                              label: "${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
+                              onChanged: (double value) {
+                                setState(() {
+                                  machineService.de1?.setSteamFlow(value);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

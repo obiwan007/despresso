@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:logging/logging.dart';
 import 'package:logging_appenders/logging_appenders.dart';
@@ -53,6 +54,14 @@ Future<Directory?> getDirectory() async {
   return dir;
 }
 
+getLoggerBackupData() async {
+  var store = await getDirectory();
+  String file = "${store!.path}/logs.txt";
+  var f = File(file);
+
+  Uint8List data = f.readAsBytesSync();
+  return data;
+}
 // class FileOutput extends LogOutput {
 //   FileOutput(this.startSession) {}
 //   bool startSession;
