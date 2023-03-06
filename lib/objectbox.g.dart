@@ -14,6 +14,7 @@ import 'package:objectbox/internal.dart'; // generated code can access "internal
 import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'helper/objectbox_cache_provider.dart';
 import 'model/coffee.dart';
 import 'model/favorite.dart';
 import 'model/recipe.dart';
@@ -453,6 +454,46 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(10, 4429298076511472570),
+      name: 'SettingsEntry',
+      lastPropertyId: const IdUid(6, 1973948115627604173),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 7949353400056856564),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 2787873785153115014),
+            name: 'doubleVal',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 3265645285527168845),
+            name: 'intVal',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 305379594325964681),
+            name: 'stringVal',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 5124145356428750686),
+            name: 'boolVal',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 1973948115627604173),
+            name: 'key',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(7, 3553530964941957570))
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -476,8 +517,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(9, 7693652674048295668),
-      lastIndexId: const IdUid(6, 446388852719725051),
+      lastEntityId: const IdUid(10, 4429298076511472570),
+      lastIndexId: const IdUid(7, 3553530964941957570),
       lastRelationId: const IdUid(1, 2516218059471133212),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -875,6 +916,46 @@ ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
           return object;
+        }),
+    SettingsEntry: EntityDefinition<SettingsEntry>(
+        model: _entities[6],
+        toOneRelations: (SettingsEntry object) => [],
+        toManyRelations: (SettingsEntry object) => {},
+        getId: (SettingsEntry object) => object.id,
+        setId: (SettingsEntry object, int id) {
+          object.id = id;
+        },
+        objectToFB: (SettingsEntry object, fb.Builder fbb) {
+          final stringValOffset = fbb.writeString(object.stringVal);
+          final keyOffset = fbb.writeString(object.key);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addFloat64(1, object.doubleVal);
+          fbb.addInt64(2, object.intVal);
+          fbb.addOffset(3, stringValOffset);
+          fbb.addBool(4, object.boolVal);
+          fbb.addOffset(5, keyOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = SettingsEntry()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..doubleVal =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 6, 0)
+            ..intVal =
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)
+            ..stringVal = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 10, '')
+            ..boolVal =
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false)
+            ..key = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 14, '');
+
+          return object;
         })
   };
 
@@ -1173,4 +1254,31 @@ class Recipe_ {
   /// see [Recipe.isFavorite]
   static final isFavorite =
       QueryBooleanProperty<Recipe>(_entities[5].properties[10]);
+}
+
+/// [SettingsEntry] entity fields to define ObjectBox queries.
+class SettingsEntry_ {
+  /// see [SettingsEntry.id]
+  static final id =
+      QueryIntegerProperty<SettingsEntry>(_entities[6].properties[0]);
+
+  /// see [SettingsEntry.doubleVal]
+  static final doubleVal =
+      QueryDoubleProperty<SettingsEntry>(_entities[6].properties[1]);
+
+  /// see [SettingsEntry.intVal]
+  static final intVal =
+      QueryIntegerProperty<SettingsEntry>(_entities[6].properties[2]);
+
+  /// see [SettingsEntry.stringVal]
+  static final stringVal =
+      QueryStringProperty<SettingsEntry>(_entities[6].properties[3]);
+
+  /// see [SettingsEntry.boolVal]
+  static final boolVal =
+      QueryBooleanProperty<SettingsEntry>(_entities[6].properties[4]);
+
+  /// see [SettingsEntry.key]
+  static final key =
+      QueryStringProperty<SettingsEntry>(_entities[6].properties[5]);
 }
