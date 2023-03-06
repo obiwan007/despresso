@@ -65,9 +65,7 @@ class _MachineFooterState extends State<MachineFooter> {
   Widget build(BuildContext context) {
     return Container(
       height: 70,
-      color: MediaQuery.of(context).platformBrightness == Brightness.dark
-          ? Colors.white12
-          : Colors.black12, // .of(context).colorScheme.background,
+      color: settingsService.screenDarkTheme ? Colors.white12 : Colors.black12,
       child: Row(
         children: [
           StreamBuilder<WaterLevel>(
