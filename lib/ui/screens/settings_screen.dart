@@ -182,13 +182,14 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   "0": "Red",
                   "1": "Orange",
                   "2": "Blue",
+                  "3": "Green",
                 },
                 onChange: (value) {
                   settingsService.notifyDelayed();
                 }),
-            ExpandableSettingsTile(title: "Sleep Timer", children: [
+            ExpandableSettingsTile(title: "Brightness and sleep", children: [
               SliderSettingsTile(
-                title: 'Switch de1 to sleep mode after',
+                title: 'Switch de1 to sleep mode if not in use [min]',
                 settingKey: SettingKeys.sleepTimer.name,
                 defaultValue: settingsService.sleepTimer,
                 min: 0,
@@ -200,7 +201,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 },
               ),
               SliderSettingsTile(
-                title: 'Reduce brightness after [min]',
+                title: 'Reduce screen brightness after [min]',
                 settingKey: SettingKeys.screenBrightnessTimer.name,
                 defaultValue: settingsService.screenBrightnessTimer,
                 min: 0,
@@ -212,7 +213,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 },
               ),
               SliderSettingsTile(
-                title: 'Reduce brightness to',
+                title: 'Reduce brightness to level',
                 settingKey: SettingKeys.screenBrightnessValue.name,
                 defaultValue: settingsService.screenBrightnessValue,
                 min: 0,
@@ -239,21 +240,21 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 },
               ),
               SwitchSettingsTile(
-                title: 'Wake up de1 if screen tapped',
+                title: 'Wake up de1 if screen tapped (if screen was off)',
                 settingKey: SettingKeys.screenTapWake.name,
                 defaultValue: settingsService.screenTapWake,
                 leading: const Icon(Icons.lock),
                 onChange: (value) async {},
               ),
               SwitchSettingsTile(
-                title: 'Go to Recipe if timeout occured',
+                title: 'Go back to Recipe screen if timeout occured',
                 settingKey: SettingKeys.screenTimoutGoToRecipe.name,
                 defaultValue: settingsService.screenTimoutGoToRecipe,
                 leading: const Icon(Icons.lock),
                 onChange: (value) async {},
               ),
               SliderSettingsTile(
-                title: 'Do not let tablet go to screen lock for (usually the tablet goes off then)',
+                title: 'Do not let tablet go to lock screen (240=never) [min]',
                 settingKey: SettingKeys.screenLockTimer.name,
                 defaultValue: settingsService.screenLockTimer,
                 min: 0,

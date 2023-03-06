@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'helper/objectbox_cache_provider.dart';
 import 'logger_util.dart';
 import 'objectbox.dart';
 import 'ui/landingpage.dart';
@@ -31,6 +32,7 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   objectbox = await ObjectBox.create();
+  getIt.registerSingleton<ObjectBox>(objectbox, signalsReady: false);
   log.info("Starting app");
   try {
     Wakelock.enable();
@@ -55,13 +57,12 @@ Future<void> main() async {
 
 Future<void> initSettings() async {
   await Settings.init(
-    cacheProvider: SharePreferenceCache(),
+    cacheProvider: ObjectBoxPreferenceCache(),
   );
 }
 
 class MyApp extends StatefulWidget {
   MyApp({super.key}) {
-    getIt.registerSingleton<ObjectBox>(objectbox, signalsReady: false);
     setupServices();
   }
 

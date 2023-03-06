@@ -437,10 +437,56 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "10:4429298076511472570",
+      "lastPropertyId": "7:7066844979841951108",
+      "name": "SettingsEntry",
+      "properties": [
+        {
+          "id": "1:7949353400056856564",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2787873785153115014",
+          "name": "doubleVal",
+          "type": 8
+        },
+        {
+          "id": "3:3265645285527168845",
+          "name": "intVal",
+          "type": 6
+        },
+        {
+          "id": "4:305379594325964681",
+          "name": "stringVal",
+          "type": 9
+        },
+        {
+          "id": "5:5124145356428750686",
+          "name": "boolVal",
+          "type": 1
+        },
+        {
+          "id": "6:1973948115627604173",
+          "name": "key",
+          "type": 9,
+          "flags": 2048,
+          "indexId": "7:3553530964941957570"
+        },
+        {
+          "id": "7:7066844979841951108",
+          "name": "type",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "9:7693652674048295668",
-  "lastIndexId": "6:446388852719725051",
+  "lastEntityId": "10:4429298076511472570",
+  "lastIndexId": "7:3553530964941957570",
   "lastRelationId": "1:2516218059471133212",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
