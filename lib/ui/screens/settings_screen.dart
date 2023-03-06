@@ -182,6 +182,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   "0": "Red",
                   "1": "Orange",
                   "2": "Blue",
+                  "3": "Green",
                 },
                 onChange: (value) {
                   settingsService.notifyDelayed();
