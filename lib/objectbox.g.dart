@@ -458,7 +458,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(10, 4429298076511472570),
       name: 'SettingsEntry',
-      lastPropertyId: const IdUid(6, 1973948115627604173),
+      lastPropertyId: const IdUid(7, 7066844979841951108),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -491,7 +491,12 @@ final _entities = <ModelEntity>[
             name: 'key',
             type: 9,
             flags: 2048,
-            indexId: const IdUid(7, 3553530964941957570))
+            indexId: const IdUid(7, 3553530964941957570)),
+        ModelProperty(
+            id: const IdUid(7, 7066844979841951108),
+            name: 'type',
+            type: 9,
+            flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
@@ -928,13 +933,15 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (SettingsEntry object, fb.Builder fbb) {
           final stringValOffset = fbb.writeString(object.stringVal);
           final keyOffset = fbb.writeString(object.key);
-          fbb.startTable(7);
+          final typeOffset = fbb.writeString(object.type);
+          fbb.startTable(8);
           fbb.addInt64(0, object.id);
           fbb.addFloat64(1, object.doubleVal);
           fbb.addInt64(2, object.intVal);
           fbb.addOffset(3, stringValOffset);
           fbb.addBool(4, object.boolVal);
           fbb.addOffset(5, keyOffset);
+          fbb.addOffset(6, typeOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -953,7 +960,9 @@ ModelDefinition getObjectBoxModel() {
             ..boolVal =
                 const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false)
             ..key = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 14, '');
+                .vTableGet(buffer, rootOffset, 14, '')
+            ..type = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 16, '');
 
           return object;
         })
@@ -1281,4 +1290,8 @@ class SettingsEntry_ {
   /// see [SettingsEntry.key]
   static final key =
       QueryStringProperty<SettingsEntry>(_entities[6].properties[5]);
+
+  /// see [SettingsEntry.type]
+  static final type =
+      QueryStringProperty<SettingsEntry>(_entities[6].properties[6]);
 }

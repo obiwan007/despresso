@@ -17,6 +17,13 @@ class SettingsEntry {
 
   @Index()
   String key = "";
+
+  String type = "";
+
+  @override
+  String toString() {
+    return "SettingsEntry:$key ${type == "b" ? boolVal : type == "d" ? doubleVal : type == "s" ? stringVal : type == "i" ? intVal : "?"}";
+  }
 }
 
 /// A cache access provider class for shared preferences using shared_preferences library.
@@ -65,6 +72,7 @@ class ObjectBoxPreferenceCache extends CacheProvider {
     SettingsEntry existing = getEntryByKey(key) ?? SettingsEntry();
     existing.boolVal = value ?? false;
     existing.key = key;
+    existing.type = "b";
     settingsBox.put(existing);
   }
 
@@ -73,6 +81,7 @@ class ObjectBoxPreferenceCache extends CacheProvider {
     SettingsEntry existing = getEntryByKey(key) ?? SettingsEntry();
     existing.doubleVal = value ?? 0;
     existing.key = key;
+    existing.type = "d";
     settingsBox.put(existing);
   }
 
@@ -81,6 +90,7 @@ class ObjectBoxPreferenceCache extends CacheProvider {
     SettingsEntry existing = getEntryByKey(key) ?? SettingsEntry();
     existing.intVal = value ?? 0;
     existing.key = key;
+    existing.type = "i";
     settingsBox.put(existing);
   }
 
@@ -89,6 +99,7 @@ class ObjectBoxPreferenceCache extends CacheProvider {
     SettingsEntry existing = getEntryByKey(key) ?? SettingsEntry();
     existing.stringVal = value ?? "";
     existing.key = key;
+    existing.type = "s";
     settingsBox.put(existing);
   }
 
@@ -114,9 +125,11 @@ class ObjectBoxPreferenceCache extends CacheProvider {
 
   @override
   Set getKeys() {
-    return Set<String>.from(settingsBox.getAll().map(
-          (e) => e.key,
-        ));
+    var all = settingsBox.getAll();
+    print("Settings $all");
+    return Set<String>.from(all.map(
+      (e) => e.key,
+    ));
   }
 
   @override

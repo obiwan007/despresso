@@ -172,7 +172,7 @@ class SettingsService extends ChangeNotifier {
   double get screenBrightnessTimer => Settings.getValue<double>(SettingKeys.screenBrightnessTimer.name) ?? 10;
   set screenBrightnessTimer(value) => Settings.setValue<double>(SettingKeys.screenBrightnessTimer.name, value);
 
-  double get screenBrightnessValue => Settings.getValue<double>(SettingKeys.screenBrightnessValue.name) ?? 0.8;
+  double get screenBrightnessValue => Settings.getValue<double>(SettingKeys.screenBrightnessValue.name) ?? 0;
   set screenBrightnessValue(value) => Settings.setValue<double>(SettingKeys.screenBrightnessValue.name, value);
 
   /// Wake de1 if tapped out of screensaver/dim mode
