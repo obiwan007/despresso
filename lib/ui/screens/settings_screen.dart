@@ -7,9 +7,9 @@ import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:flutter/services.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
@@ -239,6 +239,32 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     log.severe('Failed to set brightness');
                   }
                 },
+              ),
+              SettingsContainer(
+                leftPadding: 16,
+                children: [
+                  const Text("Load Screensaver files"),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              pickScreensaver();
+                            },
+                            child: const Text("Select files")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              ScreenSaver.deleteAllFiles();
+                            },
+                            child: const Text("Delete all screensaver files")),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               SwitchSettingsTile(
                 title: 'Wake up de1 if screen tapped (if screen was off)',
@@ -574,6 +600,26 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       }
     } else {
       // can perform some actions like notification etc
+    }
+  }
+
+  Future<void> pickScreensaver() async {
+    var filePickerResult =
+        await FilePicker.platform.pickFiles(allowMultiple: true, lockParentWindow: true, type: FileType.image);
+
+    final Directory saver = await ScreenSaver.getDirectory();
+
+    if (filePickerResult != null) {
+      try {
+        for (var file in filePickerResult.files) {
+          log.info("Screensaver: ${file.path}");
+          String fileDestination = "${saver.path}${file.name}";
+          var f = File(file.path!);
+          await f.copy(fileDestination);
+        }
+      } catch (e) {
+        log.severe("Error copy screensaver image $e");
+      }
     }
   }
 

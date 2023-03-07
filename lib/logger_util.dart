@@ -27,7 +27,7 @@ Future<void> initLogger() async {
   var dateStr = DateTime.now();
   final log = Logger("logger");
   var filepath = "${dir!.path}/logs_${dateStr.day}_${dateStr.month}_${dateStr.year}.txt";
-  log.info("Filepath: ${filepath}");
+  log.info("Filepath: $filepath");
   RotatingFileAppender(
     formatter: const DefaultLogRecordFormatter(),
     baseFilePath: filepath,
