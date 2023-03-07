@@ -15,6 +15,7 @@ import 'package:despresso/ui/screens/shot_selection.dart';
 import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
+import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -435,26 +436,23 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
       pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
         backgroundColor: Colors.black,
         body: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              Navigator.pop(context);
+              _screensaver.handleTap();
+            },
             child: Column(
               children: [
                 Expanded(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: Text(
-                        "Screensaver",
-                      )),
+                    children: const [
+                      Expanded(child: ScreenSaver()),
                     ],
                   ),
                 ),
               ],
-            ),
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              Navigator.pop(context);
-              _screensaver.handleTap();
-            }),
+            )),
       ),
     );
   }

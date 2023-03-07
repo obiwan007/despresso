@@ -53,8 +53,6 @@ const App = () => {
     const [shot, setShot] = useState<Shot>();
     const [timerId, setTimerId] = useState<NodeJS.Timer>();
 
-
-    // getState();
     useEffect(() => {
         getState();
     }, []);

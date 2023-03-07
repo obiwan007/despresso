@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:logging/logging.dart';
 import 'package:logging_appenders/logging_appenders.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,10 +24,15 @@ Future<void> initLogger() async {
     // ignore: avoid_print
     print("Error creating logfiles");
   }
-  RotatingFileAppender(formatter: const DefaultLogRecordFormatter(), baseFilePath: "${dir!.path}/logs.txt")
-      .attachToLogger(Logger.root);
+  var dateStr = DateTime.now();
+  final log = Logger("logger");
+  var filepath = "${dir!.path}/logs_${dateStr.day}_${dateStr.month}_${dateStr.year}.txt";
+  log.info("Filepath: $filepath");
+  RotatingFileAppender(
+    formatter: const DefaultLogRecordFormatter(),
+    baseFilePath: filepath,
+  ).attachToLogger(Logger.root);
 
-  final log = Logger("APP");
   log.info("##############################");
   log.info("STARTING APPLICATION DESPRESSO");
   log.info("##############################");
@@ -54,13 +60,22 @@ Future<Directory?> getDirectory() async {
   return dir;
 }
 
-getLoggerBackupData() async {
+Future<Uint8List> getLoggerBackupData() async {
+  final log = Logger("logger");
   var store = await getDirectory();
-  String file = "${store!.path}/logs.txt";
-  var f = File(file);
 
-  Uint8List data = f.readAsBytesSync();
-  return data;
+  try {
+    final appDataDir = Directory.systemTemp;
+    final zipFile = File("${appDataDir.path}/logs.zip");
+    await appDataDir.create(recursive: true);
+    await ZipFile.createFromDirectory(sourceDir: store!, zipFile: zipFile, recurseSubDirs: true);
+    Uint8List data = zipFile.readAsBytesSync();
+    zipFile.deleteSync();
+    return data;
+  } catch (e) {
+    log.severe("Zipping of directory failed: $e");
+    rethrow;
+  }
 }
 // class FileOutput extends LogOutput {
 //   FileOutput(this.startSession) {}
