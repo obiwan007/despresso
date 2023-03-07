@@ -9,6 +9,7 @@ import 'package:flutter/src/animation/animation_controller.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/src/widgets/ticker_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -61,7 +62,43 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return _currentImage == null ? Text("Empty") : _currentImage!;
+    var s = MediaQuery.of(context).size;
+
+    var maxW = s.width - 250;
+    var maxH = s.height - 170;
+
+    var x = Random().nextDouble() * maxW;
+    var y = Random().nextDouble() * maxH;
+
+    Locale myLocale = Localizations.localeOf(context);
+    var d = DateTime.now();
+    var fmtT = DateFormat.Hm(myLocale.countryCode).format(d);
+    var fmtD = DateFormat.MMMMEEEEd(myLocale.countryCode).format(d);
+    return Stack(children: [
+      Positioned.fill(
+        left: 0,
+        top: 0,
+        child: _currentImage == null ? Text("aaa") : _currentImage!,
+      ),
+      Positioned(
+          left: x,
+          top: y,
+          child: Opacity(
+            opacity: 0.9,
+            child: Column(
+              children: [
+                Text(
+                  "${fmtT.toString()}",
+                  style: TextStyle(fontSize: 100, color: Theme.of(context).colorScheme.primary),
+                ),
+                Text(
+                  "${fmtD.toString()}",
+                  style: TextStyle(fontSize: 30, color: Colors.white),
+                ),
+              ],
+            ),
+          )),
+    ]);
   }
 
   startTimer() {
@@ -72,8 +109,10 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
   }
 
   _nextImage() {
-    var i = Random().nextInt(_assetList.length);
-    _currentImage = Image.file(File(_assetList[i]));
+    if (_assetList.isNotEmpty) {
+      var i = Random().nextInt(_assetList.length);
+      _currentImage = Image.file(File(_assetList[i]));
+    }
     setState(() {});
   }
 
@@ -86,7 +125,7 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
       for (var file in _assetList) {
         log.info("current screensaver $file");
       }
-      if (_assetList.length > 0) startTimer();
+      startTimer();
     } catch (e) {
       log.severe("Error loading images for screensaver $e");
     }
