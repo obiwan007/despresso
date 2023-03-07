@@ -511,14 +511,15 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
       await DocumentFileSavePlus.saveMultipleFiles(data, [
         "despresso_backup_$dateStr.bak",
-        "logs_$dateStr.txt"
+        "logs_$dateStr.zip"
       ], [
         "application/octet-stream",
-        "application/octet-stream",
+        "application/zip",
       ]);
       log.info("Backupdata saved ${data[0].length + data[1].length}");
 
       var snackBar = SnackBar(
+          backgroundColor: Colors.greenAccent,
           content: const Text('Saved backup'),
           action: SnackBarAction(
             label: 'ok',
@@ -530,7 +531,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     } catch (e) {
       log.severe("Save database failed $e");
       var snackBar = SnackBar(
-          content: const Text('Saving backup failed'),
+          backgroundColor: const Color.fromARGB(255, 250, 141, 141),
+          content: Text('Saving backup failed $e'),
           action: SnackBarAction(
             label: 'ok',
             onPressed: () {
