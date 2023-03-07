@@ -70,15 +70,19 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
     var x = Random().nextDouble() * maxW;
     var y = Random().nextDouble() * maxH;
 
-    Locale myLocale = Localizations.localeOf(context);
+    String myLocale = Localizations.localeOf(context).countryCode!;
+    if (!DateFormat.localeExists(myLocale)) {
+      log.info("Fallback to english locale $myLocale not found.");
+      myLocale = "en";
+    }
     var d = DateTime.now();
-    var fmtT = DateFormat.Hm(myLocale.countryCode).format(d);
-    var fmtD = DateFormat.MMMMEEEEd(myLocale.countryCode).format(d);
+    var fmtT = DateFormat.Hm(myLocale).format(d);
+    var fmtD = DateFormat.MMMMEEEEd(myLocale).format(d);
     return Stack(children: [
       Positioned.fill(
         left: 0,
         top: 0,
-        child: _currentImage == null ? Text("aaa") : _currentImage!,
+        child: _currentImage == null ? const Text("") : _currentImage!,
       ),
       Positioned(
           left: x,
