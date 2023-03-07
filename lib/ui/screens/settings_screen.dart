@@ -188,113 +188,118 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                 onChange: (value) {
                   settingsService.notifyDelayed();
                 }),
-            ExpandableSettingsTile(title: "Brightness and sleep", children: [
-              SliderSettingsTile(
-                title: 'Switch de1 to sleep mode if not in use [min]',
-                settingKey: SettingKeys.sleepTimer.name,
-                defaultValue: settingsService.sleepTimer,
-                min: 0,
-                max: 240,
-                step: 5,
-                leading: const Icon(Icons.switch_left),
-                onChange: (value) {
-                  debugPrint('key-slider-volume: $value');
-                },
-              ),
-              SliderSettingsTile(
-                title: 'Reduce screen brightness after [min]',
-                settingKey: SettingKeys.screenBrightnessTimer.name,
-                defaultValue: settingsService.screenBrightnessTimer,
-                min: 0,
-                max: 240,
-                step: 1,
-                leading: const Icon(Icons.lock),
-                onChange: (value) {
-                  debugPrint('key-slider-volume: $value');
-                },
-              ),
-              SliderSettingsTile(
-                title: 'Reduce brightness to level',
-                settingKey: SettingKeys.screenBrightnessValue.name,
-                defaultValue: settingsService.screenBrightnessValue,
-                min: 0,
-                max: 1,
-                step: 0.1,
-                leading: const Icon(Icons.lock),
-                onChange: (value) async {
-                  try {
-                    await ScreenBrightness().setScreenBrightness(value);
-                    if (_resetBrightness != null) {
-                      _resetBrightness!.cancel();
-                      _resetBrightness = null;
-                    }
-                    _resetBrightness = Timer(
-                      const Duration(seconds: 2),
-                      () async {
-                        log.info("Release");
-                        await ScreenBrightness().resetScreenBrightness();
-                      },
-                    );
-                  } catch (e) {
-                    log.severe('Failed to set brightness');
-                  }
-                },
-              ),
-              SettingsContainer(
-                leftPadding: 16,
+            ExpandableSettingsTile(
+                title: "Brightness, sleep and screensaver",
+                subtitle:
+                    "Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while.",
                 children: [
-                  const Text("Load Screensaver files"),
-                  Row(
+                  SliderSettingsTile(
+                    title: 'Switch de1 to sleep mode if not in use [min]',
+                    settingKey: SettingKeys.sleepTimer.name,
+                    defaultValue: settingsService.sleepTimer,
+                    min: 0,
+                    max: 240,
+                    step: 5,
+                    leading: const Icon(Icons.switch_left),
+                    onChange: (value) {
+                      debugPrint('key-slider-volume: $value');
+                    },
+                  ),
+                  SliderSettingsTile(
+                    title: 'Reduce screen brightness after (0=off) [min]',
+                    settingKey: SettingKeys.screenBrightnessTimer.name,
+                    defaultValue: settingsService.screenBrightnessTimer,
+                    min: 0,
+                    max: 60,
+                    step: 1,
+                    leading: const Icon(Icons.lock),
+                    onChange: (value) {
+                      debugPrint('key-slider-volume: $value');
+                    },
+                  ),
+                  SliderSettingsTile(
+                    title: 'Reduce brightness to level',
+                    settingKey: SettingKeys.screenBrightnessValue.name,
+                    defaultValue: settingsService.screenBrightnessValue,
+                    min: 0,
+                    max: 1,
+                    step: 0.01,
+                    leading: const Icon(Icons.lock),
+                    onChange: (value) async {
+                      try {
+                        await ScreenBrightness().setScreenBrightness(value);
+                        if (_resetBrightness != null) {
+                          _resetBrightness!.cancel();
+                          _resetBrightness = null;
+                        }
+                        _resetBrightness = Timer(
+                          const Duration(seconds: 2),
+                          () async {
+                            log.info("Release");
+                            await ScreenBrightness().resetScreenBrightness();
+                          },
+                        );
+                      } catch (e) {
+                        log.severe('Failed to set brightness');
+                      }
+                    },
+                  ),
+                  SettingsContainer(
+                    leftPadding: 16,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              pickScreensaver();
-                            },
-                            child: const Text("Select files")),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              ScreenSaver.deleteAllFiles();
-                            },
-                            child: const Text("Delete all screensaver files")),
+                      const Text("Load Screensaver files"),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  pickScreensaver();
+                                },
+                                child: const Text("Select files")),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  ScreenSaver.deleteAllFiles();
+                                },
+                                child: const Text("Delete all screensaver files")),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              SwitchSettingsTile(
-                title: 'Wake up de1 if screen tapped (if screen was off)',
-                settingKey: SettingKeys.screenTapWake.name,
-                defaultValue: settingsService.screenTapWake,
-                leading: const Icon(Icons.lock),
-                onChange: (value) async {},
-              ),
-              SwitchSettingsTile(
-                title: 'Go back to Recipe screen if timeout occured',
-                settingKey: SettingKeys.screenTimoutGoToRecipe.name,
-                defaultValue: settingsService.screenTimoutGoToRecipe,
-                leading: const Icon(Icons.lock),
-                onChange: (value) async {},
-              ),
-              SliderSettingsTile(
-                title: 'Do not let tablet go to lock screen (240=never) [min]',
-                settingKey: SettingKeys.screenLockTimer.name,
-                defaultValue: settingsService.screenLockTimer,
-                min: 0,
-                max: 240,
-                step: 5,
-                leading: const Icon(Icons.lock),
-                onChange: (value) {
-                  debugPrint('key-slider-volume: $value');
-                },
-              )
-            ]),
+                  SwitchSettingsTile(
+                    title: 'Wake up de1 if screen tapped (if screen was off)',
+                    settingKey: SettingKeys.screenTapWake.name,
+                    defaultValue: settingsService.screenTapWake,
+                    leading: const Icon(Icons.lock),
+                    onChange: (value) async {},
+                  ),
+                  SwitchSettingsTile(
+                    title: 'Go back to Recipe screen if timeout occured',
+                    settingKey: SettingKeys.screenTimoutGoToRecipe.name,
+                    defaultValue: settingsService.screenTimoutGoToRecipe,
+                    leading: const Icon(Icons.lock),
+                    onChange: (value) async {},
+                  ),
+                  SliderSettingsTile(
+                    title: 'Do not let tablet go to lock screen (240=never) [min]',
+                    settingKey: SettingKeys.screenLockTimer.name,
+                    defaultValue: settingsService.screenLockTimer,
+                    min: 0,
+                    max: 240,
+                    step: 5,
+                    leading: const Icon(Icons.lock),
+                    onChange: (value) {
+                      debugPrint('key-slider-volume: $value');
+                    },
+                  )
+                ]),
             ExpandableSettingsTile(
               title: "Smart charging",
+              subtitle: "Control how the tablet is chagerged via the decent de1 USB plug.",
               children: [
                 SwitchSettingsTile(
                   leading: const Icon(Icons.power),
@@ -311,6 +316,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
         ),
         SettingsGroup(
           title: "Cloud and Network",
+          subtitle: "Handling of connections to other external systems like MQTT and Visualizer.",
           children: [
             ExpandableSettingsTile(
               title: "Message Queue Broadcast",
