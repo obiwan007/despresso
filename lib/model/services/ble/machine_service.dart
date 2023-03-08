@@ -496,13 +496,13 @@ class EspressoMachineService extends ChangeNotifier {
 
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
-          if (scaleService.state == ScaleState.connected) {
+          if (lastPourTime > 5 && scaleService.state == ScaleState.connected) {
             var weight = settingsService.targetEspressoWeight;
             if (weight < 1) {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
             }
             if (weight > 1 && shot.weight + 1 > weight) {
-              log.info("Shot Weight reached ${shot.weight} > $weight");
+              log.info("Shot Weight reached ${shot.weight} > $weight Portime: $lastPourTime");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();
@@ -512,7 +512,8 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.water:
           if (scaleService.state == ScaleState.connected) {
-            if (settingsService.targetHotWaterWeight > 1 &&
+            if (state.subState == "pour" &&
+                settingsService.targetHotWaterWeight > 1 &&
                 scaleService.weight + 1 > settingsService.targetHotWaterWeight) {
               log.info(
                   "Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
