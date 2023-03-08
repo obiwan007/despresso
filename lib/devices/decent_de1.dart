@@ -310,6 +310,8 @@ class DE1 extends ChangeNotifier {
 
   double steamFlow = 0.5;
 
+  int steamPurgeMode = 0;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -622,6 +624,20 @@ class DE1 extends ChangeNotifier {
     usbChargerMode = t;
   }
 
+  setSteamPurgeMode(int t) {
+    ByteData bytes = ByteData(4);
+    bytes.setUint32(0, t, Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.SteamPurgeMode]!, bytes.buffer.asUint8List());
+    steamPurgeMode = t;
+  }
+
+  Future<int> getSteamPurgeMode() async {
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.SteamPurgeMode]!, 0));
+    log.info("getSteamPurgeMode: $data ${toHexString(data)}");
+    steamPurgeMode = data;
+    return data;
+  }
+
   int getInt(List<int> buffer) {
     ByteData bytes = ByteData(20);
     var i = 0;
@@ -739,8 +755,10 @@ class DE1 extends ChangeNotifier {
           if (fan < 50) setFanThreshhold(50);
 
           steamFlow = await getSteamFlow();
+
+          steamPurgeMode = await getSteamPurgeMode();
           log.info(
-              "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow");
+              "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode");
         } catch (e) {
           log.severe("Error getting machine details $e");
         }
