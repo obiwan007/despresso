@@ -8,13 +8,13 @@ import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
+import 'package:despresso/ui/widgets/progress_overlay.dart';
 import 'package:despresso/ui/widgets/shot_graph.dart';
 import 'package:logging/logging.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -138,7 +138,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
           ),
         ],
       ),
-      body: ModalProgressHUD(
+      body: ModalProgressOverlay(
         inAsyncCall: _busy,
         progressIndicator: CircularProgressIndicator(
           // strokeWidth: 15,

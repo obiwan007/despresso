@@ -40,7 +40,26 @@ class ScreensaverService extends ChangeNotifier {
     );
   }
 
+  bool allwaysWakeLock() {
+    return _settings.screenLockTimer > 239;
+  }
+
+  bool useWakeLock() {
+    return _settings.screenLockTimer > 0;
+  }
+
   void setupScreensaver() {
+    try {
+      if (useWakeLock()) {
+        Wakelock.enable();
+        log.info('Enable WakeLock');
+      } else {
+        Wakelock.disable();
+      }
+    } catch (e) {
+      log.severe("Could not use WakeLock $e");
+    }
+
     _timer = Timer.periodic(
       const Duration(seconds: 5),
       (timer) async {
@@ -54,9 +73,7 @@ class ScreensaverService extends ChangeNotifier {
           screenSaverOn = true;
           notifyListeners();
         }
-        if (_screenSaverTimer > _settings.screenLockTimer * 60 &&
-            _settings.screenLockTimer > 0.1 &&
-            _settings.screenLockTimer < 239) {
+        if (_screenSaverTimer > _settings.screenLockTimer * 60 && !allwaysWakeLock()) {
           try {
             if (await Wakelock.enabled) {
               log.info('Disable WakeLock');
