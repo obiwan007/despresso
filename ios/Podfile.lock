@@ -48,8 +48,6 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - modal_progress_hud_nsn (0.0.1):
-    - Flutter
   - network_info_plus (0.0.1):
     - Flutter
   - ObjectBox (1.8.1-rc)
@@ -102,7 +100,6 @@ DEPENDENCIES:
   - flutter_archive (from `.symlinks/plugins/flutter_archive/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
-  - modal_progress_hud_nsn (from `.symlinks/plugins/modal_progress_hud_nsn/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -145,8 +142,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
-  modal_progress_hud_nsn:
-    :path: ".symlinks/plugins/modal_progress_hud_nsn/ios"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
   objectbox_flutter_libs:
@@ -185,7 +180,6 @@ SPEC CHECKSUMS:
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  modal_progress_hud_nsn: f6fb744cd060653d66ed8f325360ef3650eb2fde
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   ObjectBox: 7615cc462f2976cb45127d301a17cb473edf3f9e
   objectbox_flutter_libs: 55835e03ff76bf9d5ce0a41a2ef3902d2e8c1f20

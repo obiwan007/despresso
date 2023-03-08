@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   battery_plus
-  modal_progress_hud_nsn
   network_info_plus
   objectbox_flutter_libs
   permission_handler_windows
