@@ -72,6 +72,42 @@ class SteamScreenState extends State<SteamScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Steam two-tap mode:", style: Theme.of(context).textTheme.labelLarge),
+                          ),
+                          Switch(
+                            value: machineService.de1?.steamPurgeMode == 1,
+                            onChanged: (value) {
+                              if (machineService.state.coffeeState != EspressoMachineState.steam) {
+                                machineService.de1?.setSteamPurgeMode(value == true ? 1 : 0);
+                                setState(() {});
+                                machineService.notifyListeners();
+                              }
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              machineService.de1?.steamPurgeMode == 1
+                                  ? 'On (slow purge on 1st stop)'
+                                  : 'Off (normal purge after stop)',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -80,7 +116,8 @@ class SteamScreenState extends State<SteamScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Steam Temperatur ${settings.targetSteamTemp}°C", style: theme.TextStyles.tabHeading),
+                            Text("Steam Temperatur ${settings.targetSteamTemp}°C",
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetSteamTemp.toDouble(),
                               max: 180,
@@ -186,7 +223,7 @@ class SteamScreenState extends State<SteamScreen> {
                     child: Column(
                       children: [
                         Text("Stop at Temperatur ${settings.targetMilkTemperature}°C",
-                            style: theme.TextStyles.tabHeading),
+                            style: Theme.of(context).textTheme.labelLarge),
                         Slider(
                           value: settings.targetMilkTemperature.toDouble(),
                           max: 80,
@@ -218,7 +255,7 @@ class SteamScreenState extends State<SteamScreen> {
                         child: Column(
                           children: [
                             Text("Steam Flowrate ${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
-                                style: theme.TextStyles.tabHeading),
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: machineService.de1?.steamFlow ?? 0.5,
                               max: 2.5,
