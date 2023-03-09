@@ -1,6 +1,8 @@
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/ui/widgets/height_widget.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:despresso/ui/widgets/progress_overlay.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
@@ -11,6 +13,7 @@ import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:despresso/model/services/state/visualizer_service.dart';
 
 import '../../model/services/ble/machine_service.dart';
 
@@ -29,6 +32,8 @@ class ShotEditState extends State<ShotEdit> {
 
   late CoffeeService coffeeService;
   late EspressoMachineService machineService;
+  late VisualizerService visualizerService;
+  late SettingsService settingsService;
 
   Shot _editedShot = Shot();
 
@@ -72,6 +77,8 @@ class ShotEditState extends State<ShotEdit> {
   //     });
 
   late FormGroup theForm;
+  bool _busy = false;
+  double _busyProgress = 0;
 
   ShotEditState();
 
@@ -80,6 +87,9 @@ class ShotEditState extends State<ShotEdit> {
     super.initState();
     coffeeService = getIt<CoffeeService>();
     machineService = getIt<EspressoMachineService>();
+    visualizerService = getIt<VisualizerService>();
+    settingsService = getIt<SettingsService>();
+
     coffeeService.addListener(updateCoffee);
     roasters = loadRoasters();
 
@@ -130,6 +140,60 @@ class ShotEditState extends State<ShotEdit> {
           //     );
           //   },
           // ),
+          if (settingsService.visualizerUpload)
+            TextButton.icon(
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text("Visualizer"),
+              onPressed: () async {
+                try {
+                  if (currentForm != null && currentForm!.valid) {
+                    setState(() {
+                      log.info("${currentForm!.value}");
+                      saveFormData(currentForm!);
+                    });
+                  }
+                  setState(() {
+                    _busy = true;
+                  });
+                  var selectedShots = [_editedShot];
+                  for (var _ in selectedShots) {
+                    setState(() {
+                      _busyProgress += 1 / selectedShots.length;
+                    });
+                    var id = await visualizerService.sendShotToVisualizer(_editedShot);
+                    _editedShot.visualizerId = id;
+                    coffeeService.updateShot(_editedShot);
+                  }
+                  var snackBar = SnackBar(
+                      backgroundColor: Colors.greenAccent,
+                      content: const Text("Success uploading your shot"),
+                      action: SnackBarAction(
+                        label: 'Ok',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                } catch (e) {
+                  var snackBar = SnackBar(
+                      backgroundColor: const Color.fromARGB(255, 250, 141, 141),
+                      content: Text("Error uploading shot: $e"),
+                      action: SnackBarAction(
+                        label: 'Ok',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  log.severe("Error uploading shot $e");
+                }
+                setState(() {
+                  _busy = false;
+                  _busyProgress = 0;
+                });
+              },
+            ),
+
           TextButton.icon(
             icon: const Icon(Icons.save_alt),
             label: const Text(
@@ -147,21 +211,28 @@ class ShotEditState extends State<ShotEdit> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: ReactiveFormBuilder(
-          form: () => theForm,
-          builder: (context, form, child) {
-            currentForm = form;
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  shotForm(form),
-                ],
-              ),
-            );
-          },
+      body: ModalProgressOverlay(
+        inAsyncCall: _busy,
+        progressIndicator: CircularProgressIndicator(
+          // strokeWidth: 15,
+          value: _busyProgress,
+        ),
+        child: SingleChildScrollView(
+          child: ReactiveFormBuilder(
+            form: () => theForm,
+            builder: (context, form, child) {
+              currentForm = form;
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    shotForm(form),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -411,5 +482,3 @@ class ShotEditState extends State<ShotEdit> {
     return roasters;
   }
 }
-
-_onShare(BuildContext context) {}

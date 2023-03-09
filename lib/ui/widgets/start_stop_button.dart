@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:logging/logging.dart';
 
 import '../../devices/decent_de1.dart';

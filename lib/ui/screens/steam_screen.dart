@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:despresso/devices/decent_de1.dart';
-import 'package:despresso/model/machine.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';

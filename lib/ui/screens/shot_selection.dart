@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/objectbox.dart';
@@ -42,6 +43,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
   bool showTemp = true;
 
   late VisualizerService visualizerService;
+  late SettingsService settingsService;
 
   bool _busy = false;
 
@@ -54,6 +56,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
     super.initState();
     shotBox = getIt<ObjectBox>().store.box<Shot>();
     visualizerService = getIt<VisualizerService>();
+    settingsService = getIt<SettingsService>();
   }
 
   @override
@@ -78,64 +81,65 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
               );
             },
           ),
-          TextButton.icon(
-            icon: const Icon(Icons.cloud_upload),
-            label: const Text("Visualizer"),
-            onPressed: () async {
-              if (selectedShots.isEmpty) {
-                var snackBar = SnackBar(
-                    content: const Text("No shots to upload selected"),
-                    action: SnackBarAction(
-                      label: 'Ok',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                return;
-              }
-              try {
-                setState(() {
-                  _busy = true;
-                });
-                for (var element in selectedShots) {
-                  setState(() {
-                    _busyProgress += 1 / selectedShots.length;
-                  });
-                  var shot = shotBox.get(element);
-                  var id = await visualizerService.sendShotToVisualizer(shot!);
-                  shot.visualizerId = id;
-                  shotBox.put(shot);
+          if (settingsService.visualizerUpload)
+            TextButton.icon(
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text("Visualizer"),
+              onPressed: () async {
+                if (selectedShots.isEmpty) {
+                  var snackBar = SnackBar(
+                      content: const Text("No shots to upload selected"),
+                      action: SnackBarAction(
+                        label: 'Ok',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  return;
                 }
-                var snackBar = SnackBar(
-                    backgroundColor: Colors.greenAccent,
-                    content: const Text("Success uploading your shots"),
-                    action: SnackBarAction(
-                      label: 'Ok',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              } catch (e) {
-                var snackBar = SnackBar(
-                    backgroundColor: const Color.fromARGB(255, 250, 141, 141),
-                    content: Text("Error uploading shots: $e"),
-                    action: SnackBarAction(
-                      label: 'Ok',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                log.severe("Error uploading shots $e");
-              }
-              setState(() {
-                _busy = false;
-                _busyProgress = 0;
-              });
-            },
-          ),
+                try {
+                  setState(() {
+                    _busy = true;
+                  });
+                  for (var element in selectedShots) {
+                    setState(() {
+                      _busyProgress += 1 / selectedShots.length;
+                    });
+                    var shot = shotBox.get(element);
+                    var id = await visualizerService.sendShotToVisualizer(shot!);
+                    shot.visualizerId = id;
+                    shotBox.put(shot);
+                  }
+                  var snackBar = SnackBar(
+                      backgroundColor: Colors.greenAccent,
+                      content: const Text("Success uploading your shots"),
+                      action: SnackBarAction(
+                        label: 'Ok',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                } catch (e) {
+                  var snackBar = SnackBar(
+                      backgroundColor: const Color.fromARGB(255, 250, 141, 141),
+                      content: Text("Error uploading shots: $e"),
+                      action: SnackBarAction(
+                        label: 'Ok',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  log.severe("Error uploading shots $e");
+                }
+                setState(() {
+                  _busy = false;
+                  _busyProgress = 0;
+                });
+              },
+            ),
         ],
       ),
       body: ModalProgressOverlay(

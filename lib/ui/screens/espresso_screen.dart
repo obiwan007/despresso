@@ -440,19 +440,6 @@ class EspressoScreenState extends State<EspressoScreen> {
             icon: const Icon(Icons.cloud),
             label: const Text("Visualizer.coffee"),
           ),
-        // KeyValueWidget(
-        //   width: width,
-        //   label: "",
-        //   value: "",
-        //   widget: InkWell(
-        //     onTap: () =>
-        //         launchUrl(Uri.parse('https://visualizer.coffee/shots/${machineService.currentShot.visualizerId}')),
-        //     child: const Text(
-        //       'Open Visualizer.coffee',
-        //       style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
-        //     ),
-        //   ),
-        // ),
       ],
     );
 
@@ -501,7 +488,7 @@ class EspressoScreenState extends State<EspressoScreen> {
                   // ),
                   const Spacer(),
                   Padding(
-                    padding: EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: StartStopButton(requestedState: De1StateEnum.espresso),
                   ),
                   // _buildButtons()

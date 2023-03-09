@@ -80,7 +80,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           children: [
             SimpleSettingsTile(
               title: 'Bluetooth',
-              leading: Icon(Icons.bluetooth),
+              leading: const Icon(Icons.bluetooth),
               child: SettingsScreen(
                 title: 'Bluetooth',
                 children: [
@@ -159,7 +159,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           children: [
             SimpleSettingsTile(
               title: "Coffee pouring",
-              leading: Icon(Icons.coffee),
+              leading: const Icon(Icons.coffee),
               child: SettingsScreen(
                 title: 'Shot Settings',
                 children: <Widget>[
@@ -195,7 +195,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           children: [
             SimpleSettingsTile(
               title: "Theme selection",
-              leading: Icon(Icons.palette),
+              leading: const Icon(Icons.palette),
               child: StreamBuilder<int>(
                   stream: _streamRefresh,
                   builder: (context, snapshot) {
@@ -228,7 +228,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
             SimpleSettingsTile(
               title: "Screen and Brightness",
-              leading: Icon(Icons.brightness_2),
+              leading: const Icon(Icons.brightness_2),
               subtitle:
                   "Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while.",
               child: SettingsScreen(title: "Brightness, sleep and screensaver", children: [
@@ -315,7 +315,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
             SimpleSettingsTile(
               title: "Bahaviour",
-              leading: Icon(Icons.switch_access_shortcut),
+              leading: const Icon(Icons.switch_access_shortcut),
               subtitle: "Change how the app is handling the de1 in case of wake up and sleep.",
               child: SettingsScreen(title: "Behaviour", children: [
                 SliderSettingsTile(
@@ -348,7 +348,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
             SimpleSettingsTile(
               title: "Smart charging",
-              leading: Icon(Icons.power),
+              leading: const Icon(Icons.power),
               child: SettingsScreen(title: "Smart charging", children: [
                 SwitchSettingsTile(
                   leading: const Icon(Icons.power),
@@ -369,7 +369,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             SimpleSettingsTile(
               title: "Cloud and Network",
               subtitle: "Handling of connections to other external systems like MQTT and Visualizer.",
-              leading: Icon(Icons.cloud),
+              leading: const Icon(Icons.cloud),
               child: SettingsScreen(
                 title: "Cloud and Network",
                 children: [
@@ -518,7 +518,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           children: [
             SimpleSettingsTile(
               title: "Backup Settings",
-              leading: Icon(Icons.backup_table),
+              leading: const Icon(Icons.backup_table),
               child: SettingsScreen(
                 title: 'Backup/Restore',
                 children: <Widget>[
