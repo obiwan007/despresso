@@ -65,34 +65,34 @@ class WebService extends ChangeNotifier {
     isStarting = true;
     await prepareWebsite();
     var root = await getWebPath();
-    var _staticHandler = shelf_static.createStaticHandler(root, defaultDocument: 'index.html');
+    var staticHandler = shelf_static.createStaticHandler(root, defaultDocument: 'index.html');
 
-    var _router = shelf_router.Router();
+    var router = shelf_router.Router();
     final cascade = Cascade()
         // First, serve files from the 'web' directory
-        .add(_staticHandler)
+        .add(staticHandler)
         // If a corresponding file is not found, send requests to a `Router`
-        .add(_router);
+        .add(router);
 
-    _router.get('/api/hello', (Request request) {
+    router.get('/api/hello', (Request request) {
       return Response.ok('{"text": "hello-world"}', headers: header);
     });
 
-    _router.get('/api/user/<user>', (Request request, String user) {
+    router.get('/api/user/<user>', (Request request, String user) {
       return Response.ok('{"text": "hello $user}"');
     });
 
-    _router.get('/api/state', (Request request) {
+    router.get('/api/state', (Request request) {
       var s = machineService.currentFullState;
       var res = Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
       return res;
     });
 
-    _router.post('/api/state', (Request request) {
+    router.post('/api/state', (Request request) {
       return setMachineState(request);
     });
 
-    _router.get('/api/shot', (Request request) {
+    router.get('/api/shot', (Request request) {
       var s = jsonEncode(machineService.state.shot?.toJson());
       var res = Response.ok(s, headers: header);
       return res;
