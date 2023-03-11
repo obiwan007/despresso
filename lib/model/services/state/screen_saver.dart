@@ -31,6 +31,12 @@ class ScreensaverService extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
+  }
+
   void notifyDelayed() {
     Future.delayed(
       const Duration(milliseconds: 100),

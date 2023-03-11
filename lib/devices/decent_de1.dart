@@ -312,6 +312,8 @@ class DE1 extends ChangeNotifier {
 
   int steamPurgeMode = 0;
 
+  double flowEstimation = 0;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -597,13 +599,27 @@ class DE1 extends ChangeNotifier {
     return data / 100;
   }
 
-  setFanThreshhold(int t) {
+  Future<double> getFlowEstimation() async {
+    var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.CalFlowEst]!, 0));
+    log.info("getFlowEstimation: $data ${toHexString(data)}");
+    return data / 1000;
+  }
+
+  void setFlowEstimation(double newFlow) {
+    ByteData bytes = ByteData(4);
+    var data = (double.parse(newFlow.toStringAsFixed(2)) * 1000).toInt();
+    bytes.setUint32(0, data, Endian.little);
+    mmrWrite(mmrAddrLookup[MMRAddrEnum.CalFlowEst]!, bytes.buffer.asUint8List());
+    steamFlow = newFlow;
+  }
+
+  void setFanThreshhold(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
     mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
   }
 
-  setSteamFlow(double newFlow) {
+  void setSteamFlow(double newFlow) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, (newFlow * 100).toInt(), Endian.little);
     mmrWrite(mmrAddrLookup[MMRAddrEnum.TargetSteamFlow]!, bytes.buffer.asUint8List());
@@ -617,14 +633,14 @@ class DE1 extends ChangeNotifier {
     return data;
   }
 
-  setUsbChargerMode(int t) {
+  void setUsbChargerMode(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
     mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, bytes.buffer.asUint8List());
     usbChargerMode = t;
   }
 
-  setSteamPurgeMode(int t) {
+  void setSteamPurgeMode(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
     mmrWrite(mmrAddrLookup[MMRAddrEnum.SteamPurgeMode]!, bytes.buffer.asUint8List());
@@ -642,9 +658,9 @@ class DE1 extends ChangeNotifier {
     ByteData bytes = ByteData(20);
     var i = 0;
     var list = bytes.buffer.asUint8List();
-    list.forEach((element) {
+    for (var _ in list) {
       list[i] = buffer[i++];
-    });
+    }
     return bytes.getInt32(4, Endian.little);
   }
 
@@ -700,9 +716,9 @@ class DE1 extends ChangeNotifier {
     var buffer = bytes.buffer.asUint8List();
     buffer[0] = (bufferData.length % 0xFF);
     var i = 0;
-    bufferData.forEach((element) {
+    for (var _ in bufferData) {
       buffer[i + 4] = bufferData[i++];
-    });
+    }
     log.info("MMR WRITE: ${buffer.map(toHexString).toList()}");
     write(Endpoint.writeToMMR, Uint8List.fromList(buffer));
   }
@@ -757,8 +773,11 @@ class DE1 extends ChangeNotifier {
           steamFlow = await getSteamFlow();
 
           steamPurgeMode = await getSteamPurgeMode();
+
+          flowEstimation = await getFlowEstimation();
+
           log.info(
-              "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode");
+              "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");
         } catch (e) {
           log.severe("Error getting machine details $e");
         }

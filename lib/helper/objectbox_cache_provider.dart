@@ -1,7 +1,5 @@
-import 'package:collection/collection.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:despresso/objectbox.g.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 

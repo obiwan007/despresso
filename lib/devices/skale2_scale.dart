@@ -65,7 +65,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
     ByteData bytes = ByteData(20);
     var i = 0;
     var list = bytes.buffer.asUint8List();
-    for (var element in buffer) {
+    for (var _ in buffer) {
       list[i] = buffer[i];
       i++;
     }
