@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
+import 'package:sentry_logging/sentry_logging.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/service_locator.dart';
@@ -43,15 +44,26 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
 
   initSettings().then((_) async {
-    await SentryFlutter.init(
-      (options) {
-        options.dsn = Settings.getValue<bool>(SettingKeys.useSentry.name, defaultValue: true)! ? '<SENTRY_KEY>' : '';
-        // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-        // We recommend adjusting this value in production.
-        options.tracesSampleRate = 1.0;
-      },
-      appRunner: () => runApp(MyApp()),
-    );
+    String dsn = Settings.getValue<bool>(SettingKeys.useSentry.name, defaultValue: true)! ? '<SENTRY_KEY>' : '';
+
+    bool noSentry = dsn.isEmpty || dsn.length == 12;
+    if (noSentry) {
+      runApp(MyApp());
+    } else {
+      await SentryFlutter.init(
+        (options) {
+          options.dsn = dsn;
+          // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+          // We recommend adjusting this value in production.
+          options.tracesSampleRate = 1.0;
+          options.enableUserInteractionTracing = true;
+          options.attachScreenshot = true;
+          options.enableOutOfMemoryTracking = true;
+          options.addIntegration(LoggingIntegration());
+        },
+        appRunner: () => runApp(SentryUserInteractionWidget(child: MyApp())),
+      );
+    }
   });
 }
 
