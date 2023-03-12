@@ -300,6 +300,36 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     var style1 = TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: fontsize);
     var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
     var style3 = TextStyle(color: color);
+
+    if (frame == null) {
+      return [
+        Tab(
+          height: hTab,
+          child: Column(
+            children: [
+              SizedBox(
+                height: h,
+                child: FittedBox(
+                  child: Text(
+                    "Error",
+                    style: style1,
+                  ),
+                ),
+              ),
+              Text(
+                "no frame",
+                style: style1,
+              ),
+              Text(
+                "",
+                style: style3,
+              ),
+            ],
+          ),
+        ),
+      ];
+    }
+
     return [
       Tab(
         height: hTab,
@@ -334,11 +364,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               child: FittedBox(
                 child: Text(
                   "Pres.",
-                  style: (frame!.pump == "pressure") ? style1 : style2,
+                  style: (frame?.pump == "pressure") ? style1 : style2,
                 ),
               ),
             ),
-            Text("${(frame.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
+            Text("${(frame?.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
                 style: (frame.pump == "pressure") ? style1 : style2),
             Text("bar", style: (frame.pump == "pressure") ? style3 : null),
           ],
@@ -382,106 +412,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
         ),
       ),
     ];
-  }
-
-  Widget buildPreinfusion() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          const Text("Preinfuse"),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 8,
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          Text("Infusion Time (${preInfusion?.frameLen.round()} s)"),
-                          SfSlider(
-                            min: 0.0,
-                            max: 100.0,
-                            value: preInfusion!.frameLen,
-                            interval: 20,
-                            showTicks: true,
-                            showLabels: true,
-                            enableTooltip: true,
-                            minorTicksPerInterval: 1,
-                            onChanged: (dynamic value) {
-                              setState(() {
-                                preInfusion!.frameLen = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 28.0),
-                        child: Column(
-                          children: [
-                            const Text("Max. Flow"),
-                            SfSlider(
-                              min: 0.0,
-                              max: 10.0,
-                              value: preInfusion!.pump == "flow" ? preInfusion!.setVal : preInfusion!.triggerVal,
-                              interval: 1,
-                              showTicks: true,
-                              showLabels: true,
-                              enableTooltip: true,
-                              minorTicksPerInterval: 1,
-                              onChanged: (dynamic value) {
-                                var v = (value * 10).round() / 10;
-                                if (preInfusion!.pump == "flow") {
-                                  preInfusion!.setVal = v;
-                                } else {
-                                  preInfusion!.triggerVal = v;
-                                }
-                                setState(() {});
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      Text("Pressure < ${preInfusion?.setVal} bar"),
-                      SfSlider.vertical(
-                        min: 0.0,
-                        max: 10.0,
-                        value: preInfusion!.pump == "pressure" ? preInfusion!.setVal : preInfusion!.triggerVal,
-                        interval: 5,
-                        showTicks: true,
-                        showLabels: true,
-                        enableTooltip: true,
-                        minorTicksPerInterval: 5,
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            var v = (value * 10).round() / 10;
-                            if (preInfusion!.pump == "pressure") {
-                              preInfusion!.setVal = v;
-                            } else {
-                              preInfusion!.triggerVal = v;
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Padding buildRiseAndHold(De1ShotFrameClass riseAndHold, De1ShotFrameClass? forcedRise) {
