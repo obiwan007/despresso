@@ -52,6 +52,12 @@ class De1ShotProfile {
 
     return copy;
   }
+
+  De1ShotFrameClass? firstFrame() {
+    if (shotFrames.isEmpty) return null;
+
+    return shotFrames.first;
+  }
 }
 
 @JsonSerializable()

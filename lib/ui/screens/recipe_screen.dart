@@ -225,6 +225,9 @@ class RecipeDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var nameOfRecipe = coffeeService.currentRecipe?.name ?? "no name";
+
+    var firstFrame = profileService.currentProfile?.firstFrame();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -280,13 +283,40 @@ class RecipeDetails extends StatelessWidget {
                                   },
                                   child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
                                 ),
-                                Text(
-                                    "Suggested stop weight: ${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
                               ],
                             ),
                           ),
                         ],
                       ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text("Suggested stop weight:")),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if ((firstFrame?.temp ?? 0) > 0)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Expanded(child: Text("Initial temperature:")),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("${firstFrame?.temp.toStringAsFixed(1)} °C"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       const Divider(),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -308,18 +338,46 @@ class RecipeDetails extends StatelessWidget {
                                   },
                                   child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
                                 ),
-                                Text("Dose: ${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
-                                Text("Grind Settings: ${coffeeService.currentCoffee?.grinderSettings ?? ''}"),
                               ],
                             ),
                           ),
                         ],
                       ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text("Dose:")),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if ((coffeeService.currentCoffee?.grinderSettings ?? 0) > 0)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Expanded(child: Text("Grind Settings:")),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("${coffeeService.currentCoffee?.grinderSettings ?? ''}"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       const Divider(),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Stop on Weight")),
+                          const Expanded(child: Text("Stop on Weight [g]")),
                           Expanded(
                             child: Column(
                               children: [
@@ -345,7 +403,6 @@ class RecipeDetails extends StatelessWidget {
                                     errorBorder: InputBorder.none,
                                     disabledBorder: InputBorder.none,
                                     contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                                    suffix: Text('g'),
                                   ),
                                 ),
                               ],
@@ -356,7 +413,7 @@ class RecipeDetails extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Adjust temperature")),
+                          const Expanded(child: Text("Adjust temperature [°C]")),
                           Expanded(
                             child: Column(
                               children: [
@@ -382,7 +439,6 @@ class RecipeDetails extends StatelessWidget {
                                     errorBorder: InputBorder.none,
                                     disabledBorder: InputBorder.none,
                                     contentPadding: EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                                    suffix: Text('°C'),
                                   ),
                                 ),
                               ],

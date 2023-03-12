@@ -1,4 +1,8 @@
+import 'dart:math';
+
+import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
+import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
@@ -34,6 +38,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   late ProfileService profileService;
   late ScaleService scaleService;
   late SettingsService settingsService;
+  late ScreensaverService _screensaver;
 
   double baseTime = 0;
 
@@ -46,6 +51,8 @@ class EspressoScreenState extends State<EspressoScreen> {
   bool stopTriggered = false;
 
   double maxTime = 30;
+
+  GlobalKey<State<StatefulWidget>> _mywidgetkey = GlobalKey();
 
   EspressoScreenState();
 
@@ -86,6 +93,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     coffeeSelectionService.addListener(updateCoffeeSelection);
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
+    _screensaver = getIt<ScreensaverService>();
   }
 
   // loadShotData() async {
@@ -388,6 +396,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     Widget insights;
     const width = 70.0;
     insights = Column(
+      key: _mywidgetkey,
       children: [
         if (machineService.state.coffeeState == EspressoMachineState.disconnected) const Icon(Icons.bluetooth_disabled),
         KeyValueWidget(width: width, label: "Recipe", value: coffeeSelectionService.currentRecipe?.name ?? "no recipe"),
@@ -399,13 +408,19 @@ class EspressoScreenState extends State<EspressoScreen> {
                 ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
                 : "No Beans"),
         KeyValueWidget(width: width, label: "Target", value: '${settingsService.targetEspressoWeight} g'),
-        const Divider(
-          height: 20,
-          thickness: 5,
-          indent: 0,
-          endIndent: 0,
-        ),
-        KeyValueWidget(width: width, label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        if (machineService.lastPourTime > 0)
+          const Divider(
+            height: 20,
+            thickness: 5,
+            indent: 0,
+            endIndent: 0,
+          ),
+        if (machineService.lastPourTime > 0)
+          KeyValueWidget(
+              width: width, label: "Timer", value: 'Pour: ${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        if (machineService.lastPourTime > 0)
+          KeyValueWidget(
+              width: width, label: "", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
         const Divider(
           height: 20,
           thickness: 5,
@@ -414,13 +429,14 @@ class EspressoScreenState extends State<EspressoScreen> {
         ),
         TextButton.icon(
           onPressed: () {
+            _screensaver.pause();
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => ShotEdit(
                         coffeeSelectionService.selectedShotId,
                       )),
-            );
+            ).then((value) => _screensaver.resume());
           },
           icon: const Icon(Icons.note_add),
           label: const Text("Espresso Diary"),
@@ -460,10 +476,14 @@ class EspressoScreenState extends State<EspressoScreen> {
       length: 3,
       child: Scaffold(
         body: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               flex: 8, // takes 30% of available width
               child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: isEmpty
                       ? [const Text("No data yet")]
                       : [
@@ -473,31 +493,53 @@ class EspressoScreenState extends State<EspressoScreen> {
                           ),
                         ]),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 230, // takes 30% of available width
-                child: Column(children: [
-                  Expanded(
-                    flex: 0,
-                    child: _buildLiveInsights(),
-                  ),
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildScaleInsight(),
-                  // ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: StartStopButton(requestedState: De1StateEnum.espresso),
-                  ),
-                  // _buildButtons()
-                ]),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _buildRightSidePanel(),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  _buildRightSidePanel() {
+    double height = 0;
+    double expand = 0;
+    try {
+      final size = MediaQuery.of(context);
+      final apparentSize = size.size.height - size.padding.bottom - size.padding.top;
+
+      RenderBox? renderbox = _mywidgetkey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderbox != null) {
+        height = renderbox.size.height;
+      } else {
+        height = 400;
+        Future.delayed(const Duration(milliseconds: 100), () => setState(() {}));
+      }
+      expand = apparentSize - height - 360;
+    } catch (e) {
+      log.severe("Error in mediaquery $e");
+    }
+
+    return SizedBox(
+      width: 230,
+      child:
+          Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+        _buildLiveInsights(),
+        // Expanded(
+        //   flex: 1,
+        //   child: _buildScaleInsight(),
+        // ),
+        if (expand > 0) SizedBox(height: expand),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: StartStopButton(requestedState: De1StateEnum.espresso),
+        ),
+        // _buildButtons()
+      ]),
     );
   }
 }
