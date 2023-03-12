@@ -63,7 +63,7 @@ lane :beta do
     # gradle(task: "clean assembleRelease")
     version_code_from_play_store_strings = google_play_track_version_codes(
         package_name: "com.mmmedia.despresso",   # PACKAGE_NAME is a global variable defined earlier
-        track: "Closed Beta",          # this can be alpha, beta etc.
+        track: "alpha",          # this can be alpha, Closed Beta etc.
         # json_key: PLAYSTORE_KEY_PATH,
       )
 
