@@ -270,7 +270,10 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   double getOverallTime() {
-    return shotList.entries.last.sampleTimeCorrected;
+    if (shotList.entries.isNotEmpty) {
+      return shotList.entries.last.sampleTimeCorrected;
+    }
+    return 0;
   }
 
   updateProfile() {}

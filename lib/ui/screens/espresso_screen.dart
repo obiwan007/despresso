@@ -49,6 +49,8 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   double maxTime = 30;
 
+  GlobalKey<State<StatefulWidget>> _mywidgetkey = GlobalKey();
+
   EspressoScreenState();
 
   @override
@@ -390,6 +392,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     Widget insights;
     const width = 70.0;
     insights = Column(
+      key: _mywidgetkey,
       children: [
         if (machineService.state.coffeeState == EspressoMachineState.disconnected) const Icon(Icons.bluetooth_disabled),
         KeyValueWidget(width: width, label: "Recipe", value: coffeeSelectionService.currentRecipe?.name ?? "no recipe"),
@@ -401,16 +404,19 @@ class EspressoScreenState extends State<EspressoScreen> {
                 ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
                 : "No Beans"),
         KeyValueWidget(width: width, label: "Target", value: '${settingsService.targetEspressoWeight} g'),
-        const Divider(
-          height: 20,
-          thickness: 5,
-          indent: 0,
-          endIndent: 0,
-        ),
-        KeyValueWidget(
-            width: width, label: "Timer", value: 'Pour: ${machineService.lastPourTime.toStringAsFixed(1)} s'),
-        KeyValueWidget(
-            width: width, label: "", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
+        if (machineService.lastPourTime > 0)
+          const Divider(
+            height: 20,
+            thickness: 5,
+            indent: 0,
+            endIndent: 0,
+          ),
+        if (machineService.lastPourTime > 0)
+          KeyValueWidget(
+              width: width, label: "Timer", value: 'Pour: ${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        if (machineService.lastPourTime > 0)
+          KeyValueWidget(
+              width: width, label: "A", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
         const Divider(
           height: 20,
           thickness: 5,
@@ -482,9 +488,9 @@ class EspressoScreenState extends State<EspressoScreen> {
                           ),
                         ]),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: _buildRightSidePanel(),
               ),
             ),
@@ -495,10 +501,25 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   _buildRightSidePanel() {
-    final size = MediaQuery.of(context);
-    final apparentSize = size.size.height - size.padding.bottom - size.padding.top;
-    log.info("Height: ${apparentSize}");
-    bool useScroll = apparentSize > 600;
+    double height = 0;
+    double expand = 0;
+    try {
+      final size = MediaQuery.of(context);
+      final apparentSize = size.size.height - size.padding.bottom - size.padding.top;
+
+      RenderBox? renderbox = _mywidgetkey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderbox != null) {
+        height = renderbox.size.height;
+      } else {
+        height = 400;
+        Future.delayed(const Duration(milliseconds: 10), () => setState(() {}));
+      }
+      expand = apparentSize - height - 360;
+      log.info("Height: ${apparentSize} $height $expand");
+    } catch (e) {
+      log.severe("Error in mediaquery $e");
+    }
+
     return SizedBox(
       width: 230,
       child:
@@ -508,7 +529,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         //   flex: 1,
         //   child: _buildScaleInsight(),
         // ),
-        if (useScroll) SizedBox(height: max(1, apparentSize - 600)),
+        if (expand > 0) SizedBox(height: expand),
         Padding(
           padding: const EdgeInsets.all(5.0),
           child: StartStopButton(requestedState: De1StateEnum.espresso),
