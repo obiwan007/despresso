@@ -25,6 +25,7 @@ class BLEService extends ChangeNotifier {
   final flutterReactiveBle = ble.FlutterReactiveBle();
 
   final List<ble.DiscoveredDevice> _devicesList = <ble.DiscoveredDevice>[];
+  final List<ble.DiscoveredDevice> _devicesIgnoreList = <ble.DiscoveredDevice>[];
 
   StreamSubscription<ble.DiscoveredDevice>? _subscription;
 
@@ -76,9 +77,9 @@ class BLEService extends ChangeNotifier {
   }
 
   void deviceScanListener(ble.DiscoveredDevice result) {
-    if (result.name.isNotEmpty) {
-      log.fine('Scanned Peripheral ${result.name}, ID: ${result.id} RSSI ${result.rssi} ${result.serviceUuids}');
-    }
+    // if (result.name.isNotEmpty) {
+    //   log.fine('Scanned Peripheral ${result.name}, ID: ${result.id} RSSI ${result.rssi} ${result.serviceUuids}');
+    // }
     _addDeviceTolist(result);
   }
 
@@ -95,47 +96,45 @@ class BLEService extends ChangeNotifier {
 
   void _addDeviceTolist(final ble.DiscoveredDevice device) async {
     if (device.name.isNotEmpty) {
-      if (!_devicesList.map((e) => e.id).contains(device.id)) {
-        log.fine('Found new device: ${device.name} ${device.id}');
+      if (!_devicesIgnoreList.map((e) => e.id).contains(device.id) &&
+          !_devicesList.map((e) => e.id).contains(device.id)) {
+        log.fine(
+            'Found new device: ${device.name} ID: ${device.id} UUIDs: ${device.serviceUuids} RSSI ${device.rssi} ');
         if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
           log.info('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('CFS-9002')) {
+        } else if (device.name.startsWith('CFS-9002')) {
           log.info('eureka scale found');
           EurekaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('Decent')) {
+        } else if (device.name.startsWith('Decent')) {
           log.info('decent scale found');
           DecentScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('DE1')) {
+        } else if (device.name.startsWith('DE1')) {
           log.info('Creating DE1 machine!');
           DE1(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('MEATER')) {
+        } else if (device.name.startsWith('MEATER')) {
           log.info('Meater thermometer ');
           MeaterThermometer(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('Skale')) {
+        } else if (device.name.startsWith('Skale')) {
           log.info('Skala 2');
           Skale2Scale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('FELICITA')) {
+        } else if (device.name.startsWith('FELICITA')) {
           log.info('Felicita Scale');
           FelicitaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        }
-        if (device.name.startsWith('HIROIA')) {
+        } else if (device.name.startsWith('HIROIA')) {
           log.info('Hiroia Scale');
           HiroiaScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
+        } else {
+          _devicesIgnoreList.add(device);
+          log.info('Added unknown device');
         }
 
         notifyListeners();
