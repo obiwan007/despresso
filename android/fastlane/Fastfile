@@ -78,8 +78,6 @@ lane :beta do
 
     gradle(task: "clean bundleRelease")    
     
-
-    upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'Closed Alpha')
     upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'alpha')
     # sh("mv ../../lib/main.dart-e ../../lib/main.dart")
     # supply(track: 'Closed Beta', version_code: 2)    
