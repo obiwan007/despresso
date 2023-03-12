@@ -416,7 +416,7 @@ class EspressoScreenState extends State<EspressoScreen> {
               width: width, label: "Timer", value: 'Pour: ${machineService.lastPourTime.toStringAsFixed(1)} s'),
         if (machineService.lastPourTime > 0)
           KeyValueWidget(
-              width: width, label: "A", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
+              width: width, label: "", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
         const Divider(
           height: 20,
           thickness: 5,
