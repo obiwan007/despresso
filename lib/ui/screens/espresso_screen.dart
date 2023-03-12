@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
@@ -405,7 +407,10 @@ class EspressoScreenState extends State<EspressoScreen> {
           indent: 0,
           endIndent: 0,
         ),
-        KeyValueWidget(width: width, label: "Timer", value: '${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        KeyValueWidget(
+            width: width, label: "Timer", value: 'Pour: ${machineService.lastPourTime.toStringAsFixed(1)} s'),
+        KeyValueWidget(
+            width: width, label: "", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
         const Divider(
           height: 20,
           thickness: 5,
@@ -460,10 +465,14 @@ class EspressoScreenState extends State<EspressoScreen> {
       length: 3,
       child: Scaffold(
         body: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               flex: 8, // takes 30% of available width
               child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: isEmpty
                       ? [const Text("No data yet")]
                       : [
@@ -475,29 +484,37 @@ class EspressoScreenState extends State<EspressoScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 230, // takes 30% of available width
-                child: Column(children: [
-                  Expanded(
-                    flex: 0,
-                    child: _buildLiveInsights(),
-                  ),
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: _buildScaleInsight(),
-                  // ),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: StartStopButton(requestedState: De1StateEnum.espresso),
-                  ),
-                  // _buildButtons()
-                ]),
+              child: SingleChildScrollView(
+                child: _buildRightSidePanel(),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  _buildRightSidePanel() {
+    final size = MediaQuery.of(context);
+    final apparentSize = size.size.height - size.padding.bottom - size.padding.top;
+    log.info("Height: ${apparentSize}");
+    bool useScroll = apparentSize > 600;
+    return SizedBox(
+      width: 230,
+      child:
+          Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+        _buildLiveInsights(),
+        // Expanded(
+        //   flex: 1,
+        //   child: _buildScaleInsight(),
+        // ),
+        if (useScroll) SizedBox(height: max(1, apparentSize - 600)),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: StartStopButton(requestedState: De1StateEnum.espresso),
+        ),
+        // _buildButtons()
+      ]),
     );
   }
 }

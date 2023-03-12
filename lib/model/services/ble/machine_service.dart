@@ -263,9 +263,14 @@ class EspressoMachineService extends ChangeNotifier {
   loadShotData() async {
     currentShot = coffeeService.getLastShot() ?? Shot();
     shotList.entries = currentShot.shotstates;
+    lastPourTime = currentShot.pourTime;
     // await shotList.load("testshot.json");
     log.fine("Lastshot loaded ${shotList.entries.length}");
     notifyListeners();
+  }
+
+  double getOverallTime() {
+    return shotList.entries.last.sampleTimeCorrected;
   }
 
   updateProfile() {}
