@@ -52,6 +52,8 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   late ScreensaverService _screensaver;
 
+  BuildContext? _saverContext;
+
   @override
   void initState() {
     super.initState();
@@ -427,33 +429,42 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
       setState(
         () => showScreenSaver(),
       );
+    } else {
+      if (_saverContext != null) {
+        Navigator.pop(_saverContext!);
+        _saverContext = null;
+      }
     }
   }
 
   showScreenSaver() {
     return showGeneralDialog(
       context: context,
-      pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
-        backgroundColor: Colors.black,
-        body: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              Navigator.pop(context);
-              _screensaver.handleTap();
-            },
-            child: Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
-                      Expanded(child: ScreenSaver()),
-                    ],
+      pageBuilder: (context, animation, secondaryAnimation) {
+        _saverContext = context;
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.pop(context);
+                _saverContext = null;
+                _screensaver.handleTap();
+              },
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        Expanded(child: ScreenSaver()),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            )),
-      ),
+                ],
+              )),
+        );
+      },
     );
   }
 }

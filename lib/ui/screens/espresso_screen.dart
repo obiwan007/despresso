@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
+import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
@@ -36,6 +38,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   late ProfileService profileService;
   late ScaleService scaleService;
   late SettingsService settingsService;
+  late ScreensaverService _screensaver;
 
   double baseTime = 0;
 
@@ -90,6 +93,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     coffeeSelectionService.addListener(updateCoffeeSelection);
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
+    _screensaver = getIt<ScreensaverService>();
   }
 
   // loadShotData() async {
@@ -425,13 +429,14 @@ class EspressoScreenState extends State<EspressoScreen> {
         ),
         TextButton.icon(
           onPressed: () {
+            _screensaver.pause();
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => ShotEdit(
                         coffeeSelectionService.selectedShotId,
                       )),
-            );
+            ).then((value) => _screensaver.resume());
           },
           icon: const Icon(Icons.note_add),
           label: const Text("Espresso Diary"),
@@ -512,10 +517,9 @@ class EspressoScreenState extends State<EspressoScreen> {
         height = renderbox.size.height;
       } else {
         height = 400;
-        Future.delayed(const Duration(milliseconds: 10), () => setState(() {}));
+        Future.delayed(const Duration(milliseconds: 100), () => setState(() {}));
       }
       expand = apparentSize - height - 360;
-      log.info("Height: ${apparentSize} $height $expand");
     } catch (e) {
       log.severe("Error in mediaquery $e");
     }

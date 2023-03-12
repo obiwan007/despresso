@@ -15,11 +15,13 @@ class ScreensaverService extends ChangeNotifier {
 
   late Timer _timer;
   late SettingsService _settings;
-
+  late EspressoMachineService machine;
   int _screenSaverTimer = 0;
   bool screenSaverOn = false;
 
   bool _paused = false;
+
+  EspressoMachineState lastState = EspressoMachineState.disconnected;
 
   ScreensaverService() {
     init();
@@ -27,8 +29,30 @@ class ScreensaverService extends ChangeNotifier {
 
   void init() async {
     _settings = getIt<SettingsService>();
+    machine = getIt<EspressoMachineService>();
     setupScreensaver();
     notifyListeners();
+
+// Prevent screensave to go online during a pour.
+    machine.streamState.listen((event) {
+      if (event.state != lastState) {
+        lastState = event.state;
+        switch (lastState) {
+          case EspressoMachineState.idle:
+            resume();
+            break;
+          case EspressoMachineState.sleep:
+            break;
+          case EspressoMachineState.water:
+          case EspressoMachineState.steam:
+          case EspressoMachineState.flush:
+          case EspressoMachineState.espresso:
+            resume();
+            pause();
+            break;
+        }
+      }
+    });
   }
 
   @override
@@ -94,14 +118,15 @@ class ScreensaverService extends ChangeNotifier {
   }
 
   Future<void> handleTap() async {
+    log.info("resumed");
     _screenSaverTimer = 0;
+    _paused = false;
     log.info("Tap");
     if (screenSaverOn) {
       screenSaverOn = false;
       ScreenBrightness().resetScreenBrightness();
 
       if (_settings.screenTapWake) {
-        var machine = getIt<EspressoMachineService>();
         machine.de1?.switchOn();
       }
       try {
@@ -120,10 +145,10 @@ class ScreensaverService extends ChangeNotifier {
 
   void pause() {
     _paused = true;
+    log.info("Paused");
   }
 
   void resume() {
-    _paused = false;
-    _screenSaverTimer = 0;
+    handleTap();
   }
 }
