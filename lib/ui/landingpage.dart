@@ -34,7 +34,7 @@ class LandingPage extends StatefulWidget {
   LandingPageState createState() => LandingPageState();
 }
 
-class LandingPageState extends State<LandingPage> with SingleTickerProviderStateMixin {
+class LandingPageState extends State<LandingPage> with TickerProviderStateMixin {
   final log = Logger('LandingPageState');
 
   bool available = false;
@@ -54,10 +54,13 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   BuildContext? _saverContext;
 
+  late SettingsService _settings;
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: 1);
+    _settings = getIt<SettingsService>();
+    _tabController = TabController(length: _settings.steamHeaterOff ? 4 : 5, vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -70,6 +73,8 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
     _screensaver = getIt<ScreensaverService>();
     _screensaver.addListener(screenSaverEvent);
+
+    _settings.addListener(updatedSettings);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
     //   log.info("Print after 5 seconds");
     //   selectedPage++;
@@ -85,6 +90,7 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     machineService.removeListener(updatedMachine);
     profileService.removeListener(updatedProfile);
     _screensaver.removeListener(screenSaverEvent);
+    _settings.removeListener(updatedSettings);
   }
 
   @override
@@ -128,12 +134,12 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: const [
-                  RecipeScreen(),
-                  EspressoScreen(),
-                  SteamScreen(),
-                  WaterScreen(),
-                  FlushScreen(),
+                children: [
+                  const RecipeScreen(),
+                  const EspressoScreen(),
+                  if (!_settings.steamHeaterOff) const SteamScreen(),
+                  const WaterScreen(),
+                  const FlushScreen(),
                 ],
               ),
             ),
@@ -310,24 +316,25 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
         // indicator: const BoxDecoration(color: Colors.black38),
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
-        tabs: const <Widget>[
-          Tab(
+        tabs: <Widget>[
+          const Tab(
             icon: Icon(Icons.document_scanner),
             child: Text("Recipe"),
           ),
-          Tab(
+          const Tab(
             icon: Icon(Icons.coffee),
             child: Text("Espresso"),
           ),
-          Tab(
-            icon: Icon(Icons.stream),
-            child: Text("Steam"),
-          ),
-          Tab(
+          if (!_settings.steamHeaterOff)
+            const Tab(
+              icon: Icon(Icons.stream),
+              child: Text("Steam"),
+            ),
+          const Tab(
             icon: Icon(Icons.water_drop),
             child: Text("Water"),
           ),
-          Tab(
+          const Tab(
             icon: Icon(Icons.water),
             child: Text("Flush"),
           ),
@@ -351,6 +358,15 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
 
   void updatedProfile() {
     setState(() {});
+  }
+
+  void updatedSettings() {
+    var newTabCount = _settings.steamHeaterOff ? 4 : 5;
+    if (_tabController.length != newTabCount) {
+      log.info("New tab size: $newTabCount");
+      _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 1);
+      setState(() {});
+    }
   }
 
   Future<void> _showMyDialog(String title, String content) async {
@@ -384,19 +400,20 @@ class LandingPageState extends State<LandingPage> with SingleTickerProviderState
     if (lastState != machineService.state.coffeeState) {
       log.info("Machine state: ${machineService.state.coffeeState}");
       lastState = machineService.state.coffeeState;
+      var offset = _settings.steamHeaterOff == true ? -1 : 0;
       setState(() {
         switch (lastState) {
           case EspressoMachineState.espresso:
             currentPageIndex = 1;
             break;
           case EspressoMachineState.steam:
-            currentPageIndex = 2;
+            if (!_settings.steamHeaterOff) currentPageIndex = 2;
             break;
           case EspressoMachineState.flush:
-            currentPageIndex = 4;
+            currentPageIndex = 4 + offset;
             break;
           case EspressoMachineState.water:
-            currentPageIndex = 3;
+            currentPageIndex = 3 + offset;
             break;
           case EspressoMachineState.idle:
             break;

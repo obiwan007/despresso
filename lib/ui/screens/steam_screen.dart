@@ -115,7 +115,7 @@ class SteamScreenState extends State<SteamScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Steam Temperatur ${settings.targetSteamTemp}°C",
+                            Text("Steam Temperaturs ${settings.targetSteamTemp}°C",
                                 style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetSteamTemp.toDouble(),
@@ -256,8 +256,8 @@ class SteamScreenState extends State<SteamScreen> {
                             Text("Steam Flowrate ${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
                                 style: Theme.of(context).textTheme.labelLarge),
                             Slider(
-                              value: machineService.de1?.steamFlow ?? 0.5,
-                              max: 2.5,
+                              value: machineService.de1?.steamFlow ?? 2.5,
+                              max: 4.5,
                               min: 0.5,
                               divisions: 60,
                               label: "${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
