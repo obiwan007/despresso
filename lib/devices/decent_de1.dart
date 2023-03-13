@@ -408,7 +408,7 @@ class DE1 extends ChangeNotifier {
     var state = value.getUint8(0);
     var subState = value.getUint8(1);
 
-    log.info("DE1 is in state: ${states[state]} $state substate: ${subStates[subState]}");
+    log.info("DE1 is in state: ${states[state]} $state substate: $subState");
     service.setSubState(subStates[subState]);
 
     switch (state) {

@@ -454,6 +454,16 @@ class EspressoMachineService extends ChangeNotifier {
     }
     if (state.coffeeState == EspressoMachineState.espresso &&
         lastSubstate != state.subState &&
+        lastSubstate == "heat_water_heater") {
+      log.info('Heating phase over');
+      shotList.clear();
+      baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      log.info("new basetime $baseTime");
+      lastPourTime = 0;
+    }
+
+    if (state.coffeeState == EspressoMachineState.espresso &&
+        lastSubstate != state.subState &&
         state.subState == "pour") {
       pourTimeStart = DateTime.now().millisecondsSinceEpoch / 1000.0;
       isPouring = true;

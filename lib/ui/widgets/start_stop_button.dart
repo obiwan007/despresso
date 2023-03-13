@@ -78,12 +78,12 @@ class _StartStopButtonState extends State<StartStopButton> {
               subState = "heated up";
               break;
             case "heat_water_tank":
-              subState = "Heating";
+              subState = "Heating Tank";
               title = "Wait";
               mode = Colors.orange;
               break;
             case "heat_water_heater":
-              subState = "Heating";
+              subState = "Heating Water";
               title = "Wait";
               mode = Colors.orange;
               break;

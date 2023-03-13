@@ -3,6 +3,7 @@ import 'dart:async';
 // import 'dart:html';
 // import 'dart:html';
 
+import 'package:despresso/devices/acaia_pyxis_scale.dart';
 import 'package:despresso/devices/decent_scale.dart';
 import 'package:despresso/devices/felicita_scale.dart';
 import 'package:despresso/devices/meater_thermometer.dart';
@@ -103,6 +104,12 @@ class BLEService extends ChangeNotifier {
         if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
           log.info('Creating Acaia Scale!');
           AcaiaScale(device).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        } else if (device.name.startsWith('PEARLS') ||
+            device.name.startsWith('LUNAR') ||
+            device.name.startsWith('PYXIS')) {
+          log.info('Creating AcaiaPYXIS Scale!');
+          AcaiaPyxisScale(device).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         } else if (device.name.startsWith('CFS-9002')) {
           log.info('eureka scale found');

@@ -10,18 +10,28 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-/// Implementation for Acaia Scales
-/// Lunar pre 2021
-/// PROCH
 ///
-class AcaiaScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('AcaiaScale');
+///Implementation for the Acaia scale models
+///Lunar 2021,
+///PYXIS
+///PEARLS
+class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
+  final log = l.Logger('AcaiaPyxisScale');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('00001820-0000-1000-8000-00805f9b34fb') : Uuid.parse('1820');
+  static Uuid ServiceUUID = Platform.isAndroid
+      ? Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455')
+      : Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455');
 
-  static Uuid characteristicUUID =
-      Platform.isAndroid ? Uuid.parse('00002a80-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a80');
+  /// Command
+  static Uuid characteristicCommandUUID = Platform.isAndroid
+      ? Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3')
+      : Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3');
+
+  /// Command
+  static Uuid characteristicStatusUUID = Platform.isAndroid
+      ? Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616')
+      : Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616');
+
   late ScaleService scaleService;
 
   static const _heartbeatTime = Duration(seconds: 3);
@@ -70,7 +80,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
-  AcaiaScale(this.device) {
+  AcaiaPyxisScale(this.device) {
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
     scaleService.setScaleInstance(this);
@@ -202,8 +212,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       scaleService.setBattery(0);
       return;
     }
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
 
     try {
       await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
@@ -221,8 +231,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       return;
     }
 
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
 
     // device.writeCharacteristic(
@@ -237,8 +247,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       return;
     }
 
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
 
     // device.writeCharacteristic(
@@ -251,8 +261,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     // tare command
     var list = [0x00];
 
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     try {
       await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
       log.info("tara Ok");
@@ -263,8 +273,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   Future<void> writeToAcaia(Uint8List payload) async {
     log.info("Sending to Acaia");
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: payload);
   }
 
@@ -282,8 +292,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         log.info('Connected');
         scaleService.setState(ScaleState.connected);
         // await device.discoverAllServicesAndCharacteristics();
-        final characteristic =
-            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        final characteristic = QualifiedCharacteristic(
+            serviceId: ServiceUUID, characteristicId: characteristicStatusUUID, deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
