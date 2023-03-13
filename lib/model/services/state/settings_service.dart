@@ -56,6 +56,7 @@ enum SettingKeys {
   screenTimoutGoToRecipe,
   screenDarkTheme,
   screenThemeIndex,
+  steamHeaterOff,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -132,6 +133,9 @@ class SettingsService extends ChangeNotifier {
 
   int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 120;
   set targetSteamTemp(value) => Settings.setValue<int>(SettingKeys.targetSteamTemp.name, value);
+
+  bool get steamHeaterOff => Settings.getValue<bool>(SettingKeys.steamHeaterOff.name) ?? false;
+  set steamHeaterOff(value) => Settings.setValue<bool>(SettingKeys.steamHeaterOff.name, value);
 
   int get targetSteamLength => Settings.getValue<int>(SettingKeys.targetSteamLength.name) ?? 90;
   set targetSteamLength(value) => Settings.setValue<int>(SettingKeys.targetSteamLength.name, value);

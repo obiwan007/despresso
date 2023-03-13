@@ -403,13 +403,12 @@ class EspressoMachineService extends ChangeNotifier {
     // check if we need to send the new water temp
     if (settingsService.targetGroupTemp != profile.shotFrames[0].temp) {
       profile.shotHeader.targetGroupTemp = profile.shotFrames[0].temp;
-      var bytes = encodeDe1OtherSetn();
 
       try {
-        log.fine("Write Shot Settings: $bytes");
-        await de1!.writeWithResult(Endpoint.shotSettings, bytes);
+        log.fine("Write Shot Settings");
+        await de1!.updateSettings();
       } catch (ex) {
-        return "Error writing shot settings $bytes";
+        return "Error writing shot settings";
       }
     }
     return Future.value("");
@@ -616,43 +615,45 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   Future<void> updateSettings() async {
+    if (de1 == null) return;
+
+    await de1!.updateSettings();
+    // var bytes = encodeDe1OtherSetn();
+    // try {
+    //   log.info("Write Shot Settings: $bytes");
+    //   await de1?.writeWithResult(Endpoint.shotSettings, bytes);
+    // } catch (ex) {
+    //   log.severe("Error writing shot settings $bytes");
+    // }
     notifyListeners();
-
-    var bytes = encodeDe1OtherSetn();
-    try {
-      log.info("Write Shot Settings: $bytes");
-      await de1!.writeWithResult(Endpoint.shotSettings, bytes);
-    } catch (ex) {
-      log.severe("Error writing shot settings $bytes");
-    }
   }
 
-  Uint8List encodeDe1OtherSetn() {
-    Uint8List data = Uint8List(9);
+  // Uint8List encodeDe1OtherSetn() {
+  //   Uint8List data = Uint8List(9);
 
-    int index = 0;
-    data[index] = settingsService.steamSettings;
-    index++;
-    data[index] = settingsService.targetSteamTemp;
-    index++;
-    data[index] = settingsService.targetSteamLength;
-    index++;
-    data[index] = settingsService.targetHotWaterTemp;
-    index++;
-    data[index] = settingsService.targetHotWaterVol;
-    index++;
-    data[index] = settingsService.targetHotWaterLength;
-    index++;
-    data[index] = settingsService.targetEspressoVol;
-    index++;
+  //   int index = 0;
+  //   data[index] = settingsService.steamSettings;
+  //   index++;
+  //   data[index] = settingsService.steamHeaterOff ? 0 : settingsService.targetSteamTemp;
+  //   index++;
+  //   data[index] = settingsService.targetSteamLength;
+  //   index++;
+  //   data[index] = settingsService.targetHotWaterTemp;
+  //   index++;
+  //   data[index] = settingsService.targetHotWaterVol;
+  //   index++;
+  //   data[index] = settingsService.targetHotWaterLength;
+  //   index++;
+  //   data[index] = settingsService.targetEspressoVol;
+  //   index++;
 
-    data[index] = settingsService.targetGroupTemp.toInt();
-    index++;
-    data[index] = ((settingsService.targetGroupTemp - settingsService.targetGroupTemp.floor()) * 256.0).toInt();
-    index++;
+  //   data[index] = settingsService.targetGroupTemp.toInt();
+  //   index++;
+  //   data[index] = ((settingsService.targetGroupTemp - settingsService.targetGroupTemp.floor()) * 256.0).toInt();
+  //   index++;
 
-    return data;
-  }
+  //   return data;
+  // }
 
   void handleTemperature() {
     tempService.stream.listen((event) {

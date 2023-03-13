@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -761,6 +762,8 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.writeToMMR, mmrNotification);
 
         try {
+          await updateSettings();
+
           ghcInfo = await getGhcInfo();
           ghcMode = await getGhcMode();
 
@@ -797,5 +800,46 @@ class DE1 extends ChangeNotifier {
 
   Uuid getCharacteristic(Endpoint e) {
     return Uuid.parse(cuuidLookup[e]!);
+  }
+
+  Future<void> updateSettings() async {
+    var bytes = encodeDe1OtherSetn();
+    try {
+      log.info("Write Shot Settings: $bytes");
+      await writeWithResult(Endpoint.shotSettings, bytes);
+      log.info("Written shotSettings to de1");
+    } catch (ex) {
+      log.severe("Error writing shot settings $bytes");
+    }
+  }
+
+  Uint8List encodeDe1OtherSetn() {
+    var settingsService = getIt<SettingsService>();
+
+    Uint8List data = Uint8List(9);
+
+    int index = 0;
+    data[index] = settingsService.steamSettings;
+    index++;
+    data[index] = settingsService.steamHeaterOff ? 0 : settingsService.targetSteamTemp;
+    log.info("Set steam to temp: ${data[index]}");
+    index++;
+    data[index] = settingsService.targetSteamLength;
+    index++;
+    data[index] = settingsService.targetHotWaterTemp;
+    index++;
+    data[index] = settingsService.targetHotWaterVol;
+    index++;
+    data[index] = settingsService.targetHotWaterLength;
+    index++;
+    data[index] = settingsService.targetEspressoVol;
+    index++;
+
+    data[index] = settingsService.targetGroupTemp.toInt();
+    index++;
+    data[index] = ((settingsService.targetGroupTemp - settingsService.targetGroupTemp.floor()) * 256.0).toInt();
+    index++;
+
+    return data;
   }
 }

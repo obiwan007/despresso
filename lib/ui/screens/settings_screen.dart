@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
+import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
@@ -32,6 +33,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late BLEService bleService;
   late MqttService mqttService;
   late VisualizerService visualizerService;
+  late EspressoMachineService machineService;
 
   String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
 
@@ -44,6 +46,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   initState() {
     super.initState();
     settingsService = getIt<SettingsService>();
+    machineService = getIt<EspressoMachineService>();
     bleService = getIt<BLEService>();
     visualizerService = getIt<VisualizerService>();
     settingsService.addListener(settingsServiceListener);
@@ -183,6 +186,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     disabledLabel: 'Disabled',
                     onChange: (value) {
                       debugPrint('ShotAutoTare: $value');
+                    },
+                  ),
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.steamHeaterOff.name,
+                    defaultValue: settingsService.steamHeaterOff,
+                    title: 'Switch off steam heating',
+                    subtitle: 'To save energy the steam heater will be turned off and the steam tab will be hidden.',
+                    enabledLabel: 'Enabled',
+                    disabledLabel: 'Disabled',
+                    onChange: (value) {
+                      log.info('steamHeaterOff: $value');
+                      machineService.updateSettings();
                     },
                   ),
                 ],
