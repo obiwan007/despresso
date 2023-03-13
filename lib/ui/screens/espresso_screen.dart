@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
+import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:logging/logging.dart';
@@ -53,6 +55,14 @@ class EspressoScreenState extends State<EspressoScreen> {
   double maxTime = 30;
 
   GlobalKey<State<StatefulWidget>> _mywidgetkey = GlobalKey();
+
+  Iterable<VerticalRangeAnnotation> ranges = [];
+
+  Map<String, List<FlSpot>> data = {};
+
+  Widget? single;
+
+  int _lastLength = 0;
 
   EspressoScreenState();
 
@@ -126,24 +136,61 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   _buildGraphs() {
-    var ranges = _createPhasesFl();
-    var data = _createDataFlCharts();
+    if (machineService.inShot || ranges.isEmpty || machineService.shotList.entries.length != _lastLength) {
+      ranges = _createPhasesFl();
+      data = _createDataFlCharts();
 
-    try {
-      var maxData = data["pressure"]!.last;
-      var t = maxData.x;
+      try {
+        var maxData = data["pressure"]!.last;
+        var t = maxData.x;
 
-      if (machineService.inShot == true) {
-        var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
-        maxTime = math.max(30, corrected);
-      } else {
-        maxTime = t;
+        if (machineService.inShot == true) {
+          var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
+          maxTime = math.max(30, corrected);
+        } else {
+          maxTime = t;
+        }
+      } catch (ex) {
+        maxTime = 0;
       }
-    } catch (ex) {
-      maxTime = 0;
+      List<ShotState> raw = machineService.shotList.entries;
+      _lastLength = raw.length;
+      var tEnd = 0.0;
+      var tStart = 0.0;
+      if (machineService.inShot == true) {
+        tEnd = raw.last.sampleTimeCorrected;
+      } else {
+        var r = ranges.last;
+        tEnd = r.x1;
+      }
+      tStart = tEnd - 3;
+
+      var weightData =
+          raw.where((element) => element.sampleTimeCorrected > tStart && element.sampleTimeCorrected < tEnd).map(
+        (e) {
+          return DataPoint(e.sampleTimeCorrected, e.weight);
+        },
+      ).toList();
+      if (weightData.isNotEmpty) {
+        var regressionData = linearRegression(weightData);
+        log.info("Regression: ${regressionData.m} ${regressionData.b}");
+        var timeGoal = (machineService.currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
+        var weightGoal = regressionData.m * timeGoal + regressionData.b;
+        var arr = [
+          FlSpot(tStart - 5, regressionData.m * (tStart - 5) + regressionData.b),
+          FlSpot(tEnd, regressionData.m * tEnd + regressionData.b),
+          FlSpot(timeGoal, weightGoal),
+          FlSpot(timeGoal, 0),
+          FlSpot(timeGoal, weightGoal),
+          FlSpot(0, weightGoal),
+        ];
+        data["weightApprox"] = arr;
+      } else {
+        data["weightApprox"] = [];
+      }
+      single = _buildGraphSingleFlCharts(data, maxTime, ranges);
     }
 
-    var single = _buildGraphSingleFlCharts(data, maxTime, ranges);
     return {"single": single};
   }
 
@@ -301,6 +348,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           createChartLineDatapoints(data["weight"]!, 2, theme.ThemeColors.weightColor),
           createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor),
           createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor),
+          createChartLineDatapoints(data["weightApprox"]!, 2, Colors.red),
         ],
         titlesData: FlTitlesData(
           topTitles: AxisTitles(
