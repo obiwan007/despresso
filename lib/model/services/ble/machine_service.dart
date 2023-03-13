@@ -111,6 +111,8 @@ class EspressoMachineService extends ChangeNotifier {
 
   final List<int> _waterAverager = [];
 
+  bool _delayedStopActive = false;
+
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -446,6 +448,7 @@ class EspressoMachineService extends ChangeNotifier {
     if (!inShot && state.coffeeState == EspressoMachineState.espresso) {
       log.info('Not Idle and not in Shot');
       inShot = true;
+      _delayedStopActive = false;
       isPouring = false;
       shotList.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -518,12 +521,30 @@ class EspressoMachineService extends ChangeNotifier {
             if (weight < 1) {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
             }
-            if (weight > 1 && shot.weight + 1 > weight) {
-              log.info("Shot Weight reached ${shot.weight} > $weight Portime: $lastPourTime");
 
-              if (settingsService.shotStopOnWeight) {
-                triggerEndOfShot();
+            if (settingsService.shotStopOnWeight && weight > 1) {
+              var timeToWeight = (weight - shot.weight) / shot.flowWeight;
+              shot.timeToWeight = timeToWeight;
+              log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
+              if (timeToWeight < 1.2 && _delayedStopActive == false) {
+                _delayedStopActive = true;
+                log.info("Shot weight reached soon, starting delayed stop");
+                Future.delayed(
+                  Duration(
+                      milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
+                  () {
+                    log.info("Shot weight reached now!, stopping ${state.shot!.weight}");
+                    triggerEndOfShot();
+                  },
+                );
               }
+              // if (weight > 1 && shot.weight + 1 > weight) {
+              //   log.info("Shot Weight reached ${shot.weight} > $weight Portime: $lastPourTime");
+
+              //   if (settingsService.shotStopOnWeight) {
+              //     triggerEndOfShot();
+              //   }
+              // }
             }
           }
           break;
