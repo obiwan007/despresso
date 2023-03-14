@@ -177,6 +177,20 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       debugPrint('ShotStopOnWeight: $value');
                     },
                   ),
+                  SliderSettingsTile(
+                    title: 'Stop before weight was reached [s]',
+                    // subtitle:
+                    //     "Delays in scale could be adjusted accordingly. The weight is calculated based on the current flow during an espresso shot",
+                    settingKey: SettingKeys.targetEspressoWeightTimeAdjust.name,
+                    defaultValue: settingsService.targetEspressoWeightTimeAdjust,
+                    min: 0.05,
+                    max: 0.95,
+                    step: 0.05,
+                    leading: const Icon(Icons.timer),
+                    onChange: (value) {
+                      debugPrint('targetEspressoWeightTimeAdjust: $value');
+                    },
+                  ),
                   SwitchSettingsTile(
                     settingKey: SettingKeys.shotAutoTare.name,
                     defaultValue: settingsService.shotAutoTare,

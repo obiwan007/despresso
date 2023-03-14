@@ -41,4 +41,10 @@ class Shot {
   String drinker = "";
 
   String visualizerId = "";
+
+  double estimatedWeightReachedTime = 0;
+  double estimatedWeight_m = 0;
+  double estimatedWeight_b = 0;
+  double estimatedWeight_tEnd = 0;
+  double estimatedWeight_tStart = 0;
 }

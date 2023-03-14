@@ -38,7 +38,8 @@ ShotState _$ShotStateFromJson(Map<String, dynamic> json) => ShotState(
     )
       ..id = json['id'] as int
       ..pourTime = (json['pourTime'] as num).toDouble()
-      ..flowWeight = (json['flowWeight'] as num).toDouble();
+      ..flowWeight = (json['flowWeight'] as num).toDouble()
+      ..timeToWeight = (json['timeToWeight'] as num).toDouble();
 
 Map<String, dynamic> _$ShotStateToJson(ShotState instance) => <String, dynamic>{
       'id': instance.id,
@@ -58,4 +59,5 @@ Map<String, dynamic> _$ShotStateToJson(ShotState instance) => <String, dynamic>{
       'flowWeight': instance.flowWeight,
       'frameNumber': instance.frameNumber,
       'steamTemp': instance.steamTemp,
+      'timeToWeight': instance.timeToWeight,
     };
