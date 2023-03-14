@@ -145,51 +145,40 @@ class EspressoScreenState extends State<EspressoScreen> {
         var t = maxData.x;
 
         if (machineService.inShot == true) {
+          var timeGoal = machineService.currentShot.estimatedWeightReachedTime;
           var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
           maxTime = math.max(30, corrected);
+          maxTime = timeGoal > 0 ? timeGoal : maxTime;
         } else {
           maxTime = t;
         }
       } catch (ex) {
         maxTime = 0;
       }
+
       List<ShotState> raw = machineService.shotList.entries;
       _lastLength = raw.length;
-      var tEnd = 0.0;
-      var tStart = 0.0;
-      if (machineService.inShot == true) {
-        tEnd = raw.last.sampleTimeCorrected;
-      } else {
-        var r = ranges.last;
-        tEnd = r.x1;
-      }
+      var tEnd = machineService.currentShot.estimatedWeight_tEnd;
+      var tStart = machineService.currentShot.estimatedWeight_tStart;
       tStart = tEnd - 3;
-
-      var weightData =
-          raw.where((element) => element.sampleTimeCorrected > tStart && element.sampleTimeCorrected < tEnd).map(
-        (e) {
-          return DataPoint(e.sampleTimeCorrected, e.weight);
-        },
-      ).toList();
-      if (weightData.isNotEmpty) {
-        var regressionData = linearRegression(weightData);
-        log.info("Regression: ${regressionData.m} ${regressionData.b}");
-        var timeGoal = (machineService.currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
-        var weightGoal = regressionData.m * timeGoal + regressionData.b;
-        var arr = [
-          FlSpot(tStart - 5, regressionData.m * (tStart - 5) + regressionData.b),
-          FlSpot(tEnd, regressionData.m * tEnd + regressionData.b),
-          FlSpot(timeGoal, weightGoal),
-          FlSpot(timeGoal, 0),
-          FlSpot(timeGoal, weightGoal),
-          FlSpot(0, weightGoal),
-        ];
-        data["weightApprox"] = arr;
-      } else {
-        data["weightApprox"] = [];
-      }
-      single = _buildGraphSingleFlCharts(data, maxTime, ranges);
+      var m = machineService.currentShot.estimatedWeight_m;
+      var b = machineService.currentShot.estimatedWeight_b;
+      var timeGoal = machineService.currentShot.estimatedWeightReachedTime;
+      var weightGoal = m * timeGoal + b;
+      var arr = [
+        FlSpot(tStart - 5, m * (tStart - 5) + b),
+        FlSpot(tEnd, m * tEnd + b),
+        FlSpot(machineService.currentShot.estimatedWeightReachedTime, weightGoal),
+        FlSpot(machineService.currentShot.estimatedWeightReachedTime, 0),
+        FlSpot(machineService.currentShot.estimatedWeightReachedTime, weightGoal),
+        FlSpot(0, weightGoal),
+      ];
+      maxTime = timeGoal + 0.5;
+      data["weightApprox"] = arr;
+    } else {
+      //data["weightApprox"] = [];
     }
+    single = _buildGraphSingleFlCharts(data, maxTime, ranges);
 
     return {"single": single};
   }
@@ -246,7 +235,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     };
   }
 
-  LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col) {
+  LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col, List<int>? dash) {
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
@@ -255,6 +244,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       barWidth: barWidth,
       isCurved: false,
       color: col,
+      dashArray: dash,
     );
   }
 
@@ -273,11 +263,11 @@ class EspressoScreenState extends State<EspressoScreen> {
           drawVerticalLine: true,
         ),
         lineBarsData: [
-          createChartLineDatapoints(data["pressure"]!, 4, theme.ThemeColors.pressureColor),
-          createChartLineDatapoints(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor),
-          createChartLineDatapoints(data["flow"]!, 4, theme.ThemeColors.flowColor),
-          createChartLineDatapoints(data["flowSet"]!, 2, theme.ThemeColors.flowColor),
-          createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor),
+          createChartLineDatapoints(data["pressure"]!, 4, theme.ThemeColors.pressureColor, null),
+          createChartLineDatapoints(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor, null),
+          createChartLineDatapoints(data["flow"]!, 4, theme.ThemeColors.flowColor, null),
+          createChartLineDatapoints(data["flowSet"]!, 2, theme.ThemeColors.flowColor, null),
+          createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor, null),
         ],
         rangeAnnotations: RangeAnnotations(
           verticalRangeAnnotations: [
@@ -335,7 +325,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     var flowChart2 = LineChart(
       LineChartData(
         minY: 0,
-        // maxY: 15,
+        maxY: machineService.currentShot.targetEspressoWeight * 1.15,
         minX: data["pressure"]!.first.x,
         maxX: maxTime,
         lineTouchData: LineTouchData(enabled: false),
@@ -345,10 +335,10 @@ class EspressoScreenState extends State<EspressoScreen> {
           drawVerticalLine: true,
         ),
         lineBarsData: [
-          createChartLineDatapoints(data["weight"]!, 2, theme.ThemeColors.weightColor),
-          createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor),
-          createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor),
-          createChartLineDatapoints(data["weightApprox"]!, 2, Colors.red),
+          createChartLineDatapoints(data["weight"]!, 2, theme.ThemeColors.weightColor, null),
+          // createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor, null),
+          // createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor, null),
+          createChartLineDatapoints(data["weightApprox"]!, 2, Colors.red, [5, 5]),
         ],
         titlesData: FlTitlesData(
           topTitles: AxisTitles(

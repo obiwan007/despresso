@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -448,6 +449,8 @@ class EspressoMachineService extends ChangeNotifier {
     if (!inShot && state.coffeeState == EspressoMachineState.espresso) {
       log.info('Not Idle and not in Shot');
       inShot = true;
+      currentShot = Shot();
+      currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
       _delayedStopActive = false;
       isPouring = false;
       shotList.clear();
@@ -522,7 +525,9 @@ class EspressoMachineService extends ChangeNotifier {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
             }
 
-            if (settingsService.shotStopOnWeight && weight > 1) {
+            if (isPouring && settingsService.shotStopOnWeight && weight > 1) {
+              calcWeightReachedEstimation();
+
               var timeToWeight = (weight - shot.weight) / shot.flowWeight;
               shot.timeToWeight = timeToWeight;
               log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
@@ -622,24 +627,29 @@ class EspressoMachineService extends ChangeNotifier {
   shotFinished() async {
     log.info("Save last shot");
     try {
-      currentShot = Shot();
-      currentShot.coffee.targetId = coffeeService.selectedCoffeeId;
-      currentShot.recipe.targetId = coffeeService.selectedRecipeId;
+      var cs = Shot();
+      cs.coffee.targetId = coffeeService.selectedCoffeeId;
+      cs.recipe.targetId = coffeeService.selectedRecipeId;
 
-      currentShot.shotstates.addAll(shotList.entries);
+      cs.shotstates.addAll(shotList.entries);
 
-      currentShot.pourTime = lastPourTime;
-      currentShot.profileId = profileService.currentProfile?.id ?? "";
-      currentShot.pourWeight = shotList.entries.last.weight;
-      currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
-      currentShot.targetTempCorrection = settingsService.targetTempCorrection;
-      currentShot.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
-      currentShot.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
-
-      await coffeeService.addNewShot(currentShot);
+      cs.pourTime = lastPourTime;
+      cs.profileId = profileService.currentProfile?.id ?? "";
+      cs.pourWeight = shotList.entries.last.weight;
+      cs.targetEspressoWeight = settingsService.targetEspressoWeight;
+      cs.targetTempCorrection = settingsService.targetTempCorrection;
+      cs.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
+      cs.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
+      cs.estimatedWeightReachedTime = currentShot.estimatedWeightReachedTime;
+      cs.estimatedWeight_b = currentShot.estimatedWeight_b;
+      cs.estimatedWeight_m = currentShot.estimatedWeight_m;
+      cs.estimatedWeight_tEnd = currentShot.estimatedWeight_tEnd;
+      cs.estimatedWeight_tStart = currentShot.estimatedWeight_tStart;
+      await coffeeService.addNewShot(cs);
 
       shotList.saveData();
-      // currentShot = Shot();
+
+      currentShot = cs;
     } catch (ex) {
       log.severe("Error writing file: $ex");
     }
@@ -698,5 +708,31 @@ class EspressoMachineService extends ChangeNotifier {
         }
       }
     });
+  }
+
+  void calcWeightReachedEstimation() {
+    List<ShotState> raw = shotList.entries;
+
+    if (inShot == true) {
+      currentShot.estimatedWeight_tEnd = raw.last.sampleTimeCorrected;
+      currentShot.estimatedWeight_tStart = currentShot.estimatedWeight_tEnd - 3;
+    }
+
+    var weightData = raw
+        .where((element) =>
+            element.sampleTimeCorrected > currentShot.estimatedWeight_tStart &&
+            element.sampleTimeCorrected < currentShot.estimatedWeight_tEnd)
+        .map(
+      (e) {
+        return DataPoint(e.sampleTimeCorrected, e.weight);
+      },
+    ).toList();
+    if (weightData.isNotEmpty) {
+      var regressionData = linearRegression(weightData);
+      log.info("Regression: ${regressionData.m} ${regressionData.b}");
+      currentShot.estimatedWeightReachedTime = (currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
+      currentShot.estimatedWeight_m = regressionData.m;
+      currentShot.estimatedWeight_b = regressionData.b;
+    }
   }
 }
