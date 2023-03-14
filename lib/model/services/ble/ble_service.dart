@@ -90,6 +90,7 @@ class BLEService extends ChangeNotifier {
     if (true) {
       log.info('Removing device');
       _devicesList.remove(device);
+      _devicesIgnoreList.remove(device);
       // bleManager.startPeripheralScan().listen(deviceScanListener);
       startScan();
     }
