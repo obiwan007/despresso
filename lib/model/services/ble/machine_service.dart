@@ -525,13 +525,13 @@ class EspressoMachineService extends ChangeNotifier {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
             }
 
-            if (isPouring && settingsService.shotStopOnWeight && weight > 1) {
+            if (isPouring && settingsService.shotStopOnWeight && weight > 1 && _delayedStopActive == false) {
               calcWeightReachedEstimation();
-
-              var timeToWeight = (weight - shot.weight) / shot.flowWeight;
+              var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
+              // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
               shot.timeToWeight = timeToWeight;
               log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
-              if (timeToWeight < 1.2 && _delayedStopActive == false) {
+              if (timeToWeight < 1.2 && (settingsService.targetEspressoWeightTimeAdjust - shot.weight < 5)) {
                 _delayedStopActive = true;
                 log.info("Shot weight reached soon, starting delayed stop");
                 Future.delayed(

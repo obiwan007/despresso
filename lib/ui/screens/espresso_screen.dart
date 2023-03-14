@@ -145,10 +145,8 @@ class EspressoScreenState extends State<EspressoScreen> {
         var t = maxData.x;
 
         if (machineService.inShot == true) {
-          var timeGoal = machineService.currentShot.estimatedWeightReachedTime;
           var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
           maxTime = math.max(30, corrected);
-          maxTime = timeGoal > 0 ? timeGoal : maxTime;
         } else {
           maxTime = t;
         }
@@ -173,10 +171,10 @@ class EspressoScreenState extends State<EspressoScreen> {
         FlSpot(machineService.currentShot.estimatedWeightReachedTime, weightGoal),
         FlSpot(0, weightGoal),
       ];
-      maxTime = timeGoal + 0.5;
+      maxTime = max(maxTime, timeGoal + 1);
       data["weightApprox"] = arr;
     } else {
-      //data["weightApprox"] = [];
+      data["weightApprox"] = data["weightApprox"] ?? [];
     }
     single = _buildGraphSingleFlCharts(data, maxTime, ranges);
 
