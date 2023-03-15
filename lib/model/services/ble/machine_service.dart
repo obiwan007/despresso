@@ -533,7 +533,7 @@ class EspressoMachineService extends ChangeNotifier {
                 shot.timeToWeight = timeToWeight;
                 log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
                 if (timeToWeight > 0 &&
-                    timeToWeight < 1.2 &&
+                    timeToWeight < 2.5 &&
                     (settingsService.targetEspressoWeight - shot.weight < 5)) {
                   _delayedStopActive = true;
                   log.info("Shot weight reached soon, starting delayed stop");

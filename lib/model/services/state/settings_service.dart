@@ -163,7 +163,7 @@ class SettingsService extends ChangeNotifier {
   set targetEspressoWeight(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
 
   double get targetEspressoWeightTimeAdjust =>
-      Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.25;
+      Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
   set targetEspressoWeightTimeAdjust(value) =>
       Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
