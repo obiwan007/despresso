@@ -136,8 +136,9 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
         switch (subType) {
           case 12: // weight
           case 5: // weight
-            double weight = decodeWeight(payload);
-            scaleService.setWeight(weight);
+            double? weight = decodeWeight(payload);
+            if (weight != null) scaleService.setWeight(weight);
+
             break;
           case 8: // Tara done
             scaleService.setTara();
@@ -151,7 +152,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             var weight = 0.0;
             var time = 0.0;
 
-            if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
+            // if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
             if (payload[3] == 7) time = decodeTime(payload.sublist(3));
             // scaleService.setWeight(weight);
             scaleService.setWeight(weight);
@@ -181,8 +182,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     return value;
   }
 
-  double decodeWeight(List<int> payload) {
-    if (payload.length < 7) return 0;
+  double? decodeWeight(List<int> payload) {
+    if (payload.length < 7) return null;
     var temp =
         ((payload[4] & 0xff) << 24) + ((payload[3] & 0xff) << 16) + ((payload[2] & 0xff) << 8) + (payload[1] & 0xff);
     var unit = payload[5] & 0xFF;
