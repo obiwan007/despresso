@@ -234,7 +234,7 @@ class EspressoMachineService extends ChangeNotifier {
 
         //_controllerBattery.add(batteryLevel);
         if (de1 == null) {
-          log.severe("Battery: DE1 not connected yet");
+          log.fine("Battery: DE1 not connected yet");
           _controllerBattery.add(batteryLevel);
           return;
         }
