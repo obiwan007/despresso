@@ -286,7 +286,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    flex: 4,
+                                    flex: 8,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -295,7 +295,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                     ),
                                   ),
                                   Expanded(
-                                    flex: 4,
+                                    flex: 2,
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -425,14 +425,14 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     }
   }
 
-  createSteps() {
-    _selectedProfile == null
+  List<KeyValueWidget> createSteps() {
+    return _selectedProfile == null
         ? []
         : _selectedProfile!.shotFrames
             .map((p) => KeyValueWidget(
                 label: p.name,
                 value:
-                    "Duration: ${p.frameLen} s    ${p.pump == "pressure" ? "Pressure [bar]" : "Flow [ml/s]"}: ${p.setVal}"))
+                    "Duration: ${p.frameLen} s    ${p.pump == "pressure" ? "Pressure [bar]" : "Flow [ml/s]"}: ${p.setVal.toStringAsFixed(1)}"))
             .toList();
   }
 
