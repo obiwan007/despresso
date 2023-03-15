@@ -426,12 +426,14 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   }
 
   createSteps() {
-    return _selectedProfile!.shotFrames
-        .map((p) => KeyValueWidget(
-            label: p.name,
-            value:
-                "Duration: ${p.frameLen} s    ${p.pump == "pressure" ? "Pressure [bar]" : "Flow [ml/s]"}: ${p.setVal}"))
-        .toList();
+    _selectedProfile == null
+        ? []
+        : _selectedProfile!.shotFrames
+            .map((p) => KeyValueWidget(
+                label: p.name,
+                value:
+                    "Duration: ${p.frameLen} s    ${p.pump == "pressure" ? "Pressure [bar]" : "Flow [ml/s]"}: ${p.setVal}"))
+            .toList();
   }
 
   void profileListener() {
