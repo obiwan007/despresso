@@ -82,9 +82,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
       'origin': [_editedCoffee.origin],
       'intensityRating': [_editedCoffee.intensityRating],
       'acidRating': [_editedCoffee.acidRating],
-      'grinderSettings': [_editedCoffee.grinderSettings],
+      'grinderSettings': [_editedCoffee.grinderSettings, Validators.required],
       'roastLevel': [_editedCoffee.roastLevel],
-      'grinderDoseWeight': [_editedCoffee.grinderDoseWeight],
+      'grinderDoseWeight': [_editedCoffee.grinderDoseWeight, Validators.required],
     });
   }
 

@@ -48,6 +48,7 @@ enum SettingKeys {
   targetFlushTime,
   targetGroupTemp,
   targetEspressoWeight,
+  targetEspressoWeightTimeAdjust,
   webServer,
   targetTempCorrection,
   screenBrightnessTimer,
@@ -160,6 +161,11 @@ class SettingsService extends ChangeNotifier {
 
   double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 35;
   set targetEspressoWeight(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
+
+  double get targetEspressoWeightTimeAdjust =>
+      Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
+  set targetEspressoWeightTimeAdjust(value) =>
+      Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
   int get targetFlushTime => Settings.getValue<int>(SettingKeys.targetFlushTime.name) ?? 3;
   set targetFlushTime(value) => Settings.setValue<int>(SettingKeys.targetFlushTime.name, value);

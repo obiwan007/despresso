@@ -1,3 +1,4 @@
+import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/objectbox.dart';
