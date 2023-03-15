@@ -171,7 +171,13 @@ class EspressoScreenState extends State<EspressoScreen> {
         FlSpot(machineService.currentShot.estimatedWeightReachedTime, weightGoal),
         FlSpot(0, weightGoal),
       ];
-      maxTime = max(maxTime, timeGoal + 1);
+
+// Show the new scaled maxtime only of 5g before end of shot.
+      if (machineService.inShot == false ||
+          machineService.currentShot.targetEspressoWeight - (machineService.state.shot?.weight ?? 30) < 5) {
+        var corrected = (timeGoal ~/ 5.0).toInt() * 5.0 + 5;
+        maxTime = max(maxTime, corrected);
+      }
       data["weightApprox"] = arr;
     } else {
       data["weightApprox"] = data["weightApprox"] ?? [];

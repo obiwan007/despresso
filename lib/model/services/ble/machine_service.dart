@@ -526,22 +526,26 @@ class EspressoMachineService extends ChangeNotifier {
             }
 
             if (isPouring && settingsService.shotStopOnWeight && weight > 1 && _delayedStopActive == false) {
-              calcWeightReachedEstimation();
-              var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
-              // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
-              shot.timeToWeight = timeToWeight;
-              log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
-              if (timeToWeight < 1.2 && (settingsService.targetEspressoWeightTimeAdjust - shot.weight < 5)) {
-                _delayedStopActive = true;
-                log.info("Shot weight reached soon, starting delayed stop");
-                Future.delayed(
-                  Duration(
-                      milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
-                  () {
-                    log.info("Shot weight reached now!, stopping ${state.shot!.weight}");
-                    triggerEndOfShot();
-                  },
-                );
+              var valuesCount = calcWeightReachedEstimation();
+              if (valuesCount > 0) {
+                var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
+                // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
+                shot.timeToWeight = timeToWeight;
+                log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
+                if (timeToWeight > 0 &&
+                    timeToWeight < 1.2 &&
+                    (settingsService.targetEspressoWeight - shot.weight < 5)) {
+                  _delayedStopActive = true;
+                  log.info("Shot weight reached soon, starting delayed stop");
+                  Future.delayed(
+                    Duration(
+                        milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
+                    () {
+                      log.info("Shot weight reached now!, stopping ${state.shot!.weight}");
+                      triggerEndOfShot();
+                    },
+                  );
+                }
               }
               // if (weight > 1 && shot.weight + 1 > weight) {
               //   log.info("Shot Weight reached ${shot.weight} > $weight Portime: $lastPourTime");
@@ -710,7 +714,7 @@ class EspressoMachineService extends ChangeNotifier {
     });
   }
 
-  void calcWeightReachedEstimation() {
+  int calcWeightReachedEstimation() {
     List<ShotState> raw = shotList.entries;
 
     if (inShot == true) {
@@ -733,6 +737,9 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot.estimatedWeightReachedTime = (currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
       currentShot.estimatedWeight_m = regressionData.m;
       currentShot.estimatedWeight_b = regressionData.b;
+      return weightData.length;
+    } else {
+      return 0;
     }
   }
 }

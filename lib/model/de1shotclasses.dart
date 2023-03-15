@@ -316,7 +316,8 @@ class De1ShotFrameClass // proc spec_shotframe
 
         for (int i = 0; i < newBytes.length; i++) {
           if (newBytes[i] != array[i]) {
-            log.severe("Error in decoding frame:${newBytes[i]} != ${array[i]}");
+            // todo: fix issue with encoding/decoding error.
+            log.info("Error in decoding frame:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }

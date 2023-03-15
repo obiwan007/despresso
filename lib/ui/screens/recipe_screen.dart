@@ -146,9 +146,10 @@ class RecipeScreenState extends State<RecipeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           coffeeService.addRecipe(
-              name: "${profileService.currentProfile!.title}/${coffeeService.currentCoffee!.name}",
+              name:
+                  "${profileService.currentProfile?.title ?? "no profile selected"}/${coffeeService.currentCoffee?.name ?? "No bean selected"}",
               coffeeId: coffeeService.selectedCoffeeId,
-              profileId: profileService.currentProfile!.id);
+              profileId: profileService.currentProfile?.id ?? "Default");
         },
         // backgroundColor: Colors.green,
         label: const Text('Add recipe'),

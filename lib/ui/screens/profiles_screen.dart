@@ -116,14 +116,15 @@ class ProfilesScreenState extends State<ProfilesScreen> {
               child: Text("${p.shotHeader.title} ${p.isDefault ? '' : ' *'}"),
             ))
         .toList()
-        .sortedBy((element) => element.value!.title);
+        .sortedBy((element) => element.value?.title ?? "");
     // Check if we need to fallback
-    if (null ==
-        items.firstWhereOrNull(
-          (element) {
-            return element.value!.id == _selectedProfile!.id;
-          },
-        )) {
+    if (_selectedProfile != null &&
+        null ==
+            items.firstWhereOrNull(
+              (element) {
+                return element.value!.id == _selectedProfile!.id;
+              },
+            )) {
       if (items.isNotEmpty) _selectedProfile = items[0].value;
     }
     return Scaffold(
@@ -234,25 +235,30 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                           child: SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    KeyValueWidget(label: "Notes", value: _selectedProfile!.shotHeader.notes),
-                                    KeyValueWidget(label: "Beverage", value: _selectedProfile!.shotHeader.beverageType),
-                                    KeyValueWidget(label: "Type", value: _selectedProfile!.shotHeader.type),
-                                    KeyValueWidget(
-                                        label: "Max Flow", value: _selectedProfile!.shotHeader.maximumFlow.toString()),
-                                    KeyValueWidget(
-                                        label: "Max Pressure",
-                                        value: _selectedProfile!.shotHeader.minimumPressure.toString()),
-                                    KeyValueWidget(
-                                        label: "Target Volume",
-                                        value: _selectedProfile!.shotHeader.targetVolume.toString()),
-                                    KeyValueWidget(
-                                        label: "Target Weight",
-                                        value: _selectedProfile!.shotHeader.targetWeight.toString()),
-                                  ],
-                                )),
+                              padding: const EdgeInsets.all(8.0),
+                              child: (_selectedProfile != null)
+                                  ? Column(
+                                      children: [
+                                        KeyValueWidget(label: "Notes", value: _selectedProfile?.shotHeader.notes ?? ""),
+                                        KeyValueWidget(
+                                            label: "Beverage", value: _selectedProfile?.shotHeader.beverageType ?? ""),
+                                        KeyValueWidget(label: "Type", value: _selectedProfile?.shotHeader.type ?? ""),
+                                        KeyValueWidget(
+                                            label: "Max Flow",
+                                            value: _selectedProfile?.shotHeader.maximumFlow.toString() ?? ""),
+                                        KeyValueWidget(
+                                            label: "Max Pressure",
+                                            value: _selectedProfile?.shotHeader.minimumPressure.toString() ?? ""),
+                                        KeyValueWidget(
+                                            label: "Target Volume",
+                                            value: _selectedProfile?.shotHeader.targetVolume.toString() ?? ""),
+                                        KeyValueWidget(
+                                            label: "Target Weight",
+                                            value: _selectedProfile?.shotHeader.targetWeight.toString() ?? ""),
+                                      ],
+                                    )
+                                  : const Text("Nothing selected"),
+                            ),
                           ),
                         ),
                     ],
@@ -269,7 +275,9 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                         children: [
                           Expanded(
                             flex: 4,
-                            child: ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!),
+                            child: _selectedProfile != null
+                                ? ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!)
+                                : Text("nothing selected"),
                           ),
                           Expanded(
                             flex: 6,
