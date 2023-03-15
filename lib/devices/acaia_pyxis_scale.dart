@@ -58,13 +58,13 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   static const List<int> _configPayload = [
     9, // length
     0, // weight
-    2, // weight argument
+    1, // weight argument
     1, // battery
-    3, // battery argument
+    2, // battery argument
     2, // timer
-    1, // timer argument
+    5, // timer argument
     3, // key
-    4, // setting
+    4 // settingg
   ];
 
   static const int header1 = 0xef;
@@ -121,15 +121,17 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     buffer.add(cksum2 & 0xFF);
     var l = Uint8List.fromList(buffer);
     log.info("Sending: ${l.length} ${Helper.toHex(l)}");
+
     return l;
   }
 
   void parsePayload(int type, List<int> payload) {
+    // scaleService.setWeight((i++).toDouble());
     if (type != 12) log.info('Acaia: $type');
     switch (type) {
       case 12:
         var subType = payload[0];
-        //log.info('Acaia: $type $subType');
+        // log.info('Acaia: $type $subType');
         if (subType != 5) {}
         switch (subType) {
           case 12: // weight
@@ -141,8 +143,9 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             scaleService.setTara();
             break;
           case 7:
-            double time = decodeTime(payload.sublist(2));
-            // log.fine("Time Response:  $time");
+            // double time = decodeTime(payload.sublist(2));
+
+            // log.fine("time: $time");
             break;
           case 11: // Heartbeat
             var weight = 0.0;
@@ -237,10 +240,6 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
-
-    // device.writeCharacteristic(
-    //     ServiceUUID, CharateristicUUID, encode(0x0b, _identPayload), false);
-    log.info('Ident payload: ${encode(0x0b, _identPayload)}');
   }
 
   Future<void> _sendConfig() async {
@@ -253,10 +252,6 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
-
-    // device.writeCharacteristic(
-    //     ServiceUUID, CharateristicUUID, encode(0x0c, _configPayload), false);
-    log.info('Config payload: ${encode(0x0c, _configPayload)}');
   }
 
   @override
@@ -300,14 +295,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
         scaleService.setState(ScaleState.connected);
 
         registerForNotifications();
-        await Future.delayed(
-          const Duration(seconds: 1),
-          () async {
-            try {} catch (e) {
-              log.severe("Error in config scale $e");
-            }
-          },
-        );
+
         await Future.delayed(
           const Duration(milliseconds: 1000),
           () async {

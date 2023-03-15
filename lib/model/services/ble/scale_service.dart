@@ -118,7 +118,7 @@ class ScaleService extends ChangeNotifier {
       var t = DateTime.now();
       var ms = t.difference(t1).inMilliseconds;
       var hz = 10 / ms * 1000.0;
-      if (_count & 50 == 0) log.finer("Weight Hz: $ms $hz");
+      if (_count & 50 == 0) log.info("Weight Hz: $ms $hz");
       t1 = t;
     }
   }

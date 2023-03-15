@@ -206,7 +206,6 @@ class ProfileService extends ChangeNotifier {
     List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
-      log.info("Parsing profile $file");
       var rawJson = await rootBundle.loadString(file);
       try {
         defaultProfiles.add(parseDefaultProfile(rawJson, true));
@@ -218,7 +217,6 @@ class ProfileService extends ChangeNotifier {
   }
 
   De1ShotProfile parseDefaultProfile(String json, bool isDefault) {
-    log.info("parse json profile data");
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
     List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
