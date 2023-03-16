@@ -81,6 +81,12 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     //   if (selectedPage > 2) selectedPage = 0;
     //   _tabController.index = selectedPage;
     // });
+    Future.delayed(
+      const Duration(seconds: 1),
+      () {
+        _settings.startCounter = _settings.startCounter + 1;
+      },
+    );
   }
 
   @override

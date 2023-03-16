@@ -84,7 +84,6 @@ class CoffeeEditState extends State<CoffeeEdit> {
       'acidRating': [_editedCoffee.acidRating],
       'grinderSettings': [_editedCoffee.grinderSettings, Validators.required],
       'roastLevel': [_editedCoffee.roastLevel],
-      'grinderDoseWeight': [_editedCoffee.grinderDoseWeight, Validators.required],
     });
   }
 
@@ -301,7 +300,6 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.acidRating = form.value["acidRating"] as double;
     _editedCoffee.grinderSettings = form.value["grinderSettings"] as double;
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
-    _editedCoffee.grinderDoseWeight = form.value["grinderDoseWeight"] as double;
     _editedCoffee.roaster.targetId = _selectedRoasterId;
     coffeeService.addCoffee(_editedCoffee);
     selectedCoffeeId = _editedCoffee.id;

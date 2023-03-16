@@ -111,6 +111,35 @@ class CoffeeService extends ChangeNotifier {
 
     log.info("lastshot $selectedShotId");
 
+    if (settings.startCounter == 0) {
+      if (roasterBox.count() == 0) {
+        log.info("No roasters available. Creating a default one.");
+        var r = Roaster();
+        r.name = "Default Rouaster";
+        selectedRoasterId = roasterBox.put(r);
+        settings.selectedRoaster = selectedRoasterId;
+      }
+
+      if (coffeeBox.count() == 0) {
+        log.info("No roasters available. Creating a default one.");
+        var r = Coffee();
+        r.roaster.targetId = selectedRoasterId;
+        r.name = "Default Beans";
+        selectedCoffeeId = coffeeBox.put(r);
+        settings.selectedCoffee = selectedCoffeeId;
+      }
+
+      if (recipeBox.count() == 0) {
+        log.info("No recipe available. Creating a default one.");
+        var r = Recipe();
+        r.coffee.targetId = selectedCoffeeId;
+        r.name = "Default Americano";
+        r.profileId = settings.currentProfile;
+
+        selectedRecipeId = recipeBox.put(r);
+        settings.selectedRecipe = selectedRecipeId;
+      }
+    }
     Future.delayed(
       const Duration(milliseconds: 199),
       () {
@@ -163,6 +192,7 @@ class CoffeeService extends ChangeNotifier {
 
     profileService.setProfileFromId(recipe.profileId);
     machineService.uploadProfile(profileService.currentProfile!);
+
     settings.notifyListeners;
     notifyListeners();
   }

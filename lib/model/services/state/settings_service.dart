@@ -58,6 +58,7 @@ enum SettingKeys {
   screenDarkTheme,
   screenThemeIndex,
   steamHeaterOff,
+  startCounter,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -159,7 +160,7 @@ class SettingsService extends ChangeNotifier {
   int get targetEspressoVol => Settings.getValue<int>(SettingKeys.targetEspressoVol.name) ?? 35;
   set targetEspressoVol(value) => Settings.setValue<int>(SettingKeys.targetEspressoVol.name, value);
 
-  double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 35;
+  double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 36;
   set targetEspressoWeight(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
 
   double get targetEspressoWeightTimeAdjust =>
@@ -197,6 +198,9 @@ class SettingsService extends ChangeNotifier {
 
   String get screenThemeIndex => Settings.getValue<String>(SettingKeys.screenThemeIndex.name) ?? "0";
   set screenThemeIndex(value) => Settings.setValue<String>(SettingKeys.screenThemeIndex.name, value);
+
+  int get startCounter => Settings.getValue<int>(SettingKeys.startCounter.name) ?? 0;
+  set startCounter(value) => Settings.setValue<int>(SettingKeys.startCounter.name, value);
 
   void notifyDelayed() {
     Future.delayed(

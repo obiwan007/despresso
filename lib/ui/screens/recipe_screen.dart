@@ -11,6 +11,7 @@ import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/shotstate.dart';
 
@@ -74,7 +75,8 @@ class RecipeScreenState extends State<RecipeScreen> {
                   builder: (context, snapshot) {
                     return ListView.builder(
                       padding: const EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
+                      itemBuilder: (context, index) =>
+                          snapshot.hasData ? buildItem(context, snapshot.data![index]) : const Text("empty"),
                       itemCount: snapshot.data?.length ?? 0,
                     );
                   }),
@@ -200,7 +202,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           data.name,
         ),
         subtitle: Text(
-          "${data.profileId} ${data.coffee.target!.name}",
+          "${data.profileId} ${data.coffee.target?.name ?? "no bean"}",
         ),
         selected: coffeeService.selectedRecipeId == data.id,
         onTap: () {
@@ -347,12 +349,13 @@ class RecipeDetails extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Dose:")),
+                          const Expanded(child: Text("Ratio:")),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
+                                Text(
+                                    "${formatRatio(coffeeService.currentRecipe?.ratio1 ?? 0.0)} : ${formatRatio(coffeeService.currentRecipe?.ratio2 ?? 0.0)}"),
                               ],
                             ),
                           ),
@@ -375,6 +378,43 @@ class RecipeDetails extends StatelessWidget {
                           ],
                         ),
                       const Divider(),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text("Weighted beans [g]")),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SpinBox(
+                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (value) {
+                                    var r = coffeeService.currentRecipe;
+                                    if (r != null) {
+                                      r.grinderDoseWeight = value;
+                                      r.adjustedWeight = value * (r.ratio2 / r.ratio1);
+                                      coffeeService.updateRecipe(r);
+                                      settingsService.targetEspressoWeight = r.adjustedWeight;
+                                    }
+                                  },
+                                  max: 120.0,
+                                  value: coffeeService.currentRecipe?.grinderDoseWeight ?? 0.0,
+                                  decimals: 1,
+                                  step: 0.5,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -454,5 +494,10 @@ class RecipeDetails extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String formatRatio(double r) {
+    var f = NumberFormat("#");
+    return f.format(r);
   }
 }

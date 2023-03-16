@@ -277,9 +277,6 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         KeyValueWidget(label: "Tasting", value: coffee.taste),
         KeyValueWidget(label: "Type of Beans", value: coffee.type),
         const SizedBox(height: 10),
-        KeyValueWidget(label: "Grinder", value: coffee.grinderSettings.toString()),
-        KeyValueWidget(label: "Dose", value: coffee.grinderDoseWeight.toString()),
-        const SizedBox(height: 10),
         KeyValueWidget(
           label: "Acidity",
           value: "",
