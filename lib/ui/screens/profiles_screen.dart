@@ -143,7 +143,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           ElevatedButton(
             child: const Icon(Icons.cloud_download),
             onPressed: () async {
-              final shortCode = await _openShortCodeDiaglog();
+              final shortCode = await _openShortCodeDialog();
               if (shortCode == null || shortCode.isEmpty) return;
 
               try {
@@ -473,7 +473,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     );
   }
 
-  Future<String?> _openShortCodeDiaglog() async {
+  Future<String?> _openShortCodeDialog() async {
     return showDialog<String>(
       context: context,
       barrierDismissible: true, // user must tap button!
