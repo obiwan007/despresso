@@ -131,13 +131,24 @@ class CoffeeService extends ChangeNotifier {
 
       if (recipeBox.count() == 0) {
         log.info("No recipe available. Creating a default one.");
-        var r = Recipe();
-        r.coffee.targetId = selectedCoffeeId;
-        r.name = "Americano";
-        r.profileId = settings.currentProfile;
+        {
+          var r = Recipe();
+          r.coffee.targetId = selectedCoffeeId;
+          r.name = "Americano";
+          r.profileId = settings.currentProfile;
 
-        selectedRecipeId = recipeBox.put(r);
-        settings.selectedRecipe = selectedRecipeId;
+          selectedRecipeId = recipeBox.put(r);
+          settings.selectedRecipe = selectedRecipeId;
+        }
+        {
+          var r = Recipe();
+          r.coffee.targetId = selectedCoffeeId;
+          r.name = "Cappuccino";
+          r.profileId = settings.currentProfile;
+          r.useWater = false;
+          r.useSteam = true;
+          selectedRecipeId = recipeBox.put(r);
+        }
       }
     }
     Future.delayed(

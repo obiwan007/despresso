@@ -23,4 +23,17 @@ class Recipe {
   bool isFavorite = false;
 
   String name = "Espresso";
+
+  /// For added water
+  double weightWater = 120;
+  bool useWater = true;
+  double tempWater = 120;
+  double timeWater = 20;
+
+  // Steaming milk for recipe
+  double tempSteam = 120;
+  double flowSteam = 1;
+  double timeSteam = 30;
+  double weightMilk = 120;
+  bool useSteam = false;
 }
