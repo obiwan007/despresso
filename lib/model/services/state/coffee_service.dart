@@ -147,7 +147,7 @@ class CoffeeService extends ChangeNotifier {
           r.profileId = settings.currentProfile;
           r.useWater = false;
           r.useSteam = true;
-          selectedRecipeId = recipeBox.put(r);
+          recipeBox.put(r);
         }
       }
     }
