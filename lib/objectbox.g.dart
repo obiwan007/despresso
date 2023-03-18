@@ -427,7 +427,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 7693652674048295668),
       name: 'Recipe',
-      lastPropertyId: const IdUid(14, 1831677913184358060),
+      lastPropertyId: const IdUid(23, 4030549021668168783),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -496,6 +496,51 @@ final _entities = <ModelEntity>[
             id: const IdUid(13, 1901110978839052278),
             name: 'ratio2',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 7025254451475299925),
+            name: 'weightWater',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 15425906396748186),
+            name: 'useWater',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 9055581799472750245),
+            name: 'tempWater',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 4711319393184164790),
+            name: 'timeWater',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 1770550326036569594),
+            name: 'tempSteam',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 6084341035853340078),
+            name: 'flowSteam',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(21, 3919563489562326148),
+            name: 'timeSteam',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 2201822893454360106),
+            name: 'weightMilk',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(23, 4030549021668168783),
+            name: 'useSteam',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -953,7 +998,7 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Recipe object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
           final profileIdOffset = fbb.writeString(object.profileId);
-          fbb.startTable(15);
+          fbb.startTable(24);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.coffee.targetId);
           fbb.addFloat64(2, object.adjustedWeight);
@@ -967,6 +1012,15 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(10, object.isFavorite);
           fbb.addFloat64(11, object.ratio1);
           fbb.addFloat64(12, object.ratio2);
+          fbb.addFloat64(14, object.weightWater);
+          fbb.addBool(15, object.useWater);
+          fbb.addFloat64(16, object.tempWater);
+          fbb.addFloat64(17, object.timeWater);
+          fbb.addFloat64(18, object.tempSteam);
+          fbb.addFloat64(19, object.flowSteam);
+          fbb.addFloat64(20, object.timeSteam);
+          fbb.addFloat64(21, object.weightMilk);
+          fbb.addBool(22, object.useSteam);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -997,7 +1051,25 @@ ModelDefinition getObjectBoxModel() {
             ..ratio1 =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0)
             ..ratio2 =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0)
+            ..weightWater =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 32, 0)
+            ..useWater =
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false)
+            ..tempWater =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0)
+            ..timeWater =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0)
+            ..tempSteam =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0)
+            ..flowSteam =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 42, 0)
+            ..timeSteam =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0)
+            ..weightMilk =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0)
+            ..useSteam =
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false);
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
@@ -1378,6 +1450,42 @@ class Recipe_ {
   /// see [Recipe.ratio2]
   static final ratio2 =
       QueryDoubleProperty<Recipe>(_entities[5].properties[12]);
+
+  /// see [Recipe.weightWater]
+  static final weightWater =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[13]);
+
+  /// see [Recipe.useWater]
+  static final useWater =
+      QueryBooleanProperty<Recipe>(_entities[5].properties[14]);
+
+  /// see [Recipe.tempWater]
+  static final tempWater =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[15]);
+
+  /// see [Recipe.timeWater]
+  static final timeWater =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[16]);
+
+  /// see [Recipe.tempSteam]
+  static final tempSteam =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[17]);
+
+  /// see [Recipe.flowSteam]
+  static final flowSteam =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[18]);
+
+  /// see [Recipe.timeSteam]
+  static final timeSteam =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[19]);
+
+  /// see [Recipe.weightMilk]
+  static final weightMilk =
+      QueryDoubleProperty<Recipe>(_entities[5].properties[20]);
+
+  /// see [Recipe.useSteam]
+  static final useSteam =
+      QueryBooleanProperty<Recipe>(_entities[5].properties[21]);
 }
 
 /// [SettingsEntry] entity fields to define ObjectBox queries.
