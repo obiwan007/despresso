@@ -241,7 +241,7 @@ class DE1 extends ChangeNotifier {
     0x15: 'sched_idle', // 15 Scheduled wake up idle state
   };
 
-  static const Map subStates = {
+  static const Map<int, String> subStates = {
     0x00: 'no_state', // 0 State is not relevant
     0x01: 'heat_water_tank', // 1 Cold water is not hot enough. Heating hot water tank.
     0x02: 'heat_water_heater', // 2 Warm up hot water heater for shot.
@@ -409,7 +409,7 @@ class DE1 extends ChangeNotifier {
     var subState = value.getUint8(1);
 
     log.info("DE1 is in state: ${states[state]} $state substate: $subState");
-    service.setSubState(subStates[subState]);
+    service.setSubState(subStates[subState] ?? subState.toString());
 
     switch (state) {
       case 0x00: // 4 Making espresso
