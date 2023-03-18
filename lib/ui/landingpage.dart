@@ -60,7 +60,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   void initState() {
     super.initState();
     _settings = getIt<SettingsService>();
-    _tabController = TabController(length: _settings.steamHeaterOff ? 4 : 5, vsync: this, initialIndex: 1);
+    _tabController = TabController(length: _settings.steamHeaterOff ? 3 : 4, vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -81,6 +81,12 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     //   if (selectedPage > 2) selectedPage = 0;
     //   _tabController.index = selectedPage;
     // });
+    Future.delayed(
+      const Duration(seconds: 1),
+      () {
+        _settings.startCounter = _settings.startCounter + 1;
+      },
+    );
   }
 
   @override
@@ -139,7 +145,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                   const EspressoScreen(),
                   if (!_settings.steamHeaterOff) const SteamScreen(),
                   const WaterScreen(),
-                  const FlushScreen(),
+                  // const FlushScreen(),
                 ],
               ),
             ),
@@ -334,10 +340,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             icon: Icon(Icons.water_drop),
             child: Text("Water"),
           ),
-          const Tab(
-            icon: Icon(Icons.water),
-            child: Text("Flush"),
-          ),
         ],
       ),
     );
@@ -361,7 +363,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   }
 
   void updatedSettings() {
-    var newTabCount = _settings.steamHeaterOff ? 4 : 5;
+    var newTabCount = _settings.steamHeaterOff ? 3 : 4;
     if (_tabController.length != newTabCount) {
       log.info("New tab size: $newTabCount");
       _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 1);
@@ -409,9 +411,9 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
           case EspressoMachineState.steam:
             if (!_settings.steamHeaterOff) currentPageIndex = 2;
             break;
-          case EspressoMachineState.flush:
-            currentPageIndex = 4 + offset;
-            break;
+          // case EspressoMachineState.flush:
+          //   currentPageIndex = 4 + offset;
+          //   break;
           case EspressoMachineState.water:
             currentPageIndex = 3 + offset;
             break;

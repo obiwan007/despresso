@@ -530,7 +530,7 @@ class EspressoScreenState extends State<EspressoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: isEmpty
-                      ? [const Text("No data yet")]
+                      ? [Icon(size: 100, Icons.multiline_chart), const Text("No data yet")]
                       : [
                           Expanded(
                             flex: 1,

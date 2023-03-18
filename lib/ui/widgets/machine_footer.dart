@@ -269,43 +269,52 @@ class ScaleFooter extends StatelessWidget {
                             machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
                           ),
                         ),
-                      SizedBox(
-                        width: 190,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: FittedBox(
-                                fit: BoxFit.fitHeight,
-                                child: machineService.scaleService.state == ScaleState.connected
-                                    ? Text(
-                                        textAlign: TextAlign.right,
-                                        "${snapshot.data?.weight.toStringAsFixed(1)} g",
-                                        style: Theme.of(context).textTheme.headlineSmall,
-                                      )
-                                    : FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        child: Text(
-                                          textAlign: TextAlign.right,
-                                          machineService.scaleService.state.name,
-                                          style: Theme.of(context).textTheme.labelSmall,
-                                        ),
-                                      ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 90,
-                              child: Text(
-                                textAlign: TextAlign.right,
-                                machineService.scaleService.state == ScaleState.connected
-                                    ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
-                                    : "",
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ],
+                      if (machineService.scaleService.state == ScaleState.connecting)
+                        Text(
+                          textAlign: TextAlign.right,
+                          machineService.scaleService.state.name,
+                          style: Theme.of(context).textTheme.labelMedium,
                         ),
-                      ),
+                      if (machineService.scaleService.state == ScaleState.connected)
+                        SizedBox(
+                          width: 190,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: FittedBox(
+                                  fit: BoxFit.fitHeight,
+                                  child: machineService.scaleService.state == ScaleState.connected
+                                      ? Text(
+                                          textAlign: TextAlign.right,
+                                          "${snapshot.data?.weight.toStringAsFixed(1)} g",
+                                          style: Theme.of(context).textTheme.headlineSmall,
+                                        )
+                                      : machineService.scaleService.state != ScaleState.disconnected
+                                          ? FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text(
+                                                textAlign: TextAlign.right,
+                                                machineService.scaleService.state.name,
+                                                style: Theme.of(context).textTheme.labelSmall,
+                                              ),
+                                            )
+                                          : Text(""),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 90,
+                                child: Text(
+                                  textAlign: TextAlign.right,
+                                  machineService.scaleService.state == ScaleState.connected
+                                      ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
+                                      : "",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       // if (machineService.scaleService.state == ScaleState.connected)
                       //   ElevatedButton(
                       //     onPressed: () => {},

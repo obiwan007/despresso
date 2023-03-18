@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
 import 'package:despresso/model/coffee.dart';
@@ -268,6 +269,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     if (_selectedCoffeeId == 0) return;
 
     var coffee = coffeeService.coffeeBox.get(_selectedCoffeeId)!;
+    DateTime d1 = DateTime.now();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -276,9 +279,9 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         const SizedBox(height: 10),
         KeyValueWidget(label: "Tasting", value: coffee.taste),
         KeyValueWidget(label: "Type of Beans", value: coffee.type),
-        const SizedBox(height: 10),
-        KeyValueWidget(label: "Grinder", value: coffee.grinderSettings.toString()),
-        KeyValueWidget(label: "Dose", value: coffee.grinderDoseWeight.toString()),
+        KeyValueWidget(
+            label: "Roasting date",
+            value: "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} days ago"),
         const SizedBox(height: 10),
         KeyValueWidget(
           label: "Acidity",

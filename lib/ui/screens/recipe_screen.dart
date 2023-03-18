@@ -10,7 +10,9 @@ import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/shotstate.dart';
 
@@ -74,7 +76,8 @@ class RecipeScreenState extends State<RecipeScreen> {
                   builder: (context, snapshot) {
                     return ListView.builder(
                       padding: const EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data![index]),
+                      itemBuilder: (context, index) =>
+                          snapshot.hasData ? buildItem(context, snapshot.data![index]) : const Text("empty"),
                       itemCount: snapshot.data?.length ?? 0,
                     );
                   }),
@@ -200,7 +203,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           data.name,
         ),
         subtitle: Text(
-          "${data.profileId} ${data.coffee.target!.name}",
+          "${data.profileId} ${data.coffee.target?.name ?? "no bean"}",
         ),
         selected: coffeeService.selectedRecipeId == data.id,
         onTap: () {
@@ -211,7 +214,7 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 }
 
-class RecipeDetails extends StatelessWidget {
+class RecipeDetails extends StatefulWidget {
   const RecipeDetails({
     Key? key,
     required this.profileService,
@@ -224,10 +227,18 @@ class RecipeDetails extends StatelessWidget {
   final SettingsService settingsService;
 
   @override
-  Widget build(BuildContext context) {
-    var nameOfRecipe = coffeeService.currentRecipe?.name ?? "no name";
+  State<RecipeDetails> createState() => _RecipeDetailsState();
+}
 
-    var firstFrame = profileService.currentProfile?.firstFrame();
+class _RecipeDetailsState extends State<RecipeDetails> {
+  String _ratio1 = "0";
+  String _ratio2 = "0";
+
+  @override
+  Widget build(BuildContext context) {
+    var nameOfRecipe = widget.coffeeService.currentRecipe?.name ?? "no name";
+
+    var firstFrame = widget.profileService.currentProfile?.firstFrame();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,10 +254,10 @@ class RecipeDetails extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
             onChanged: (value) {
-              var res = coffeeService.currentRecipe;
+              var res = widget.coffeeService.currentRecipe;
               if (res != null) {
                 res.name = value;
-                coffeeService.updateRecipe(res);
+                widget.coffeeService.updateRecipe(res);
               }
             }),
         Column(
@@ -282,7 +293,7 @@ class RecipeDetails extends StatelessWidget {
                                               )),
                                     );
                                   },
-                                  child: Text(profileService.currentProfile?.title ?? "No Profile selected"),
+                                  child: Text(widget.profileService.currentProfile?.title ?? "No Profile selected"),
                                 ),
                               ],
                             ),
@@ -297,7 +308,8 @@ class RecipeDetails extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("${profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
+                                Text(
+                                    "${widget.profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
                               ],
                             ),
                           ),
@@ -337,7 +349,7 @@ class RecipeDetails extends StatelessWidget {
                                       MaterialPageRoute(builder: (context) => CoffeeSelectionTab(saveToRecipe: true)),
                                     );
                                   },
-                                  child: Text(coffeeService.currentCoffee?.name ?? "No Coffee selected"),
+                                  child: Text(widget.coffeeService.currentCoffee?.name ?? "No Coffee selected"),
                                 ),
                               ],
                             ),
@@ -347,18 +359,27 @@ class RecipeDetails extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Dose:")),
+                          const Expanded(child: Text("Ratio:")),
                           Expanded(
-                            child: Column(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("${coffeeService.currentCoffee?.grinderDoseWeight.toStringAsFixed(1)} g"),
+                                Text(
+                                    "${formatRatio(widget.coffeeService.currentRecipe?.ratio1 ?? 0.0)} : ${formatRatio(widget.coffeeService.currentRecipe?.ratio2 ?? 0.0)}"),
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _openRatioDialog();
+                                    setState(() => {});
+                                  },
+                                )
                               ],
                             ),
                           ),
                         ],
                       ),
-                      if ((coffeeService.currentCoffee?.grinderSettings ?? 0) > 0)
+                      if ((widget.coffeeService.currentCoffee?.grinderSettings ?? 0) > 0)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -368,13 +389,50 @@ class RecipeDetails extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("${coffeeService.currentCoffee?.grinderSettings ?? ''}"),
+                                  Text("${widget.coffeeService.currentCoffee?.grinderSettings ?? ''}"),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       const Divider(),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text("Weighted beans [g]")),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SpinBox(
+                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (value) {
+                                    var r = widget.coffeeService.currentRecipe;
+                                    if (r != null) {
+                                      r.grinderDoseWeight = value;
+                                      r.adjustedWeight = value * (r.ratio2 / r.ratio1);
+                                      widget.coffeeService.updateRecipe(r);
+                                      widget.settingsService.targetEspressoWeight = r.adjustedWeight;
+                                    }
+                                  },
+                                  max: 120.0,
+                                  value: widget.coffeeService.currentRecipe?.grinderDoseWeight ?? 0.0,
+                                  decimals: 1,
+                                  step: 0.5,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -386,15 +444,15 @@ class RecipeDetails extends StatelessWidget {
                                   keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
-                                    var r = coffeeService.currentRecipe;
+                                    var r = widget.coffeeService.currentRecipe;
                                     if (r != null) {
                                       r.adjustedWeight = value;
-                                      coffeeService.updateRecipe(r);
-                                      settingsService.targetEspressoWeight = value;
+                                      widget.coffeeService.updateRecipe(r);
+                                      widget.settingsService.targetEspressoWeight = value;
                                     }
                                   },
                                   max: 120.0,
-                                  value: settingsService.targetEspressoWeight,
+                                  value: widget.settingsService.targetEspressoWeight,
                                   decimals: 1,
                                   step: 0.5,
                                   decoration: const InputDecoration(
@@ -422,15 +480,15 @@ class RecipeDetails extends StatelessWidget {
                                   keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                                   textInputAction: TextInputAction.done,
                                   onChanged: (value) {
-                                    var r = coffeeService.currentRecipe;
+                                    var r = widget.coffeeService.currentRecipe;
                                     if (r != null) {
                                       r.adjustedTemp = value;
-                                      coffeeService.updateRecipe(r);
+                                      widget.coffeeService.updateRecipe(r);
                                     }
                                   },
                                   min: -5.0,
                                   max: 5.0,
-                                  value: settingsService.targetTempCorrection.toDouble(),
+                                  value: widget.settingsService.targetTempCorrection.toDouble(),
                                   decimals: 1,
                                   step: 0.1,
                                   decoration: const InputDecoration(
@@ -454,5 +512,102 @@ class RecipeDetails extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String formatRatio(double r) {
+    var f = NumberFormat("#.#");
+    return f.format(r);
+  }
+
+  Future<String?> _openRatioDialog() async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Set Ratio'),
+          content: SizedBox(
+            height: 200,
+            child: Column(
+              children: [
+                SpinBox(
+                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                  textInputAction: TextInputAction.done,
+                  onChanged: (value) {
+                    var r = widget.coffeeService.currentRecipe;
+                    if (r != null) {
+                      r.ratio1 = value;
+                      widget.coffeeService.updateRecipe(r);
+                    }
+                  },
+                  min: 1,
+                  max: 10.0,
+                  value: widget.coffeeService.currentRecipe!.ratio1,
+                  decimals: 1,
+                  step: 0.1,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                  ),
+                ),
+                const Text(":"),
+                SpinBox(
+                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                  textInputAction: TextInputAction.done,
+                  onChanged: (value) {
+                    var r = widget.coffeeService.currentRecipe;
+                    if (r != null) {
+                      r.ratio2 = value;
+                      widget.coffeeService.updateRecipe(r);
+                    }
+                  },
+                  min: 1,
+                  max: 10.0,
+                  value: widget.coffeeService.currentRecipe!.ratio2,
+                  decimals: 1,
+                  step: 0.1,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () {
+                // widget.coffeeService.currentRecipe?.ratio1 = double.parse(_ratio1);
+                var r = widget.coffeeService.currentRecipe!;
+                var value = r.grinderDoseWeight;
+                r.adjustedWeight = value * (r.ratio2 / r.ratio1);
+                widget.coffeeService.updateRecipe(r);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String? numberValidator(String value) {
+    if (value == null) {
+      return null;
+    }
+    final n = num.tryParse(value);
+    if (n == null) {
+      return '"$value" is not a valid number';
+    }
+    return null;
   }
 }

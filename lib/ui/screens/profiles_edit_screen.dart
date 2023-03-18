@@ -155,8 +155,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                           max: 100,
                           De1ShotFrameClass(),
                           _profile.shotHeader.targetVolume, (value) {
-                        setState(() => _profile.shotHeader.targetVolume = value);
-                        log.info("Changed");
+                        var v = (value * 10).round() / 10;
+                        setState(() => _profile.shotHeader.targetVolume = v);
                       }),
                       changeValue(
                           unit: "g",
@@ -165,8 +165,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                           max: 100,
                           De1ShotFrameClass(),
                           _profile.shotHeader.targetWeight, (value) {
-                        setState(() => _profile.shotHeader.targetWeight = value);
-                        log.info("Changed");
+                        var v = (value * 10).round() / 10;
+                        setState(() => _profile.shotHeader.targetWeight = v);
                       }),
                     ],
                   ),
@@ -345,7 +345,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Text(
-              "${(frame?.frameLen.round() ?? 0)}",
+              "${(frame?.frameLen.toStringAsFixed(1) ?? 0)}",
               style: style1,
             ),
             Text(
@@ -406,7 +406,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                 ),
               ),
             ),
-            Text("${(frame.temp.round())}", style: style2),
+            Text((frame.temp.toStringAsFixed(1)), style: style2),
             const Text("°C"),
           ],
         ),
@@ -436,6 +436,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                             max: 100.0,
                             value: riseAndHold.frameLen,
                             interval: 20,
+                            stepSize: 0.1,
                             showTicks: true,
                             showLabels: true,
                             enableTooltip: true,
@@ -462,6 +463,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                               interval: 1,
                               showTicks: true,
                               showLabels: true,
+                              stepSize: 0.1,
                               enableTooltip: true,
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
@@ -487,6 +489,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                         max: 10.0,
                         value: riseAndHold.pump == "pressure" ? riseAndHold.setVal : riseAndHold.triggerVal,
                         interval: 2,
+                        stepSize: 0.1,
                         showTicks: true,
                         showLabels: true,
                         enableTooltip: true,
@@ -532,7 +535,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                             min: 0.0,
                             max: 100.0,
                             value: decline?.frameLen,
-                            interval: 20,
+                            interval: 10,
+                            stepSize: 0.1,
                             showTicks: true,
                             showLabels: true,
                             enableTooltip: true,
@@ -555,6 +559,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                               max: 100.0,
                               value: _profile.shotHeader.targetWeight,
                               interval: 20,
+                              stepSize: 0.1,
                               showTicks: false,
                               showLabels: true,
                               enableTooltip: true,
@@ -581,6 +586,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                         max: 15.0,
                         value: preInfusion!.pump == "pressure" ? preInfusion!.setVal : preInfusion!.triggerVal,
                         interval: 2,
+                        stepSize: 0.1,
                         showTicks: true,
                         showLabels: true,
                         enableTooltip: true,
@@ -697,7 +703,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                 max: max,
                 value: value,
                 decimals: 1,
-                step: 0.5,
+                step: 0.1,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -717,6 +723,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               showTicks: false,
               showLabels: true,
               enableTooltip: true,
+              stepSize: 0.1,
               minorTicksPerInterval: 10,
               onChanged: (dynamic value) {
                 valueChanged(value);
