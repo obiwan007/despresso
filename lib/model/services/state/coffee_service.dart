@@ -136,9 +136,7 @@ class CoffeeService extends ChangeNotifier {
           r.coffee.targetId = selectedCoffeeId;
           r.name = "Americano";
           r.profileId = settings.currentProfile;
-
-          selectedRecipeId = recipeBox.put(r);
-          settings.selectedRecipe = selectedRecipeId;
+          recipeBox.put(r);
         }
         {
           var r = Recipe();
@@ -148,6 +146,17 @@ class CoffeeService extends ChangeNotifier {
           r.useWater = false;
           r.useSteam = true;
           recipeBox.put(r);
+        }
+        {
+          var r = Recipe();
+          r.coffee.targetId = selectedCoffeeId;
+          r.name = "Simple Espresso";
+          r.profileId = settings.currentProfile;
+          r.useWater = false;
+          r.useSteam = false;
+          r.isFavorite = true;
+          selectedRecipeId = recipeBox.put(r);
+          settings.selectedRecipe = selectedRecipeId;
         }
       }
     }
