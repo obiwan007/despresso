@@ -28,6 +28,9 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   static Uuid CommandUUID =
       Platform.isAndroid ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
 
+  static Uuid ButtonNotifyUUID =
+      Platform.isAndroid ? Uuid.parse('0000ef82-0000-1000-8000-00805F9B34FB') : Uuid.parse('ef82');
+
   late ScaleService scaleService;
 
   static const int cmdDisplayOn = 0xed;
@@ -59,6 +62,18 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   void _notificationCallback(List<int> data) {
     var weight = getInt(data);
     scaleService.setWeight((weight / 10 / 256).toDouble());
+  }
+
+  void _notificationButtonsCallback(List<int> data) {
+    var button = getInt(data);
+    switch (button) {
+      case 1:
+        writeTare();
+        break;
+      case 2:
+        break;
+    }
+    // scaleService.setWeight((weight / 10 / 256).toDouble());
   }
 
   int getInt(List<int> buffer) {
@@ -113,6 +128,17 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
+        }, onError: (dynamic error) {
+          log.severe(("Error register weight callback $error"));
+        });
+
+        final characteristicButton =
+            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: ButtonNotifyUUID, deviceId: device.id);
+
+        _characteristicsSubscription =
+            flutterReactiveBle.subscribeToCharacteristic(characteristicButton).listen((data) {
+          // code to handle incoming data
+          _notificationButtonsCallback(data);
         }, onError: (dynamic error) {
           log.severe(("Error register weight callback $error"));
         });
