@@ -155,8 +155,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                           max: 100,
                           De1ShotFrameClass(),
                           _profile.shotHeader.targetVolume, (value) {
-                        setState(() => _profile.shotHeader.targetVolume = value);
-                        log.info("Changed");
+                        var v = (value * 10).round() / 10;
+                        setState(() => _profile.shotHeader.targetVolume = v);
                       }),
                       changeValue(
                           unit: "g",
@@ -165,8 +165,8 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                           max: 100,
                           De1ShotFrameClass(),
                           _profile.shotHeader.targetWeight, (value) {
-                        setState(() => _profile.shotHeader.targetWeight = value);
-                        log.info("Changed");
+                        var v = (value * 10).round() / 10;
+                        setState(() => _profile.shotHeader.targetWeight = v);
                       }),
                     ],
                   ),
