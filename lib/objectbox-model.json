@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "3:5050282589413394899",
-      "lastPropertyId": "27:7751808523866622917",
+      "lastPropertyId": "29:7092783304172893944",
       "name": "Shot",
       "properties": [
         {
@@ -143,6 +143,16 @@
         {
           "id": "27:7751808523866622917",
           "name": "estimatedWeight_tStart",
+          "type": 8
+        },
+        {
+          "id": "28:7560094062746893331",
+          "name": "ratio1",
+          "type": 8
+        },
+        {
+          "id": "29:7092783304172893944",
+          "name": "ratio2",
           "type": 8
         }
       ],

@@ -27,7 +27,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 5050282589413394899),
       name: 'Shot',
-      lastPropertyId: const IdUid(27, 7751808523866622917),
+      lastPropertyId: const IdUid(29, 7092783304172893944),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -162,6 +162,16 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(27, 7751808523866622917),
             name: 'estimatedWeight_tStart',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 7560094062746893331),
+            name: 'ratio1',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(29, 7092783304172893944),
+            name: 'ratio2',
             type: 8,
             flags: 0)
       ],
@@ -625,7 +635,7 @@ ModelDefinition getObjectBoxModel() {
           final barristaOffset = fbb.writeString(object.barrista);
           final drinkerOffset = fbb.writeString(object.drinker);
           final visualizerIdOffset = fbb.writeString(object.visualizerId);
-          fbb.startTable(28);
+          fbb.startTable(30);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.date.millisecondsSinceEpoch);
           fbb.addInt64(2, object.coffee.targetId);
@@ -652,6 +662,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(24, object.estimatedWeight_b);
           fbb.addFloat64(25, object.estimatedWeight_tEnd);
           fbb.addFloat64(26, object.estimatedWeight_tStart);
+          fbb.addFloat64(27, object.ratio1);
+          fbb.addFloat64(28, object.ratio2);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -706,7 +718,11 @@ ModelDefinition getObjectBoxModel() {
             ..estimatedWeight_tEnd =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 54, 0)
             ..estimatedWeight_tStart =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 56, 0);
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 56, 0)
+            ..ratio1 =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 58, 0)
+            ..ratio2 =
+                const fb.Float64Reader().vTableGet(buffer, rootOffset, 60, 0);
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.coffee.attach(store);
@@ -1137,6 +1153,12 @@ class Shot_ {
   /// see [Shot.estimatedWeight_tStart]
   static final estimatedWeight_tStart =
       QueryDoubleProperty<Shot>(_entities[0].properties[25]);
+
+  /// see [Shot.ratio1]
+  static final ratio1 = QueryDoubleProperty<Shot>(_entities[0].properties[26]);
+
+  /// see [Shot.ratio2]
+  static final ratio2 = QueryDoubleProperty<Shot>(_entities[0].properties[27]);
 
   /// see [Shot.shotstates]
   static final shotstates =

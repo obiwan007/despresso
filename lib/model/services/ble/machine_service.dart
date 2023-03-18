@@ -451,6 +451,7 @@ class EspressoMachineService extends ChangeNotifier {
       inShot = true;
       currentShot = Shot();
       currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
+
       _delayedStopActive = false;
       isPouring = false;
       shotList.clear();
@@ -613,6 +614,7 @@ class EspressoMachineService extends ChangeNotifier {
 
       //if (profileService.currentProfile.shot_header.target_weight)
       if (inShot == true) {
+        shot.isPouring = isPouring;
         shotList.add(shot);
       }
     }
@@ -635,14 +637,17 @@ class EspressoMachineService extends ChangeNotifier {
       cs.coffee.targetId = coffeeService.selectedCoffeeId;
       cs.recipe.targetId = coffeeService.selectedRecipeId;
 
-      cs.shotstates.addAll(shotList.entries);
+      cs.shotstates.addAll(shotList.entries.where((element) => element.isPouring == true));
 
       cs.pourTime = lastPourTime;
       cs.profileId = profileService.currentProfile?.id ?? "";
-      cs.pourWeight = shotList.entries.last.weight;
       cs.targetEspressoWeight = settingsService.targetEspressoWeight;
       cs.targetTempCorrection = settingsService.targetTempCorrection;
       cs.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
+      cs.pourWeight = shotList.entries.last.weight;
+      cs.ratio1 = coffeeService.currentRecipe?.ratio1 ?? 1;
+      cs.ratio2 = coffeeService.currentRecipe?.ratio2 ?? 1;
+
       cs.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
       cs.estimatedWeightReachedTime = currentShot.estimatedWeightReachedTime;
       cs.estimatedWeight_b = currentShot.estimatedWeight_b;

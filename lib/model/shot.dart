@@ -47,4 +47,7 @@ class Shot {
   double estimatedWeight_b = 0;
   double estimatedWeight_tEnd = 0;
   double estimatedWeight_tStart = 0;
+
+  double ratio1 = 1;
+  double ratio2 = 2;
 }
