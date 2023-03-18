@@ -214,6 +214,20 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       machineService.updateSettings();
                     },
                   ),
+                  SliderSettingsTile(
+                    title: 'Flush timer [s]',
+                    // subtitle:
+                    //     "Delays in scale could be adjusted accordingly. The weight is calculated based on the current flow during an espresso shot",
+                    settingKey: SettingKeys.targetFlushTime.name,
+                    defaultValue: settingsService.targetFlushTime.toDouble(),
+                    min: 1.00,
+                    max: 15,
+                    step: 1.0,
+                    leading: const Icon(Icons.timer),
+                    onChange: (value) {
+                      debugPrint('targetFlushTime: $value');
+                    },
+                  ),
                 ],
               ),
             ),
