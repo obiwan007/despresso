@@ -133,7 +133,7 @@ class CoffeeService extends ChangeNotifier {
         log.info("No recipe available. Creating a default one.");
         var r = Recipe();
         r.coffee.targetId = selectedCoffeeId;
-        r.name = "Default Americano";
+        r.name = "Americano";
         r.profileId = settings.currentProfile;
 
         selectedRecipeId = recipeBox.put(r);
@@ -146,7 +146,7 @@ class CoffeeService extends ChangeNotifier {
         if (roasterBox.count() == 0) {
           log.info("No roasters available. Creating a default one.");
           var r = Roaster();
-          r.name = "Default Rouaster";
+          r.name = "Sample Rouaster";
           selectedRoasterId = roasterBox.put(r);
           settings.selectedRoaster = selectedRoasterId;
         }
@@ -155,7 +155,7 @@ class CoffeeService extends ChangeNotifier {
           log.info("No roasters available. Creating a default one.");
           var r = Coffee();
           r.roaster.targetId = selectedRoasterId;
-          r.name = "Default Beans";
+          r.name = "Sample Beans";
           selectedCoffeeId = coffeeBox.put(r);
           settings.selectedCoffee = selectedCoffeeId;
         }

@@ -8,6 +8,8 @@ import 'package:despresso/devices/decent_scale.dart';
 import 'package:despresso/devices/felicita_scale.dart';
 import 'package:despresso/devices/meater_thermometer.dart';
 import 'package:despresso/devices/skale2_scale.dart';
+import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -55,7 +57,12 @@ class BLEService extends ChangeNotifier {
     // _devicesList.clear();
     _subscription?.cancel();
     notifyListeners();
+
     log.info('startScan');
+    ScaleService scaleService = getIt<ScaleService>();
+    if (scaleService.state != ScaleState.connected) {
+      scaleService.setState(ScaleState.connecting);
+    }
     _subscription =
         flutterReactiveBle.scanForDevices(withServices: [], scanMode: ble.ScanMode.lowLatency).listen((device) {
       deviceScanListener(device);
@@ -68,6 +75,9 @@ class BLEService extends ChangeNotifier {
       _subscription?.cancel();
       log.info('stoppedScan');
       isScanning = false;
+      if (scaleService.state == ScaleState.connecting) {
+        scaleService.setState(ScaleState.disconnected);
+      }
       notifyListeners();
     });
 
