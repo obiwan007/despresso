@@ -46,9 +46,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
         'origin': [''],
         'intensityRating': [0.1],
         'acidRating': [0.1],
-        'grinderSettings': [0.1],
         'roastLevel': [0.1],
-        'grinderDoseWeight': [0.1],
       });
 
   late FormGroup theForm;
@@ -82,8 +80,8 @@ class CoffeeEditState extends State<CoffeeEdit> {
       'origin': [_editedCoffee.origin],
       'intensityRating': [_editedCoffee.intensityRating],
       'acidRating': [_editedCoffee.acidRating],
-      'grinderSettings': [_editedCoffee.grinderSettings, Validators.required],
       'roastLevel': [_editedCoffee.roastLevel],
+      'roastDate': [DateTime.now()],
     });
   }
 
@@ -191,27 +189,44 @@ class CoffeeEditState extends State<CoffeeEdit> {
             labelText: 'Origin',
           ),
         ),
-        ReactiveTextField<String>(
-          formControlName: 'price',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Price/package',
+        SizedBox(
+          width: 250,
+          child: ReactiveTextField<String>(
+            formControlName: 'price',
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Price/package',
+            ),
           ),
         ),
-        ReactiveTextField<double>(
-          formControlName: 'grinderSettings',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Grinder',
+        SizedBox(
+          width: 300,
+          child: Row(
+            children: [
+              Expanded(
+                child: ReactiveTextField<DateTime>(
+                  formControlName: 'roastDate',
+                  keyboardType: TextInputType.datetime,
+                  decoration: const InputDecoration(
+                    labelText: 'Roasting date',
+                  ),
+                ),
+              ),
+              ReactiveDatePicker(
+                formControlName: 'roastDate',
+                lastDate: DateTime.now(),
+                firstDate: DateTime.now().subtract(Duration(days: 365)),
+                builder: (context, picker, child) {
+                  return IconButton(
+                    onPressed: picker.showPicker,
+                    icon: Icon(Icons.date_range),
+                  );
+                },
+              ),
+            ],
           ),
         ),
-        ReactiveTextField<double>(
-          formControlName: 'grinderDoseWeight',
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Dose',
-          ),
-        ),
+
         HeightWidget(height: 20),
         KeyValueWidget(label: "Acidity", value: ""),
         ReactiveRatingBarBuilder<double>(
@@ -294,11 +309,12 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.price = form.value["price"] as String;
     _editedCoffee.taste = form.value["taste"] as String;
     _editedCoffee.origin = form.value["origin"] as String;
+    _editedCoffee.roastDate = form.value["roastDate"] as DateTime;
     _editedCoffee.description = form.value["description"] as String;
 
     _editedCoffee.intensityRating = form.value["intensityRating"] as double;
     _editedCoffee.acidRating = form.value["acidRating"] as double;
-    _editedCoffee.grinderSettings = form.value["grinderSettings"] as double;
+
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
     _editedCoffee.roaster.targetId = _selectedRoasterId;
     coffeeService.addCoffee(_editedCoffee);
