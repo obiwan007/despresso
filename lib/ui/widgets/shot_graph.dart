@@ -297,7 +297,7 @@ class _ShotGraphState extends State<ShotGraph> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Weight [g] / Temp [°C]',
+              'Weight [g]',
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(

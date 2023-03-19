@@ -64,7 +64,7 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
     var x = Random().nextDouble() * maxW;
     var y = Random().nextDouble() * maxH;
 
-    String myLocale = Localizations.localeOf(context).countryCode ?? "en";
+    String myLocale = Localizations.localeOf(context).languageCode;
     if (!DateFormat.localeExists(myLocale)) {
       log.info("Fallback to english locale $myLocale not found.");
       myLocale = "en";

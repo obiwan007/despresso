@@ -34,12 +34,16 @@ class BLEService extends ChangeNotifier {
 
   bool isScanning = false;
 
+  bool checkInProgress = false;
+
+  String error = "";
+
   BLEService() {
     init();
   }
 
   void init() async {
-    await _checkPermissions();
+    await checkPermissions();
     // await bleManager.createClient();
 
     // bleManager.observeBluetoothState().listen(btStateListener);
@@ -69,6 +73,8 @@ class BLEService extends ChangeNotifier {
     }, onError: (err) {
       // ignore: prefer_interpolation_to_compose_strings
       log.info('Scanner Error:' + err?.message?.message);
+      error = err.message?.message;
+      notifyListeners();
     });
 
     Timer(const Duration(seconds: 10), () {
@@ -164,18 +170,19 @@ class BLEService extends ChangeNotifier {
     }
   }
 
-  Future<void> _checkPermissions() async {
+  Future<void> checkPermissions() async {
     // if (Permission.location.serviceStatus.isEnabled == true){
     // var status2 = await Permission.bluetooth.request();
     // var status1 = await Permission.location.request();
 
 // You can request multiple permissions at once.
+    checkInProgress = true;
     Map<Permission, PermissionStatus> statuses = await [
       Permission.location,
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
     ].request();
-
+    checkInProgress = false;
     if (!statuses.values.any((element) => element.isDenied)) {
       return;
     }

@@ -47,7 +47,9 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
-  late StreamSubscription<List<int>> _characteristicsSubscription;
+  StreamSubscription<List<int>>? _characteristicsSubscription;
+
+  StreamSubscription<List<int>>? _characteristicsButtonSubscription;
 
   Skale2Scale(this.device) {
     scaleService = getIt<ScaleService>();
@@ -135,7 +137,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
         final characteristicButton =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: ButtonNotifyUUID, deviceId: device.id);
 
-        _characteristicsSubscription =
+        _characteristicsButtonSubscription =
             flutterReactiveBle.subscribeToCharacteristic(characteristicButton).listen((data) {
           // code to handle incoming data
           _notificationButtonsCallback(data);
@@ -165,7 +167,8 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
         log.info('Skale2 disconnected. Destroying');
         scaleService.setBattery(0);
         // await device.disconnectOrCancelConnection();
-        _characteristicsSubscription.cancel();
+        _characteristicsSubscription?.cancel();
+        _characteristicsButtonSubscription?.cancel();
 
         _deviceListener.cancel();
         notifyListeners();

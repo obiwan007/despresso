@@ -95,7 +95,7 @@ class ScreensaverService extends ChangeNotifier {
       (timer) async {
         if (_paused == true) return;
         _screenSaverTimer += 5;
-        log.fine("Tick  $_screenSaverTimer ${_settings.screenBrightnessTimer * 60} on: $screenSaverOn");
+        // log.fine("Tick  $_screenSaverTimer ${_settings.screenBrightnessTimer * 60} on: $screenSaverOn");
         if (_settings.screenBrightnessTimer > 0 &&
             _screenSaverTimer > _settings.screenBrightnessTimer * 60 &&
             screenSaverOn == false) {

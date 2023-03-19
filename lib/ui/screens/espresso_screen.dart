@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:despresso/helper/linear_regress.ion.dart';
+import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
@@ -64,6 +65,8 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   int _lastLength = 0;
 
+  String bleError = "";
+
   EspressoScreenState();
 
   @override
@@ -104,6 +107,8 @@ class EspressoScreenState extends State<EspressoScreen> {
     // Scale services is consumed as stream
     scaleService = getIt<ScaleService>();
     _screensaver = getIt<ScreensaverService>();
+
+    Future.delayed(const Duration(seconds: 4), () => checkPermissions());
   }
 
   // loadShotData() async {
@@ -258,6 +263,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       LineChartData(
         minY: 0,
         // maxY: 15,
+
         minX: data["pressure"]!.first.x,
         maxX: maxTime,
         lineTouchData: LineTouchData(enabled: false),
@@ -370,7 +376,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Weight [g] / Temp [°C]',
+              'Weight [g]',
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -530,7 +536,13 @@ class EspressoScreenState extends State<EspressoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: isEmpty
-                      ? [Icon(size: 100, Icons.multiline_chart), const Text("No data yet")]
+                      ? [
+                          const Icon(size: 100, Icons.multiline_chart),
+                          bleError.isEmpty
+                              ? const Text("No data yet")
+                              : const Text(
+                                  "you need to enable location services in the system settings to be able to connect to the de1 and scales")
+                        ]
                       : [
                           Expanded(
                             flex: 1,
@@ -586,5 +598,21 @@ class EspressoScreenState extends State<EspressoScreen> {
         // _buildButtons()
       ]),
     );
+  }
+
+  Future<void> checkPermissions() async {
+    // var ble = getIt<BLEService>();
+    // if (ble.checkInProgress) {
+    //   return;
+    // }
+    // try {
+    //   await ble.checkPermissions();
+    //   bleError = "";
+    // } catch (e) {
+    //   bleError = "$e";
+    //   setState(() {});
+    //   log.severe("Error in connection to BLE $e");
+    // }
+    // setState(() {});
   }
 }
