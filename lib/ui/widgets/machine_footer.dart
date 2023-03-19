@@ -1,10 +1,14 @@
+import 'package:despresso/helper/message.dart';
+import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:flutter/scheduler.dart';
 import 'package:logging/logging.dart';
+import 'package:path/path.dart';
 
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
@@ -23,6 +27,8 @@ class _MachineFooterState extends State<MachineFooter> {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
   late SettingsService settingsService;
+  late BLEService bleService;
+
   _MachineFooterState();
 
   @override
@@ -32,6 +38,9 @@ class _MachineFooterState extends State<MachineFooter> {
     scaleService = getIt<ScaleService>();
     settingsService = getIt<SettingsService>();
     settingsService.addListener(updateMachine);
+
+    bleService = getIt<BLEService>();
+    bleService.addListener(checkError);
     // scaleService.addListener();
 
     // profileService = getIt<ProfileService>();
@@ -47,6 +56,7 @@ class _MachineFooterState extends State<MachineFooter> {
   void dispose() {
     super.dispose();
     settingsService.removeListener(updateMachine);
+    bleService.removeListener(checkError);
     // scaleService.removeListener(updateMachine);
     // profileService.removeListener(updateProfile);
     // coffeeSelectionService.removeListener(updateCoffeeSelection);
@@ -63,6 +73,10 @@ class _MachineFooterState extends State<MachineFooter> {
 
   @override
   Widget build(BuildContext context) {
+    if (bleService.error.isNotEmpty) {
+      showError(context, bleService.error);
+      bleService.error = "";
+    }
     return Container(
       height: 70,
       color: settingsService.screenDarkTheme ? Colors.white12 : Colors.black12,
@@ -130,6 +144,10 @@ class _MachineFooterState extends State<MachineFooter> {
         ],
       ),
     );
+  }
+
+  void checkError() {
+    setState(() {});
   }
 }
 

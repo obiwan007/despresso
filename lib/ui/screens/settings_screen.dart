@@ -374,6 +374,13 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   },
                 ),
                 SwitchSettingsTile(
+                  title: 'Wake up de1 if app is launched',
+                  settingKey: SettingKeys.launchWake.name,
+                  defaultValue: settingsService.launchWake,
+                  leading: const Icon(Icons.back_hand),
+                  onChange: (value) async {},
+                ),
+                SwitchSettingsTile(
                   title: 'Wake up de1 if screen tapped (if screen was off)',
                   settingKey: SettingKeys.screenTapWake.name,
                   defaultValue: settingsService.screenTapWake,

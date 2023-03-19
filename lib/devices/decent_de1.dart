@@ -315,6 +315,8 @@ class DE1 extends ChangeNotifier {
 
   double flowEstimation = 0;
 
+  late SettingsService _settings;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -337,6 +339,7 @@ class DE1 extends ChangeNotifier {
     });
 
     service.setDecentInstance(this);
+    _settings = getIt<SettingsService>();
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
@@ -360,22 +363,22 @@ class DE1 extends ChangeNotifier {
     // });
   }
 
-  setIdleState() {
+  void setIdleState() {
     requestState(De1StateEnum.idle);
     log.info('idleState Requested');
   }
 
-  switchOn() {
+  void switchOn() {
     requestState(De1StateEnum.idle);
     log.info('SwitchOn Requested');
   }
 
-  switchOff() {
+  void switchOff() {
     requestState(De1StateEnum.sleep);
     log.info('SwitchOff Requested');
   }
 
-  requestState(De1StateEnum state) {
+  void requestState(De1StateEnum state) {
     write(Endpoint.requestedState, Uint8List.fromList([state.index]));
   }
 
@@ -778,6 +781,10 @@ class DE1 extends ChangeNotifier {
           steamPurgeMode = await getSteamPurgeMode();
 
           flowEstimation = await getFlowEstimation();
+
+          if (_settings.launchWake) {
+            switchOn();
+          }
 
           log.info(
               "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");

@@ -59,6 +59,7 @@ enum SettingKeys {
   screenThemeIndex,
   steamHeaterOff,
   startCounter,
+  launchWake,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -189,6 +190,10 @@ class SettingsService extends ChangeNotifier {
   /// Wake de1 if tapped out of screensaver/dim mode
   bool get screenTapWake => Settings.getValue<bool>(SettingKeys.screenTapWake.name) ?? true;
   set screenTapWake(value) => Settings.setValue<bool>(SettingKeys.screenTapWake.name, value);
+
+  /// Wake de1 ifapp is starting
+  bool get launchWake => Settings.getValue<bool>(SettingKeys.launchWake.name) ?? true;
+  set launchWake(value) => Settings.setValue<bool>(SettingKeys.launchWake.name, value);
 
   bool get screenTimoutGoToRecipe => Settings.getValue<bool>(SettingKeys.screenTimoutGoToRecipe.name) ?? true;
   set screenTimoutGoToRecipe(value) => Settings.setValue<bool>(SettingKeys.screenTimoutGoToRecipe.name, value);

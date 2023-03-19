@@ -615,7 +615,16 @@ class EspressoMachineService extends ChangeNotifier {
       //if (profileService.currentProfile.shot_header.target_weight)
       if (inShot == true) {
         shot.isPouring = isPouring;
-        shotList.add(shot);
+        if (isPouring) {
+          shotList.add(shot);
+        } else {
+          // make a single value for the first few seconds to show some action ongoing
+          if (shotList.entries.isEmpty) {
+            shotList.entries.add(shot);
+          } else if (shotList.entries.length == 1) {
+            shotList.entries[0] = shot;
+          }
+        }
       }
     }
   }

@@ -445,9 +445,8 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
           _tabController.index = 0;
         });
       }
-      setState(
-        () => showScreenSaver(),
-      );
+      showScreenSaver();
+      setState(() {});
     } else {
       if (_saverContext != null) {
         Navigator.pop(_saverContext!);

@@ -72,7 +72,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   final DiscoveredDevice device;
 
-  late DeviceConnectionState _state;
+  DeviceConnectionState _state = DeviceConnectionState.disconnected;
 
   List<int> commandBuffer = [];
   Timer? _heartBeatTimer;
@@ -80,7 +80,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
-  late StreamSubscription<List<int>> _characteristicsSubscription;
+  StreamSubscription<List<int>>? _characteristicsSubscription;
 
   AcaiaPyxisScale(this.device) {
     scaleService = getIt<ScaleService>();
@@ -334,7 +334,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
         scaleService.setState(ScaleState.disconnected);
         scaleService.setBattery(0);
         log.info('Acaia Scale disconnected. Destroying');
-        _characteristicsSubscription.cancel();
+        _characteristicsSubscription?.cancel();
         if (_heartBeatTimer != null) _heartBeatTimer!.cancel();
         _deviceListener.cancel();
         notifyListeners();

@@ -68,7 +68,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
-  late StreamSubscription<List<int>> _characteristicsSubscription;
+  StreamSubscription<List<int>>? _characteristicsSubscription;
 
   AcaiaScale(this.device) {
     scaleService = getIt<ScaleService>();
@@ -302,7 +302,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         scaleService.setState(ScaleState.disconnected);
         scaleService.setBattery(0);
         log.info('Acaia Scale disconnected. Destroying');
-        _characteristicsSubscription.cancel();
+        _characteristicsSubscription?.cancel();
         _heartBeatTimer.cancel();
         _deviceListener.cancel();
         notifyListeners();
