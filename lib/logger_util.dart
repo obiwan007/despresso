@@ -24,12 +24,12 @@ Future<void> initLogger() async {
     // ignore: avoid_print
     print("Error creating logfiles");
   }
-  var dateStr = DateTime.now();
+  var dateStr = DateTime.now().toUtc();
   final log = Logger("logger");
   var filepath = "${dir!.path}/logs_${dateStr.day}_${dateStr.month}_${dateStr.year}.txt";
   log.info("Filepath: $filepath");
   RotatingFileAppender(
-    formatter: const DefaultLogRecordFormatter(),
+    formatter: const UtcLogRecordFormatter(),
     baseFilePath: filepath,
   ).attachToLogger(Logger.root);
 
@@ -164,3 +164,26 @@ Future<Uint8List> getLoggerBackupData() async {
 //     }
 //   }
 // }
+
+class UtcLogRecordFormatter extends LogRecordFormatter {
+  const UtcLogRecordFormatter();
+
+  @override
+  StringBuffer formatToStringBuffer(LogRecord rec, StringBuffer sb) {
+    sb.write('${rec.time.toUtc()} ${rec.level.name} '
+        '${rec.loggerName} - ${rec.message}');
+
+    if (rec.error != null) {
+      sb.writeln();
+      sb.write('### ${rec.error?.runtimeType}: ');
+      sb.write(rec.error);
+    }
+    // ignore: avoid_as
+    final stackTrace = rec.stackTrace ?? (rec.error is Error ? (rec.error as Error).stackTrace : null);
+    if (stackTrace != null) {
+      sb.writeln();
+      sb.write(stackTrace);
+    }
+    return sb;
+  }
+}

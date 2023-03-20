@@ -351,7 +351,6 @@ class DE1 extends ChangeNotifier {
     flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
       // Handle connection state updates
       try {
-        log.info("Callback $e");
         callback(ByteData.sublistView(Uint8List.fromList(data)));
       } catch (err) {
         log.info("Callback not catched $e $err");
@@ -523,13 +522,15 @@ class DE1 extends ChangeNotifier {
     log.info("parseShotMapRequest received");
   }
 
-  void parseFrameWrite(ByteData r) {
+  De1ShotFrameClass parseFrameWrite(ByteData r) {
+    log.info("parseFrameWrite: decoding shot frame ${r.buffer.lengthInBytes}");
     var sh = De1ShotFrameClass();
     if (De1ShotFrameClass.decodeDe1ShotFrame(r, sh, true) == false) {
       log.info("Error decoding shot frame");
     }
 
     service.setShotFrame(sh);
+    return sh;
   }
 
   void parseShotSetting(ByteData r) {
@@ -742,10 +743,15 @@ class DE1 extends ChangeNotifier {
 
         // parseShotMapRequest(ByteData.sublistView(
         //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
-        parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        var header =
+            parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
+        log.info("loaded header ${header.numberOfFrames} $header");
+        for (var f = 0; f < header.numberOfFrames; f++) {
+          var frame = parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+          log.info("loaded frame $frame");
+        }
+        // parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        // parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
 
         enableNotification(Endpoint.requestedState, requestedState);
 

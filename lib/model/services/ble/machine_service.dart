@@ -350,13 +350,13 @@ class EspressoMachineService extends ChangeNotifier {
   void setShotHeader(De1ShotHeaderClass sh) {
     _state.shotHeader = sh;
     log.fine("Shotheader:$sh");
-    notifyListeners();
+    // notifyListeners();
   }
 
   void setShotFrame(De1ShotFrameClass sh) {
     _state.shotFrame = sh;
     log.fine("ShotFrame:$sh");
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<String> uploadProfile(De1ShotProfile profile) async {

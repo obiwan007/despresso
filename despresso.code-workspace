@@ -10,6 +10,7 @@
     ],
     "settings": {
         "dart.flutterSdkPath": null,
-        "dart.lineLength": 120
+        "dart.lineLength": 120,
+        "java.configuration.updateBuildConfiguration": "interactive"
     }
 }
