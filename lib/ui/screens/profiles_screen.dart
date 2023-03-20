@@ -81,7 +81,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
     if (widget.saveToRecipe) coffeeService.setSelectedRecipeProfile(_selectedProfile!.id);
 
-    machineService.removeListener(profileListener);
+    profileService.removeListener(profileListener);
     log.info('Disposed profile');
   }
 
@@ -129,6 +129,9 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     }
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => Navigator.pop(context, _selectedProfile),
+        ),
         title: const Text('Profiles'),
         actions: <Widget>[
           // Use Builder to get the widget context

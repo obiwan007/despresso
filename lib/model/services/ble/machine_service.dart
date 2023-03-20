@@ -360,33 +360,37 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   Future<String> uploadProfile(De1ShotProfile profile) async {
-    log.fine("Save profile $profile");
+    log.info("Uploading profile to machine $profile");
     var header = profile.shotHeader;
 
     try {
-      log.fine("Write Header: $header");
+      log.info("Write Header: $header");
       await de1!.writeWithResult(Endpoint.headerWrite, header.bytes);
     } catch (ex) {
-      log.fine("Save profile $profile");
+      log.severe("Error writing header $profile");
       return "Error writing profile header $ex";
     }
 
     for (var fr in profile.shotFrames) {
       try {
-        log.fine("Write Frame: $fr");
+        log.info("Write Frame: $fr");
+        var oldTemp = fr.temp;
         fr.temp += settingsService.targetTempCorrection;
         var bytes = De1ShotFrameClass.encodeDe1ShotFrame(fr);
         await de1!.writeWithResult(Endpoint.frameWrite, bytes);
+        fr.temp = oldTemp;
       } catch (ex) {
+        log.severe("Error writing frame $profile");
         return "Error writing shot frame $fr";
       }
     }
 
     for (var exFrame in profile.shotExframes) {
       try {
-        log.fine("Write ExtFrame: $exFrame");
+        log.info("Write ExtFrame: $exFrame");
         await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
       } catch (ex) {
+        log.severe("Error writing exframe $profile");
         return "Error writing ex shot frame $exFrame";
       }
     }

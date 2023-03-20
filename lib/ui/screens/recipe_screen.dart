@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 
 import '../../model/shotstate.dart';
 
@@ -24,6 +25,7 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class RecipeScreenState extends State<RecipeScreen> {
+  final log = Logger('RecipeScreenState');
   late EspressoMachineService machineService;
   late ProfileService profileService;
   late CoffeeService coffeeService;
@@ -231,6 +233,7 @@ class RecipeDetails extends StatefulWidget {
 }
 
 class _RecipeDetailsState extends State<RecipeDetails> {
+  final log = Logger('RecipeDetails');
   String _ratio1 = "0";
   String _ratio2 = "0";
 
@@ -284,14 +287,20 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(40), // NEW
                                   ),
-                                  onPressed: () {
-                                    Navigator.push(
+                                  onPressed: () async {
+                                    var result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProfilesScreen(
-                                                saveToRecipe: true,
+                                                saveToRecipe: false,
                                               )),
                                     );
+                                    log.info("New profile selected $result");
+                                    if (result == null) {
+                                      return;
+                                    }
+                                    widget.coffeeService.setSelectedRecipeProfile(result!.id);
+                                    widget.coffeeService.setSelectedRecipe(widget.coffeeService.currentRecipe!.id);
                                   },
                                   child: Text(widget.profileService.currentProfile?.title ?? "No Profile selected"),
                                 ),

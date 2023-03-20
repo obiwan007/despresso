@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -117,7 +118,7 @@ class DE1 extends ChangeNotifier {
           '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
           '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
           '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
-          '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
+          '0000A00F': Endpoint.headerWrite, // '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
           '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
           '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
           '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
@@ -343,24 +344,22 @@ class DE1 extends ChangeNotifier {
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
-    log.info('enabeling Notification for $e (${getCharacteristic(e)})');
+    log.info('enableNotification for $e (${getCharacteristic(e)})');
 
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
     flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
       // Handle connection state updates
-
-      callback(ByteData.sublistView(Uint8List.fromList(data)));
+      try {
+        log.info("Callback $e");
+        callback(ByteData.sublistView(Uint8List.fromList(data)));
+      } catch (err) {
+        log.info("Callback not catched $e $err");
+      }
     }, onError: (Object error) {
       // Handle a possible error
+      log.info("Error subscribing to $e $error");
     });
-    // return device.readCharacteristic(ServiceUUID, getCharacteristic(e));
-
-    // device
-    //     .monitorCharacteristic(ServiceUUID, getCharacteristic(e))
-    //     .listen((event) {
-    //   callback(ByteData.sublistView(event.value));
-    // });
   }
 
   void setIdleState() {
@@ -785,6 +784,9 @@ class DE1 extends ChangeNotifier {
           if (_settings.launchWake) {
             switchOn();
           }
+
+          var coffeeService = getIt<CoffeeService>();
+          coffeeService.setSelectedRecipe(_settings.selectedRecipe);
 
           log.info(
               "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");
