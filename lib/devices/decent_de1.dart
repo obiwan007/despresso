@@ -118,7 +118,7 @@ class DE1 extends ChangeNotifier {
           '0000A00C-0000-1000-8000-00805F9B34FB': Endpoint.deprecatedShotDesc,
           '0000A00D-0000-1000-8000-00805F9B34FB': Endpoint.shotSample,
           '0000A00E-0000-1000-8000-00805F9B34FB': Endpoint.stateInfo,
-          '0000A00F': Endpoint.headerWrite, // '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
+          '0000A00F-0000-1000-8000-00805F9B34FB': Endpoint.headerWrite,
           '0000A010-0000-1000-8000-00805F9B34FB': Endpoint.frameWrite,
           '0000A011-0000-1000-8000-00805F9B34FB': Endpoint.waterLevels,
           '0000A012-0000-1000-8000-00805F9B34FB': Endpoint.calibration
