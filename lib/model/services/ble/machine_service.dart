@@ -567,8 +567,7 @@ class EspressoMachineService extends ChangeNotifier {
             if (state.subState == "pour" &&
                 settingsService.targetHotWaterWeight > 1 &&
                 scaleService.weight + 1 > settingsService.targetHotWaterWeight) {
-              log.info(
-                  "Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
+              log.info("Water Weight reached ${shot.weight} > ${settingsService.targetHotWaterWeight}");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();
