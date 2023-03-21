@@ -367,7 +367,7 @@ class EspressoMachineService extends ChangeNotifier {
       log.info("Write Header: $header");
       await de1!.writeWithResult(Endpoint.headerWrite, header.bytes);
     } catch (ex) {
-      log.severe("Error writing header $profile");
+      log.severe("Error writing header $profile $ex");
       return "Error writing profile header $ex";
     }
 
@@ -380,7 +380,7 @@ class EspressoMachineService extends ChangeNotifier {
         await de1!.writeWithResult(Endpoint.frameWrite, bytes);
         fr.temp = oldTemp;
       } catch (ex) {
-        log.severe("Error writing frame $profile");
+        log.severe("Error writing frame $profile $ex");
         return "Error writing shot frame $fr";
       }
     }
@@ -390,7 +390,7 @@ class EspressoMachineService extends ChangeNotifier {
         log.info("Write ExtFrame: $exFrame");
         await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
       } catch (ex) {
-        log.severe("Error writing exframe $profile");
+        log.severe("Error writing exframe $profile $ex");
         return "Error writing ex shot frame $exFrame";
       }
     }

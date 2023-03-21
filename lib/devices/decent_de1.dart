@@ -746,12 +746,10 @@ class DE1 extends ChangeNotifier {
         var header =
             parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
         log.info("loaded header ${header.numberOfFrames} $header");
-        for (var f = 0; f < header.numberOfFrames; f++) {
-          var frame = parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-          log.info("loaded frame $frame");
-        }
-        // parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        // parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        // for (var f = 0; f < header.numberOfFrames; f++) {
+        //   var frame = parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        //   log.info("loaded frame $frame");
+        // }
 
         enableNotification(Endpoint.requestedState, requestedState);
 
@@ -763,8 +761,8 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.shotSettings, parseShotSetting);
 
         enableNotification(Endpoint.shotMapRequest, parseShotMapRequest);
-        enableNotification(Endpoint.headerWrite, parseShotHeaderSettings);
-        enableNotification(Endpoint.frameWrite, parseFrameWrite);
+        // enableNotification(Endpoint.headerWrite, parseShotHeaderSettings);
+        // enableNotification(Endpoint.frameWrite, parseFrameWrite);
 
         enableNotification(Endpoint.readFromMMR, mmrNotification);
         enableNotification(Endpoint.writeToMMR, mmrNotification);
