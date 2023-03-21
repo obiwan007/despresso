@@ -263,6 +263,8 @@ class ProfileService extends ChangeNotifier {
     Map<String, dynamic> json,
     De1ShotProfile profile,
   ) {
+    Logger log = Logger("shotjsonparser");
+
     De1ShotHeaderClass shotHeader = profile.shotHeader;
     List<De1ShotFrameClass> shotFrames = profile.shotFrames;
     List<De1ShotExtFrameClass> shotExframes = profile.shotExframes;
@@ -285,7 +287,13 @@ class ProfileService extends ChangeNotifier {
     shotHeader.notes = dynamic2String(json["notes"]);
     shotHeader.beverageType = dynamic2String(json["beverage_type"]);
     if (profile.id.isEmpty) {
-      profile.id = shotHeader.title;
+      profile.id = shotHeader.title
+          .replaceAll("\\/", "")
+          .replaceAll(" ", "")
+          .replaceAll("´", "")
+          .replaceAll("/", "")
+          .replaceAll(",", "");
+      log.info("Saving new profile id as ${profile.id}");
     }
     if (!json.containsKey("steps")) return false;
     for (Map<String, dynamic> frameData in json["steps"]) {
