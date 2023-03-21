@@ -350,43 +350,47 @@ class EspressoMachineService extends ChangeNotifier {
   void setShotHeader(De1ShotHeaderClass sh) {
     _state.shotHeader = sh;
     log.fine("Shotheader:$sh");
-    notifyListeners();
+    // notifyListeners();
   }
 
   void setShotFrame(De1ShotFrameClass sh) {
     _state.shotFrame = sh;
     log.fine("ShotFrame:$sh");
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<String> uploadProfile(De1ShotProfile profile) async {
-    log.fine("Save profile $profile");
+    log.info("Uploading profile to machine $profile");
     var header = profile.shotHeader;
 
     try {
-      log.fine("Write Header: $header");
+      log.info("Write Header: $header");
       await de1!.writeWithResult(Endpoint.headerWrite, header.bytes);
     } catch (ex) {
-      log.fine("Save profile $profile");
+      log.severe("Error writing header $profile $ex");
       return "Error writing profile header $ex";
     }
 
     for (var fr in profile.shotFrames) {
       try {
-        log.fine("Write Frame: $fr");
+        log.info("Write Frame: $fr");
+        var oldTemp = fr.temp;
         fr.temp += settingsService.targetTempCorrection;
         var bytes = De1ShotFrameClass.encodeDe1ShotFrame(fr);
         await de1!.writeWithResult(Endpoint.frameWrite, bytes);
+        fr.temp = oldTemp;
       } catch (ex) {
+        log.severe("Error writing frame $profile $ex");
         return "Error writing shot frame $fr";
       }
     }
 
     for (var exFrame in profile.shotExframes) {
       try {
-        log.fine("Write ExtFrame: $exFrame");
+        log.info("Write ExtFrame: $exFrame");
         await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
       } catch (ex) {
+        log.severe("Error writing exframe $profile $ex");
         return "Error writing ex shot frame $exFrame";
       }
     }
@@ -563,8 +567,7 @@ class EspressoMachineService extends ChangeNotifier {
             if (state.subState == "pour" &&
                 settingsService.targetHotWaterWeight > 1 &&
                 scaleService.weight + 1 > settingsService.targetHotWaterWeight) {
-              log.info(
-                  "Water Weight reached ${shot.weight} > ${profileService.currentProfile!.shotHeader.targetWeight}");
+              log.info("Water Weight reached ${shot.weight} > ${settingsService.targetHotWaterWeight}");
 
               if (settingsService.shotStopOnWeight) {
                 triggerEndOfShot();

@@ -7,9 +7,6 @@
         {
             "name": "despresso",
             "request": "launch",
-            "args": [
-                "--no-sound-null-safety",
-            ],
             "type": "dart"
         },
         {

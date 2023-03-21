@@ -131,13 +131,10 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
             break;
           case 11: // Heartbeat
             var weight = 0.0;
-            var time = 0.0;
 
             if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
-            if (payload[3] == 7) time = decodeTime(payload.sublist(3));
-            // scaleService.setWeight(weight);
+//             if (payload[3] == 7) time = decodeTime(payload.sublist(3));
             scaleService.setWeight(weight);
-            log.finer("Heartbeat Response: Weight: $weight Time: $time");
             break;
           default:
             log.fine('Acaia: 12 Subtype $subType');

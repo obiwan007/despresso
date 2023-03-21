@@ -56,11 +56,14 @@ class BLEService extends ChangeNotifier {
   // }
 
   void startScan() {
-    if (isScanning) return;
+    if (isScanning) {
+      log.info("Already scanning");
+      return;
+    }
+
     isScanning = true;
     // _devicesList.clear();
-    _subscription?.cancel();
-    notifyListeners();
+    if (_subscription != null) _subscription?.cancel();
 
     log.info('startScan');
     ScaleService scaleService = getIt<ScaleService>();
@@ -77,9 +80,10 @@ class BLEService extends ChangeNotifier {
       notifyListeners();
     });
 
-    Timer(const Duration(seconds: 10), () {
+    Timer(const Duration(seconds: 30), () {
       _subscription?.cancel();
       log.info('stoppedScan');
+      _subscription = null;
       isScanning = false;
       if (scaleService.state == ScaleState.connecting) {
         scaleService.setState(ScaleState.disconnected);

@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -343,24 +344,21 @@ class DE1 extends ChangeNotifier {
   }
 
   void enableNotification(Endpoint e, Function(ByteData) callback) {
-    log.info('enabeling Notification for $e (${getCharacteristic(e)})');
+    log.info('enableNotification for $e (${getCharacteristic(e)})');
 
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
     flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
       // Handle connection state updates
-
-      callback(ByteData.sublistView(Uint8List.fromList(data)));
+      try {
+        callback(ByteData.sublistView(Uint8List.fromList(data)));
+      } catch (err) {
+        log.info("Callback not catched $e $err");
+      }
     }, onError: (Object error) {
       // Handle a possible error
+      log.info("Error subscribing to $e $error");
     });
-    // return device.readCharacteristic(ServiceUUID, getCharacteristic(e));
-
-    // device
-    //     .monitorCharacteristic(ServiceUUID, getCharacteristic(e))
-    //     .listen((event) {
-    //   callback(ByteData.sublistView(event.value));
-    // });
   }
 
   void setIdleState() {
@@ -524,13 +522,15 @@ class DE1 extends ChangeNotifier {
     log.info("parseShotMapRequest received");
   }
 
-  void parseFrameWrite(ByteData r) {
+  De1ShotFrameClass parseFrameWrite(ByteData r) {
+    log.info("parseFrameWrite: decoding shot frame ${r.buffer.lengthInBytes}");
     var sh = De1ShotFrameClass();
     if (De1ShotFrameClass.decodeDe1ShotFrame(r, sh, true) == false) {
       log.info("Error decoding shot frame");
     }
 
     service.setShotFrame(sh);
+    return sh;
   }
 
   void parseShotSetting(ByteData r) {
@@ -743,10 +743,13 @@ class DE1 extends ChangeNotifier {
 
         // parseShotMapRequest(ByteData.sublistView(
         //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
-        parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
-        parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        var header =
+            parseShotHeaderSettings(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.headerWrite)))));
+        log.info("loaded header ${header.numberOfFrames} $header");
+        // for (var f = 0; f < header.numberOfFrames; f++) {
+        //   var frame = parseFrameWrite(ByteData.sublistView(Uint8List.fromList((await read(Endpoint.frameWrite)))));
+        //   log.info("loaded frame $frame");
+        // }
 
         enableNotification(Endpoint.requestedState, requestedState);
 
@@ -758,8 +761,8 @@ class DE1 extends ChangeNotifier {
         enableNotification(Endpoint.shotSettings, parseShotSetting);
 
         enableNotification(Endpoint.shotMapRequest, parseShotMapRequest);
-        enableNotification(Endpoint.headerWrite, parseShotHeaderSettings);
-        enableNotification(Endpoint.frameWrite, parseFrameWrite);
+        // enableNotification(Endpoint.headerWrite, parseShotHeaderSettings);
+        // enableNotification(Endpoint.frameWrite, parseFrameWrite);
 
         enableNotification(Endpoint.readFromMMR, mmrNotification);
         enableNotification(Endpoint.writeToMMR, mmrNotification);
@@ -785,6 +788,9 @@ class DE1 extends ChangeNotifier {
           if (_settings.launchWake) {
             switchOn();
           }
+
+          var coffeeService = getIt<CoffeeService>();
+          coffeeService.setSelectedRecipe(_settings.selectedRecipe);
 
           log.info(
               "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");

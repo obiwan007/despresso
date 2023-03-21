@@ -27,7 +27,7 @@ class Recipe {
   /// For added water
   double weightWater = 120;
   bool useWater = true;
-  double tempWater = 120;
+  double tempWater = 85;
   double timeWater = 20;
 
   // Steaming milk for recipe
