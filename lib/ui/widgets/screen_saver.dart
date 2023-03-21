@@ -115,8 +115,8 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
   }
 
   _getListOfImages() async {
-    var saver = await ScreenSaver.getDirectory();
     try {
+      var saver = await ScreenSaver.getDirectory();
       var entities = await saver.list().toList();
       _assetList = entities.map((e) => e.path).toList();
 
