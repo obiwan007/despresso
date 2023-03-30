@@ -4,7 +4,7 @@
 // With a Dart package, run `dart run build_runner build`.
 // See also https://docs.objectbox.io/getting-started#generate-objectbox-code
 
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, depend_on_referenced_packages
 // coverage:ignore-file
 
 import 'dart:typed_data';
@@ -774,8 +774,8 @@ ModelDefinition getObjectBoxModel() {
           object.recipe.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
           object.recipe.attach(store);
-          InternalToManyAccess.setRelInfo(object.shotstates, store,
-              RelInfo<Shot>.toMany(1, object.id), store.box<Shot>());
+          InternalToManyAccess.setRelInfo<Shot>(
+              object.shotstates, store, RelInfo<Shot>.toMany(1, object.id));
           return object;
         }),
     Coffee: EntityDefinition<Coffee>(
@@ -894,12 +894,11 @@ ModelDefinition getObjectBoxModel() {
                 .vTableGet(buffer, rootOffset, 12, '')
             ..homepage = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 14, '');
-          InternalToManyAccess.setRelInfo(
+          InternalToManyAccess.setRelInfo<Roaster>(
               object.coffees,
               store,
               RelInfo<Coffee>.toOneBacklink(
-                  3, object.id, (Coffee srcObject) => srcObject.roaster),
-              store.box<Roaster>());
+                  3, object.id, (Coffee srcObject) => srcObject.roaster));
           return object;
         }),
     ShotState: EntityDefinition<ShotState>(

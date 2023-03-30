@@ -58,7 +58,6 @@ Future<void> main() async {
           options.tracesSampleRate = 1.0;
           options.enableUserInteractionTracing = true;
           options.attachScreenshot = true;
-          options.enableOutOfMemoryTracking = true;
           options.addIntegration(LoggingIntegration());
         },
         appRunner: () => runApp(SentryUserInteractionWidget(child: MyApp())),
