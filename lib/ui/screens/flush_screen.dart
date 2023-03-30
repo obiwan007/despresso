@@ -18,7 +18,7 @@ class FlushScreen extends StatefulWidget {
 
 class FlushScreenState extends State<FlushScreen> {
   late EspressoMachineService machineService;
-  late ScaleService scaleService;
+
   late SettingsService settings;
 
   List<ShotState> dataPoints = [];
@@ -32,18 +32,20 @@ class FlushScreenState extends State<FlushScreen> {
     settings = getIt<SettingsService>();
 
     machineService.addListener(machineStateListener);
+    settings.addListener(machineStateListener);
 
     // Scale services is consumed as stream
-    scaleService = getIt<ScaleService>();
   }
 
   @override
   void dispose() {
     super.dispose();
     machineService.removeListener(machineStateListener);
+    settings.removeListener(machineStateListener);
   }
 
   machineStateListener() {
+    debugPrint("targetFlushTime t:${settings.targetFlushTime}");
     setState(() => {currentState = machineService.state.coffeeState});
     // machineService.de1?.setIdleState();
   }
@@ -70,14 +72,15 @@ class FlushScreenState extends State<FlushScreen> {
                             Text("Timer ${settings.targetFlushTime} s", style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetFlushTime.toDouble(),
-                              max: 100,
-                              min: 1,
-                              divisions: 100,
+                              max: 60,
+                              min: 0,
+                              divisions: 60,
                               label: "${settings.targetFlushTime} s",
                               onChanged: (double value) {
                                 setState(() {
-                                  settings.targetFlushTime = value.toInt();
-                                  machineService.updateSettings();
+                                  settings.targetFlushTime = value;
+                                  settings.notifyDelayed();
+                                  // machineService.updateSettings();
                                 });
                               },
                             ),

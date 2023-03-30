@@ -318,6 +318,12 @@ class DE1 extends ChangeNotifier {
 
   late SettingsService _settings;
 
+  bool ghcLEDPresent = false;
+
+  bool ghcTouchPresent = false;
+
+  bool ghcActive = false;
+
   DE1(this.device) {
     // device
     //     .observeConnectionState(
@@ -573,7 +579,13 @@ class DE1 extends ChangeNotifier {
   Future<int> getGhcInfo() async {
     log.info('getGhcInfo');
     var data = getInt(await mmrRead(mmrAddrLookup[MMRAddrEnum.GHCInfo]!, 0));
-    log.info("ghc Info: ${toHexString(data)}");
+// GHC Info Bitmask, 0x1 = GHC LED Controller Present, 0x2 = GHC Touch Controller_Present, 0x4 GHC Active, 0x80000000 = Factory Mode
+
+    ghcLEDPresent = data & 0x1 == 0x1;
+    ghcTouchPresent = data & 0x2 == 0x2;
+    ghcActive = data & 0x4 == 0x4;
+
+    log.info("ghc Info: LED:$ghcLEDPresent Touch:$ghcTouchPresent Active:$ghcActive ${toHexString(data)}");
     return data;
   }
 

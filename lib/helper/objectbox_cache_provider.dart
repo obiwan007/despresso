@@ -37,6 +37,7 @@ class ObjectBoxPreferenceCache extends CacheProvider {
     WidgetsFlutterBinding.ensureInitialized();
     _objectBox = getIt<ObjectBox>();
     settingsBox = _objectBox!.store.box<SettingsEntry>();
+    getKeys();
   }
 
   Set get keys => getKeys();
@@ -125,7 +126,7 @@ class ObjectBoxPreferenceCache extends CacheProvider {
   @override
   Set getKeys() {
     var all = settingsBox.getAll();
-    print("Settings $all");
+    debugPrint("All SettingKeys $all");
     return Set<String>.from(all.map(
       (e) => e.key,
     ));

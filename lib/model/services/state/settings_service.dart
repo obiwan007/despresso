@@ -60,6 +60,7 @@ enum SettingKeys {
   steamHeaterOff,
   startCounter,
   launchWake,
+  showFlushScreen,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -169,8 +170,8 @@ class SettingsService extends ChangeNotifier {
   set targetEspressoWeightTimeAdjust(value) =>
       Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
-  int get targetFlushTime => Settings.getValue<int>(SettingKeys.targetFlushTime.name) ?? 3;
-  set targetFlushTime(value) => Settings.setValue<int>(SettingKeys.targetFlushTime.name, value);
+  double get targetFlushTime => Settings.getValue<double>(SettingKeys.targetFlushTime.name) ?? 3.0;
+  set targetFlushTime(value) => Settings.setValue<double>(SettingKeys.targetFlushTime.name, value);
 
   int get targetGroupTemp => Settings.getValue<int>(SettingKeys.targetGroupTemp.name) ?? 98;
   set targetGroupTemp(value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
@@ -206,6 +207,9 @@ class SettingsService extends ChangeNotifier {
 
   int get startCounter => Settings.getValue<int>(SettingKeys.startCounter.name) ?? 0;
   set startCounter(value) => Settings.setValue<int>(SettingKeys.startCounter.name, value);
+
+  bool get showFlushScreen => Settings.getValue<bool>(SettingKeys.showFlushScreen.name) ?? false;
+  set showFlushScreen(value) => Settings.setValue<bool>(SettingKeys.showFlushScreen.name, value);
 
   void notifyDelayed() {
     Future.delayed(
