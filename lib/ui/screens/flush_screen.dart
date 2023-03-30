@@ -45,7 +45,6 @@ class FlushScreenState extends State<FlushScreen> {
   }
 
   machineStateListener() {
-    debugPrint("targetFlushTime t:${settings.targetFlushTime}");
     setState(() => {currentState = machineService.state.coffeeState});
     // machineService.de1?.setIdleState();
   }
@@ -80,7 +79,6 @@ class FlushScreenState extends State<FlushScreen> {
                                 setState(() {
                                   settings.targetFlushTime = value;
                                   settings.notifyDelayed();
-                                  // machineService.updateSettings();
                                 });
                               },
                             ),

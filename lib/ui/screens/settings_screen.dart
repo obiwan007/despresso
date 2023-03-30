@@ -234,10 +234,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     max: 60,
                     step: 1.0,
                     leading: const Icon(Icons.timer),
-                    onChange: (value) {
-                      debugPrint('targetFlushTime: $value');
-                      //settingsService.targetFlushTime = value;
-                    },
+                    onChange: (value) {},
                   ),
                 ],
               ),
