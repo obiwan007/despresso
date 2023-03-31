@@ -363,7 +363,11 @@ class EspressoMachineService extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<String> uploadProfile(De1ShotProfile profile) async {
+  Future<String> uploadProfile(De1ShotProfile profileToBeUploaded) async {
+    if (de1 == null) {
+      return Future.error("No de1 connected");
+    }
+    var profile = profileToBeUploaded.clone();
     log.info("Uploading profile to machine $profile");
     var header = profile.shotHeader;
 

@@ -211,9 +211,13 @@ class CoffeeService extends ChangeNotifier {
     settings.targetTempCorrection = recipe.adjustedTemp;
 
     profileService.setProfileFromId(recipe.profileId);
-    await machineService.uploadProfile(profileService.currentProfile!);
+    try {
+      await machineService.uploadProfile(profileService.currentProfile!);
+    } catch (e) {
+      log.severe("Profile could not be sent: $e");
+    }
 
-    settings.notifyListeners;
+    settings.notifyListeners();
     notifyListeners();
   }
 

@@ -307,10 +307,16 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                           icon: const Icon(Icons.add),
                                           onPressed: () async {
                                             var messenger = ScaffoldMessenger.of(context);
-                                            var result = await machineService.uploadProfile(_selectedProfile!);
+                                            Text result;
+                                            try {
+                                              var r = await machineService.uploadProfile(_selectedProfile!);
+                                              result = Text('Profile is selected: $r');
+                                            } catch (e) {
+                                              result = Text('Profile is not selected: $e');
+                                            }
 
                                             var snackBar = SnackBar(
-                                                content: Text('Profile is selected: $result'),
+                                                content: result,
                                                 action: SnackBarAction(
                                                   label: 'Ok',
                                                   onPressed: () {
