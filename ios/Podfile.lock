@@ -50,10 +50,10 @@ PODS:
   - FMDB/standard (2.7.5)
   - network_info_plus (0.0.1):
     - Flutter
-  - ObjectBox (1.8.1-rc)
+  - ObjectBox (1.8.1)
   - objectbox_flutter_libs (0.0.1):
     - Flutter
-    - ObjectBox (= 1.8.1-rc)
+    - ObjectBox (= 1.8.1)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -61,21 +61,23 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.0.4):
     - Flutter
-  - Protobuf (3.21.12)
+  - Protobuf (3.22.1)
   - reactive_ble_mobile (0.0.1):
     - Flutter
     - Protobuf (~> 3.5)
     - SwiftProtobuf (~> 1.0)
   - screen_brightness_ios (0.1.0):
     - Flutter
-  - SDWebImage (5.15.2):
-    - SDWebImage/Core (= 5.15.2)
-  - SDWebImage/Core (5.15.2)
-  - Sentry/HybridSDK (7.31.5)
+  - SDWebImage (5.15.5):
+    - SDWebImage/Core (= 5.15.5)
+  - SDWebImage/Core (5.15.5)
+  - Sentry/HybridSDK (8.3.3):
+    - SentryPrivate (= 8.3.3)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 7.31.5)
+    - Sentry/HybridSDK (= 8.3.3)
+  - SentryPrivate (8.3.3)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -84,7 +86,7 @@ PODS:
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftProtobuf (1.20.3)
+  - SwiftProtobuf (1.21.0)
   - SwiftyGif (5.4.4)
   - url_launcher_ios (0.0.1):
     - Flutter
@@ -123,6 +125,7 @@ SPEC REPOS:
     - Protobuf
     - SDWebImage
     - Sentry
+    - SentryPrivate
     - SwiftProtobuf
     - SwiftyGif
     - ZIPFoundation
@@ -181,26 +184,27 @@ SPEC CHECKSUMS:
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
-  ObjectBox: 7615cc462f2976cb45127d301a17cb473edf3f9e
-  objectbox_flutter_libs: 55835e03ff76bf9d5ce0a41a2ef3902d2e8c1f20
+  ObjectBox: a7900d5335218cd437cbc080b7ccc38a5211f7b4
+  objectbox_flutter_libs: 61d74196d924fbc773da5f5757d1e9fab7b3cc78
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
-  path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
+  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  Protobuf: 120350fc38646e2dedc26f49ecba778184ea1de2
+  Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
   reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
   screen_brightness_ios: 715ca807df953bf676d339f11464e438143ee625
-  SDWebImage: 8ab87d4b3e5cc4927bd47f78db6ceb0b94442577
-  Sentry: 4c9babff9034785067c896fd580b1f7de44da020
-  sentry_flutter: b10ae7a5ddcbc7f04648eeb2672b5747230172f1
+  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
+  Sentry: 8ffc397d98fe58d693e73959b26ed0eaee55646a
+  sentry_flutter: 5028afacfa875785cb0e3682aece171fcd9dc0d5
+  SentryPrivate: bf776a47a131648f5023097215987b40fbd47025
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
-  shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
+  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  SwiftProtobuf: b02b5075dcf60c9f5f403000b3b0c202a11b6ae1
+  SwiftProtobuf: afced68785854575756db965e9da52bbf3dc45e7
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
-  url_launcher_ios: ae1517e5e344f5544fb090b079e11f399dfbe4d2
+  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   ZIPFoundation: ae5b4b813d216d3bf0a148773267fff14bd51d37
 
-PODFILE CHECKSUM: 775997f741c536251164e3eacf6e34abf2eb7a17
+PODFILE CHECKSUM: 57c8aed26fba39d3ec9424816221f294a07c58eb
 
 COCOAPODS: 1.11.3

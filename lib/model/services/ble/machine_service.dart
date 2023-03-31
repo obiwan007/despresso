@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/decent_de1.dart';
@@ -113,6 +114,9 @@ class EspressoMachineService extends ChangeNotifier {
   final List<int> _waterAverager = [];
 
   bool _delayedStopActive = false;
+
+  int flushCounter = 0;
+  DateTime lastFlushTime = DateTime.now();
 
   Stream<ShotState> get streamShotState => _streamShotState;
 
@@ -499,7 +503,13 @@ class EspressoMachineService extends ChangeNotifier {
       log.fine("basetime $baseTime");
     }
     if (state.coffeeState == EspressoMachineState.flush && lastSubstate != state.subState && state.subState == "pour") {
-      log.info('Startet flush pour');
+      flushCounter++;
+      // If second flush was done, reset to first flush
+      if (flushCounter > 2) flushCounter = 1;
+      // Reset to default flush after 30 sec.
+      if (DateTime.now().difference(lastFlushTime).inSeconds > 30) flushCounter = 1;
+
+      log.info('Startet flush pour $flushCounter ${DateTime.now().difference(lastFlushTime).inSeconds}');
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       baseTimeDate = DateTime.now();
       log.fine("basetime $baseTime");
@@ -594,11 +604,12 @@ class EspressoMachineService extends ChangeNotifier {
 
           break;
         case EspressoMachineState.flush:
-          if (state.subState == "pour" &&
-              settingsService.targetFlushTime > 1 &&
-              timer.inSeconds > settingsService.targetFlushTime) {
-            log.info("Flush Timer reached ${timer.inSeconds} > ${settingsService.targetFlushTime}");
-
+          var flushTime = flushCounter == 1 ? settingsService.targetFlushTime : settingsService.targetFlushTime2;
+          bool reachedGoal = state.subState == "pour" && flushTime > 1.0 && timer.inSeconds.toDouble() > flushTime;
+          log.info("Flush Timer $reachedGoal ${timer.inMilliseconds / 1000.0} > $flushTime");
+          if (reachedGoal) {
+            log.info("Flush Timer reached ${timer.inSeconds} > $flushTime");
+            lastFlushTime = DateTime.now();
             triggerEndOfShot();
           }
 
@@ -633,7 +644,7 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   void triggerEndOfShot() {
-    log.info("Idle mode initiated because of weight");
+    log.info("Idle mode initiated because of goal reached");
 
     de1?.requestState(De1StateEnum.idle);
     // Future.delayed(const Duration(milliseconds: 5000), () {
@@ -680,6 +691,20 @@ class EspressoMachineService extends ChangeNotifier {
     if (de1 == null) return;
 
     await de1!.updateSettings();
+    // var bytes = encodeDe1OtherSetn();
+    // try {
+    //   log.info("Write Shot Settings: $bytes");
+    //   await de1?.writeWithResult(Endpoint.shotSettings, bytes);
+    // } catch (ex) {
+    //   log.severe("Error writing shot settings $bytes");
+    // }
+    notifyListeners();
+  }
+
+  Future<void> updateFlush() async {
+    if (de1 == null) return;
+
+    await de1!.setFlushTimeout(max(settingsService.targetFlushTime, settingsService.targetFlushTime2));
     // var bytes = encodeDe1OtherSetn();
     // try {
     //   log.info("Write Shot Settings: $bytes");

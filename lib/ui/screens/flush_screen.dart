@@ -18,7 +18,7 @@ class FlushScreen extends StatefulWidget {
 
 class FlushScreenState extends State<FlushScreen> {
   late EspressoMachineService machineService;
-  late ScaleService scaleService;
+
   late SettingsService settings;
 
   List<ShotState> dataPoints = [];
@@ -32,15 +32,16 @@ class FlushScreenState extends State<FlushScreen> {
     settings = getIt<SettingsService>();
 
     machineService.addListener(machineStateListener);
+    settings.addListener(machineStateListener);
 
     // Scale services is consumed as stream
-    scaleService = getIt<ScaleService>();
   }
 
   @override
   void dispose() {
     super.dispose();
     machineService.removeListener(machineStateListener);
+    settings.removeListener(machineStateListener);
   }
 
   machineStateListener() {
@@ -67,17 +68,32 @@ class FlushScreenState extends State<FlushScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Timer ${settings.targetFlushTime} s", style: theme.TextStyles.tabHeading),
+                            Text("Timer ${settings.targetFlushTime.toInt()} s", style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetFlushTime.toDouble(),
-                              max: 100,
-                              min: 1,
-                              divisions: 100,
-                              label: "${settings.targetFlushTime} s",
+                              max: 60,
+                              min: 0,
+                              divisions: 60,
+                              label: "${settings.targetFlushTime.toInt()} s",
                               onChanged: (double value) {
                                 setState(() {
-                                  settings.targetFlushTime = value.toInt();
-                                  machineService.updateSettings();
+                                  settings.targetFlushTime = value;
+                                  settings.notifyDelayed();
+                                });
+                              },
+                            ),
+                            Text("Second Timer ${settings.targetFlushTime2.toInt()} s",
+                                style: theme.TextStyles.tabHeading),
+                            Slider(
+                              value: settings.targetFlushTime2.toDouble(),
+                              max: 60,
+                              min: 0,
+                              divisions: 60,
+                              label: "${settings.targetFlushTime2.toInt()} s",
+                              onChanged: (double value) {
+                                setState(() {
+                                  settings.targetFlushTime2 = value;
+                                  settings.notifyDelayed();
                                 });
                               },
                             ),
@@ -97,7 +113,10 @@ class FlushScreenState extends State<FlushScreen> {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 15,
                                     value: machineService.state.coffeeState == EspressoMachineState.flush
-                                        ? machineService.timer.inSeconds / settings.targetFlushTime
+                                        ? machineService.timer.inSeconds.toDouble() /
+                                            (machineService.flushCounter == 1
+                                                ? settings.targetFlushTime
+                                                : settings.targetFlushTime2)
                                         : 0,
                                   ),
                                 ),

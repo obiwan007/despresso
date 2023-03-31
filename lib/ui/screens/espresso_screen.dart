@@ -348,7 +348,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           createChartLineDatapoints(data["weight"]!, 2, theme.ThemeColors.weightColor, null),
           // createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor, null),
           // createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor, null),
-          createChartLineDatapoints(data["weightApprox"]!, 2, Colors.red, [5, 5]),
+          createChartLineDatapoints(data["weightApprox"]!, 2, theme.ThemeColors.weightColor, [5, 5]),
         ],
         titlesData: FlTitlesData(
           topTitles: AxisTitles(

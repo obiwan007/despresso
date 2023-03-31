@@ -60,7 +60,9 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   void initState() {
     super.initState();
     _settings = getIt<SettingsService>();
-    _tabController = TabController(length: _settings.steamHeaterOff ? 3 : 4, vsync: this, initialIndex: 1);
+    var l = _settings.steamHeaterOff ? 3 : 4;
+    if (_settings.showFlushScreen) l++;
+    _tabController = TabController(length: l, vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -145,7 +147,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                   const EspressoScreen(),
                   if (!_settings.steamHeaterOff) const SteamScreen(),
                   const WaterScreen(),
-                  // const FlushScreen(),
+                  if (_settings.showFlushScreen) const FlushScreen(),
                 ],
               ),
             ),
@@ -223,7 +225,10 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
-                ).then((value) => _screensaver.resume());
+                ).then((value) {
+                  _screensaver.resume();
+                  machineService.updateFlush();
+                });
                 // Then close the drawer
               },
             ),
@@ -340,6 +345,11 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             icon: Icon(Icons.water_drop),
             child: Text("Water"),
           ),
+          if (_settings.showFlushScreen)
+            const Tab(
+              icon: Icon(Icons.water),
+              child: Text("Flush"),
+            ),
         ],
       ),
     );
@@ -364,6 +374,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
 
   void updatedSettings() {
     var newTabCount = _settings.steamHeaterOff ? 3 : 4;
+    if (_settings.showFlushScreen) newTabCount++;
     if (_tabController.length != newTabCount) {
       log.info("New tab size: $newTabCount");
       _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 1);
@@ -411,9 +422,9 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
           case EspressoMachineState.steam:
             if (!_settings.steamHeaterOff) currentPageIndex = 2;
             break;
-          // case EspressoMachineState.flush:
-          //   currentPageIndex = 4 + offset;
-          //   break;
+          case EspressoMachineState.flush:
+            if (_settings.showFlushScreen) currentPageIndex = 4 + offset;
+            break;
           case EspressoMachineState.water:
             currentPageIndex = 3 + offset;
             break;

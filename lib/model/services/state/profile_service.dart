@@ -144,6 +144,10 @@ class ProfileService extends ChangeNotifier {
   Future<List<FileSystemEntity>> getSavedProfileFiles() async {
     final dir = "${(await getApplicationDocumentsDirectory()).path}/profiles";
 
+    final Directory appDocDirFolder = Directory(dir);
+    if (!appDocDirFolder.existsSync()) {
+      appDocDirFolder.create(recursive: true);
+    }
     String pdfDirectory = '$dir/';
 
     final myDir = Directory(pdfDirectory);

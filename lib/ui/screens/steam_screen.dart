@@ -173,7 +173,7 @@ class SteamScreenState extends State<SteamScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Timer ${settings.targetSteamLength} s", style: theme.TextStyles.tabHeading),
+                            Text("Timer ${settings.targetSteamLength.toInt()} s", style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetSteamLength.toDouble(),
                               max: 200,
