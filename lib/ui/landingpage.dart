@@ -225,7 +225,10 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
-                ).then((value) => _screensaver.resume());
+                ).then((value) {
+                  _screensaver.resume();
+                  machineService.updateFlush();
+                });
                 // Then close the drawer
               },
             ),

@@ -223,13 +223,22 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     disabledLabel: 'Hide',
                     onChange: (value) {
                       settingsService.notifyDelayed();
-                      machineService.updateSettings();
                     },
                   ),
                   SliderSettingsTile(
                     title: 'Flush timer [s]',
                     settingKey: SettingKeys.targetFlushTime.name,
                     defaultValue: settingsService.targetFlushTime.toDouble(),
+                    min: 1.00,
+                    max: 60,
+                    step: 1.0,
+                    leading: const Icon(Icons.timer),
+                    onChange: (value) {},
+                  ),
+                  SliderSettingsTile(
+                    title: 'Second Flush timer [s]',
+                    settingKey: SettingKeys.targetFlushTime2.name,
+                    defaultValue: settingsService.targetFlushTime2.toDouble(),
                     min: 1.00,
                     max: 60,
                     step: 1.0,

@@ -68,16 +68,31 @@ class FlushScreenState extends State<FlushScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Timer ${settings.targetFlushTime} s", style: theme.TextStyles.tabHeading),
+                            Text("Timer ${settings.targetFlushTime.toInt()} s", style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetFlushTime.toDouble(),
                               max: 60,
                               min: 0,
                               divisions: 60,
-                              label: "${settings.targetFlushTime} s",
+                              label: "${settings.targetFlushTime.toInt()} s",
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetFlushTime = value;
+                                  settings.notifyDelayed();
+                                });
+                              },
+                            ),
+                            Text("Second Timer ${settings.targetFlushTime2.toInt()} s",
+                                style: theme.TextStyles.tabHeading),
+                            Slider(
+                              value: settings.targetFlushTime2.toDouble(),
+                              max: 60,
+                              min: 0,
+                              divisions: 60,
+                              label: "${settings.targetFlushTime2.toInt()} s",
+                              onChanged: (double value) {
+                                setState(() {
+                                  settings.targetFlushTime2 = value;
                                   settings.notifyDelayed();
                                 });
                               },
@@ -98,7 +113,10 @@ class FlushScreenState extends State<FlushScreen> {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 15,
                                     value: machineService.state.coffeeState == EspressoMachineState.flush
-                                        ? machineService.timer.inSeconds / settings.targetFlushTime
+                                        ? machineService.timer.inSeconds.toDouble() /
+                                            (machineService.flushCounter == 1
+                                                ? settings.targetFlushTime
+                                                : settings.targetFlushTime2)
                                         : 0,
                                   ),
                                 ),

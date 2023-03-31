@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io' show Platform;
+import 'dart:math';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -367,23 +368,24 @@ class DE1 extends ChangeNotifier {
     });
   }
 
-  void setIdleState() {
-    requestState(De1StateEnum.idle);
+  Future<void> setIdleState() {
     log.info('idleState Requested');
+    return requestState(De1StateEnum.idle);
   }
 
-  void switchOn() {
-    requestState(De1StateEnum.idle);
+  Future<void> switchOn() {
     log.info('SwitchOn Requested');
+    return requestState(De1StateEnum.idle);
   }
 
-  void switchOff() {
-    requestState(De1StateEnum.sleep);
+  Future<void> switchOff() {
     log.info('SwitchOff Requested');
+    return requestState(De1StateEnum.sleep);
   }
 
-  void requestState(De1StateEnum state) {
-    write(Endpoint.requestedState, Uint8List.fromList([state.index]));
+  Future<void> requestState(De1StateEnum state) {
+    log.info("RequestState $state");
+    return write(Endpoint.requestedState, Uint8List.fromList([state.index]));
   }
 
   Future<List<int>> read(Endpoint e) {
@@ -394,10 +396,10 @@ class DE1 extends ChangeNotifier {
     return data;
   }
 
-  void write(Endpoint e, Uint8List data) {
+  Future<void> write(Endpoint e, Uint8List data) {
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
+    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
@@ -621,25 +623,34 @@ class DE1 extends ChangeNotifier {
     return data / 1000;
   }
 
-  void setFlowEstimation(double newFlow) {
+  Future<void> setFlowEstimation(double newFlow) {
     ByteData bytes = ByteData(4);
     var data = (double.parse(newFlow.toStringAsFixed(2)) * 1000).toInt();
     bytes.setUint32(0, data, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.CalFlowEst]!, bytes.buffer.asUint8List());
+
     steamFlow = newFlow;
+    return mmrWrite(mmrAddrLookup[MMRAddrEnum.CalFlowEst]!, bytes.buffer.asUint8List());
   }
 
-  void setFanThreshhold(int t) {
+  Future<void> setFlushTimeout(double newTimeout) {
+    ByteData bytes = ByteData(4);
+    var data = (newTimeout * 10).toInt();
+    bytes.setUint32(0, data, Endian.little);
+    return mmrWrite(mmrAddrLookup[MMRAddrEnum.FlushTimeout]!, bytes.buffer.asUint8List());
+  }
+
+  Future<void> setFanThreshhold(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
+    return mmrWrite(mmrAddrLookup[MMRAddrEnum.FanThreshold]!, bytes.buffer.asUint8List());
   }
 
-  void setSteamFlow(double newFlow) {
+  Future<void> setSteamFlow(double newFlow) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, (newFlow * 100).toInt(), Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.TargetSteamFlow]!, bytes.buffer.asUint8List());
+
     steamFlow = newFlow;
+    return mmrWrite(mmrAddrLookup[MMRAddrEnum.TargetSteamFlow]!, bytes.buffer.asUint8List());
   }
 
   Future<int> getUsbChargerMode() async {
@@ -649,18 +660,20 @@ class DE1 extends ChangeNotifier {
     return data;
   }
 
-  void setUsbChargerMode(int t) {
+  Future<void> setUsbChargerMode(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, bytes.buffer.asUint8List());
+
     usbChargerMode = t;
+    return mmrWrite(mmrAddrLookup[MMRAddrEnum.AllowUSBCharging]!, bytes.buffer.asUint8List());
   }
 
-  void setSteamPurgeMode(int t) {
+  Future<void> setSteamPurgeMode(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
-    mmrWrite(mmrAddrLookup[MMRAddrEnum.SteamPurgeMode]!, bytes.buffer.asUint8List());
+
     steamPurgeMode = t;
+    return mmrWrite(mmrAddrLookup[MMRAddrEnum.SteamPurgeMode]!, bytes.buffer.asUint8List());
   }
 
   Future<int> getSteamPurgeMode() async {
@@ -702,7 +715,7 @@ class DE1 extends ChangeNotifier {
       log.fine("MMR READ: ${buffer.map(toHexString).toList()}");
     }
 
-    write(Endpoint.readFromMMR, Uint8List.fromList(buffer));
+    await write(Endpoint.readFromMMR, Uint8List.fromList(buffer));
 
     var result = await _streamMMR.firstWhere(
       (element) {
@@ -720,11 +733,11 @@ class DE1 extends ChangeNotifier {
     return result;
   }
 
-  void mmrWrite(int address, List<int> bufferData) {
+  Future<void> mmrWrite(int address, List<int> bufferData) {
     log.info("MMR WRITE REQUEST");
     if (!mmrAvailable) {
       log.info('Unable to mmr_read because MMR not available');
-      return;
+      return Future.error("No MMR");
     }
 
     ByteData bytes = ByteData(20);
@@ -736,7 +749,7 @@ class DE1 extends ChangeNotifier {
       buffer[i + 4] = bufferData[i++];
     }
     log.info("MMR WRITE: ${buffer.map(toHexString).toList()}");
-    write(Endpoint.writeToMMR, Uint8List.fromList(buffer));
+    return write(Endpoint.writeToMMR, Uint8List.fromList(buffer));
   }
 
   Future<void> _onStateChange(DeviceConnectionState state) async {
@@ -797,12 +810,14 @@ class DE1 extends ChangeNotifier {
 
           flowEstimation = await getFlowEstimation();
 
+          await setFlushTimeout(max(_settings.targetFlushTime, _settings.targetFlushTime2));
+
           if (_settings.launchWake) {
-            switchOn();
+            await switchOn();
           }
 
           var coffeeService = getIt<CoffeeService>();
-          coffeeService.setSelectedRecipe(_settings.selectedRecipe);
+          await coffeeService.setSelectedRecipe(_settings.selectedRecipe);
 
           log.info(
               "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");

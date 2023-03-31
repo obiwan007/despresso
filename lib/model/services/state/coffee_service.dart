@@ -211,7 +211,7 @@ class CoffeeService extends ChangeNotifier {
     settings.targetTempCorrection = recipe.adjustedTemp;
 
     profileService.setProfileFromId(recipe.profileId);
-    machineService.uploadProfile(profileService.currentProfile!);
+    await machineService.uploadProfile(profileService.currentProfile!);
 
     settings.notifyListeners;
     notifyListeners();
