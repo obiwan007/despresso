@@ -79,7 +79,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   void dispose() {
     super.dispose();
 
-    if (widget.saveToRecipe) coffeeService.setSelectedRecipeProfile(_selectedProfile!.id);
+    if (widget.saveToRecipe) coffeeService.setSelectedRecipeProfile(_selectedProfile?.id ?? "Default");
 
     profileService.removeListener(profileListener);
     log.info('Disposed profile');
@@ -122,7 +122,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         null ==
             items.firstWhereOrNull(
               (element) {
-                return element.value!.id == _selectedProfile!.id;
+                return element.value!.id == (_selectedProfile?.id ?? "Default");
               },
             )) {
       if (items.isNotEmpty) _selectedProfile = items[0].value;
@@ -185,6 +185,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             child: const Icon(Icons.edit),
             onPressed: () {
               setState(() {
+                log.info("Edit profile $_selectedProfile");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfilesEditScreen(_selectedProfile!.clone())),
@@ -471,6 +472,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
   _onShare(BuildContext context) async {
     // _onShare method:
+    log.info("Share profile $_selectedProfile");
     final box = context.findRenderObject() as RenderBox?;
     // var profileAsString = jsonEncode(_selectedProfile!.toJson());
     var encoder = const JsonEncoder.withIndent("  ");
