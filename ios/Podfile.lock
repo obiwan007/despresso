@@ -187,7 +187,7 @@ SPEC CHECKSUMS:
   ObjectBox: a7900d5335218cd437cbc080b7ccc38a5211f7b4
   objectbox_flutter_libs: 61d74196d924fbc773da5f5757d1e9fab7b3cc78
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
-  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
+  path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
   reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
@@ -197,11 +197,11 @@ SPEC CHECKSUMS:
   sentry_flutter: 5028afacfa875785cb0e3682aece171fcd9dc0d5
   SentryPrivate: bf776a47a131648f5023097215987b40fbd47025
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
-  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  shared_preferences_foundation: 297b3ebca31b34ec92be11acd7fb0ba932c822ca
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   SwiftProtobuf: afced68785854575756db965e9da52bbf3dc45e7
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
+  url_launcher_ios: ae1517e5e344f5544fb090b079e11f399dfbe4d2
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   ZIPFoundation: ae5b4b813d216d3bf0a148773267fff14bd51d37
 
