@@ -76,9 +76,17 @@ lane :beta do
 
     # sh("bash", "./configsentry.sh")
 
-    gradle(task: "clean bundleRelease")    
+    gradle(task: "clean bundleRelease")
+        
     
     upload_to_play_store(aab: '../build/app/outputs/bundle/release/app-release.aab', track: 'alpha')
+
+    sentry_upload_dif(
+        auth_token: ENV['SENTRY_AUTH_TOKEN'],
+        org_slug: 'mmmediacom',
+        project_slug: 'despresso',
+        include_sources: true, # Optional. For source context.
+    )
     # sh("mv ../../lib/main.dart-e ../../lib/main.dart")
     # supply(track: 'Closed Beta', version_code: 2)    
     #     
