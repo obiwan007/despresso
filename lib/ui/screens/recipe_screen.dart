@@ -460,7 +460,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                       widget.settingsService.targetEspressoWeight = value;
                                     }
                                   },
-                                  max: 120.0,
+                                  min: 0.0,
+                                  max: 300.0,
                                   value: widget.settingsService.targetEspressoWeight,
                                   decimals: 1,
                                   step: 0.5,
