@@ -12,6 +12,14 @@ class Line {
   double m;
   double b;
   Line(this.m, this.b);
+  static Line limit(Line l) {
+    double b = max(-100, min(l.b, 100));
+    double m = max(-10, min(l.m, 10));
+    if (m == 0.0) {
+      m = 0.001;
+    }
+    return Line(m, b);
+  }
 }
 
 // Define a function to calculate linear regression

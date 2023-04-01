@@ -778,8 +778,8 @@ class EspressoMachineService extends ChangeNotifier {
       },
     ).toList();
     if (weightData.isNotEmpty) {
-      var regressionData = linearRegression(weightData);
-      log.info("Regression: ${regressionData.m} ${regressionData.b}");
+      var regressionData = Line.limit(linearRegression(weightData));
+      log.info("Regression: ${regressionData.m} ${regressionData.b}");      
       currentShot.estimatedWeightReachedTime = (currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
       currentShot.estimatedWeight_m = regressionData.m;
       currentShot.estimatedWeight_b = regressionData.b;
