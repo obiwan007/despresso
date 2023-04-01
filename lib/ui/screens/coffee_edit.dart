@@ -215,11 +215,11 @@ class CoffeeEditState extends State<CoffeeEdit> {
               ReactiveDatePicker(
                 formControlName: 'roastDate',
                 lastDate: DateTime.now(),
-                firstDate: DateTime.now().subtract(Duration(days: 365)),
+                firstDate: DateTime.now().subtract(const Duration(days: 365)),
                 builder: (context, picker, child) {
                   return IconButton(
                     onPressed: picker.showPicker,
-                    icon: Icon(Icons.date_range),
+                    icon: const Icon(Icons.date_range),
                   );
                 },
               ),
@@ -309,7 +309,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.price = form.value["price"] as String;
     _editedCoffee.taste = form.value["taste"] as String;
     _editedCoffee.origin = form.value["origin"] as String;
-    _editedCoffee.roastDate = form.value["roastDate"] as DateTime;
+    _editedCoffee.roastDate = form.value["roastDate"] as DateTime? ?? DateTime.now();
     _editedCoffee.description = form.value["description"] as String;
 
     _editedCoffee.intensityRating = form.value["intensityRating"] as double;

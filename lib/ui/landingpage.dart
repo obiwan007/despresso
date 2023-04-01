@@ -263,14 +263,14 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 }
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip),
-              title: const Text('Test'),
-              onTap: () async {
-                Navigator.pop(context);
-                showScreenSaver();
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.privacy_tip),
+            //   title: const Text('Test'),
+            //   onTap: () async {
+            //     Navigator.pop(context);
+            //     showScreenSaver();
+            //   },
+            // ),
             FutureBuilder<PackageInfo>(
               future: PackageInfo.fromPlatform(),
               builder: (context, snapshot) {

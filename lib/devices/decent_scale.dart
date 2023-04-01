@@ -44,6 +44,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
+    if (data.length < 4) return;
     var weight = ((data[2] << 8) + data[3]) / 10;
     if (weight > 3200) {
       writeTare();
