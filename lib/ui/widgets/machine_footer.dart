@@ -6,9 +6,8 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
-import 'package:flutter/scheduler.dart';
 import 'package:logging/logging.dart';
-import 'package:path/path.dart';
+import 'package:despresso/model/services/state/screen_saver.dart';
 
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
@@ -134,7 +133,16 @@ class _MachineFooterState extends State<MachineFooter> {
                           Switch(
                             value: isOn(snapshot.data?.state), //set true to enable switch by default
                             onChanged: (bool value) {
-                              value ? machineService.de1?.switchOn() : machineService.de1?.switchOff();
+                              if (value) {
+                                machineService.de1?.switchOn();
+                              } else {
+                                if (settingsService.screensaverOnIfIdle) {
+                                  var screensaver = getIt<ScreensaverService>();
+                                  screensaver.activateScreenSaver();
+                                }
+                                // screensaver.notifyDelayed();
+                                machineService.de1?.switchOff();
+                              }
                             },
                           ),
                         ],
