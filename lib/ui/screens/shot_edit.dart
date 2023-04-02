@@ -448,18 +448,18 @@ class ShotEditState extends State<ShotEdit> {
   void saveFormData(FormGroup form) {
     _editedShot.description = form.value["description"] as String;
     _editedShot.barrista = form.value["barrista"] as String;
-    _editedShot.doseWeight = form.value["doseWeight"] as double;
-    _editedShot.drinkWeight = form.value["drinkWeight"] as double;
+    _editedShot.doseWeight = form.value["doseWeight"] as double? ?? 0.0;
+    _editedShot.drinkWeight = form.value["drinkWeight"] as double? ?? 0.0;
     _editedShot.drinker = form.value["drinker"] as String;
     _editedShot.enjoyment = form.value["enjoyment"] as double;
 
-    _editedShot.extractionYield = form.value["extractionYield"] as double;
+    _editedShot.extractionYield = form.value["extractionYield"] as double? ?? 0.0;
     _editedShot.grinderName = form.value["grinderName"] as String;
-    _editedShot.grinderSettings = form.value["grinderSettings"] as double;
-    _editedShot.pourTime = form.value["pourTime"] as double;
-    _editedShot.pourWeight = form.value["pourWeight"] as double;
-    _editedShot.targetEspressoWeight = form.value["targetEspressoWeight"] as double;
-    _editedShot.totalDissolvedSolids = form.value["totalDissolvedSolids"] as double;
+    _editedShot.grinderSettings = form.value["grinderSettings"] as double? ?? 0.0;
+    _editedShot.pourTime = form.value["pourTime"] as double? ?? 0.0;
+    _editedShot.pourWeight = form.value["pourWeight"] as double? ?? 0.0;
+    _editedShot.targetEspressoWeight = form.value["targetEspressoWeight"] as double? ?? 0.0;
+    _editedShot.totalDissolvedSolids = form.value["totalDissolvedSolids"] as double? ?? 0.0;
 
     coffeeService.updateShot(_editedShot);
   }

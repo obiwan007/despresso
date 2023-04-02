@@ -184,6 +184,7 @@ class WaterScreenState extends State<WaterScreen> {
                               onChanged: (double value) {
                                 setState(() {
                                   settings.targetHotWaterWeight = value.toInt();
+                                  settings.targetHotWaterVol = (value * 1.1).toInt();
                                   machineService.updateSettings();
                                 });
                               },

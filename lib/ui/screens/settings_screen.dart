@@ -46,6 +46,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   initState() {
     super.initState();
     settingsService = getIt<SettingsService>();
+    mqttService = getIt<MqttService>();
     machineService = getIt<EspressoMachineService>();
     bleService = getIt<BLEService>();
     visualizerService = getIt<VisualizerService>();

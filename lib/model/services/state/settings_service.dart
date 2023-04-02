@@ -119,52 +119,52 @@ class SettingsService extends ChangeNotifier {
   bool get useSentry => Settings.getValue<bool>(SettingKeys.useSentry.name) ?? true;
 
   String get currentProfile => Settings.getValue<String>(SettingKeys.currentProfile.name) ?? "Default";
-  set currentProfile(value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
+  set currentProfile(String value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
 
   int get selectedRoaster => Settings.getValue<int>(SettingKeys.selectedRoaster.name) ?? 0;
-  set selectedRoaster(value) => Settings.setValue<int>(SettingKeys.selectedRoaster.name, value);
+  set selectedRoaster(int value) => Settings.setValue<int>(SettingKeys.selectedRoaster.name, value);
 
   int get selectedCoffee => Settings.getValue<int>(SettingKeys.selectedCoffee.name) ?? 0;
-  set selectedCoffee(value) => Settings.setValue<int>(SettingKeys.selectedCoffee.name, value);
+  set selectedCoffee(int value) => Settings.setValue<int>(SettingKeys.selectedCoffee.name, value);
 
   int get selectedRecipe => Settings.getValue<int>(SettingKeys.selectedRecipe.name) ?? 0;
-  set selectedRecipe(value) => Settings.setValue<int>(SettingKeys.selectedRecipe.name, value);
+  set selectedRecipe(int value) => Settings.setValue<int>(SettingKeys.selectedRecipe.name, value);
 
   int get selectedShot => Settings.getValue<int>(SettingKeys.selectedShot.name) ?? 0;
-  set selectedShot(value) => Settings.setValue<int>(SettingKeys.selectedShot.name, value);
+  set selectedShot(int value) => Settings.setValue<int>(SettingKeys.selectedShot.name, value);
 
   int get steamSettings => Settings.getValue<int>(SettingKeys.steamSettings.name) ?? 0;
-  set steamSettings(value) => Settings.setValue<int>(SettingKeys.steamSettings.name, value);
+  set steamSettings(int value) => Settings.setValue<int>(SettingKeys.steamSettings.name, value);
 
   int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 120;
-  set targetSteamTemp(value) => Settings.setValue<int>(SettingKeys.targetSteamTemp.name, value);
+  set targetSteamTemp(int value) => Settings.setValue<int>(SettingKeys.targetSteamTemp.name, value);
 
   bool get steamHeaterOff => Settings.getValue<bool>(SettingKeys.steamHeaterOff.name) ?? false;
-  set steamHeaterOff(value) => Settings.setValue<bool>(SettingKeys.steamHeaterOff.name, value);
+  set steamHeaterOff(bool value) => Settings.setValue<bool>(SettingKeys.steamHeaterOff.name, value);
 
   int get targetSteamLength => Settings.getValue<int>(SettingKeys.targetSteamLength.name) ?? 90;
-  set targetSteamLength(value) => Settings.setValue<int>(SettingKeys.targetSteamLength.name, value);
+  set targetSteamLength(int value) => Settings.setValue<int>(SettingKeys.targetSteamLength.name, value);
 
   int get targetMilkTemperature => Settings.getValue<int>(SettingKeys.targetMilkTemperature.name) ?? 55;
-  set targetMilkTemperature(value) => Settings.setValue<int>(SettingKeys.targetMilkTemperature.name, value);
+  set targetMilkTemperature(int value) => Settings.setValue<int>(SettingKeys.targetMilkTemperature.name, value);
 
   int get targetHotWaterTemp => Settings.getValue<int>(SettingKeys.targetHotWaterTemp.name) ?? 85;
-  set targetHotWaterTemp(value) => Settings.setValue<int>(SettingKeys.targetHotWaterTemp.name, value);
+  set targetHotWaterTemp(int value) => Settings.setValue<int>(SettingKeys.targetHotWaterTemp.name, value);
 
   int get targetHotWaterVol => Settings.getValue<int>(SettingKeys.targetHotWaterVol.name) ?? 120;
-  set targetHotWaterVol(value) => Settings.setValue<int>(SettingKeys.targetHotWaterVol.name, value);
+  set targetHotWaterVol(int value) => Settings.setValue<int>(SettingKeys.targetHotWaterVol.name, value);
 
   int get targetHotWaterWeight => Settings.getValue<int>(SettingKeys.targetHotWaterWeight.name) ?? 120;
-  set targetHotWaterWeight(value) => Settings.setValue<int>(SettingKeys.targetHotWaterWeight.name, value);
+  set targetHotWaterWeight(int value) => Settings.setValue<int>(SettingKeys.targetHotWaterWeight.name, value);
 
   int get targetHotWaterLength => Settings.getValue<int>(SettingKeys.targetHotWaterLength.name) ?? 45;
-  set targetHotWaterLength(value) => Settings.setValue<int>(SettingKeys.targetHotWaterLength.name, value);
+  set targetHotWaterLength(int value) => Settings.setValue<int>(SettingKeys.targetHotWaterLength.name, value);
 
   int get targetEspressoVol => Settings.getValue<int>(SettingKeys.targetEspressoVol.name) ?? 35;
-  set targetEspressoVol(value) => Settings.setValue<int>(SettingKeys.targetEspressoVol.name, value);
+  set targetEspressoVol(int value) => Settings.setValue<int>(SettingKeys.targetEspressoVol.name, value);
 
   double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 36;
-  set targetEspressoWeight(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
+  set targetEspressoWeight(double value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
 
   double get targetEspressoWeightTimeAdjust =>
       Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
@@ -172,48 +172,48 @@ class SettingsService extends ChangeNotifier {
       Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
   double get targetFlushTime => Settings.getValue<double>(SettingKeys.targetFlushTime.name) ?? 3.0;
-  set targetFlushTime(value) => Settings.setValue<double>(SettingKeys.targetFlushTime.name, value);
+  set targetFlushTime(double value) => Settings.setValue<double>(SettingKeys.targetFlushTime.name, value);
 
   double get targetFlushTime2 => Settings.getValue<double>(SettingKeys.targetFlushTime2.name) ?? 15.0;
-  set targetFlushTime2(value) => Settings.setValue<double>(SettingKeys.targetFlushTime2.name, value);
+  set targetFlushTime2(double value) => Settings.setValue<double>(SettingKeys.targetFlushTime2.name, value);
 
   int get targetGroupTemp => Settings.getValue<int>(SettingKeys.targetGroupTemp.name) ?? 98;
-  set targetGroupTemp(value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
+  set targetGroupTemp(int value) => Settings.setValue<int>(SettingKeys.targetGroupTemp.name, value);
 
   bool get webServer => Settings.getValue<bool>(SettingKeys.webServer.name) ?? true;
-  set webServer(value) => Settings.setValue<bool>(SettingKeys.webServer.name, value);
+  set webServer(bool value) => Settings.setValue<bool>(SettingKeys.webServer.name, value);
 
   double get targetTempCorrection => Settings.getValue<double>(SettingKeys.targetTempCorrection.name) ?? 0;
-  set targetTempCorrection(value) => Settings.setValue<double>(SettingKeys.targetTempCorrection.name, value);
+  set targetTempCorrection(double value) => Settings.setValue<double>(SettingKeys.targetTempCorrection.name, value);
 
   double get screenBrightnessTimer => Settings.getValue<double>(SettingKeys.screenBrightnessTimer.name) ?? 10;
-  set screenBrightnessTimer(value) => Settings.setValue<double>(SettingKeys.screenBrightnessTimer.name, value);
+  set screenBrightnessTimer(double value) => Settings.setValue<double>(SettingKeys.screenBrightnessTimer.name, value);
 
   double get screenBrightnessValue => Settings.getValue<double>(SettingKeys.screenBrightnessValue.name) ?? 0;
-  set screenBrightnessValue(value) => Settings.setValue<double>(SettingKeys.screenBrightnessValue.name, value);
+  set screenBrightnessValue(double value) => Settings.setValue<double>(SettingKeys.screenBrightnessValue.name, value);
 
   /// Wake de1 if tapped out of screensaver/dim mode
   bool get screenTapWake => Settings.getValue<bool>(SettingKeys.screenTapWake.name) ?? true;
-  set screenTapWake(value) => Settings.setValue<bool>(SettingKeys.screenTapWake.name, value);
+  set screenTapWake(bool value) => Settings.setValue<bool>(SettingKeys.screenTapWake.name, value);
 
   /// Wake de1 ifapp is starting
   bool get launchWake => Settings.getValue<bool>(SettingKeys.launchWake.name) ?? true;
-  set launchWake(value) => Settings.setValue<bool>(SettingKeys.launchWake.name, value);
+  set launchWake(bool value) => Settings.setValue<bool>(SettingKeys.launchWake.name, value);
 
   bool get screenTimoutGoToRecipe => Settings.getValue<bool>(SettingKeys.screenTimoutGoToRecipe.name) ?? true;
-  set screenTimoutGoToRecipe(value) => Settings.setValue<bool>(SettingKeys.screenTimoutGoToRecipe.name, value);
+  set screenTimoutGoToRecipe(bool value) => Settings.setValue<bool>(SettingKeys.screenTimoutGoToRecipe.name, value);
 
   bool get screenDarkTheme => Settings.getValue<bool>(SettingKeys.screenDarkTheme.name) ?? true;
-  set screenDarkTheme(value) => Settings.setValue<bool>(SettingKeys.screenDarkTheme.name, value);
+  set screenDarkTheme(bool value) => Settings.setValue<bool>(SettingKeys.screenDarkTheme.name, value);
 
   String get screenThemeIndex => Settings.getValue<String>(SettingKeys.screenThemeIndex.name) ?? "0";
-  set screenThemeIndex(value) => Settings.setValue<String>(SettingKeys.screenThemeIndex.name, value);
+  set screenThemeIndex(String value) => Settings.setValue<String>(SettingKeys.screenThemeIndex.name, value);
 
   int get startCounter => Settings.getValue<int>(SettingKeys.startCounter.name) ?? 0;
-  set startCounter(value) => Settings.setValue<int>(SettingKeys.startCounter.name, value);
+  set startCounter(int value) => Settings.setValue<int>(SettingKeys.startCounter.name, value);
 
   bool get showFlushScreen => Settings.getValue<bool>(SettingKeys.showFlushScreen.name) ?? false;
-  set showFlushScreen(value) => Settings.setValue<bool>(SettingKeys.showFlushScreen.name, value);
+  set showFlushScreen(bool value) => Settings.setValue<bool>(SettingKeys.showFlushScreen.name, value);
 
   void notifyDelayed() {
     Future.delayed(

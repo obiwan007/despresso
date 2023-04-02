@@ -183,7 +183,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         var corrected = (timeGoal ~/ 5.0).toInt() * 5.0 + 5;
         maxTime = max(maxTime, corrected);
       }
-      data["weightApprox"] = arr;
+      data["weightApprox"] = timeGoal > 0 && timeGoal < 200 ? arr : [];
     } else {
       data["weightApprox"] = data["weightApprox"] ?? [];
     }
