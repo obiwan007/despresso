@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -105,39 +107,7 @@ class RecipeScreenState extends State<RecipeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "Details",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  if (profileService.currentProfile != null)
-                    AspectRatio(
-                      aspectRatio: 1.3,
-                      child: ProfileGraphWidget(
-                          key: Key(profileService.currentProfile?.id ?? UniqueKey().toString()),
-                          selectedProfile: profileService.currentProfile!),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(profileService.currentProfile?.shotHeader.notes ?? ""),
-                  ),
-                  if (coffeeService.currentCoffee?.description.isNotEmpty == true)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Coffee notes",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                  Text(coffeeService.currentCoffee?.description ?? ""),
-
-                  /// To make it possible to read because of Add recipe overlay button
-                  const SizedBox(height: 80),
-                ],
-              ),
+              child: RecipeDescription(profileService: profileService, coffeeService: coffeeService),
             ),
           ),
         ),
@@ -216,6 +186,90 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 }
 
+class RecipeDescription extends StatelessWidget {
+  const RecipeDescription({
+    super.key,
+    required this.profileService,
+    required this.coffeeService,
+  });
+
+  final ProfileService profileService;
+  final CoffeeService coffeeService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          "Recipe Details",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(coffeeService.currentRecipe?.description ?? ""),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+          child: Row(
+            children: [
+              const Text("Hot water:"),
+              Text("${(coffeeService.currentRecipe?.useWater ?? false) ? "" : "No"}"),
+              Text((coffeeService.currentRecipe?.useWater ?? false)
+                  ? " ${coffeeService.currentRecipe?.weightWater} g"
+                  : ""),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+          child: Row(
+            children: [
+              const Text("Steam milk:"),
+              Text((coffeeService.currentRecipe?.useSteam ?? false) ? "" : "No"),
+              Text((coffeeService.currentRecipe?.useSteam ?? false)
+                  ? " ${coffeeService.currentRecipe?.weightMilk} g"
+                  : ""),
+            ],
+          ),
+        ),
+        const Divider(),
+
+        Text(
+          "Profile Details",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        if (profileService.currentProfile != null)
+          AspectRatio(
+            aspectRatio: 1.3,
+            child: ProfileGraphWidget(
+                key: Key(profileService.currentProfile?.id ?? UniqueKey().toString()),
+                selectedProfile: profileService.currentProfile!),
+          ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(profileService.currentProfile?.shotHeader.notes ?? ""),
+        ),
+        if (coffeeService.currentCoffee?.description.isNotEmpty == true)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Coffee notes",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+        Text(coffeeService.currentCoffee?.description ?? ""),
+
+        /// To make it possible to read because of Add recipe overlay button
+        const SizedBox(height: 80),
+      ],
+    );
+  }
+}
+
 class RecipeDetails extends StatefulWidget {
   const RecipeDetails({
     Key? key,
@@ -278,7 +332,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Selected Base Profile")),
+                          const Expanded(child: Text("Selected profile")),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,21 +363,21 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           ),
                         ],
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Expanded(child: Text("Suggested stop weight:")),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                    "${widget.profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   children: [
+                      //     const Expanded(child: Text("Suggested stop weight:")),
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.center,
+                      //         children: [
+                      //           Text(
+                      //               "${widget.profileService.currentProfile?.shotHeader.targetWeight.toStringAsFixed(1)} g"),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       if ((firstFrame?.temp ?? 0) > 0)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -365,6 +419,46 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           ),
                         ],
                       ),
+                      const Divider(),
+
+                      // if ((widget.coffeeService.currentRecipe?.grinderSettings ?? 0) > 0)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(child: Text("Grind Settings:")),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SpinBox(
+                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (value) {
+                                    var r = widget.coffeeService.currentRecipe;
+                                    if (r != null) {
+                                      r.grinderSettings = value;
+                                      widget.coffeeService.updateRecipe(r);
+                                    }
+                                  },
+                                  max: 120.0,
+                                  value: widget.coffeeService.currentRecipe?.grinderSettings ?? 0.0,
+                                  decimals: 1,
+                                  step: 0.1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -388,27 +482,10 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           ),
                         ],
                       ),
-                      if ((widget.coffeeService.currentCoffee?.grinderSettings ?? 0) > 0)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Expanded(child: Text("Grind Settings:")),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("${widget.coffeeService.currentCoffee?.grinderSettings ?? ''}"),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      const Divider(),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Weighted beans [g]")),
+                          const Expanded(child: Text("Weight-in beans [g]")),
                           Expanded(
                             child: Column(
                               children: [
@@ -482,7 +559,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Adjust temperature [°C]")),
+                          const Expanded(child: Text("Adjust temp [°C]")),
                           Expanded(
                             child: Column(
                               children: [

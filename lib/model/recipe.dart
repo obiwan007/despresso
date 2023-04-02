@@ -23,6 +23,7 @@ class Recipe {
   bool isFavorite = false;
 
   String name = "Espresso";
+  String description = "";
 
   /// For added water
   double weightWater = 120;

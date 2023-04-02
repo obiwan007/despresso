@@ -135,6 +135,9 @@ class CoffeeService extends ChangeNotifier {
           var r = Recipe();
           r.coffee.targetId = selectedCoffeeId;
           r.name = "Americano";
+          r.description =
+              "The drink consists of a single or double shot of espresso brewed with added water. Typically up to about 40 millilitres of hot water is added to the double espresso.";
+          r.weightWater = 40;
           r.profileId = settings.currentProfile;
           recipeBox.put(r);
         }
@@ -142,8 +145,11 @@ class CoffeeService extends ChangeNotifier {
           var r = Recipe();
           r.coffee.targetId = selectedCoffeeId;
           r.name = "Cappuccino";
+          r.description =
+              "Cappuccino is traditionally small (180 ml maximum) with a thick layer of foam; cappuccino served mostly in a 150–180 ml cup with a handle. Cappuccino traditionally has a layer of textured milk microfoam exceeding 1 cm in thickness; microfoam is frothed/steamed milk in which the bubbles are so small and so numerous that they are not seen, but it makes the milk lighter and thicker.";
           r.profileId = settings.currentProfile;
           r.useWater = false;
+          r.weightMilk = 120;
           r.useSteam = true;
           recipeBox.put(r);
         }
@@ -151,6 +157,8 @@ class CoffeeService extends ChangeNotifier {
           var r = Recipe();
           r.coffee.targetId = selectedCoffeeId;
           r.name = "Simple Espresso";
+          r.description =
+              "Espresso is made by forcing very hot water under high pressure through finely ground compacted coffee.";
           r.profileId = settings.currentProfile;
           r.useWater = false;
           r.useSteam = false;
