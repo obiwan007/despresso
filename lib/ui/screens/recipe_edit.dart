@@ -162,205 +162,256 @@ class RecipeEditState extends State<RecipeEdit> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ReactiveTextField<String>(
-          formControlName: 'name',
-          decoration: const InputDecoration(
-            labelText: 'Name',
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                ReactiveTextField<String>(
+                  formControlName: 'name',
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                  ),
+                  validationMessages: {
+                    ValidationMessage.required: (_) => 'Name must not be empty',
+                  },
+                ),
+                ReactiveTextField<String>(
+                  formControlName: 'description',
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                  ),
+                ),
+              ],
+            ),
           ),
-          validationMessages: {
-            ValidationMessage.required: (_) => 'Name must not be empty',
-          },
-        ),
-        ReactiveTextField<String>(
-          formControlName: 'description',
-          decoration: const InputDecoration(
-            labelText: 'Description',
-          ),
-        ),
-        SizedBox(height: 20),
-        Text("Grinder", style: Theme.of(context).textTheme.labelMedium),
-        Row(
-          children: [
-            SizedBox(
-              width: 200,
-              child: ReactiveTextField<double>(
-                formControlName: 'grinderSettings',
-                decoration: const InputDecoration(
-                  labelText: 'Grinder Settings',
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            SizedBox(
-              width: 200,
-              child: ReactiveTextField<String>(
-                formControlName: 'grinderModel',
-                decoration: const InputDecoration(
-                  labelText: 'Model',
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20),
-        Text("Dosing and weights", style: Theme.of(context).textTheme.labelMedium),
-        Row(
-          children: [
-            SizedBox(
-              width: 100,
-              child: ReactiveTextField<double>(
-                formControlName: 'ratio1',
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: const InputDecoration(
-                  labelText: 'Ratio',
-                ),
-                onSubmitted: (control) {
-                  recalcWeight(form);
-                  setState(() {});
-                },
-                showErrors: (control) => control.invalid,
-                validationMessages: {
-                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
-                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
-                },
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            SizedBox(
-              width: 100,
-              child: ReactiveTextField<double>(
-                formControlName: 'ratio2',
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: const InputDecoration(
-                  labelText: 'to',
-                ),
-                onSubmitted: (control) {
-                  recalcWeight(form);
-                  setState(() {});
-                },
-                showErrors: (control) => control.invalid,
-                validationMessages: {
-                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
-                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
-                },
-              ),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            SizedBox(
-              width: 200,
-              child: ReactiveTextField<double>(
-                formControlName: 'grinderDoseWeight',
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: const InputDecoration(
-                  labelText: 'Dose Weight-in',
-                ),
-                onSubmitted: (control) {
-                  recalcWeight(form);
-                  setState(() {});
-                },
-                showErrors: (control) => control.invalid,
-                validationMessages: {
-                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
-                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
-                },
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            SizedBox(
-              width: 200,
-              child: ReactiveTextField<double>(
-                formControlName: 'adjustedWeight',
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: const InputDecoration(
-                  labelText: 'Weight out',
-                ),
-                showErrors: (control) => control.invalid,
-                validationMessages: {
-                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
-                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
-                },
-              ),
-            ),
-          ],
         ),
 
         SizedBox(height: 20),
-        Text("Adjustments", style: Theme.of(context).textTheme.labelMedium),
-
-        SizedBox(
-          width: 200,
-          child: ReactiveTextField<double>(
-            formControlName: 'adjustedTemp',
-            decoration: const InputDecoration(
-              labelText: 'Temperature correction',
-            ),
-            showErrors: (control) => control.invalid,
-            validationMessages: {
-              ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
-              ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
-            },
+        Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Text("Grinder", style: Theme.of(context).textTheme.labelMedium),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: ReactiveTextField<double>(
+                      formControlName: 'grinderSettings',
+                      decoration: const InputDecoration(
+                        labelText: 'Grinder Settings',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  SizedBox(
+                    width: 200,
+                    child: ReactiveTextField<String>(
+                      formControlName: 'grinderModel',
+                      decoration: const InputDecoration(
+                        labelText: 'Model',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-
-        const Divider(),
+        )),
         SizedBox(height: 20),
-        Text("Milk and water", style: Theme.of(context).textTheme.labelMedium),
-
-        Row(
-          children: [
-            const Text("Use steam? "),
-            ReactiveSwitch(
-              formControlName: 'useSteam',
-              onChanged: (control) => setState(() {}),
-            ),
-          ],
-        ),
-
-        if (form.value["useSteam"] as bool)
-          SizedBox(
-            width: 200,
-            child: ReactiveTextField<double>(
-              formControlName: 'weightMilk',
-              keyboardType: TextInputType.numberWithOptions(),
-              decoration: const InputDecoration(
-                labelText: 'Milk weight',
+        Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Text("Dosing and weights", style: Theme.of(context).textTheme.labelMedium),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: ReactiveTextField<double>(
+                      formControlName: 'ratio1',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: const InputDecoration(
+                        labelText: 'Ratio',
+                      ),
+                      onSubmitted: (control) {
+                        recalcWeight(form);
+                        setState(() {});
+                      },
+                      showErrors: (control) => control.invalid,
+                      validationMessages: {
+                        ValidationMessage.max: (error) =>
+                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: 100,
+                    child: ReactiveTextField<double>(
+                      formControlName: 'ratio2',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: const InputDecoration(
+                        labelText: 'to',
+                      ),
+                      onSubmitted: (control) {
+                        recalcWeight(form);
+                        setState(() {});
+                      },
+                      showErrors: (control) => control.invalid,
+                      validationMessages: {
+                        ValidationMessage.max: (error) =>
+                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  SizedBox(
+                    width: 200,
+                    child: ReactiveTextField<double>(
+                      formControlName: 'grinderDoseWeight',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: const InputDecoration(
+                        labelText: 'Dose Weight-in',
+                      ),
+                      onSubmitted: (control) {
+                        recalcWeight(form);
+                        setState(() {});
+                      },
+                      showErrors: (control) => control.invalid,
+                      validationMessages: {
+                        ValidationMessage.max: (error) =>
+                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: 200,
+                    child: ReactiveTextField<double>(
+                      formControlName: 'adjustedWeight',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: const InputDecoration(
+                        labelText: 'Weight out',
+                      ),
+                      showErrors: (control) => control.invalid,
+                      validationMessages: {
+                        ValidationMessage.max: (error) =>
+                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
+            ],
           ),
-        const Divider(),
-        Row(
-          children: [
-            const Text("Use water? "),
-            ReactiveSwitch(
-              formControlName: 'useWater',
-              onChanged: (control) => setState(() {}),
-            ),
-          ],
-        ),
-        if (form.value["useWater"] as bool)
-          SizedBox(
-            width: 200,
-            child: ReactiveTextField<double>(
-              formControlName: 'weightWater',
-              keyboardType: TextInputType.numberWithOptions(),
-              showErrors: (control) => control.invalid,
-              validationMessages: {
-                ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
-                ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
-              },
-              decoration: const InputDecoration(
-                labelText: 'Water weight',
+        )),
+
+        SizedBox(height: 20),
+        Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Text("Adjustments", style: Theme.of(context).textTheme.labelMedium),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: ReactiveTextField<double>(
+                      formControlName: 'adjustedTemp',
+                      decoration: const InputDecoration(
+                        labelText: 'Temperature correction',
+                      ),
+                      showErrors: (control) => control.invalid,
+                      validationMessages: {
+                        ValidationMessage.max: (error) =>
+                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
+            ],
           ),
+        )),
+
+        SizedBox(height: 20),
+        Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Text("Milk and water", style: Theme.of(context).textTheme.labelMedium)),
+              Row(
+                children: [
+                  const Text("Use steam? "),
+                  ReactiveSwitch(
+                    formControlName: 'useSteam',
+                    onChanged: (control) => setState(() {}),
+                  ),
+                ],
+              ),
+              if (form.value["useSteam"] as bool)
+                SizedBox(
+                  width: 200,
+                  child: ReactiveTextField<double>(
+                    formControlName: 'weightMilk',
+                    keyboardType: TextInputType.numberWithOptions(),
+                    decoration: const InputDecoration(
+                      labelText: 'Milk weight',
+                    ),
+                  ),
+                ),
+              const Divider(),
+              Row(
+                children: [
+                  const Text("Use water? "),
+                  ReactiveSwitch(
+                    formControlName: 'useWater',
+                    onChanged: (control) => setState(() {}),
+                  ),
+                ],
+              ),
+              if (form.value["useWater"] as bool)
+                SizedBox(
+                  width: 200,
+                  child: ReactiveTextField<double>(
+                    formControlName: 'weightWater',
+                    keyboardType: TextInputType.numberWithOptions(),
+                    showErrors: (control) => control.invalid,
+                    validationMessages: {
+                      ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+                      ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Water weight',
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        )),
+
         // ReactiveFormConsumer(
         //   builder: (context, form, child) {
         //     return ElevatedButton(
