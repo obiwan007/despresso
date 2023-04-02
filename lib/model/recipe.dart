@@ -15,6 +15,7 @@ class Recipe {
   double adjustedTemp = 0;
   double grinderDoseWeight = 18;
   double grinderSettings = 0;
+  String grinderModel = "";
 
   double ratio1 = 1;
   double ratio2 = 2;

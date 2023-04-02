@@ -41,13 +41,12 @@ class RecipeEditState extends State<RecipeEdit> {
 
   late FormGroup theForm;
 
-  RecipeEditState() {
-    _selectedRecipeId = widget.selectedRecipeId;
-  }
+  RecipeEditState() {}
 
   @override
   void initState() {
     super.initState();
+    _selectedRecipeId = widget.selectedRecipeId;
     coffeeService = getIt<CoffeeService>();
     machineService = getIt<EspressoMachineService>();
     coffeeService.addListener(updateCoffee);
@@ -62,20 +61,49 @@ class RecipeEditState extends State<RecipeEdit> {
       'name': [_editedRecipe.name, Validators.required],
       'description': [_editedRecipe.description],
       'adjustedPressure': [_editedRecipe.adjustedPressure],
-      'adjustedTemp': [_editedRecipe.adjustedTemp],
-      'adjustedWeight': [_editedRecipe.adjustedWeight],
-      'grinderDoseWeight': [_editedRecipe.grinderDoseWeight],
+      'adjustedTemp': [
+        _editedRecipe.adjustedTemp,
+        Validators.min(-10.0),
+        Validators.max(10.0),
+      ],
+      'adjustedWeight': [
+        _editedRecipe.adjustedWeight,
+        Validators.min(0.0),
+        Validators.max(5000.0),
+      ],
+      'grinderDoseWeight': [
+        _editedRecipe.grinderDoseWeight,
+        Validators.min(0.0),
+        Validators.max(5000.0),
+      ],
       'grinderSettings': [_editedRecipe.grinderSettings],
-      'ratio1': [_editedRecipe.ratio1],
-      'ratio2': [_editedRecipe.ratio2],
+      'grinderModel': [_editedRecipe.grinderModel],
+      'ratio1': [
+        _editedRecipe.ratio1,
+        Validators.min(0.0),
+        Validators.max(100.0),
+      ],
+      'ratio2': [
+        _editedRecipe.ratio2,
+        Validators.min(0.0),
+        Validators.max(100.0),
+      ],
       'tempSteam': [_editedRecipe.tempSteam],
       'tempWater': [_editedRecipe.tempWater],
       'timeSteam': [_editedRecipe.timeSteam],
       'timeWater': [_editedRecipe.timeWater],
       'useSteam': [_editedRecipe.useSteam],
       'useWater': [_editedRecipe.useWater],
-      'weightMilk': [_editedRecipe.weightMilk],
-      'weightWater': [_editedRecipe.weightWater],
+      'weightMilk': [
+        _editedRecipe.weightMilk,
+        Validators.min(0.0),
+        Validators.max(5000.0),
+      ],
+      'weightWater': [
+        _editedRecipe.weightWater,
+        Validators.min(0.0),
+        Validators.max(1000.0),
+      ],
       'id': [_editedRecipe.id],
     });
   }
@@ -91,7 +119,7 @@ class RecipeEditState extends State<RecipeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Roaster'),
+        title: const Text('Edit Recipe'),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(
@@ -119,7 +147,7 @@ class RecipeEditState extends State<RecipeEdit> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  roasterForm(form),
+                  recipeForm(form),
                 ],
               ),
             );
@@ -129,8 +157,10 @@ class RecipeEditState extends State<RecipeEdit> {
     );
   }
 
-  roasterForm(FormGroup form) {
+  recipeForm(FormGroup form) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ReactiveTextField<String>(
           formControlName: 'name',
@@ -147,31 +177,190 @@ class RecipeEditState extends State<RecipeEdit> {
             labelText: 'Description',
           ),
         ),
-        ReactiveTextField<double>(
-          formControlName: 'grinderDoseWeight',
-          decoration: const InputDecoration(
-            labelText: 'Dose Weight-in',
-          ),
+        SizedBox(height: 20),
+        Text("Grinder", style: Theme.of(context).textTheme.labelMedium),
+        Row(
+          children: [
+            SizedBox(
+              width: 200,
+              child: ReactiveTextField<double>(
+                formControlName: 'grinderSettings',
+                decoration: const InputDecoration(
+                  labelText: 'Grinder Settings',
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            SizedBox(
+              width: 200,
+              child: ReactiveTextField<String>(
+                formControlName: 'grinderModel',
+                decoration: const InputDecoration(
+                  labelText: 'Model',
+                ),
+              ),
+            ),
+          ],
         ),
-        ReactiveTextField<double>(
-          formControlName: 'grinderSettings',
-          decoration: const InputDecoration(
-            labelText: 'Grinder Settings',
+        SizedBox(height: 20),
+        Text("Dosing and weights", style: Theme.of(context).textTheme.labelMedium),
+        Row(
+          children: [
+            SizedBox(
+              width: 100,
+              child: ReactiveTextField<double>(
+                formControlName: 'ratio1',
+                keyboardType: TextInputType.numberWithOptions(),
+                decoration: const InputDecoration(
+                  labelText: 'Ratio',
+                ),
+                onSubmitted: (control) {
+                  recalcWeight(form);
+                  setState(() {});
+                },
+                showErrors: (control) => control.invalid,
+                validationMessages: {
+                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            SizedBox(
+              width: 100,
+              child: ReactiveTextField<double>(
+                formControlName: 'ratio2',
+                keyboardType: TextInputType.numberWithOptions(),
+                decoration: const InputDecoration(
+                  labelText: 'to',
+                ),
+                onSubmitted: (control) {
+                  recalcWeight(form);
+                  setState(() {});
+                },
+                showErrors: (control) => control.invalid,
+                validationMessages: {
+                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            SizedBox(
+              width: 200,
+              child: ReactiveTextField<double>(
+                formControlName: 'grinderDoseWeight',
+                keyboardType: TextInputType.numberWithOptions(),
+                decoration: const InputDecoration(
+                  labelText: 'Dose Weight-in',
+                ),
+                onSubmitted: (control) {
+                  recalcWeight(form);
+                  setState(() {});
+                },
+                showErrors: (control) => control.invalid,
+                validationMessages: {
+                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            SizedBox(
+              width: 200,
+              child: ReactiveTextField<double>(
+                formControlName: 'adjustedWeight',
+                keyboardType: TextInputType.numberWithOptions(),
+                decoration: const InputDecoration(
+                  labelText: 'Weight out',
+                ),
+                showErrors: (control) => control.invalid,
+                validationMessages: {
+                  ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+                  ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+                },
+              ),
+            ),
+          ],
+        ),
+
+        SizedBox(height: 20),
+        Text("Adjustments", style: Theme.of(context).textTheme.labelMedium),
+
+        SizedBox(
+          width: 200,
+          child: ReactiveTextField<double>(
+            formControlName: 'adjustedTemp',
+            decoration: const InputDecoration(
+              labelText: 'Temperature correction',
+            ),
+            showErrors: (control) => control.invalid,
+            validationMessages: {
+              ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+              ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+            },
           ),
         ),
 
-        ReactiveTextField<double>(
-          formControlName: 'adjustedWeight',
-          decoration: const InputDecoration(
-            labelText: 'Weight correction',
-          ),
+        const Divider(),
+        SizedBox(height: 20),
+        Text("Milk and water", style: Theme.of(context).textTheme.labelMedium),
+
+        Row(
+          children: [
+            const Text("Use steam? "),
+            ReactiveSwitch(
+              formControlName: 'useSteam',
+              onChanged: (control) => setState(() {}),
+            ),
+          ],
         ),
-        ReactiveTextField<double>(
-          formControlName: 'adjustedTemp',
-          decoration: const InputDecoration(
-            labelText: 'Temperature correction',
+
+        if (form.value["useSteam"] as bool)
+          SizedBox(
+            width: 200,
+            child: ReactiveTextField<double>(
+              formControlName: 'weightMilk',
+              keyboardType: TextInputType.numberWithOptions(),
+              decoration: const InputDecoration(
+                labelText: 'Milk weight',
+              ),
+            ),
           ),
+        const Divider(),
+        Row(
+          children: [
+            const Text("Use water? "),
+            ReactiveSwitch(
+              formControlName: 'useWater',
+              onChanged: (control) => setState(() {}),
+            ),
+          ],
         ),
+        if (form.value["useWater"] as bool)
+          SizedBox(
+            width: 200,
+            child: ReactiveTextField<double>(
+              formControlName: 'weightWater',
+              keyboardType: TextInputType.numberWithOptions(),
+              showErrors: (control) => control.invalid,
+              validationMessages: {
+                ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
+                ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
+              },
+              decoration: const InputDecoration(
+                labelText: 'Water weight',
+              ),
+            ),
+          ),
         // ReactiveFormConsumer(
         //   builder: (context, form, child) {
         //     return ElevatedButton(
@@ -197,6 +386,18 @@ class RecipeEditState extends State<RecipeEdit> {
     );
   }
 
+  void recalcWeight(FormGroup form) {
+    var ratio1 = form.value["ratio1"] as double? ?? 0;
+    if (ratio1 > 0) {
+      var ratio2 = form.value["ratio2"] as double? ?? 0;
+      var grinderDoseWeight = form.value["grinderDoseWeight"] as double? ?? 0;
+
+      var adjustedWeight = grinderDoseWeight * (ratio2 / ratio1);
+      var ctrl = form.controls["adjustedWeight"]!;
+      ctrl.value = adjustedWeight;
+    }
+  }
+
   void saveFormData(FormGroup form) {
     _editedRecipe.name = form.value["name"] as String;
     _editedRecipe.description = form.value["description"] as String;
@@ -205,6 +406,7 @@ class RecipeEditState extends State<RecipeEdit> {
     _editedRecipe.adjustedWeight = form.value["adjustedWeight"] as double? ?? 0;
     _editedRecipe.grinderDoseWeight = form.value["grinderDoseWeight"] as double? ?? 0;
     _editedRecipe.grinderSettings = form.value["grinderSettings"] as double? ?? 0;
+    _editedRecipe.grinderModel = form.value["grinderModel"] as String? ?? "";
     _editedRecipe.ratio1 = form.value["ratio1"] as double? ?? 0;
     _editedRecipe.ratio2 = form.value["ratio2"] as double? ?? 0;
     _editedRecipe.tempSteam = form.value["tempSteam"] as double? ?? 0;

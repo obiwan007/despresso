@@ -5,12 +5,15 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
+import 'package:despresso/ui/screens/recipe_edit.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
+import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
@@ -291,6 +294,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
   String _ratio1 = "0";
   String _ratio2 = "0";
 
+  late ScreensaverService _screensaver;
+
+  @override
+  void initState() {
+    super.initState();
+    _screensaver = getIt<ScreensaverService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     var nameOfRecipe = widget.coffeeService.currentRecipe?.name ?? "no name";
@@ -305,18 +316,34 @@ class _RecipeDetailsState extends State<RecipeDetails> {
         //   "Current Shot Recipe",
         //   style: Theme.of(context).textTheme.titleMedium,
         // ),
-        IconEditableText(
-            key: Key(nameOfRecipe),
-            initialValue: nameOfRecipe,
-            style: Theme.of(context).textTheme.titleMedium,
-            textAlign: TextAlign.center,
-            onChanged: (value) {
-              var res = widget.coffeeService.currentRecipe;
-              if (res != null) {
-                res.name = value;
-                widget.coffeeService.updateRecipe(res);
-              }
-            }),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                nameOfRecipe,
+                key: Key(nameOfRecipe),
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            IconButton(
+              key: Key(nameOfRecipe),
+              onPressed: () async {
+                _screensaver.pause();
+                var result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RecipeEdit(
+                            widget.coffeeService.currentRecipe?.id ?? 0,
+                          )),
+                );
+                _screensaver.resume();
+                widget.coffeeService.setSelectedRecipe(widget.coffeeService.currentRecipe!.id);
+              },
+              icon: Icon(Icons.edit),
+            ),
+          ],
+        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
