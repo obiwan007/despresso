@@ -176,7 +176,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.auto_graph_outlined),
-              title: const Text('Shot Database'),
+              title: const Text('Espresso Diary'),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -203,7 +203,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.coffee),
-              title: const Text('Coffees'),
+              title: const Text('Beans'),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);

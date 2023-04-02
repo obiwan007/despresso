@@ -406,6 +406,13 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   onChange: (value) async {},
                 ),
                 SwitchSettingsTile(
+                  title: 'Switch on screensaver if de1 manually switched to sleep',
+                  settingKey: SettingKeys.screensaverOnIfIdle.name,
+                  defaultValue: settingsService.screensaverOnIfIdle,
+                  leading: const Icon(Icons.back_hand),
+                  onChange: (value) async {},
+                ),
+                SwitchSettingsTile(
                   title: 'Go back to Recipe screen if timeout occured',
                   settingKey: SettingKeys.screenTimoutGoToRecipe.name,
                   defaultValue: settingsService.screenTimoutGoToRecipe,

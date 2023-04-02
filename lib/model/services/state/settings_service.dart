@@ -62,6 +62,7 @@ enum SettingKeys {
   startCounter,
   launchWake,
   showFlushScreen,
+  screensaverOnIfIdle,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -214,6 +215,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get showFlushScreen => Settings.getValue<bool>(SettingKeys.showFlushScreen.name) ?? false;
   set showFlushScreen(bool value) => Settings.setValue<bool>(SettingKeys.showFlushScreen.name, value);
+
+  bool get screensaverOnIfIdle => Settings.getValue<bool>(SettingKeys.screensaverOnIfIdle.name) ?? true;
+  set screensaverOnIfIdle(bool value) => Settings.setValue<bool>(SettingKeys.screensaverOnIfIdle.name, value);
 
   void notifyDelayed() {
     Future.delayed(

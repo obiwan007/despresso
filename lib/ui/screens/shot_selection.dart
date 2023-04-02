@@ -70,7 +70,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shot Database'),
+        title: const Text('Espresso Diary'),
         actions: [
           Builder(
             builder: (BuildContext context) {

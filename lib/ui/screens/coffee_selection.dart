@@ -47,7 +47,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     newRoaster.name = "<new roaster>";
     newRoaster.id = 0;
     _selectedRoasterId = 0;
-    newCoffee.name = "<new Coffee>";
+    newCoffee.name = "<new Beans>";
     newCoffee.id = 0;
     _selectedCoffeeId = 0;
   }
@@ -73,7 +73,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Coffee'),
+        title: const Text('Beans'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -153,7 +153,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                     children: [
                       Row(
                         children: [
-                          const SizedBox(width: 150, child: Text("Select Coffee", style: theme.TextStyles.h2)),
+                          const SizedBox(width: 150, child: Text("Select Beans", style: theme.TextStyles.h2)),
                           Expanded(
                             flex: 8,
                             child: DropdownButton(

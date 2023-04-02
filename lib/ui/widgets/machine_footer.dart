@@ -136,8 +136,10 @@ class _MachineFooterState extends State<MachineFooter> {
                               if (value) {
                                 machineService.de1?.switchOn();
                               } else {
-                                var screensaver = getIt<ScreensaverService>();
-                                screensaver.activateScreenSaver();
+                                if (settingsService.screensaverOnIfIdle) {
+                                  var screensaver = getIt<ScreensaverService>();
+                                  screensaver.activateScreenSaver();
+                                }
                                 // screensaver.notifyDelayed();
                                 machineService.de1?.switchOff();
                               }
