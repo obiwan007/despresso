@@ -408,7 +408,7 @@
     },
     {
       "id": "9:7693652674048295668",
-      "lastPropertyId": "23:4030549021668168783",
+      "lastPropertyId": "25:1050422726627456052",
       "name": "Recipe",
       "properties": [
         {
@@ -524,6 +524,16 @@
           "id": "23:4030549021668168783",
           "name": "useSteam",
           "type": 1
+        },
+        {
+          "id": "24:5553698550197971705",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "25:1050422726627456052",
+          "name": "grinderModel",
+          "type": 9
         }
       ],
       "relations": []

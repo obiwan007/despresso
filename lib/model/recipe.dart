@@ -15,6 +15,7 @@ class Recipe {
   double adjustedTemp = 0;
   double grinderDoseWeight = 18;
   double grinderSettings = 0;
+  String grinderModel = "";
 
   double ratio1 = 1;
   double ratio2 = 2;
@@ -23,6 +24,7 @@ class Recipe {
   bool isFavorite = false;
 
   String name = "Espresso";
+  String description = "";
 
   /// For added water
   double weightWater = 120;
