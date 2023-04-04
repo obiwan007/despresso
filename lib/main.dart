@@ -18,7 +18,7 @@ import 'package:wakelock/wakelock.dart';
 import 'color_schemes.g.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'generated/l10n.dart';
 
 // import 'package:logging_appenders/logging_appenders.dart';
 
@@ -104,8 +104,13 @@ class _MyAppState extends State<MyApp> {
     return BetterFeedback(
       child: MaterialApp(
         title: 'despresso',
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
         // localizationsDelegates: const [
         //   AppLocalizations.delegate,
         //   GlobalMaterialLocalizations.delegate,

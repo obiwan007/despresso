@@ -1,0 +1,11 @@
+{
+    "helloWorld": "Hello World!",
+    "@helloWorld": {
+        "description": "The conventional newborn programmer greeting"
+    },
+    "tabHomeRecipe": "Recipe",
+    "tabHomeEspresso": "Espresso",
+    "tabHomeSteam": "Steam",
+    "tabHomeWater": "Water",
+    "tabHomeFlush": "Flush"
+}

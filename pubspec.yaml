@@ -37,9 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   # charts_flutter: ^0.12.0
   # flutter_ble_lib: ^2.3.2
-  http:
-  path:
-  flat_buffers:
+  http: null
+  path: null
+  flat_buffers: null
   flutter_typeahead: ^4.1.1
   cached_network_image: ^3.2.3
   flutter_reactive_ble: ^5.0.3
@@ -64,7 +64,7 @@ dependencies:
   url_launcher: ^6.1.8
   fl_chart: ^0.61.0
   mqtt_client: ^9.7.4
-  collection:
+  collection: null
   battery_plus: ^3.0.2
   logging_appenders: ^1.0.0+2
   logging: ^1.1.1
@@ -125,7 +125,6 @@ flutter_native_splash:
 #   test: other
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -144,13 +143,10 @@ flutter:
     - assets/website/static/js/
     - assets/website/static/css/
     - assets/website/static/media/
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -174,3 +170,5 @@ flutter_icons:
   image_path: "assets/icon.png"
   android: true
   ios: true
+flutter_intl:
+  enabled: true
