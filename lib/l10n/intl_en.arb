@@ -180,5 +180,17 @@
   "screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart": "Settings are restored. Please close app and restart.",
   "screenSettingsExitApp": "Exit app",
   "screenSettingsCoffeePouring": "Coffee pouring",
-  "screenSettingsShotSettings": "Shot Settings"
+  "screenSettingsShotSettings": "Shot Settings",
+  "disconnected": "disconnected",
+  "stop": "Stop",
+  "start": "Start",
+  "stateIdleHeated": "heated up",
+  "subStateHeatWaterHeater": "Heating Water",
+  "subStateHeatWaterTank": "Heating Tank",
+  "wait": "Wait",
+  "switchOn": "Switch on",
+  "reconnect": "Reconnect",
+  "state_Disconnected": "disconnected",
+  "stateDisconnected": "disconnected",
+  "statePour": "pour"
 }

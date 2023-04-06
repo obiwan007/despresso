@@ -41,6 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "beans": MessageLookupByLibrary.simpleMessage("Beans"),
         "blue": MessageLookupByLibrary.simpleMessage("Blue"),
         "disabled": MessageLookupByLibrary.simpleMessage("Disabled"),
+        "disconnected": MessageLookupByLibrary.simpleMessage("disconnected"),
         "edit": MessageLookupByLibrary.simpleMessage("EDIT"),
         "enabled": MessageLookupByLibrary.simpleMessage("Enabled"),
         "error": MessageLookupByLibrary.simpleMessage("error"),
@@ -59,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pressure": MessageLookupByLibrary.simpleMessage("Pressure"),
         "privacy": MessageLookupByLibrary.simpleMessage("Privacy"),
         "profiles": MessageLookupByLibrary.simpleMessage("Profiles"),
+        "reconnect": MessageLookupByLibrary.simpleMessage("Reconnect"),
         "red": MessageLookupByLibrary.simpleMessage("Red"),
         "screenBeanSelectAcidity":
             MessageLookupByLibrary.simpleMessage("Acidity"),
@@ -373,12 +375,26 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenWaterWeightG": m7,
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "show": MessageLookupByLibrary.simpleMessage("Show"),
+        "start": MessageLookupByLibrary.simpleMessage("Start"),
+        "stateDisconnected":
+            MessageLookupByLibrary.simpleMessage("disconnected"),
+        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("heated up"),
+        "statePour": MessageLookupByLibrary.simpleMessage("pour"),
+        "state_Disconnected":
+            MessageLookupByLibrary.simpleMessage("disconnected"),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
+        "stop": MessageLookupByLibrary.simpleMessage("Stop"),
+        "subStateHeatWaterHeater":
+            MessageLookupByLibrary.simpleMessage("Heating Water"),
+        "subStateHeatWaterTank":
+            MessageLookupByLibrary.simpleMessage("Heating Tank"),
+        "switchOn": MessageLookupByLibrary.simpleMessage("Switch on"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Flush"),
         "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Steam"),
         "tabHomeWater": MessageLookupByLibrary.simpleMessage("Water"),
         "temp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "wait": MessageLookupByLibrary.simpleMessage("Wait"),
         "weight": MessageLookupByLibrary.simpleMessage("Weight")
       };
 }

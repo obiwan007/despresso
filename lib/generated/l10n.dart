@@ -1841,6 +1841,126 @@ class S {
       args: [],
     );
   }
+
+  /// `disconnected`
+  String get disconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop`
+  String get stop {
+    return Intl.message(
+      'Stop',
+      name: 'stop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start`
+  String get start {
+    return Intl.message(
+      'Start',
+      name: 'start',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `heated up`
+  String get stateIdleHeated {
+    return Intl.message(
+      'heated up',
+      name: 'stateIdleHeated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Heating Water`
+  String get subStateHeatWaterHeater {
+    return Intl.message(
+      'Heating Water',
+      name: 'subStateHeatWaterHeater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Heating Tank`
+  String get subStateHeatWaterTank {
+    return Intl.message(
+      'Heating Tank',
+      name: 'subStateHeatWaterTank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wait`
+  String get wait {
+    return Intl.message(
+      'Wait',
+      name: 'wait',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch on`
+  String get switchOn {
+    return Intl.message(
+      'Switch on',
+      name: 'switchOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reconnect`
+  String get reconnect {
+    return Intl.message(
+      'Reconnect',
+      name: 'reconnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `disconnected`
+  String get state_Disconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'state_Disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `disconnected`
+  String get stateDisconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'stateDisconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `pour`
+  String get statePour {
+    return Intl.message(
+      'pour',
+      name: 'statePour',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

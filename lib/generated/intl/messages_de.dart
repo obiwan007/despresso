@@ -41,6 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "beans": MessageLookupByLibrary.simpleMessage("Bohnen"),
         "blue": MessageLookupByLibrary.simpleMessage("Blau"),
         "disabled": MessageLookupByLibrary.simpleMessage("Deaktiviert"),
+        "disconnected": MessageLookupByLibrary.simpleMessage("disconnected"),
         "edit": MessageLookupByLibrary.simpleMessage("Ändern"),
         "enabled": MessageLookupByLibrary.simpleMessage("Aktiviert"),
         "error": MessageLookupByLibrary.simpleMessage("Fehler"),
@@ -59,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pressure": MessageLookupByLibrary.simpleMessage("Druck"),
         "privacy": MessageLookupByLibrary.simpleMessage("Privatsphäre/DSGVO"),
         "profiles": MessageLookupByLibrary.simpleMessage("Profile"),
+        "reconnect": MessageLookupByLibrary.simpleMessage("Verbinden"),
         "red": MessageLookupByLibrary.simpleMessage("Rot"),
         "screenBeanSelectAcidity":
             MessageLookupByLibrary.simpleMessage("Säure"),
@@ -374,13 +376,24 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenWaterWeightG": m7,
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
         "show": MessageLookupByLibrary.simpleMessage("Anzeigen"),
+        "start": MessageLookupByLibrary.simpleMessage("Start"),
+        "stateDisconnected": MessageLookupByLibrary.simpleMessage("GETRENNT"),
+        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("aufgeheizt"),
+        "statePour": MessageLookupByLibrary.simpleMessage("Bezug"),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
+        "stop": MessageLookupByLibrary.simpleMessage("Stop"),
+        "subStateHeatWaterHeater":
+            MessageLookupByLibrary.simpleMessage("Heize Wasser"),
+        "subStateHeatWaterTank":
+            MessageLookupByLibrary.simpleMessage("Heize Tank"),
+        "switchOn": MessageLookupByLibrary.simpleMessage("Einschalten"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Spülen"),
         "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("Rezept"),
         "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Dampf"),
         "tabHomeWater": MessageLookupByLibrary.simpleMessage("Wasser"),
         "temp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "wait": MessageLookupByLibrary.simpleMessage("Warten"),
         "weight": MessageLookupByLibrary.simpleMessage("Gewicht")
       };
 }

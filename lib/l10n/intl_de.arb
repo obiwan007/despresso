@@ -176,5 +176,16 @@
     "screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart": "Einstellungen wurden wiederhergestellt. Bitte die App komplett beenden und neu Starten (Task Manager).",
     "screenSettingsExitApp": "App Beenden",
     "screenSettingsCoffeePouring": "Espresso Bezug",
-    "screenSettingsShotSettings": "Shot Einstellungen"
+    "screenSettingsShotSettings": "Shot Einstellungen",
+    "disconnected": "disconnected",
+    "stop": "Stop",
+    "start": "Start",
+    "stateIdleHeated": "aufgeheizt",
+    "subStateHeatWaterHeater": "Heize Wasser",
+    "subStateHeatWaterTank": "Heize Tank",
+    "wait": "Warten",
+    "switchOn": "Einschalten",
+    "reconnect": "Verbinden",
+    "stateDisconnected": "GETRENNT",
+    "statePour": "Bezug"
 }
