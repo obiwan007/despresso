@@ -177,7 +177,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.auto_graph_outlined),
-              title: const Text('Espresso Diary'),
+              title: Text(S.of(context).mainMenuEspressoDiary),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -189,7 +189,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.add),
-              title: const Text('Profiles'),
+              title: Text(S.of(context).profiles),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -204,7 +204,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.coffee),
-              title: const Text('Beans'),
+              title: Text(S.of(context).beans),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -219,7 +219,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(S.of(context).settings),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -235,7 +235,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.feedback),
-              title: const Text('Feedback'),
+              title: Text(S.of(context).mainMenuFeedback),
               onTap: () async {
                 Navigator.pop(context);
                 var settings = getIt<SettingsService>();
@@ -246,14 +246,14 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                   return;
                 }
                 BetterFeedback.of(context).showAndUploadToSentry(
-                  name: 'Despresso Feedback', // optional
+                  name: S.of(context).mainMenuDespressoFeedback, // optional
                   email: 'foo_bar@example.com', // optional
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy'),
+              title: Text(S.of(context).privacy),
               onTap: () async {
                 Navigator.pop(context);
                 final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
@@ -293,7 +293,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             if (Platform.isAndroid)
               ListTile(
                 leading: const Icon(Icons.exit_to_app),
-                title: const Text('Exit'),
+                title: Text(S.of(context).exit),
                 onTap: () {
                   Navigator.pop(context);
                   var snackBar = SnackBar(
@@ -357,17 +357,17 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     return tb;
   }
 
-  void configureCoffee() {
-    var snackBar = SnackBar(
-        content: const Text('Configure your coffee'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            // Some code to undo the change.
-          },
-        ));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  // void configureCoffee() {
+  //   var snackBar = SnackBar(
+  //       content: const Text('Configure your coffee'),
+  //       action: SnackBarAction(
+  //         label: 'Undo',
+  //         onPressed: () {
+  //           // Some code to undo the change.
+  //         },
+  //       ));
+  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // }
 
   void updatedProfile() {
     setState(() {});

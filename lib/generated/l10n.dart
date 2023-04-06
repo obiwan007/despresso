@@ -449,6 +449,306 @@ class S {
       args: [],
     );
   }
+
+  /// `Steam two-tap mode:`
+  String get screenSteamTwotapMode {
+    return Intl.message(
+      'Steam two-tap mode:',
+      name: 'screenSteamTwotapMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On (slow purge on 1st stop)`
+  String get screenSteamOnSlowPurgeOn1stStop {
+    return Intl.message(
+      'On (slow purge on 1st stop)',
+      name: 'screenSteamOnSlowPurgeOn1stStop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off (normal purge after stop)`
+  String get screenSteamOffNormalPurgeAfterStop {
+    return Intl.message(
+      'Off (normal purge after stop)',
+      name: 'screenSteamOffNormalPurgeAfterStop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steam Temperaturs {temp} °C`
+  String screenSteamTemperaturs(Object temp) {
+    return Intl.message(
+      'Steam Temperaturs $temp °C',
+      name: 'screenSteamTemperaturs',
+      desc: '',
+      args: [temp],
+    );
+  }
+
+  /// `Timer {t} s`
+  String screenSteamTimerS(Object t) {
+    return Intl.message(
+      'Timer $t s',
+      name: 'screenSteamTimerS',
+      desc: '',
+      args: [t],
+    );
+  }
+
+  /// `Stop at Temperature {temp} °C`
+  String screenSteamStopAtTemperatur(Object temp) {
+    return Intl.message(
+      'Stop at Temperature $temp °C',
+      name: 'screenSteamStopAtTemperatur',
+      desc: '',
+      args: [temp],
+    );
+  }
+
+  /// `Steam Flowrate {flow} ml/s`
+  String screenSteamFlowrate(Object flow) {
+    return Intl.message(
+      'Steam Flowrate $flow ml/s',
+      name: 'screenSteamFlowrate',
+      desc: '',
+      args: [flow],
+    );
+  }
+
+  /// `Time/s`
+  String get screenSteamTimeS {
+    return Intl.message(
+      'Time/s',
+      name: 'screenSteamTimeS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp [°C]`
+  String get steamScreenTempC {
+    return Intl.message(
+      'Temp [°C]',
+      name: 'steamScreenTempC',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp Tip`
+  String get screenSteamTempTip {
+    return Intl.message(
+      'Temp Tip',
+      name: 'screenSteamTempTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ambient`
+  String get screenSteamAmbient {
+    return Intl.message(
+      'Ambient',
+      name: 'screenSteamAmbient',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset`
+  String get screenSteamReset {
+    return Intl.message(
+      'Reset',
+      name: 'screenSteamReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight {w} g`
+  String screenWaterWeightG(Object w) {
+    return Intl.message(
+      'Weight $w g',
+      name: 'screenWaterWeightG',
+      desc: '',
+      args: [w],
+    );
+  }
+
+  /// `Espresso Diary`
+  String get mainMenuEspressoDiary {
+    return Intl.message(
+      'Espresso Diary',
+      name: 'mainMenuEspressoDiary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profiles`
+  String get profiles {
+    return Intl.message(
+      'Profiles',
+      name: 'profiles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Beans`
+  String get beans {
+    return Intl.message(
+      'Beans',
+      name: 'beans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feedback`
+  String get mainMenuFeedback {
+    return Intl.message(
+      'Feedback',
+      name: 'mainMenuFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Despresso Feedback`
+  String get mainMenuDespressoFeedback {
+    return Intl.message(
+      'Despresso Feedback',
+      name: 'mainMenuDespressoFeedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy`
+  String get privacy {
+    return Intl.message(
+      'Privacy',
+      name: 'privacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit`
+  String get exit {
+    return Intl.message(
+      'Exit',
+      name: 'exit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No shots to upload selected`
+  String get screenDiaryNoShotsToUploadSelected {
+    return Intl.message(
+      'No shots to upload selected',
+      name: 'screenDiaryNoShotsToUploadSelected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Success uploading your shots`
+  String get screenDiarySuccessUploadingYourShots {
+    return Intl.message(
+      'Success uploading your shots',
+      name: 'screenDiarySuccessUploadingYourShots',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error uploading shots`
+  String get screenDiaryErrorUploadingShots {
+    return Intl.message(
+      'Error uploading shots',
+      name: 'screenDiaryErrorUploadingShots',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nothing selected`
+  String get screenDiaryNothingSelected {
+    return Intl.message(
+      'Nothing selected',
+      name: 'screenDiaryNothingSelected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Overlaymode:`
+  String get screenDiaryOverlaymode {
+    return Intl.message(
+      'Overlaymode:',
+      name: 'screenDiaryOverlaymode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pressure`
+  String get pressure {
+    return Intl.message(
+      'Pressure',
+      name: 'pressure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flow`
+  String get flow {
+    return Intl.message(
+      'Flow',
+      name: 'flow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight`
+  String get weight {
+    return Intl.message(
+      'Weight',
+      name: 'weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp`
+  String get temp {
+    return Intl.message(
+      'Temp',
+      name: 'temp',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

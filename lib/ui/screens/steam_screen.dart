@@ -10,7 +10,7 @@ import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
-
+import 'package:despresso/generated/l10n.dart';
 import '../../model/shotstate.dart';
 import '../widgets/start_stop_button.dart';
 
@@ -81,7 +81,8 @@ class SteamScreenState extends State<SteamScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text("Steam two-tap mode:", style: Theme.of(context).textTheme.labelLarge),
+                            child: Text(S.of(context).screenSteamTwotapMode,
+                                style: Theme.of(context).textTheme.labelLarge),
                           ),
                           Switch(
                             value: machineService.de1?.steamPurgeMode == 1,
@@ -97,8 +98,8 @@ class SteamScreenState extends State<SteamScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               machineService.de1?.steamPurgeMode == 1
-                                  ? 'On (slow purge on 1st stop)'
-                                  : 'Off (normal purge after stop)',
+                                  ? S.of(context).screenSteamOnSlowPurgeOn1stStop
+                                  : S.of(context).screenSteamOffNormalPurgeAfterStop,
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ),
@@ -115,7 +116,7 @@ class SteamScreenState extends State<SteamScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Steam Temperaturs ${settings.targetSteamTemp}°C",
+                            Text(S.of(context).screenSteamTemperaturs(settings.targetSteamTemp),
                                 style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetSteamTemp.toDouble(),
@@ -173,7 +174,8 @@ class SteamScreenState extends State<SteamScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Timer ${settings.targetSteamLength.toInt()} s", style: theme.TextStyles.tabHeading),
+                            Text(S.of(context).screenSteamTimerS(settings.targetSteamLength.toInt()),
+                                style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetSteamLength.toDouble(),
                               max: 200,
@@ -221,7 +223,7 @@ class SteamScreenState extends State<SteamScreen> {
                     flex: 1,
                     child: Column(
                       children: [
-                        Text("Stop at Temperatur ${settings.targetMilkTemperature}°C",
+                        Text(S.of(context).screenSteamStopAtTemperatur(settings.targetMilkTemperature),
                             style: Theme.of(context).textTheme.labelLarge),
                         Slider(
                           value: settings.targetMilkTemperature.toDouble(),
@@ -253,7 +255,10 @@ class SteamScreenState extends State<SteamScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Steam Flowrate ${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
+                            Text(
+                                S
+                                    .of(context)
+                                    .screenSteamFlowrate(machineService.de1?.steamFlow.toStringAsFixed(1) ?? '?'),
                                 style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: machineService.de1?.steamFlow ?? 2.5,
@@ -358,7 +363,7 @@ class SteamScreenState extends State<SteamScreen> {
           bottomTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Time/s',
+              S.of(context).screenSteamTimeS,
               style: Theme.of(context).textTheme.labelSmall,
               // style: TextStyle(
               //     // fontSize: 15,
@@ -374,7 +379,7 @@ class SteamScreenState extends State<SteamScreen> {
           rightTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Temp [°C]',
+              S.of(context).steamScreenTempC,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -400,8 +405,8 @@ class SteamScreenState extends State<SteamScreen> {
                   height: 30,
                   child: LegendsListWidget(
                     legends: [
-                      Legend('Temp Tip', theme.ThemeColors.tempColor),
-                      Legend('Ambient', theme.ThemeColors.flowColor),
+                      Legend(S.of(context).screenSteamTempTip, theme.ThemeColors.tempColor),
+                      Legend(S.of(context).screenSteamAmbient, theme.ThemeColors.flowColor),
                     ],
                   ),
                 ),
@@ -410,7 +415,7 @@ class SteamScreenState extends State<SteamScreen> {
                   onPressed: () {
                     tempService.resetHistory();
                   },
-                  child: const Text("Reset")),
+                  child: Text(S.of(context).screenSteamReset)),
             ],
           ),
           if (data["temp1"]!.length > 2)

@@ -26,13 +26,45 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(sec) => "TTW: ${sec} s";
 
+  static String m3(flow) => "Dampf Flussgeschwindigkeit ${flow} ml/s";
+
+  static String m4(temp) => "Stop bei Temperatur ${temp} °C";
+
+  static String m5(temp) => "Dampf Temperatur ${temp} °C";
+
+  static String m6(t) => "Timer ${t} s";
+
+  static String m7(w) => "Gewicht ${w} g";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "beans": MessageLookupByLibrary.simpleMessage("Bohnen"),
+        "exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "flow": MessageLookupByLibrary.simpleMessage("Fluss"),
+        "mainMenuDespressoFeedback":
+            MessageLookupByLibrary.simpleMessage("Despresso Feedback"),
+        "mainMenuEspressoDiary":
+            MessageLookupByLibrary.simpleMessage("Espresso Logbuch"),
+        "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "no": MessageLookupByLibrary.simpleMessage("Nein"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "pressure": MessageLookupByLibrary.simpleMessage("Druck"),
+        "privacy": MessageLookupByLibrary.simpleMessage("Privatsphäre/DSGVO"),
+        "profiles": MessageLookupByLibrary.simpleMessage("Profile"),
+        "screenDiaryErrorUploadingShots":
+            MessageLookupByLibrary.simpleMessage("Fehler beim Hochladen "),
+        "screenDiaryNoShotsToUploadSelected":
+            MessageLookupByLibrary.simpleMessage(
+                "Keine Shots zum hochladen ausgewählt"),
+        "screenDiaryNothingSelected":
+            MessageLookupByLibrary.simpleMessage("Kein Shot ausgewählt"),
+        "screenDiaryOverlaymode":
+            MessageLookupByLibrary.simpleMessage("Overlaymodus:"),
+        "screenDiarySuccessUploadingYourShots":
+            MessageLookupByLibrary.simpleMessage("Hochladen war erfolgreich"),
         "screenEspressoBean": MessageLookupByLibrary.simpleMessage("Bohnen"),
         "screenEspressoDiary":
-            MessageLookupByLibrary.simpleMessage("Espresso Logbuch"),
+            MessageLookupByLibrary.simpleMessage("Logbucheintrag"),
         "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("Fluss"),
         "screenEspressoFlowMlsPressureBar":
             MessageLookupByLibrary.simpleMessage("Fluss [ml/s] / Druck [bar]"),
@@ -82,10 +114,30 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Heißwasser:"),
         "screenRecipesteamMilk":
             MessageLookupByLibrary.simpleMessage("Milch schäumen:"),
+        "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Umgebung"),
+        "screenSteamFlowrate": m3,
+        "screenSteamOffNormalPurgeAfterStop":
+            MessageLookupByLibrary.simpleMessage(
+                "Aus (normaler purge nach Stop)"),
+        "screenSteamOnSlowPurgeOn1stStop": MessageLookupByLibrary.simpleMessage(
+            "An (langsamer purge nach erstem Stop)"),
+        "screenSteamReset": MessageLookupByLibrary.simpleMessage("Reset"),
+        "screenSteamStopAtTemperatur": m4,
+        "screenSteamTempTip": MessageLookupByLibrary.simpleMessage("Temp Tip"),
+        "screenSteamTemperaturs": m5,
+        "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("Zeit/s"),
+        "screenSteamTimerS": m6,
+        "screenSteamTwotapMode":
+            MessageLookupByLibrary.simpleMessage("Dampf two-tap mode:"),
+        "screenWaterWeightG": m7,
+        "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
+        "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Spülen"),
         "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("Rezept"),
         "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Dampf"),
-        "tabHomeWater": MessageLookupByLibrary.simpleMessage("Wasser")
+        "tabHomeWater": MessageLookupByLibrary.simpleMessage("Wasser"),
+        "temp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "weight": MessageLookupByLibrary.simpleMessage("Gewicht")
       };
 }

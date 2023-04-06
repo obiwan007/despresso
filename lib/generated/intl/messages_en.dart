@@ -26,11 +26,43 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(sec) => "TTW: ${sec} s";
 
+  static String m3(flow) => "Steam Flowrate ${flow} ml/s";
+
+  static String m4(temp) => "Stop at Temperature ${temp} °C";
+
+  static String m5(temp) => "Steam Temperaturs ${temp} °C";
+
+  static String m6(t) => "Timer ${t} s";
+
+  static String m7(w) => "Weight ${w} g";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "beans": MessageLookupByLibrary.simpleMessage("Beans"),
+        "exit": MessageLookupByLibrary.simpleMessage("Exit"),
+        "flow": MessageLookupByLibrary.simpleMessage("Flow"),
         "helloWorld": MessageLookupByLibrary.simpleMessage("Hello World!"),
+        "mainMenuDespressoFeedback":
+            MessageLookupByLibrary.simpleMessage("Despresso Feedback"),
+        "mainMenuEspressoDiary":
+            MessageLookupByLibrary.simpleMessage("Espresso Diary"),
+        "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "pressure": MessageLookupByLibrary.simpleMessage("Pressure"),
+        "privacy": MessageLookupByLibrary.simpleMessage("Privacy"),
+        "profiles": MessageLookupByLibrary.simpleMessage("Profiles"),
+        "screenDiaryErrorUploadingShots":
+            MessageLookupByLibrary.simpleMessage("Error uploading shots"),
+        "screenDiaryNoShotsToUploadSelected":
+            MessageLookupByLibrary.simpleMessage("No shots to upload selected"),
+        "screenDiaryNothingSelected":
+            MessageLookupByLibrary.simpleMessage("Nothing selected"),
+        "screenDiaryOverlaymode":
+            MessageLookupByLibrary.simpleMessage("Overlaymode:"),
+        "screenDiarySuccessUploadingYourShots":
+            MessageLookupByLibrary.simpleMessage(
+                "Success uploading your shots"),
         "screenEspressoBean": MessageLookupByLibrary.simpleMessage("Coffee"),
         "screenEspressoDiary":
             MessageLookupByLibrary.simpleMessage("Espresso Diary"),
@@ -84,10 +116,30 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Hot water:"),
         "screenRecipesteamMilk":
             MessageLookupByLibrary.simpleMessage("Steam milk:"),
+        "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambient"),
+        "screenSteamFlowrate": m3,
+        "screenSteamOffNormalPurgeAfterStop":
+            MessageLookupByLibrary.simpleMessage(
+                "Off (normal purge after stop)"),
+        "screenSteamOnSlowPurgeOn1stStop":
+            MessageLookupByLibrary.simpleMessage("On (slow purge on 1st stop)"),
+        "screenSteamReset": MessageLookupByLibrary.simpleMessage("Reset"),
+        "screenSteamStopAtTemperatur": m4,
+        "screenSteamTempTip": MessageLookupByLibrary.simpleMessage("Temp Tip"),
+        "screenSteamTemperaturs": m5,
+        "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("Time/s"),
+        "screenSteamTimerS": m6,
+        "screenSteamTwotapMode":
+            MessageLookupByLibrary.simpleMessage("Steam two-tap mode:"),
+        "screenWaterWeightG": m7,
+        "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Flush"),
         "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("Recipe"),
         "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Steam"),
-        "tabHomeWater": MessageLookupByLibrary.simpleMessage("Water")
+        "tabHomeWater": MessageLookupByLibrary.simpleMessage("Water"),
+        "temp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "weight": MessageLookupByLibrary.simpleMessage("Weight")
       };
 }
