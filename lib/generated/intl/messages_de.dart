@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "beans": MessageLookupByLibrary.simpleMessage("Bohnen"),
+        "edit": MessageLookupByLibrary.simpleMessage("Ändern"),
         "exit": MessageLookupByLibrary.simpleMessage("Exit"),
         "flow": MessageLookupByLibrary.simpleMessage("Fluss"),
         "mainMenuDespressoFeedback":
@@ -51,6 +52,38 @@ class MessageLookup extends MessageLookupByLibrary {
         "pressure": MessageLookupByLibrary.simpleMessage("Druck"),
         "privacy": MessageLookupByLibrary.simpleMessage("Privatsphäre/DSGVO"),
         "profiles": MessageLookupByLibrary.simpleMessage("Profile"),
+        "screenBeanSelectAcidity":
+            MessageLookupByLibrary.simpleMessage("Säure"),
+        "screenBeanSelectAddressOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Addresse"),
+        "screenBeanSelectDaysAgo":
+            MessageLookupByLibrary.simpleMessage("Tage her"),
+        "screenBeanSelectDescriptionOfBean":
+            MessageLookupByLibrary.simpleMessage("Beschreibung"),
+        "screenBeanSelectDescriptionOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Beschreibung"),
+        "screenBeanSelectHomepageOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Homepage"),
+        "screenBeanSelectIntensity":
+            MessageLookupByLibrary.simpleMessage("Intensität"),
+        "screenBeanSelectNameOfBean":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenBeanSelectNameOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenBeanSelectRoastLevel":
+            MessageLookupByLibrary.simpleMessage("Röstgrad"),
+        "screenBeanSelectRoastingDate":
+            MessageLookupByLibrary.simpleMessage("Röst-Datum"),
+        "screenBeanSelectSelectBeans":
+            MessageLookupByLibrary.simpleMessage("Wähle Bohne"),
+        "screenBeanSelectSelectRoaster":
+            MessageLookupByLibrary.simpleMessage("Wähle Röster"),
+        "screenBeanSelectTasting":
+            MessageLookupByLibrary.simpleMessage("Aromen"),
+        "screenBeanSelectTitle":
+            MessageLookupByLibrary.simpleMessage("Bohnen and Röster"),
+        "screenBeanSelectTypeOfBeans":
+            MessageLookupByLibrary.simpleMessage("Typ der Bohne"),
         "screenDiaryErrorUploadingShots":
             MessageLookupByLibrary.simpleMessage("Fehler beim Hochladen "),
         "screenDiaryNoShotsToUploadSelected":

@@ -749,6 +749,176 @@ class S {
       args: [],
     );
   }
+
+  /// `Beans and Roasters`
+  String get screenBeanSelectTitle {
+    return Intl.message(
+      'Beans and Roasters',
+      name: 'screenBeanSelectTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Roaster`
+  String get screenBeanSelectSelectRoaster {
+    return Intl.message(
+      'Select Roaster',
+      name: 'screenBeanSelectSelectRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `EDIT`
+  String get edit {
+    return Intl.message(
+      'EDIT',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Beans`
+  String get screenBeanSelectSelectBeans {
+    return Intl.message(
+      'Select Beans',
+      name: 'screenBeanSelectSelectBeans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get screenBeanSelectNameOfRoaster {
+    return Intl.message(
+      'Name',
+      name: 'screenBeanSelectNameOfRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get screenBeanSelectDescriptionOfRoaster {
+    return Intl.message(
+      'Description',
+      name: 'screenBeanSelectDescriptionOfRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Homepage`
+  String get screenBeanSelectHomepageOfRoaster {
+    return Intl.message(
+      'Homepage',
+      name: 'screenBeanSelectHomepageOfRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address`
+  String get screenBeanSelectAddressOfRoaster {
+    return Intl.message(
+      'Address',
+      name: 'screenBeanSelectAddressOfRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get screenBeanSelectNameOfBean {
+    return Intl.message(
+      'Name',
+      name: 'screenBeanSelectNameOfBean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get screenBeanSelectDescriptionOfBean {
+    return Intl.message(
+      'Description',
+      name: 'screenBeanSelectDescriptionOfBean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tasting`
+  String get screenBeanSelectTasting {
+    return Intl.message(
+      'Tasting',
+      name: 'screenBeanSelectTasting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type of Beans`
+  String get screenBeanSelectTypeOfBeans {
+    return Intl.message(
+      'Type of Beans',
+      name: 'screenBeanSelectTypeOfBeans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Roasting date`
+  String get screenBeanSelectRoastingDate {
+    return Intl.message(
+      'Roasting date',
+      name: 'screenBeanSelectRoastingDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Acidity`
+  String get screenBeanSelectAcidity {
+    return Intl.message(
+      'Acidity',
+      name: 'screenBeanSelectAcidity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Intensity`
+  String get screenBeanSelectIntensity {
+    return Intl.message(
+      'Intensity',
+      name: 'screenBeanSelectIntensity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Roast Level`
+  String get screenBeanSelectRoastLevel {
+    return Intl.message(
+      'Roast Level',
+      name: 'screenBeanSelectRoastLevel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `days ago`
+  String get screenBeanSelectDaysAgo {
+    return Intl.message(
+      'days ago',
+      name: 'screenBeanSelectDaysAgo',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -66,5 +66,22 @@
   "pressure": "Pressure",
   "flow": "Flow",
   "weight": "Weight",
-  "temp": "Temp"
+  "temp": "Temp",
+  "screenBeanSelectTitle": "Beans and Roasters",
+  "screenBeanSelectSelectRoaster": "Select Roaster",
+  "edit": "EDIT",
+  "screenBeanSelectSelectBeans": "Select Beans",
+  "screenBeanSelectNameOfRoaster": "Name",
+  "screenBeanSelectDescriptionOfRoaster": "Description",
+  "screenBeanSelectHomepageOfRoaster": "Homepage",
+  "screenBeanSelectAddressOfRoaster": "Address",
+  "screenBeanSelectNameOfBean": "Name",
+  "screenBeanSelectDescriptionOfBean": "Description",
+  "screenBeanSelectTasting": "Tasting",
+  "screenBeanSelectTypeOfBeans": "Type of Beans",
+  "screenBeanSelectRoastingDate": "Roasting date",
+  "screenBeanSelectAcidity": "Acidity",
+  "screenBeanSelectIntensity": "Intensity",
+  "screenBeanSelectRoastLevel": "Roast Level",
+  "screenBeanSelectDaysAgo": "days ago"
 }

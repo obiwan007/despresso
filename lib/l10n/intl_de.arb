@@ -67,5 +67,22 @@
     "pressure": "Druck",
     "flow": "Fluss",
     "weight": "Gewicht",
-    "temp": "Temp"
+    "temp": "Temp",
+    "screenBeanSelectTitle": "Bohnen and Röster",
+    "screenBeanSelectSelectRoaster": "Wähle Röster",
+    "edit": "Ändern",
+    "screenBeanSelectSelectBeans": "Wähle Bohne",
+    "screenBeanSelectNameOfRoaster": "Name",
+    "screenBeanSelectDescriptionOfRoaster": "Beschreibung",
+    "screenBeanSelectHomepageOfRoaster": "Homepage",
+    "screenBeanSelectAddressOfRoaster": "Addresse",
+    "screenBeanSelectNameOfBean": "Name",
+    "screenBeanSelectDescriptionOfBean": "Beschreibung",
+    "screenBeanSelectTasting": "Aromen",
+    "screenBeanSelectTypeOfBeans": "Typ der Bohne",
+    "screenBeanSelectRoastingDate": "Röst-Datum",
+    "screenBeanSelectAcidity": "Säure",
+    "screenBeanSelectIntensity": "Intensität",
+    "screenBeanSelectRoastLevel": "Röstgrad",
+    "screenBeanSelectDaysAgo": "Tage her"
 }

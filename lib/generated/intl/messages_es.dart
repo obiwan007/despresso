@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "beans": MessageLookupByLibrary.simpleMessage("Beans"),
+        "edit": MessageLookupByLibrary.simpleMessage("EDIT"),
         "exit": MessageLookupByLibrary.simpleMessage("Exit"),
         "flow": MessageLookupByLibrary.simpleMessage("Flow"),
         "mainMenuDespressoFeedback":
@@ -51,6 +52,38 @@ class MessageLookup extends MessageLookupByLibrary {
         "pressure": MessageLookupByLibrary.simpleMessage("Pressure"),
         "privacy": MessageLookupByLibrary.simpleMessage("Privacy"),
         "profiles": MessageLookupByLibrary.simpleMessage("Profiles"),
+        "screenBeanSelectAcidity":
+            MessageLookupByLibrary.simpleMessage("Acidity"),
+        "screenBeanSelectAddressOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Address"),
+        "screenBeanSelectDaysAgo":
+            MessageLookupByLibrary.simpleMessage("days ago"),
+        "screenBeanSelectDescriptionOfBean":
+            MessageLookupByLibrary.simpleMessage("Description"),
+        "screenBeanSelectDescriptionOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Description"),
+        "screenBeanSelectHomepageOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Homepage"),
+        "screenBeanSelectIntensity":
+            MessageLookupByLibrary.simpleMessage("Intensity"),
+        "screenBeanSelectNameOfBean":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenBeanSelectNameOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenBeanSelectRoastLevel":
+            MessageLookupByLibrary.simpleMessage("Roast Level"),
+        "screenBeanSelectRoastingDate":
+            MessageLookupByLibrary.simpleMessage("Roasting date"),
+        "screenBeanSelectSelectBeans":
+            MessageLookupByLibrary.simpleMessage("Select Beans"),
+        "screenBeanSelectSelectRoaster":
+            MessageLookupByLibrary.simpleMessage("Select Roaster"),
+        "screenBeanSelectTasting":
+            MessageLookupByLibrary.simpleMessage("Tasting"),
+        "screenBeanSelectTitle":
+            MessageLookupByLibrary.simpleMessage("Beans and Roasters"),
+        "screenBeanSelectTypeOfBeans":
+            MessageLookupByLibrary.simpleMessage("Type of Beans"),
         "screenDiaryErrorUploadingShots":
             MessageLookupByLibrary.simpleMessage("Error uploading shots"),
         "screenDiaryNoShotsToUploadSelected":
