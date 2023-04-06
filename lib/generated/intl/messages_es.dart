@@ -39,9 +39,15 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "beans": MessageLookupByLibrary.simpleMessage("Beans"),
+        "blue": MessageLookupByLibrary.simpleMessage("Blue"),
+        "disabled": MessageLookupByLibrary.simpleMessage("Disabled"),
         "edit": MessageLookupByLibrary.simpleMessage("EDIT"),
+        "enabled": MessageLookupByLibrary.simpleMessage("Enabled"),
+        "error": MessageLookupByLibrary.simpleMessage("error"),
         "exit": MessageLookupByLibrary.simpleMessage("Exit"),
         "flow": MessageLookupByLibrary.simpleMessage("Flow"),
+        "green": MessageLookupByLibrary.simpleMessage("Green"),
+        "hide": MessageLookupByLibrary.simpleMessage("Hide"),
         "mainMenuDespressoFeedback":
             MessageLookupByLibrary.simpleMessage("Despresso Feedback"),
         "mainMenuEspressoDiary":
@@ -49,9 +55,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "orange": MessageLookupByLibrary.simpleMessage("Orange"),
         "pressure": MessageLookupByLibrary.simpleMessage("Pressure"),
         "privacy": MessageLookupByLibrary.simpleMessage("Privacy"),
         "profiles": MessageLookupByLibrary.simpleMessage("Profiles"),
+        "red": MessageLookupByLibrary.simpleMessage("Red"),
         "screenBeanSelectAcidity":
             MessageLookupByLibrary.simpleMessage("Acidity"),
         "screenBeanSelectAddressOfRoaster":
@@ -148,6 +156,205 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Hot water:"),
         "screenRecipesteamMilk":
             MessageLookupByLibrary.simpleMessage("Steam milk:"),
+        "screenSettingsApplicationSettings":
+            MessageLookupByLibrary.simpleMessage("Application Settings"),
+        "screenSettingsApplicationSettingsHardwareAndConnections":
+            MessageLookupByLibrary.simpleMessage("Hardware and connections"),
+        "screenSettingsApplicationSettingsScanForDevices":
+            MessageLookupByLibrary.simpleMessage("Scan for Devices"),
+        "screenSettingsApplicationSettingsScanStart":
+            MessageLookupByLibrary.simpleMessage(
+                "Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)"),
+        "screenSettingsAutoTare":
+            MessageLookupByLibrary.simpleMessage("Auto Tare"),
+        "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("Backup"),
+        "screenSettingsBackupAndMaintenance":
+            MessageLookupByLibrary.simpleMessage("Backup and maintenance"),
+        "screenSettingsBackupSettings":
+            MessageLookupByLibrary.simpleMessage("Backup Settings"),
+        "screenSettingsBackuprestore":
+            MessageLookupByLibrary.simpleMessage("Backup/Restore"),
+        "screenSettingsBackuprestoreDatabase":
+            MessageLookupByLibrary.simpleMessage("Backup/Restore database"),
+        "screenSettingsBahaviour":
+            MessageLookupByLibrary.simpleMessage("Bahaviour"),
+        "screenSettingsBehaviour":
+            MessageLookupByLibrary.simpleMessage("Behaviour"),
+        "screenSettingsBrightnessSleepAndScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Brightness, sleep and screensaver"),
+        "screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot":
+            MessageLookupByLibrary.simpleMessage(
+                "Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while."),
+        "screenSettingsChangeHowTheAppIsHandlingTheDe1InCase":
+            MessageLookupByLibrary.simpleMessage(
+                "Change how the app is handling the de1 in case of wake up and sleep."),
+        "screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen":
+            MessageLookupByLibrary.simpleMessage(
+                "Check your router for IP adress of your tablet. Open browser under"),
+        "screenSettingsCloudAndNetwork":
+            MessageLookupByLibrary.simpleMessage("Cloud and Network"),
+        "screenSettingsCloudShotUpload":
+            MessageLookupByLibrary.simpleMessage("Cloud shot upload"),
+        "screenSettingsCoffeePouring":
+            MessageLookupByLibrary.simpleMessage("Coffee pouring"),
+        "screenSettingsCoffeeSection":
+            MessageLookupByLibrary.simpleMessage("Coffee"),
+        "screenSettingsDarkTheme":
+            MessageLookupByLibrary.simpleMessage("Dark theme"),
+        "screenSettingsDeleteAllScreensaverFiles":
+            MessageLookupByLibrary.simpleMessage(
+                "Delete all screensaver files"),
+        "screenSettingsDoNotLetTabletGoToLockScreen0doNot":
+            MessageLookupByLibrary.simpleMessage(
+                "Do not let tablet go to lock screen (0=do not lock screen, 240=keep always locked) [min]"),
+        "screenSettingsEnableMiniWebsiteWithPort8888":
+            MessageLookupByLibrary.simpleMessage(
+                "Enable Mini Website with port 8888"),
+        "screenSettingsEnableMqtt":
+            MessageLookupByLibrary.simpleMessage("Enable MQTT"),
+        "screenSettingsExitApp":
+            MessageLookupByLibrary.simpleMessage("Exit app"),
+        "screenSettingsFailedRestoringBackup":
+            MessageLookupByLibrary.simpleMessage("Failed restoring backup"),
+        "screenSettingsFeedbackAndCrashReporting":
+            MessageLookupByLibrary.simpleMessage(
+                "Feedback and Crash reporting"),
+        "screenSettingsFlushTimerS":
+            MessageLookupByLibrary.simpleMessage("Flush timer [s]"),
+        "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
+            MessageLookupByLibrary.simpleMessage(
+                "Go back to Recipe screen if timeout occured"),
+        "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
+            MessageLookupByLibrary.simpleMessage(
+                "Handling of connections to other external systems like MQTT and Visualizer."),
+        "screenSettingsIfAShotIsStartingAutotareTheScale":
+            MessageLookupByLibrary.simpleMessage(
+                "If a shot is starting, auto-tare the scale"),
+        "screenSettingsIfTheScaleIsConnectedItIsUsedToStop":
+            MessageLookupByLibrary.simpleMessage(
+                "If the scale is connected it is used to stop the shot if the profile has a limit given."),
+        "screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe":
+            MessageLookupByLibrary.simpleMessage(
+                "If you have no GHC installed, you would need the flush screen"),
+        "screenSettingsKeepTabletChargedBetween6090":
+            MessageLookupByLibrary.simpleMessage(
+                "Keep Tablet charged between 60-90%"),
+        "screenSettingsLightTheme":
+            MessageLookupByLibrary.simpleMessage("Light theme"),
+        "screenSettingsLoadScreensaverFiles":
+            MessageLookupByLibrary.simpleMessage("Load Screensaver files"),
+        "screenSettingsMessageQueueBroadcastMqttClient":
+            MessageLookupByLibrary.simpleMessage(
+                "Message Queue Broadcast (MQTT) client"),
+        "screenSettingsMilkSteamingThermometerSupport":
+            MessageLookupByLibrary.simpleMessage(
+                "Milk steaming thermometer support"),
+        "screenSettingsMiniWebsite":
+            MessageLookupByLibrary.simpleMessage("Mini Website"),
+        "screenSettingsMqttPassword":
+            MessageLookupByLibrary.simpleMessage("MQTT Password"),
+        "screenSettingsMqttPort":
+            MessageLookupByLibrary.simpleMessage("MQTT Port"),
+        "screenSettingsMqttRootTopic":
+            MessageLookupByLibrary.simpleMessage("MQTT root topic"),
+        "screenSettingsMqttServer":
+            MessageLookupByLibrary.simpleMessage("MQTT Server"),
+        "screenSettingsMqttUser":
+            MessageLookupByLibrary.simpleMessage("MQTT User"),
+        "screenSettingsPassword":
+            MessageLookupByLibrary.simpleMessage("password"),
+        "screenSettingsPasswordCantBeSmallerThan7Letters":
+            MessageLookupByLibrary.simpleMessage(
+                "Password can\'t be smaller than 7 letters"),
+        "screenSettingsPrivacySettings":
+            MessageLookupByLibrary.simpleMessage("Privacy Settings"),
+        "screenSettingsReduceBrightnessToLevel":
+            MessageLookupByLibrary.simpleMessage("Reduce brightness to level"),
+        "screenSettingsReduceScreenBrightnessAfter0offMin":
+            MessageLookupByLibrary.simpleMessage(
+                "Reduce screen brightness after (0=off) [min]"),
+        "screenSettingsRestore":
+            MessageLookupByLibrary.simpleMessage("Restore"),
+        "screenSettingsRestoredBackup":
+            MessageLookupByLibrary.simpleMessage("Restored backup"),
+        "screenSettingsSavedBackup":
+            MessageLookupByLibrary.simpleMessage("Saved backup"),
+        "screenSettingsScaleSupport":
+            MessageLookupByLibrary.simpleMessage("Scale support"),
+        "screenSettingsScreenAndBrightness":
+            MessageLookupByLibrary.simpleMessage("Screen and Brightness"),
+        "screenSettingsSecondFlushTimerS":
+            MessageLookupByLibrary.simpleMessage("Second Flush timer [s]"),
+        "screenSettingsSelectFiles":
+            MessageLookupByLibrary.simpleMessage("Select files"),
+        "screenSettingsSendDe1ShotUpdates":
+            MessageLookupByLibrary.simpleMessage("Send de1 shot updates"),
+        "screenSettingsSendDe1StateUpdates":
+            MessageLookupByLibrary.simpleMessage("Send de1 state updates"),
+        "screenSettingsSendDe1WaterLevelUpdates":
+            MessageLookupByLibrary.simpleMessage(
+                "Send de1 water level updates"),
+        "screenSettingsSendInformationsToSentryioIfTheAppCrashesOrYou":
+            MessageLookupByLibrary.simpleMessage(
+                "Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description."),
+        "screenSettingsSendTabletBatteryLevelUpdates":
+            MessageLookupByLibrary.simpleMessage(
+                "Send tablet battery level updates"),
+        "screenSettingsSendingTheStatusOfTheDe1":
+            MessageLookupByLibrary.simpleMessage(
+                "Sending the status of the de1"),
+        "screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart":
+            MessageLookupByLibrary.simpleMessage(
+                "Settings are restored. Please close app and restart."),
+        "screenSettingsShotSettings":
+            MessageLookupByLibrary.simpleMessage("Shot Settings"),
+        "screenSettingsShowFlush":
+            MessageLookupByLibrary.simpleMessage("Show Flush"),
+        "screenSettingsSmartCharging":
+            MessageLookupByLibrary.simpleMessage("Smart charging"),
+        "screenSettingsSpecialBluetoothDevices":
+            MessageLookupByLibrary.simpleMessage("Special Bluetooth devices"),
+        "screenSettingsStopBeforeWeightWasReachedS":
+            MessageLookupByLibrary.simpleMessage(
+                "Stop before weight was reached [s]"),
+        "screenSettingsStopOnWeightIfScaleDetected":
+            MessageLookupByLibrary.simpleMessage(
+                "Stop on Weight if scale detected"),
+        "screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor":
+            MessageLookupByLibrary.simpleMessage(
+                "Switch de1 to sleep mode if it is idle for some time [min]"),
+        "screenSettingsSwitchOffSteamHeating":
+            MessageLookupByLibrary.simpleMessage("Switch off steam heating"),
+        "screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep":
+            MessageLookupByLibrary.simpleMessage(
+                "Switch on screensaver if de1 manually switched to sleep"),
+        "screenSettingsTabletGroup":
+            MessageLookupByLibrary.simpleMessage("Tablet"),
+        "screenSettingsThemeSelection":
+            MessageLookupByLibrary.simpleMessage("Theme selection"),
+        "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
+            MessageLookupByLibrary.simpleMessage(
+                "This can lead to a higher load on your MQTT server as the message frequency is about 10Hz."),
+        "screenSettingsToSaveEnergyTheSteamHeaterWillBeTurnedOff":
+            MessageLookupByLibrary.simpleMessage(
+                "To save energy the steam heater will be turned off and the steam tab will be hidden."),
+        "screenSettingsUploadShotsToVisualizer":
+            MessageLookupByLibrary.simpleMessage("Upload Shots to Visualizer"),
+        "screenSettingsUserNameCantBeSmallerThan4Letters":
+            MessageLookupByLibrary.simpleMessage(
+                "User Name can\'t be smaller than 4 letters"),
+        "screenSettingsUserNameemail":
+            MessageLookupByLibrary.simpleMessage("User Name/email"),
+        "screenSettingsWakeUpDe1IfAppIsLaunched":
+            MessageLookupByLibrary.simpleMessage(
+                "Wake up de1 if app is launched"),
+        "screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff":
+            MessageLookupByLibrary.simpleMessage(
+                "Wake up de1 if screen tapped (if screen was off)"),
+        "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
+            MessageLookupByLibrary.simpleMessage(
+                "You changed critical settings. You need to restart the app to make the settings active."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambient"),
         "screenSteamFlowrate": m3,
         "screenSteamOffNormalPurgeAfterStop":
@@ -165,6 +372,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Steam two-tap mode:"),
         "screenWaterWeightG": m7,
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "show": MessageLookupByLibrary.simpleMessage("Show"),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Flush"),
