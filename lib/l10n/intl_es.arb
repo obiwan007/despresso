@@ -19,5 +19,22 @@
   "screenRecipeAddRecipe": "Add recipe",
   "no": "No",
   "screenRecipeSetRatio": "Set Ratio",
-  "ok": "Ok"
+  "ok": "Ok",
+  "screenEspressoRefillTheWaterTank": "Refill the water tank",
+  "screenEspressoRecipe": "Recipe",
+  "screenEspressoProfile": "Profile",
+  "screenEspressoBean": "Coffee",
+  "screenEspressoTarget": "Target",
+  "screenEspressoTimer": "Timer",
+  "screenEspressoPour": "Pour: {sec} s",
+  "screenEspressoTotal": "Total: {sec} s",
+  "screenEspressoTtw": "TTW: {sec} s",
+  "screenEspressoDiary": "Espresso Diary",
+  "screenEspressoFlowMlsPressureBar": "Flow [ml/s] / Pressure [bar]",
+  "screenEspressoTimes": "Time/s",
+  "screenEspressoPressure": "Pressure",
+  "screenEspressoFlow": "Flow",
+  "screenEspressoWeight": "Weight",
+  "screenEspressoTemp": "Temp",
+  "screenEspressoWeightG": "Weight [g]"
 }

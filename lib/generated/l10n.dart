@@ -279,6 +279,176 @@ class S {
       args: [],
     );
   }
+
+  /// `Refill the water tank`
+  String get screenEspressoRefillTheWaterTank {
+    return Intl.message(
+      'Refill the water tank',
+      name: 'screenEspressoRefillTheWaterTank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recipe`
+  String get screenEspressoRecipe {
+    return Intl.message(
+      'Recipe',
+      name: 'screenEspressoRecipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get screenEspressoProfile {
+    return Intl.message(
+      'Profile',
+      name: 'screenEspressoProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coffee`
+  String get screenEspressoBean {
+    return Intl.message(
+      'Coffee',
+      name: 'screenEspressoBean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Target`
+  String get screenEspressoTarget {
+    return Intl.message(
+      'Target',
+      name: 'screenEspressoTarget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timer`
+  String get screenEspressoTimer {
+    return Intl.message(
+      'Timer',
+      name: 'screenEspressoTimer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pour: {sec} s`
+  String screenEspressoPour(Object sec) {
+    return Intl.message(
+      'Pour: $sec s',
+      name: 'screenEspressoPour',
+      desc: '',
+      args: [sec],
+    );
+  }
+
+  /// `Total: {sec} s`
+  String screenEspressoTotal(Object sec) {
+    return Intl.message(
+      'Total: $sec s',
+      name: 'screenEspressoTotal',
+      desc: '',
+      args: [sec],
+    );
+  }
+
+  /// `TTW: {sec} s`
+  String screenEspressoTtw(Object sec) {
+    return Intl.message(
+      'TTW: $sec s',
+      name: 'screenEspressoTtw',
+      desc: '',
+      args: [sec],
+    );
+  }
+
+  /// `Espresso Diary`
+  String get screenEspressoDiary {
+    return Intl.message(
+      'Espresso Diary',
+      name: 'screenEspressoDiary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flow [ml/s] / Pressure [bar]`
+  String get screenEspressoFlowMlsPressureBar {
+    return Intl.message(
+      'Flow [ml/s] / Pressure [bar]',
+      name: 'screenEspressoFlowMlsPressureBar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time/s`
+  String get screenEspressoTimes {
+    return Intl.message(
+      'Time/s',
+      name: 'screenEspressoTimes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pressure`
+  String get screenEspressoPressure {
+    return Intl.message(
+      'Pressure',
+      name: 'screenEspressoPressure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flow`
+  String get screenEspressoFlow {
+    return Intl.message(
+      'Flow',
+      name: 'screenEspressoFlow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight`
+  String get screenEspressoWeight {
+    return Intl.message(
+      'Weight',
+      name: 'screenEspressoWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp`
+  String get screenEspressoTemp {
+    return Intl.message(
+      'Temp',
+      name: 'screenEspressoTemp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight [g]`
+  String get screenEspressoWeightG {
+    return Intl.message(
+      'Weight [g]',
+      name: 'screenEspressoWeightG',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -20,10 +20,40 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'es';
 
+  static String m0(sec) => "Pour: ${sec} s";
+
+  static String m1(sec) => "Total: ${sec} s";
+
+  static String m2(sec) => "TTW: ${sec} s";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "screenEspressoBean": MessageLookupByLibrary.simpleMessage("Coffee"),
+        "screenEspressoDiary":
+            MessageLookupByLibrary.simpleMessage("Espresso Diary"),
+        "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("Flow"),
+        "screenEspressoFlowMlsPressureBar":
+            MessageLookupByLibrary.simpleMessage(
+                "Flow [ml/s] / Pressure [bar]"),
+        "screenEspressoPour": m0,
+        "screenEspressoPressure":
+            MessageLookupByLibrary.simpleMessage("Pressure"),
+        "screenEspressoProfile":
+            MessageLookupByLibrary.simpleMessage("Profile"),
+        "screenEspressoRecipe": MessageLookupByLibrary.simpleMessage("Recipe"),
+        "screenEspressoRefillTheWaterTank":
+            MessageLookupByLibrary.simpleMessage("Refill the water tank"),
+        "screenEspressoTarget": MessageLookupByLibrary.simpleMessage("Target"),
+        "screenEspressoTemp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("Timer"),
+        "screenEspressoTimes": MessageLookupByLibrary.simpleMessage("Time/s"),
+        "screenEspressoTotal": m1,
+        "screenEspressoTtw": m2,
+        "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("Weight"),
+        "screenEspressoWeightG":
+            MessageLookupByLibrary.simpleMessage("Weight [g]"),
         "screenRecipeAddRecipe":
             MessageLookupByLibrary.simpleMessage("Add recipe"),
         "screenRecipeAdjustTempC":

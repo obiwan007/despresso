@@ -20,10 +20,38 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'de';
 
+  static String m0(sec) => "Bezug: ${sec} s";
+
+  static String m1(sec) => "Total: ${sec} s";
+
+  static String m2(sec) => "TTW: ${sec} s";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "no": MessageLookupByLibrary.simpleMessage("Nein"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "screenEspressoBean": MessageLookupByLibrary.simpleMessage("Bohnen"),
+        "screenEspressoDiary":
+            MessageLookupByLibrary.simpleMessage("Espresso Logbuch"),
+        "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("Fluss"),
+        "screenEspressoFlowMlsPressureBar":
+            MessageLookupByLibrary.simpleMessage("Fluss [ml/s] / Druck [bar]"),
+        "screenEspressoPour": m0,
+        "screenEspressoPressure":
+            MessageLookupByLibrary.simpleMessage("Pressure"),
+        "screenEspressoProfile": MessageLookupByLibrary.simpleMessage("Profil"),
+        "screenEspressoRecipe": MessageLookupByLibrary.simpleMessage("Rezept"),
+        "screenEspressoRefillTheWaterTank":
+            MessageLookupByLibrary.simpleMessage("Bitte Wassertank füllen"),
+        "screenEspressoTarget": MessageLookupByLibrary.simpleMessage("Ziel"),
+        "screenEspressoTemp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("Timer"),
+        "screenEspressoTimes": MessageLookupByLibrary.simpleMessage("Zeit/s"),
+        "screenEspressoTotal": m1,
+        "screenEspressoTtw": m2,
+        "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("Gewicht"),
+        "screenEspressoWeightG":
+            MessageLookupByLibrary.simpleMessage("Gewicht [g]"),
         "screenRecipeAddRecipe":
             MessageLookupByLibrary.simpleMessage("Rezept hinzufügen"),
         "screenRecipeAdjustTempC":

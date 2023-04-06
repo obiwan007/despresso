@@ -20,5 +20,22 @@
     "screenRecipeAddRecipe": "Rezept hinzufügen",
     "screenRecipeSetRatio": "Verhältniss einstellen",
     "no": "Nein",
-    "ok": "Ok"
+    "ok": "Ok",
+    "screenEspressoRefillTheWaterTank": "Bitte Wassertank füllen",
+    "screenEspressoRecipe": "Rezept",
+    "screenEspressoProfile": "Profil",
+    "screenEspressoBean": "Bohnen",
+    "screenEspressoTarget": "Ziel",
+    "screenEspressoTimer": "Timer",
+    "screenEspressoPour": "Bezug: {sec} s",
+    "screenEspressoTotal": "Total: {sec} s",
+    "screenEspressoTtw": "TTW: {sec} s",
+    "screenEspressoDiary": "Espresso Logbuch",
+    "screenEspressoFlowMlsPressureBar": "Fluss [ml/s] / Druck [bar]",
+    "screenEspressoTimes": "Zeit/s",
+    "screenEspressoPressure": "Pressure",
+    "screenEspressoFlow": "Fluss",
+    "screenEspressoWeight": "Gewicht",
+    "screenEspressoTemp": "Temp",
+    "screenEspressoWeightG": "Gewicht [g]"
 }
