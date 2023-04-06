@@ -1,11 +1,28 @@
 {
-    "helloWorld": "Hello World!",
-    "@helloWorld": {
-        "description": "The conventional newborn programmer greeting"
-    },
-    "tabHomeRecipe": "Recipe",
-    "tabHomeEspresso": "Espresso",
-    "tabHomeSteam": "Steam",
-    "tabHomeWater": "Water",
-    "tabHomeFlush": "Flush"
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "tabHomeRecipe": "Recipe",
+  "tabHomeEspresso": "Espresso",
+  "tabHomeSteam": "Steam",
+  "tabHomeWater": "Water",
+  "tabHomeFlush": "Flush",
+  "screenRecipeRecipeDetails": "Recipe Details",
+  "screenRecipehotWater": "Hot water:",
+  "screenRecipesteamMilk": "Steam milk:",
+  "screenRecipeProfileDetails": "Profile Details",
+  "screenRecipeCoffeeNotes": "Coffee notes",
+  "screenRecipeSelectedProfile": "Selected profile",
+  "screenRecipeInitialTemp": "Initial temperature:",
+  "screenRecipeSelectedBean": "Selected Bean",
+  "screenRecipeGrindSettings": "Grind Settings:",
+  "screenRecipeRatio": "Ratio:",
+  "screenRecipeWeightinBeansG": "Weight-in beans [g]",
+  "screenRecipeStopOnWeightG": "Stop on Weight [g]",
+  "screenRecipeAdjustTempC": "Adjust temp [°C]",
+  "screenRecipeAddRecipe": "Add recipe",
+  "no": "No",
+  "screenRecipeSetRatio": "Set Ratio",
+  "ok": "Ok"
 }

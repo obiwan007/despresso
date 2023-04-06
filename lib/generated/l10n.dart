@@ -109,6 +109,176 @@ class S {
       args: [],
     );
   }
+
+  /// `Recipe Details`
+  String get screenRecipeRecipeDetails {
+    return Intl.message(
+      'Recipe Details',
+      name: 'screenRecipeRecipeDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hot water:`
+  String get screenRecipehotWater {
+    return Intl.message(
+      'Hot water:',
+      name: 'screenRecipehotWater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steam milk:`
+  String get screenRecipesteamMilk {
+    return Intl.message(
+      'Steam milk:',
+      name: 'screenRecipesteamMilk',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Details`
+  String get screenRecipeProfileDetails {
+    return Intl.message(
+      'Profile Details',
+      name: 'screenRecipeProfileDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coffee notes`
+  String get screenRecipeCoffeeNotes {
+    return Intl.message(
+      'Coffee notes',
+      name: 'screenRecipeCoffeeNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected profile`
+  String get screenRecipeSelectedProfile {
+    return Intl.message(
+      'Selected profile',
+      name: 'screenRecipeSelectedProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Initial temperature:`
+  String get screenRecipeInitialTemp {
+    return Intl.message(
+      'Initial temperature:',
+      name: 'screenRecipeInitialTemp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected Bean`
+  String get screenRecipeSelectedBean {
+    return Intl.message(
+      'Selected Bean',
+      name: 'screenRecipeSelectedBean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grind Settings:`
+  String get screenRecipeGrindSettings {
+    return Intl.message(
+      'Grind Settings:',
+      name: 'screenRecipeGrindSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ratio:`
+  String get screenRecipeRatio {
+    return Intl.message(
+      'Ratio:',
+      name: 'screenRecipeRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight-in beans [g]`
+  String get screenRecipeWeightinBeansG {
+    return Intl.message(
+      'Weight-in beans [g]',
+      name: 'screenRecipeWeightinBeansG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop on Weight [g]`
+  String get screenRecipeStopOnWeightG {
+    return Intl.message(
+      'Stop on Weight [g]',
+      name: 'screenRecipeStopOnWeightG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adjust temp [°C]`
+  String get screenRecipeAdjustTempC {
+    return Intl.message(
+      'Adjust temp [°C]',
+      name: 'screenRecipeAdjustTempC',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add recipe`
+  String get screenRecipeAddRecipe {
+    return Intl.message(
+      'Add recipe',
+      name: 'screenRecipeAddRecipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message(
+      'No',
+      name: 'no',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set Ratio`
+  String get screenRecipeSetRatio {
+    return Intl.message(
+      'Set Ratio',
+      name: 'screenRecipeSetRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ok`
+  String get ok {
+    return Intl.message(
+      'Ok',
+      name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

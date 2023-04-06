@@ -23,6 +23,37 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "helloWorld": MessageLookupByLibrary.simpleMessage("Hello World!"),
+        "no": MessageLookupByLibrary.simpleMessage("No"),
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "screenRecipeAddRecipe":
+            MessageLookupByLibrary.simpleMessage("Add recipe"),
+        "screenRecipeAdjustTempC":
+            MessageLookupByLibrary.simpleMessage("Adjust temp [°C]"),
+        "screenRecipeCoffeeNotes":
+            MessageLookupByLibrary.simpleMessage("Coffee notes"),
+        "screenRecipeGrindSettings":
+            MessageLookupByLibrary.simpleMessage("Grind Settings:"),
+        "screenRecipeInitialTemp":
+            MessageLookupByLibrary.simpleMessage("Initial temperature:"),
+        "screenRecipeProfileDetails":
+            MessageLookupByLibrary.simpleMessage("Profile Details"),
+        "screenRecipeRatio": MessageLookupByLibrary.simpleMessage("Ratio:"),
+        "screenRecipeRecipeDetails":
+            MessageLookupByLibrary.simpleMessage("Recipe Details"),
+        "screenRecipeSelectedBean":
+            MessageLookupByLibrary.simpleMessage("Selected Bean"),
+        "screenRecipeSelectedProfile":
+            MessageLookupByLibrary.simpleMessage("Selected profile"),
+        "screenRecipeSetRatio":
+            MessageLookupByLibrary.simpleMessage("Set Ratio"),
+        "screenRecipeStopOnWeightG":
+            MessageLookupByLibrary.simpleMessage("Stop on Weight [g]"),
+        "screenRecipeWeightinBeansG":
+            MessageLookupByLibrary.simpleMessage("Weight-in beans [g]"),
+        "screenRecipehotWater":
+            MessageLookupByLibrary.simpleMessage("Hot water:"),
+        "screenRecipesteamMilk":
+            MessageLookupByLibrary.simpleMessage("Steam milk:"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Flush"),
         "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("Recipe"),

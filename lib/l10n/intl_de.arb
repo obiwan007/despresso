@@ -3,5 +3,22 @@
     "tabHomeEspresso": "Espresso",
     "tabHomeSteam": "Dampf",
     "tabHomeWater": "Wasser",
-    "tabHomeFlush": "Spülen"
+    "tabHomeFlush": "Spülen",
+    "screenRecipeRecipeDetails": "Rezept Infos",
+    "screenRecipehotWater": "Heißwasser:",
+    "screenRecipesteamMilk": "Milch schäumen:",
+    "screenRecipeProfileDetails": "Profil Infos",
+    "screenRecipeCoffeeNotes": "Bohnen Infos",
+    "screenRecipeSelectedProfile": "Gewähltes Profil",
+    "screenRecipeInitialTemp": "Anfangs Temperatur:",
+    "screenRecipeSelectedBean": "Gewählte Bohnen",
+    "screenRecipeGrindSettings": "Mühlen Einst.:",
+    "screenRecipeRatio": "Verhältniss:",
+    "screenRecipeWeightinBeansG": "Einwaage Bohnen [g]",
+    "screenRecipeStopOnWeightG": "Stop bei Gewicht [g]",
+    "screenRecipeAdjustTempC": "Temp Anpassen [°C]",
+    "screenRecipeAddRecipe": "Rezept hinzufügen",
+    "screenRecipeSetRatio": "Verhältniss einstellen",
+    "no": "Nein",
+    "ok": "Ok"
 }
