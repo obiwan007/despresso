@@ -238,5 +238,7 @@
   "screenShotEditDoseWeightG": "Dose weight [g]",
   "screenShotEditDrinkWeightG": "Drink weight [g]",
   "screenShotEditPouringTimeS": "Pouring time [s]",
-  "screenShotEditPouringWeightG": "Pouring weight [g]"
+  "screenShotEditPouringWeightG": "Pouring weight [g]",
+  "graphTime": "Time/s",
+  "graphFlowMlsPressureBar": "Flow [ml/s] / Pressure [bar]"
 }

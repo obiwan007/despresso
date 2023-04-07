@@ -58,6 +58,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "footerScale": MessageLookupByLibrary.simpleMessage("Scale"),
         "footerTare": MessageLookupByLibrary.simpleMessage("  Tare  "),
         "footerWater": MessageLookupByLibrary.simpleMessage("Water"),
+        "graphFlowMlsPressureBar": MessageLookupByLibrary.simpleMessage(
+            "Flow [ml/s] / Pressure [bar]"),
+        "graphTime": MessageLookupByLibrary.simpleMessage("Time/s"),
         "green": MessageLookupByLibrary.simpleMessage("Green"),
         "hide": MessageLookupByLibrary.simpleMessage("Hide"),
         "mainMenuDespressoFeedback":

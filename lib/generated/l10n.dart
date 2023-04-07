@@ -2451,6 +2451,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Time/s`
+  String get graphTime {
+    return Intl.message(
+      'Time/s',
+      name: 'graphTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flow [ml/s] / Pressure [bar]`
+  String get graphFlowMlsPressureBar {
+    return Intl.message(
+      'Flow [ml/s] / Pressure [bar]',
+      name: 'graphFlowMlsPressureBar',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

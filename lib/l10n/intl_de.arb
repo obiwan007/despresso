@@ -237,5 +237,7 @@
     "screenShotEditDoseWeightG": "Einwaage [g]",
     "screenShotEditDrinkWeightG": "Zielgewicht [g]",
     "screenShotEditPouringTimeS": "Zubereitungszeit [s]",
-    "screenShotEditPouringWeightG": "Gewicht Getränk [g]"
+    "screenShotEditPouringWeightG": "Gewicht Getränk [g]",
+    "graphTime": "Zeit/s",
+    "graphFlowMlsPressureBar": "Fluss [ml/s] / Druck [bar]"
 }
