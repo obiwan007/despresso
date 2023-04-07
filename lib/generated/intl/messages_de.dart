@@ -73,6 +73,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "profiles": MessageLookupByLibrary.simpleMessage("Profile"),
         "reconnect": MessageLookupByLibrary.simpleMessage("Verbinden"),
         "red": MessageLookupByLibrary.simpleMessage("Rot"),
+        "save": MessageLookupByLibrary.simpleMessage("Speichern"),
         "screenBeanSelectAcidity":
             MessageLookupByLibrary.simpleMessage("Säure"),
         "screenBeanSelectAddressOfRoaster":
@@ -199,6 +200,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Heißwasser:"),
         "screenRecipesteamMilk":
             MessageLookupByLibrary.simpleMessage("Milch schäumen:"),
+        "screenRoasterEditAddress":
+            MessageLookupByLibrary.simpleMessage("Adresse"),
+        "screenRoasterEditDescription":
+            MessageLookupByLibrary.simpleMessage("Beschreibung"),
+        "screenRoasterEditHomepage":
+            MessageLookupByLibrary.simpleMessage("Homepage"),
+        "screenRoasterEditNameOfRoaster":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenRoasterEditTitle":
+            MessageLookupByLibrary.simpleMessage("Röster ändern"),
         "screenSettingsApplicationSettings":
             MessageLookupByLibrary.simpleMessage("Einstellungen"),
         "screenSettingsApplicationSettingsHardwareAndConnections":
@@ -435,6 +446,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Dampf"),
         "tabHomeWater": MessageLookupByLibrary.simpleMessage("Wasser"),
         "temp": MessageLookupByLibrary.simpleMessage("Temp"),
+        "validatorNotBeEmpty":
+            MessageLookupByLibrary.simpleMessage("must not be empty"),
         "wait": MessageLookupByLibrary.simpleMessage("Warten"),
         "weight": MessageLookupByLibrary.simpleMessage("Gewicht")
       };

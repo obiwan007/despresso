@@ -213,5 +213,12 @@
   "screenRecipeEditRatio": "Ratio",
   "screenRecipeEditRatioTo": "to",
   "screenRecipeEditDoseWeightin": "Dose Weight-in",
-  "screenRecipeEditWeightOut": "Weight out"
+  "screenRecipeEditWeightOut": "Weight out",
+  "screenRoasterEditTitle": "Edit Roaster",
+  "screenRoasterEditNameOfRoaster": "Name",
+  "validatorNotBeEmpty": "must not be empty",
+  "screenRoasterEditDescription": "Description",
+  "screenRoasterEditAddress": "Address",
+  "screenRoasterEditHomepage": "Homepage",
+  "save": "Save"
 }

@@ -50,12 +50,202 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `Hello World!`
-  String get helloWorld {
+  /// `must not be empty`
+  String get validatorNotBeEmpty {
     return Intl.message(
-      'Hello World!',
-      name: 'helloWorld',
-      desc: 'The conventional newborn programmer greeting',
+      'must not be empty',
+      name: 'validatorNotBeEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `disconnected`
+  String get disconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `heated up`
+  String get stateIdleHeated {
+    return Intl.message(
+      'heated up',
+      name: 'stateIdleHeated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Heating Water`
+  String get subStateHeatWaterHeater {
+    return Intl.message(
+      'Heating Water',
+      name: 'subStateHeatWaterHeater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Heating Tank`
+  String get subStateHeatWaterTank {
+    return Intl.message(
+      'Heating Tank',
+      name: 'subStateHeatWaterTank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `disconnected`
+  String get state_Disconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'state_Disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `disconnected`
+  String get stateDisconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'stateDisconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `pour`
+  String get statePour {
+    return Intl.message(
+      'pour',
+      name: 'statePour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message(
+      'No',
+      name: 'no',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ok`
+  String get ok {
+    return Intl.message(
+      'Ok',
+      name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pressure`
+  String get pressure {
+    return Intl.message(
+      'Pressure',
+      name: 'pressure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flow`
+  String get flow {
+    return Intl.message(
+      'Flow',
+      name: 'flow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight`
+  String get weight {
+    return Intl.message(
+      'Weight',
+      name: 'weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp`
+  String get temp {
+    return Intl.message(
+      'Temp',
+      name: 'temp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profiles`
+  String get profiles {
+    return Intl.message(
+      'Profiles',
+      name: 'profiles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Beans`
+  String get beans {
+    return Intl.message(
+      'Beans',
+      name: 'beans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy`
+  String get privacy {
+    return Intl.message(
+      'Privacy',
+      name: 'privacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit`
+  String get exit {
+    return Intl.message(
+      'Exit',
+      name: 'exit',
+      desc: '',
       args: [],
     );
   }
@@ -65,6 +255,26 @@ class S {
     return Intl.message(
       'Recipe',
       name: 'tabHomeRecipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enabled`
+  String get enabled {
+    return Intl.message(
+      'Enabled',
+      name: 'enabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disabled`
+  String get disabled {
+    return Intl.message(
+      'Disabled',
+      name: 'disabled',
       desc: '',
       args: [],
     );
@@ -105,6 +315,156 @@ class S {
     return Intl.message(
       'Flush',
       name: 'tabHomeFlush',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `EDIT`
+  String get edit {
+    return Intl.message(
+      'EDIT',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show`
+  String get show {
+    return Intl.message(
+      'Show',
+      name: 'show',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hide`
+  String get hide {
+    return Intl.message(
+      'Hide',
+      name: 'hide',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Red`
+  String get red {
+    return Intl.message(
+      'Red',
+      name: 'red',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orange`
+  String get orange {
+    return Intl.message(
+      'Orange',
+      name: 'orange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blue`
+  String get blue {
+    return Intl.message(
+      'Blue',
+      name: 'blue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Green`
+  String get green {
+    return Intl.message(
+      'Green',
+      name: 'green',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `error`
+  String get error {
+    return Intl.message(
+      'error',
+      name: 'error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop`
+  String get stop {
+    return Intl.message(
+      'Stop',
+      name: 'stop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start`
+  String get start {
+    return Intl.message(
+      'Start',
+      name: 'start',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On`
+  String get on {
+    return Intl.message(
+      'On',
+      name: 'on',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off`
+  String get off {
+    return Intl.message(
+      'Off',
+      name: 'off',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wait`
+  String get wait {
+    return Intl.message(
+      'Wait',
+      name: 'wait',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch on`
+  String get switchOn {
+    return Intl.message(
+      'Switch on',
+      name: 'switchOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reconnect`
+  String get reconnect {
+    return Intl.message(
+      'Reconnect',
+      name: 'reconnect',
       desc: '',
       args: [],
     );
@@ -250,31 +610,11 @@ class S {
     );
   }
 
-  /// `No`
-  String get no {
-    return Intl.message(
-      'No',
-      name: 'no',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Set Ratio`
   String get screenRecipeSetRatio {
     return Intl.message(
       'Set Ratio',
       name: 'screenRecipeSetRatio',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Ok`
-  String get ok {
-    return Intl.message(
-      'Ok',
-      name: 'ok',
       desc: '',
       args: [],
     );
@@ -590,36 +930,6 @@ class S {
     );
   }
 
-  /// `Profiles`
-  String get profiles {
-    return Intl.message(
-      'Profiles',
-      name: 'profiles',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Beans`
-  String get beans {
-    return Intl.message(
-      'Beans',
-      name: 'beans',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Settings`
-  String get settings {
-    return Intl.message(
-      'Settings',
-      name: 'settings',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Feedback`
   String get mainMenuFeedback {
     return Intl.message(
@@ -635,26 +945,6 @@ class S {
     return Intl.message(
       'Despresso Feedback',
       name: 'mainMenuDespressoFeedback',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Privacy`
-  String get privacy {
-    return Intl.message(
-      'Privacy',
-      name: 'privacy',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Exit`
-  String get exit {
-    return Intl.message(
-      'Exit',
-      name: 'exit',
       desc: '',
       args: [],
     );
@@ -710,46 +1000,6 @@ class S {
     );
   }
 
-  /// `Pressure`
-  String get pressure {
-    return Intl.message(
-      'Pressure',
-      name: 'pressure',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Flow`
-  String get flow {
-    return Intl.message(
-      'Flow',
-      name: 'flow',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Weight`
-  String get weight {
-    return Intl.message(
-      'Weight',
-      name: 'weight',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Temp`
-  String get temp {
-    return Intl.message(
-      'Temp',
-      name: 'temp',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Beans and Roasters`
   String get screenBeanSelectTitle {
     return Intl.message(
@@ -765,16 +1015,6 @@ class S {
     return Intl.message(
       'Select Roaster',
       name: 'screenBeanSelectSelectRoaster',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `EDIT`
-  String get edit {
-    return Intl.message(
-      'EDIT',
-      name: 'edit',
       desc: '',
       args: [],
     );
@@ -1020,26 +1260,6 @@ class S {
     );
   }
 
-  /// `Enabled`
-  String get enabled {
-    return Intl.message(
-      'Enabled',
-      name: 'enabled',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Disabled`
-  String get disabled {
-    return Intl.message(
-      'Disabled',
-      name: 'disabled',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Stop before weight was reached [s]`
   String get screenSettingsStopBeforeWeightWasReachedS {
     return Intl.message(
@@ -1110,26 +1330,6 @@ class S {
     );
   }
 
-  /// `Show`
-  String get show {
-    return Intl.message(
-      'Show',
-      name: 'show',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Hide`
-  String get hide {
-    return Intl.message(
-      'Hide',
-      name: 'hide',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Flush timer [s]`
   String get screenSettingsFlushTimerS {
     return Intl.message(
@@ -1185,46 +1385,6 @@ class S {
     return Intl.message(
       'Light theme',
       name: 'screenSettingsLightTheme',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Red`
-  String get red {
-    return Intl.message(
-      'Red',
-      name: 'red',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Orange`
-  String get orange {
-    return Intl.message(
-      'Orange',
-      name: 'orange',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Blue`
-  String get blue {
-    return Intl.message(
-      'Blue',
-      name: 'blue',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Green`
-  String get green {
-    return Intl.message(
-      'Green',
-      name: 'green',
       desc: '',
       args: [],
     );
@@ -1792,16 +1952,6 @@ class S {
     );
   }
 
-  /// `error`
-  String get error {
-    return Intl.message(
-      'error',
-      name: 'error',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Settings are restored. Please close app and restart.`
   String get screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart {
     return Intl.message(
@@ -1842,151 +1992,11 @@ class S {
     );
   }
 
-  /// `disconnected`
-  String get disconnected {
-    return Intl.message(
-      'disconnected',
-      name: 'disconnected',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Stop`
-  String get stop {
-    return Intl.message(
-      'Stop',
-      name: 'stop',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Start`
-  String get start {
-    return Intl.message(
-      'Start',
-      name: 'start',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `heated up`
-  String get stateIdleHeated {
-    return Intl.message(
-      'heated up',
-      name: 'stateIdleHeated',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Heating Water`
-  String get subStateHeatWaterHeater {
-    return Intl.message(
-      'Heating Water',
-      name: 'subStateHeatWaterHeater',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Heating Tank`
-  String get subStateHeatWaterTank {
-    return Intl.message(
-      'Heating Tank',
-      name: 'subStateHeatWaterTank',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Wait`
-  String get wait {
-    return Intl.message(
-      'Wait',
-      name: 'wait',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Switch on`
-  String get switchOn {
-    return Intl.message(
-      'Switch on',
-      name: 'switchOn',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Reconnect`
-  String get reconnect {
-    return Intl.message(
-      'Reconnect',
-      name: 'reconnect',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `disconnected`
-  String get state_Disconnected {
-    return Intl.message(
-      'disconnected',
-      name: 'state_Disconnected',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `disconnected`
-  String get stateDisconnected {
-    return Intl.message(
-      'disconnected',
-      name: 'stateDisconnected',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `pour`
-  String get statePour {
-    return Intl.message(
-      'pour',
-      name: 'statePour',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Group`
   String get footerGroup {
     return Intl.message(
       'Group',
       name: 'footerGroup',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `On`
-  String get on {
-    return Intl.message(
-      'On',
-      name: 'on',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Off`
-  String get off {
-    return Intl.message(
-      'Off',
-      name: 'off',
       desc: '',
       args: [],
     );
@@ -2217,6 +2227,56 @@ class S {
     return Intl.message(
       'Weight out',
       name: 'screenRecipeEditWeightOut',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Roaster`
+  String get screenRoasterEditTitle {
+    return Intl.message(
+      'Edit Roaster',
+      name: 'screenRoasterEditTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get screenRoasterEditNameOfRoaster {
+    return Intl.message(
+      'Name',
+      name: 'screenRoasterEditNameOfRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get screenRoasterEditDescription {
+    return Intl.message(
+      'Description',
+      name: 'screenRoasterEditDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address`
+  String get screenRoasterEditAddress {
+    return Intl.message(
+      'Address',
+      name: 'screenRoasterEditAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Homepage`
+  String get screenRoasterEditHomepage {
+    return Intl.message(
+      'Homepage',
+      name: 'screenRoasterEditHomepage',
       desc: '',
       args: [],
     );

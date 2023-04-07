@@ -1,4 +1,6 @@
 {
+    "validatorNotBeEmpty": "must not be empty",
+    "save": "Speichern",
     "tabHomeRecipe": "Rezept",
     "tabHomeEspresso": "Espresso",
     "tabHomeSteam": "Dampf",
@@ -213,5 +215,10 @@
     "screenRecipeEditRatio": "Verhältniss",
     "screenRecipeEditRatioTo": "zu",
     "screenRecipeEditDoseWeightin": "Bohnen Einwaage",
-    "screenRecipeEditWeightOut": "Zielgewicht"
+    "screenRecipeEditWeightOut": "Zielgewicht",
+    "screenRoasterEditTitle": "Röster ändern",
+    "screenRoasterEditNameOfRoaster": "Name",
+    "screenRoasterEditDescription": "Beschreibung",
+    "screenRoasterEditAddress": "Adresse",
+    "screenRoasterEditHomepage": "Homepage"
 }
