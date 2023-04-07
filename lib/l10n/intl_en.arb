@@ -192,5 +192,15 @@
   "reconnect": "Reconnect",
   "state_Disconnected": "disconnected",
   "stateDisconnected": "disconnected",
-  "statePour": "pour"
+  "statePour": "pour",
+  "footerGroup": "Group",
+  "on": "On",
+  "off": "Off",
+  "footerConnect": "Connect",
+  "footerProbe": "Probe",
+  "footerBattery": "Battery",
+  "footerTare": "  Tare  ",
+  "footerRefillWater": "Refill water",
+  "footerWater": "Water",
+  "footerScale": "Scale"
 }

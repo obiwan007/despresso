@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/helper/message.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -93,9 +94,15 @@ class _MachineFooterState extends State<MachineFooter> {
                           machineService.currentFullState.state == EspressoMachineState.refill
                               ? Container(
                                   color: Colors.red,
-                                  child: const FooterValue(value: "Refill water", label: "Water", width: 200),
+                                  child: FooterValue(
+                                      value: S.of(context).footerRefillWater,
+                                      label: S.of(context).footerWater,
+                                      width: 200),
                                 )
-                              : FooterValue(value: "${snapshot.data?.getLevelML()} ml", label: "Water", width: 200)
+                              : FooterValue(
+                                  value: "${snapshot.data?.getLevelML()} ml",
+                                  label: S.of(context).footerWater,
+                                  width: 200)
                         ]
                       : [],
                 );
@@ -110,12 +117,17 @@ class _MachineFooterState extends State<MachineFooter> {
                 return Row(
                   children: snapshot.data != null && machineService.currentFullState.state != EspressoMachineState.sleep
                       ? [
-                          FooterValue(value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C", label: "Group"),
+                          FooterValue(
+                              value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C",
+                              label: S.of(context).footerGroup),
                           if (machineService.currentFullState.state != EspressoMachineState.idle)
                             FooterValue(
-                                value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar", label: "Pressure"),
+                                value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar",
+                                label: S.of(context).pressure),
                           if (machineService.currentFullState.state != EspressoMachineState.idle)
-                            FooterValue(value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s", label: "Flow"),
+                            FooterValue(
+                                value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s",
+                                label: S.of(context).flow),
                         ]
                       : [],
                 );
@@ -129,7 +141,7 @@ class _MachineFooterState extends State<MachineFooter> {
                         snapshot.data?.state != EspressoMachineState.connecting)
                     ? Row(
                         children: [
-                          Text(isOn(snapshot.data?.state) ? 'On' : 'Off'),
+                          Text(isOn(snapshot.data?.state) ? S.of(context).on : S.of(context).off),
                           Switch(
                             value: isOn(snapshot.data?.state), //set true to enable switch by default
                             onChanged: (bool value) {
@@ -188,8 +200,8 @@ class ThermprobeFooter extends StatelessWidget {
                           onPressed: () {
                             machineService.tempService.connect();
                           },
-                          child: const Text(
-                            "Connect",
+                          child: Text(
+                            S.of(context).footerConnect,
                           ),
                         ),
                       if (machineService.tempService.state == TempState.connected)
@@ -239,8 +251,8 @@ class ThermprobeFooter extends StatelessWidget {
                   );
                 }),
           ),
-          const Text(
-            'Probe',
+          Text(
+            S.of(context).footerProbe,
             style: theme.TextStyles.subHeadingFooter,
           ),
           StreamBuilder<Object>(
@@ -251,7 +263,7 @@ class ThermprobeFooter extends StatelessWidget {
                   backgroundColor: Colors.black38,
                   color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
                   value: bat,
-                  semanticsLabel: 'Battery',
+                  semanticsLabel: S.of(context).footerBattery,
                 );
               }),
         ],
@@ -292,7 +304,9 @@ class ScaleFooter extends StatelessWidget {
                                 : machineService.scaleService.connect();
                           },
                           child: Text(
-                            machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
+                            machineService.scaleService.state == ScaleState.connected
+                                ? S.of(context).footerTare
+                                : S.of(context).footerConnect,
                           ),
                         ),
                       if (machineService.scaleService.state == ScaleState.connecting)
@@ -351,7 +365,7 @@ class ScaleFooter extends StatelessWidget {
                 }),
           ),
           Text(
-            'Scale',
+            S.of(context).footerScale,
             style: Theme.of(context).textTheme.labelSmall,
           ),
           StreamBuilder<Object>(
@@ -362,7 +376,7 @@ class ScaleFooter extends StatelessWidget {
                   backgroundColor: Colors.black38,
                   color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
                   value: bat,
-                  semanticsLabel: 'Battery',
+                  semanticsLabel: S.of(context).footerBattery,
                 );
               }),
         ],

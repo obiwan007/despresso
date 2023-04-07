@@ -187,5 +187,15 @@
     "switchOn": "Einschalten",
     "reconnect": "Verbinden",
     "stateDisconnected": "GETRENNT",
-    "statePour": "Bezug"
+    "statePour": "Bezug",
+    "footerGroup": "Group",
+    "on": "Ein",
+    "off": "Aus",
+    "footerConnect": "Verbinden",
+    "footerProbe": "Probe",
+    "footerBattery": "Batterie",
+    "footerTare": "  Tara  ",
+    "footerRefillWater": "Wasser auffüllen",
+    "footerWater": "Wasser",
+    "footerScale": "Waage"
 }

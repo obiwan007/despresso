@@ -1961,6 +1961,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Group`
+  String get footerGroup {
+    return Intl.message(
+      'Group',
+      name: 'footerGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On`
+  String get on {
+    return Intl.message(
+      'On',
+      name: 'on',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Off`
+  String get off {
+    return Intl.message(
+      'Off',
+      name: 'off',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect`
+  String get footerConnect {
+    return Intl.message(
+      'Connect',
+      name: 'footerConnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Probe`
+  String get footerProbe {
+    return Intl.message(
+      'Probe',
+      name: 'footerProbe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Battery`
+  String get footerBattery {
+    return Intl.message(
+      'Battery',
+      name: 'footerBattery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `  Tare  `
+  String get footerTare {
+    return Intl.message(
+      '  Tare  ',
+      name: 'footerTare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refill water`
+  String get footerRefillWater {
+    return Intl.message(
+      'Refill water',
+      name: 'footerRefillWater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water`
+  String get footerWater {
+    return Intl.message(
+      'Water',
+      name: 'footerWater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale`
+  String get footerScale {
+    return Intl.message(
+      'Scale',
+      name: 'footerScale',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
