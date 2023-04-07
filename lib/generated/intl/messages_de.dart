@@ -26,15 +26,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(sec) => "TTW: ${sec} s";
 
-  static String m3(flow) => "Dampf Flussgeschwindigkeit ${flow} ml/s";
+  static String m3(desc) => "Beschreibung des Shots vom ${desc}";
 
-  static String m4(temp) => "Stop bei Temperatur ${temp} °C";
+  static String m4(flow) => "Dampf Flussgeschwindigkeit ${flow} ml/s";
 
-  static String m5(temp) => "Dampf Temperatur ${temp} °C";
+  static String m5(temp) => "Stop bei Temperatur ${temp} °C";
 
-  static String m6(t) => "Timer ${t} s";
+  static String m6(temp) => "Dampf Temperatur ${temp} °C";
 
-  static String m7(w) => "Gewicht ${w} g";
+  static String m7(t) => "Timer ${t} s";
+
+  static String m8(w) => "Gewicht ${w} g";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -70,7 +72,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "orange": MessageLookupByLibrary.simpleMessage("Orange"),
         "pressure": MessageLookupByLibrary.simpleMessage("Druck"),
         "privacy": MessageLookupByLibrary.simpleMessage("Privatsphäre/DSGVO"),
+        "profile": MessageLookupByLibrary.simpleMessage("Profil"),
         "profiles": MessageLookupByLibrary.simpleMessage("Profile"),
+        "recipe": MessageLookupByLibrary.simpleMessage("Rezept"),
         "reconnect": MessageLookupByLibrary.simpleMessage("Verbinden"),
         "red": MessageLookupByLibrary.simpleMessage("Rot"),
         "save": MessageLookupByLibrary.simpleMessage("Speichern"),
@@ -411,22 +415,51 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "Es wurden kritische Einstellungen geändert. Es wird ein Neustart der App benötigt."),
+        "screenShotEditBarrista":
+            MessageLookupByLibrary.simpleMessage("Barrista"),
+        "screenShotEditDescribeYourExperience":
+            MessageLookupByLibrary.simpleMessage("Beschreibung"),
+        "screenShotEditDoseWeightG":
+            MessageLookupByLibrary.simpleMessage("Einwaage [g]"),
+        "screenShotEditDrinkWeightG":
+            MessageLookupByLibrary.simpleMessage("Zielgewicht [g]"),
+        "screenShotEditDrinker":
+            MessageLookupByLibrary.simpleMessage("Drinker"),
+        "screenShotEditEnjoyment":
+            MessageLookupByLibrary.simpleMessage("Enjoyment"),
+        "screenShotEditExtractionYield":
+            MessageLookupByLibrary.simpleMessage("Extraktions Ausbeute"),
+        "screenShotEditGrinder": MessageLookupByLibrary.simpleMessage("Mühle"),
+        "screenShotEditGrinderSettings":
+            MessageLookupByLibrary.simpleMessage("Mühleneinstellungen"),
+        "screenShotEditOpenInVisualizercoffee":
+            MessageLookupByLibrary.simpleMessage("In Visualizer.coffee öffnen"),
+        "screenShotEditPouringTimeS":
+            MessageLookupByLibrary.simpleMessage("Zubereitungszeit [s]"),
+        "screenShotEditPouringWeightG":
+            MessageLookupByLibrary.simpleMessage("Gewicht Getränk [g]"),
+        "screenShotEditSuccessUploadingYourShot":
+            MessageLookupByLibrary.simpleMessage("Success uploading your shot"),
+        "screenShotEditTitle": m3,
+        "screenShotEditTotalDissolvedSolidssTds":
+            MessageLookupByLibrary.simpleMessage(
+                "Total Dissolved Solidss (TDS)"),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Umgebung"),
-        "screenSteamFlowrate": m3,
+        "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":
             MessageLookupByLibrary.simpleMessage(
                 "Aus (normaler purge nach Stop)"),
         "screenSteamOnSlowPurgeOn1stStop": MessageLookupByLibrary.simpleMessage(
             "An (langsamer purge nach erstem Stop)"),
         "screenSteamReset": MessageLookupByLibrary.simpleMessage("Reset"),
-        "screenSteamStopAtTemperatur": m4,
+        "screenSteamStopAtTemperatur": m5,
         "screenSteamTempTip": MessageLookupByLibrary.simpleMessage("Temp Tip"),
-        "screenSteamTemperaturs": m5,
+        "screenSteamTemperaturs": m6,
         "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("Zeit/s"),
-        "screenSteamTimerS": m6,
+        "screenSteamTimerS": m7,
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("Dampf two-tap mode:"),
-        "screenWaterWeightG": m7,
+        "screenWaterWeightG": m8,
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
         "show": MessageLookupByLibrary.simpleMessage("Anzeigen"),
         "start": MessageLookupByLibrary.simpleMessage("Start"),

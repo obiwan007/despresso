@@ -2281,6 +2281,176 @@ class S {
       args: [],
     );
   }
+
+  /// `Describe your experience with shot from {desc}`
+  String screenShotEditTitle(Object desc) {
+    return Intl.message(
+      'Describe your experience with shot from $desc',
+      name: 'screenShotEditTitle',
+      desc: '',
+      args: [desc],
+    );
+  }
+
+  /// `Success uploading your shot`
+  String get screenShotEditSuccessUploadingYourShot {
+    return Intl.message(
+      'Success uploading your shot',
+      name: 'screenShotEditSuccessUploadingYourShot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recipe`
+  String get recipe {
+    return Intl.message(
+      'Recipe',
+      name: 'recipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get profile {
+    return Intl.message(
+      'Profile',
+      name: 'profile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open in Visualizer.coffee`
+  String get screenShotEditOpenInVisualizercoffee {
+    return Intl.message(
+      'Open in Visualizer.coffee',
+      name: 'screenShotEditOpenInVisualizercoffee',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Describe your experience`
+  String get screenShotEditDescribeYourExperience {
+    return Intl.message(
+      'Describe your experience',
+      name: 'screenShotEditDescribeYourExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enjoyment`
+  String get screenShotEditEnjoyment {
+    return Intl.message(
+      'Enjoyment',
+      name: 'screenShotEditEnjoyment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drinker`
+  String get screenShotEditDrinker {
+    return Intl.message(
+      'Drinker',
+      name: 'screenShotEditDrinker',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Barrista`
+  String get screenShotEditBarrista {
+    return Intl.message(
+      'Barrista',
+      name: 'screenShotEditBarrista',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Dissolved Solidss (TDS)`
+  String get screenShotEditTotalDissolvedSolidssTds {
+    return Intl.message(
+      'Total Dissolved Solidss (TDS)',
+      name: 'screenShotEditTotalDissolvedSolidssTds',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extraction yield`
+  String get screenShotEditExtractionYield {
+    return Intl.message(
+      'Extraction yield',
+      name: 'screenShotEditExtractionYield',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grinder`
+  String get screenShotEditGrinder {
+    return Intl.message(
+      'Grinder',
+      name: 'screenShotEditGrinder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grinder settings`
+  String get screenShotEditGrinderSettings {
+    return Intl.message(
+      'Grinder settings',
+      name: 'screenShotEditGrinderSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dose weight [g]`
+  String get screenShotEditDoseWeightG {
+    return Intl.message(
+      'Dose weight [g]',
+      name: 'screenShotEditDoseWeightG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drink weight [g]`
+  String get screenShotEditDrinkWeightG {
+    return Intl.message(
+      'Drink weight [g]',
+      name: 'screenShotEditDrinkWeightG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pouring time [s]`
+  String get screenShotEditPouringTimeS {
+    return Intl.message(
+      'Pouring time [s]',
+      name: 'screenShotEditPouringTimeS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pouring weight [g]`
+  String get screenShotEditPouringWeightG {
+    return Intl.message(
+      'Pouring weight [g]',
+      name: 'screenShotEditPouringWeightG',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

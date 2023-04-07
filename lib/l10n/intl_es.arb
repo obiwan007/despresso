@@ -220,5 +220,22 @@
   "screenRoasterEditDescription": "Description",
   "screenRoasterEditAddress": "Address",
   "screenRoasterEditHomepage": "Homepage",
-  "save": "Save"
+  "save": "Save",
+  "screenShotEditTitle": "Describe your experience with shot from {desc}",
+  "screenShotEditSuccessUploadingYourShot": "Success uploading your shot",
+  "recipe": "Recipe",
+  "profile": "Profile",
+  "screenShotEditOpenInVisualizercoffee": "Open in Visualizer.coffee",
+  "screenShotEditDescribeYourExperience": "Describe your experience",
+  "screenShotEditEnjoyment": "Enjoyment",
+  "screenShotEditDrinker": "Drinker",
+  "screenShotEditBarrista": "Barrista",
+  "screenShotEditTotalDissolvedSolidssTds": "Total Dissolved Solidss (TDS)",
+  "screenShotEditExtractionYield": "Extraction yield",
+  "screenShotEditGrinder": "Grinder",
+  "screenShotEditGrinderSettings": "Grinder settings",
+  "screenShotEditDoseWeightG": "Dose weight [g]",
+  "screenShotEditDrinkWeightG": "Drink weight [g]",
+  "screenShotEditPouringTimeS": "Pouring time [s]",
+  "screenShotEditPouringWeightG": "Pouring weight [g]"
 }
