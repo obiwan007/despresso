@@ -197,5 +197,21 @@
     "footerTare": "  Tara  ",
     "footerRefillWater": "Wasser auffüllen",
     "footerWater": "Wasser",
-    "footerScale": "Waage"
+    "footerScale": "Waage",
+    "screenRecipeEditTitle": "Rezept ändern",
+    "screenRecipeEditNameOfRecipe": "Name",
+    "screenRecipeEditDescription": "Beschreibung",
+    "screenRecipeEditGrinderSettings": "Mühle Einstellungen",
+    "screenRecipeEditGrinderModel": "Model",
+    "screenRecipeEditAdjustments": "Anpassungen",
+    "screenRecipeEditTemperatureCorrection": "Temperatur Anpassungen",
+    "screenRecipeEditMilkAndWater": "Milch und Wasser",
+    "screenRecipeEditUseSteam": "Dampf? ",
+    "screenRecipeEditMilkWeight": "Milch Einwaage",
+    "screenRecipeEditUseWater": "Wasser? ",
+    "screenRecipeEditDosingAndWeights": "Verhältniss und Einwaagen",
+    "screenRecipeEditRatio": "Verhältniss",
+    "screenRecipeEditRatioTo": "zu",
+    "screenRecipeEditDoseWeightin": "Bohnen Einwaage",
+    "screenRecipeEditWeightOut": "Zielgewicht"
 }

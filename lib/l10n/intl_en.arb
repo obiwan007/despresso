@@ -202,5 +202,21 @@
   "footerTare": "  Tare  ",
   "footerRefillWater": "Refill water",
   "footerWater": "Water",
-  "footerScale": "Scale"
+  "footerScale": "Scale",
+  "screenRecipeEditTitle": "Edit Recipe",
+  "screenRecipeEditNameOfRecipe": "Name",
+  "screenRecipeEditDescription": "Description",
+  "screenRecipeEditGrinderSettings": "Grinder Settings",
+  "screenRecipeEditGrinderModel": "Model",
+  "screenRecipeEditAdjustments": "Adjustments",
+  "screenRecipeEditTemperatureCorrection": "Temperature correction",
+  "screenRecipeEditMilkAndWater": "Milk and water",
+  "screenRecipeEditUseSteam": "Use steam? ",
+  "screenRecipeEditMilkWeight": "Milk weight",
+  "screenRecipeEditUseWater": "Use water? ",
+  "screenRecipeEditDosingAndWeights": "Dosing and weights",
+  "screenRecipeEditRatio": "Ratio",
+  "screenRecipeEditRatioTo": "to",
+  "screenRecipeEditDoseWeightin": "Dose Weight-in",
+  "screenRecipeEditWeightOut": "Weight out"
 }

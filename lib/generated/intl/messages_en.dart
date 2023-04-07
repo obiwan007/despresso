@@ -147,6 +147,36 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Adjust temp [°C]"),
         "screenRecipeCoffeeNotes":
             MessageLookupByLibrary.simpleMessage("Coffee notes"),
+        "screenRecipeEditAdjustments":
+            MessageLookupByLibrary.simpleMessage("Adjustments"),
+        "screenRecipeEditDescription":
+            MessageLookupByLibrary.simpleMessage("Description"),
+        "screenRecipeEditDoseWeightin":
+            MessageLookupByLibrary.simpleMessage("Dose Weight-in"),
+        "screenRecipeEditDosingAndWeights":
+            MessageLookupByLibrary.simpleMessage("Dosing and weights"),
+        "screenRecipeEditGrinderModel":
+            MessageLookupByLibrary.simpleMessage("Model"),
+        "screenRecipeEditGrinderSettings":
+            MessageLookupByLibrary.simpleMessage("Grinder Settings"),
+        "screenRecipeEditMilkAndWater":
+            MessageLookupByLibrary.simpleMessage("Milk and water"),
+        "screenRecipeEditMilkWeight":
+            MessageLookupByLibrary.simpleMessage("Milk weight"),
+        "screenRecipeEditNameOfRecipe":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenRecipeEditRatio": MessageLookupByLibrary.simpleMessage("Ratio"),
+        "screenRecipeEditRatioTo": MessageLookupByLibrary.simpleMessage("to"),
+        "screenRecipeEditTemperatureCorrection":
+            MessageLookupByLibrary.simpleMessage("Temperature correction"),
+        "screenRecipeEditTitle":
+            MessageLookupByLibrary.simpleMessage("Edit Recipe"),
+        "screenRecipeEditUseSteam":
+            MessageLookupByLibrary.simpleMessage("Use steam? "),
+        "screenRecipeEditUseWater":
+            MessageLookupByLibrary.simpleMessage("Use water? "),
+        "screenRecipeEditWeightOut":
+            MessageLookupByLibrary.simpleMessage("Weight out"),
         "screenRecipeGrindSettings":
             MessageLookupByLibrary.simpleMessage("Grind Settings:"),
         "screenRecipeInitialTemp":

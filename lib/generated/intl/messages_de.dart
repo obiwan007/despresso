@@ -144,6 +144,37 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Temp Anpassen [°C]"),
         "screenRecipeCoffeeNotes":
             MessageLookupByLibrary.simpleMessage("Bohnen Infos"),
+        "screenRecipeEditAdjustments":
+            MessageLookupByLibrary.simpleMessage("Anpassungen"),
+        "screenRecipeEditDescription":
+            MessageLookupByLibrary.simpleMessage("Beschreibung"),
+        "screenRecipeEditDoseWeightin":
+            MessageLookupByLibrary.simpleMessage("Bohnen Einwaage"),
+        "screenRecipeEditDosingAndWeights":
+            MessageLookupByLibrary.simpleMessage("Verhältniss und Einwaagen"),
+        "screenRecipeEditGrinderModel":
+            MessageLookupByLibrary.simpleMessage("Model"),
+        "screenRecipeEditGrinderSettings":
+            MessageLookupByLibrary.simpleMessage("Mühle Einstellungen"),
+        "screenRecipeEditMilkAndWater":
+            MessageLookupByLibrary.simpleMessage("Milch und Wasser"),
+        "screenRecipeEditMilkWeight":
+            MessageLookupByLibrary.simpleMessage("Milch Einwaage"),
+        "screenRecipeEditNameOfRecipe":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "screenRecipeEditRatio":
+            MessageLookupByLibrary.simpleMessage("Verhältniss"),
+        "screenRecipeEditRatioTo": MessageLookupByLibrary.simpleMessage("zu"),
+        "screenRecipeEditTemperatureCorrection":
+            MessageLookupByLibrary.simpleMessage("Temperatur Anpassungen"),
+        "screenRecipeEditTitle":
+            MessageLookupByLibrary.simpleMessage("Rezept ändern"),
+        "screenRecipeEditUseSteam":
+            MessageLookupByLibrary.simpleMessage("Dampf? "),
+        "screenRecipeEditUseWater":
+            MessageLookupByLibrary.simpleMessage("Wasser? "),
+        "screenRecipeEditWeightOut":
+            MessageLookupByLibrary.simpleMessage("Zielgewicht"),
         "screenRecipeGrindSettings":
             MessageLookupByLibrary.simpleMessage("Mühlen Einst.:"),
         "screenRecipeInitialTemp":

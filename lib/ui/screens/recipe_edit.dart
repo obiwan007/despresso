@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -119,7 +120,7 @@ class RecipeEditState extends State<RecipeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Recipe'),
+        title: Text(S.of(context).screenRecipeEditTitle),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(
@@ -169,8 +170,8 @@ class RecipeEditState extends State<RecipeEdit> {
               children: [
                 ReactiveTextField<String>(
                   formControlName: 'name',
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenRecipeEditNameOfRecipe,
                   ),
                   validationMessages: {
                     ValidationMessage.required: (_) => 'Name must not be empty',
@@ -180,8 +181,8 @@ class RecipeEditState extends State<RecipeEdit> {
                   formControlName: 'description',
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenRecipeEditDescription,
                   ),
                 ),
               ],
@@ -202,8 +203,8 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 200,
                     child: ReactiveTextField<double>(
                       formControlName: 'grinderSettings',
-                      decoration: const InputDecoration(
-                        labelText: 'Grinder Settings',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditGrinderSettings,
                       ),
                     ),
                   ),
@@ -214,8 +215,8 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 200,
                     child: ReactiveTextField<String>(
                       formControlName: 'grinderModel',
-                      decoration: const InputDecoration(
-                        labelText: 'Model',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditGrinderModel,
                       ),
                     ),
                   ),
@@ -230,7 +231,7 @@ class RecipeEditState extends State<RecipeEdit> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text("Dosing and weights", style: Theme.of(context).textTheme.labelMedium),
+              Text(S.of(context).screenRecipeEditDosingAndWeights, style: Theme.of(context).textTheme.labelMedium),
               Row(
                 children: [
                   SizedBox(
@@ -238,8 +239,8 @@ class RecipeEditState extends State<RecipeEdit> {
                     child: ReactiveTextField<double>(
                       formControlName: 'ratio1',
                       keyboardType: TextInputType.numberWithOptions(),
-                      decoration: const InputDecoration(
-                        labelText: 'Ratio',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditRatio,
                       ),
                       onSubmitted: (control) {
                         recalcWeight(form);
@@ -261,8 +262,8 @@ class RecipeEditState extends State<RecipeEdit> {
                     child: ReactiveTextField<double>(
                       formControlName: 'ratio2',
                       keyboardType: TextInputType.numberWithOptions(),
-                      decoration: const InputDecoration(
-                        labelText: 'to',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditRatioTo,
                       ),
                       onSubmitted: (control) {
                         recalcWeight(form);
@@ -284,8 +285,8 @@ class RecipeEditState extends State<RecipeEdit> {
                     child: ReactiveTextField<double>(
                       formControlName: 'grinderDoseWeight',
                       keyboardType: TextInputType.numberWithOptions(),
-                      decoration: const InputDecoration(
-                        labelText: 'Dose Weight-in',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditDoseWeightin,
                       ),
                       onSubmitted: (control) {
                         recalcWeight(form);
@@ -307,8 +308,8 @@ class RecipeEditState extends State<RecipeEdit> {
                     child: ReactiveTextField<double>(
                       formControlName: 'adjustedWeight',
                       keyboardType: TextInputType.numberWithOptions(),
-                      decoration: const InputDecoration(
-                        labelText: 'Weight out',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditWeightOut,
                       ),
                       showErrors: (control) => control.invalid,
                       validationMessages: {
@@ -330,15 +331,15 @@ class RecipeEditState extends State<RecipeEdit> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text("Adjustments", style: Theme.of(context).textTheme.labelMedium),
+              Text(S.of(context).screenRecipeEditAdjustments, style: Theme.of(context).textTheme.labelMedium),
               Row(
                 children: [
                   SizedBox(
                     width: 200,
                     child: ReactiveTextField<double>(
                       formControlName: 'adjustedTemp',
-                      decoration: const InputDecoration(
-                        labelText: 'Temperature correction',
+                      decoration: InputDecoration(
+                        labelText: S.of(context).screenRecipeEditTemperatureCorrection,
                       ),
                       showErrors: (control) => control.invalid,
                       validationMessages: {
@@ -361,10 +362,12 @@ class RecipeEditState extends State<RecipeEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Text("Milk and water", style: Theme.of(context).textTheme.labelMedium)),
+              Center(
+                  child:
+                      Text(S.of(context).screenRecipeEditMilkAndWater, style: Theme.of(context).textTheme.labelMedium)),
               Row(
                 children: [
-                  const Text("Use steam? "),
+                  Text(S.of(context).screenRecipeEditUseSteam),
                   ReactiveSwitch(
                     formControlName: 'useSteam',
                     onChanged: (control) => setState(() {}),
@@ -377,15 +380,15 @@ class RecipeEditState extends State<RecipeEdit> {
                   child: ReactiveTextField<double>(
                     formControlName: 'weightMilk',
                     keyboardType: TextInputType.numberWithOptions(),
-                    decoration: const InputDecoration(
-                      labelText: 'Milk weight',
+                    decoration: InputDecoration(
+                      labelText: S.of(context).screenRecipeEditMilkWeight,
                     ),
                   ),
                 ),
               const Divider(),
               Row(
                 children: [
-                  const Text("Use water? "),
+                  Text(S.of(context).screenRecipeEditUseWater),
                   ReactiveSwitch(
                     formControlName: 'useWater',
                     onChanged: (control) => setState(() {}),

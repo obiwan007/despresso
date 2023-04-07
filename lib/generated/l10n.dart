@@ -2061,6 +2061,166 @@ class S {
       args: [],
     );
   }
+
+  /// `Edit Recipe`
+  String get screenRecipeEditTitle {
+    return Intl.message(
+      'Edit Recipe',
+      name: 'screenRecipeEditTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get screenRecipeEditNameOfRecipe {
+    return Intl.message(
+      'Name',
+      name: 'screenRecipeEditNameOfRecipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get screenRecipeEditDescription {
+    return Intl.message(
+      'Description',
+      name: 'screenRecipeEditDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grinder Settings`
+  String get screenRecipeEditGrinderSettings {
+    return Intl.message(
+      'Grinder Settings',
+      name: 'screenRecipeEditGrinderSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Model`
+  String get screenRecipeEditGrinderModel {
+    return Intl.message(
+      'Model',
+      name: 'screenRecipeEditGrinderModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adjustments`
+  String get screenRecipeEditAdjustments {
+    return Intl.message(
+      'Adjustments',
+      name: 'screenRecipeEditAdjustments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temperature correction`
+  String get screenRecipeEditTemperatureCorrection {
+    return Intl.message(
+      'Temperature correction',
+      name: 'screenRecipeEditTemperatureCorrection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Milk and water`
+  String get screenRecipeEditMilkAndWater {
+    return Intl.message(
+      'Milk and water',
+      name: 'screenRecipeEditMilkAndWater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use steam? `
+  String get screenRecipeEditUseSteam {
+    return Intl.message(
+      'Use steam? ',
+      name: 'screenRecipeEditUseSteam',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Milk weight`
+  String get screenRecipeEditMilkWeight {
+    return Intl.message(
+      'Milk weight',
+      name: 'screenRecipeEditMilkWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use water? `
+  String get screenRecipeEditUseWater {
+    return Intl.message(
+      'Use water? ',
+      name: 'screenRecipeEditUseWater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dosing and weights`
+  String get screenRecipeEditDosingAndWeights {
+    return Intl.message(
+      'Dosing and weights',
+      name: 'screenRecipeEditDosingAndWeights',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ratio`
+  String get screenRecipeEditRatio {
+    return Intl.message(
+      'Ratio',
+      name: 'screenRecipeEditRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `to`
+  String get screenRecipeEditRatioTo {
+    return Intl.message(
+      'to',
+      name: 'screenRecipeEditRatioTo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dose Weight-in`
+  String get screenRecipeEditDoseWeightin {
+    return Intl.message(
+      'Dose Weight-in',
+      name: 'screenRecipeEditDoseWeightin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight out`
+  String get screenRecipeEditWeightOut {
+    return Intl.message(
+      'Weight out',
+      name: 'screenRecipeEditWeightOut',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
