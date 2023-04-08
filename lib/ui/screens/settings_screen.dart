@@ -280,6 +280,23 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                           onChange: (value) {
                             settingsService.notifyDelayed();
                           }),
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: DropDownSettingsTile(
+                            title: S.of(context).screenSettingsLanguage,
+                            settingKey: SettingKeys.locale.name,
+                            selected: settingsService.locale,
+                            values: {
+                              "auto": S.of(context).screenSettingsTabletDefault,
+                              "en": S.of(context).screenSettingsEnglish,
+                              "de": S.of(context).screenSettingsGerman,
+                              "es": S.of(context).screenSettingsSpanish,
+                            },
+                            onChange: (value) {
+                              settingsService.notifyDelayed();
+                            }),
+                      ),
                     ]);
                   }),
             ),

@@ -111,7 +111,7 @@
     "screenSettingsFlushTimerS": "Spülen Timer [s]",
     "screenSettingsSecondFlushTimerS": "Zweiter Spülen Timer [s]",
     "screenSettingsTabletGroup": "Tablet",
-    "screenSettingsThemeSelection": "Theme Auswahl",
+    "screenSettingsThemeSelection": "Spracheinstellungen und Theme Auswahl",
     "screenSettingsDarkTheme": "Dunkles Theme",
     "screenSettingsLightTheme": "Helles Theme",
     "red": "Rot",
@@ -239,5 +239,10 @@
     "screenShotEditPouringTimeS": "Zubereitungszeit [s]",
     "screenShotEditPouringWeightG": "Gewicht Getränk [g]",
     "graphTime": "Zeit/s",
-    "graphFlowMlsPressureBar": "Fluss [ml/s] / Druck [bar]"
+    "graphFlowMlsPressureBar": "Fluss [ml/s] / Druck [bar]",
+    "screenSettingsTabletDefault": "Tablet Default",
+    "screenSettingsEnglish": "Englisch",
+    "screenSettingsGerman": "Deutsch",
+    "screenSettingsSpanish": "Spanisch",
+    "screenSettingsLanguage": "Sprache"
 }

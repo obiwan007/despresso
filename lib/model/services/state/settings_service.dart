@@ -63,6 +63,7 @@ enum SettingKeys {
   launchWake,
   showFlushScreen,
   screensaverOnIfIdle,
+  locale,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -218,6 +219,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get screensaverOnIfIdle => Settings.getValue<bool>(SettingKeys.screensaverOnIfIdle.name) ?? true;
   set screensaverOnIfIdle(bool value) => Settings.setValue<bool>(SettingKeys.screensaverOnIfIdle.name, value);
+
+  String get locale => Settings.getValue<String>(SettingKeys.locale.name) ?? "auto";
+  set locale(String value) => Settings.setValue<String>(SettingKeys.locale.name, value);
 
   void notifyDelayed() {
     Future.delayed(

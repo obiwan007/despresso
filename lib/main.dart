@@ -85,22 +85,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
-  late SettingsService _services;
+  late SettingsService _settings;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _services = getIt<SettingsService>();
-    _services.addListener(() {
+    _settings = getIt<SettingsService>();
+    _settings.addListener(() {
       setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var schemaLight = lightColorSchemes[int.parse(_services.screenThemeIndex)];
-    var themeDark = darkColorSchemes[int.parse(_services.screenThemeIndex)];
+    var schemaLight = lightColorSchemes[int.parse(_settings.screenThemeIndex)];
+    var themeDark = darkColorSchemes[int.parse(_settings.screenThemeIndex)];
     return BetterFeedback(
       child: MaterialApp(
         title: 'despresso',
@@ -111,6 +111,7 @@ class _MyAppState extends State<MyApp> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: S.delegate.supportedLocales,
+        locale: _settings.locale == "auto" ? null : Locale(_settings.locale),
         // localizationsDelegates: const [
         //   AppLocalizations.delegate,
         //   GlobalMaterialLocalizations.delegate,
@@ -151,7 +152,7 @@ class _MyAppState extends State<MyApp> {
         //   //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         //   //     ),
         // ),
-        themeMode: _services.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
+        themeMode: _settings.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
 
         // theme: ThemeData(
         //   useMaterial3: true,

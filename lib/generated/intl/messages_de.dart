@@ -274,6 +274,8 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Mini Website aktivieren auf Port 8888"),
         "screenSettingsEnableMqtt":
             MessageLookupByLibrary.simpleMessage("Aktiviere MQTT"),
+        "screenSettingsEnglish":
+            MessageLookupByLibrary.simpleMessage("Englisch"),
         "screenSettingsExitApp":
             MessageLookupByLibrary.simpleMessage("App Beenden"),
         "screenSettingsFailedRestoringBackup":
@@ -283,6 +285,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Feedback und Crash Berichte"),
         "screenSettingsFlushTimerS":
             MessageLookupByLibrary.simpleMessage("Spülen Timer [s]"),
+        "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("Deutsch"),
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage(
                 "Nach einem Timeout automatisch zum Rezept Bildschirm zurückwechseln"),
@@ -301,6 +304,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsKeepTabletChargedBetween6090":
             MessageLookupByLibrary.simpleMessage(
                 "Das Tablet immer geladen halten zwischen 60-90% (de1 USB Port)"),
+        "screenSettingsLanguage":
+            MessageLookupByLibrary.simpleMessage("Sprache"),
         "screenSettingsLightTheme":
             MessageLookupByLibrary.simpleMessage("Helles Theme"),
         "screenSettingsLoadScreensaverFiles":
@@ -375,6 +380,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Spülen Anzeigen"),
         "screenSettingsSmartCharging":
             MessageLookupByLibrary.simpleMessage("Smart charging"),
+        "screenSettingsSpanish":
+            MessageLookupByLibrary.simpleMessage("Spanisch"),
         "screenSettingsSpecialBluetoothDevices":
             MessageLookupByLibrary.simpleMessage("Spezielle Bluetooth Geräte"),
         "screenSettingsStopBeforeWeightWasReachedS":
@@ -391,10 +398,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep":
             MessageLookupByLibrary.simpleMessage(
                 "Wenn die de1 per App in den Standby geschaltet wird, automatisch Bildschirmschoner aktivieren"),
+        "screenSettingsTabletDefault":
+            MessageLookupByLibrary.simpleMessage("Tablet Default"),
         "screenSettingsTabletGroup":
             MessageLookupByLibrary.simpleMessage("Tablet"),
-        "screenSettingsThemeSelection":
-            MessageLookupByLibrary.simpleMessage("Theme Auswahl"),
+        "screenSettingsThemeSelection": MessageLookupByLibrary.simpleMessage(
+            "Spracheinstellungen und Theme Auswahl"),
         "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
             MessageLookupByLibrary.simpleMessage(
                 "Das könnte zu einer höheren Last im MQTT Server führen. Die Updatefrequenz ist etwa 10Hz."),

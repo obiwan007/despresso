@@ -1360,10 +1360,10 @@ class S {
     );
   }
 
-  /// `Theme selection`
+  /// `Language and Theme selection`
   String get screenSettingsThemeSelection {
     return Intl.message(
-      'Theme selection',
+      'Language and Theme selection',
       name: 'screenSettingsThemeSelection',
       desc: '',
       args: [],
@@ -2467,6 +2467,56 @@ class S {
     return Intl.message(
       'Flow [ml/s] / Pressure [bar]',
       name: 'graphFlowMlsPressureBar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tablet default`
+  String get screenSettingsTabletDefault {
+    return Intl.message(
+      'Tablet default',
+      name: 'screenSettingsTabletDefault',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get screenSettingsEnglish {
+    return Intl.message(
+      'English',
+      name: 'screenSettingsEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `German`
+  String get screenSettingsGerman {
+    return Intl.message(
+      'German',
+      name: 'screenSettingsGerman',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spanish`
+  String get screenSettingsSpanish {
+    return Intl.message(
+      'Spanish',
+      name: 'screenSettingsSpanish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language`
+  String get screenSettingsLanguage {
+    return Intl.message(
+      'Language',
+      name: 'screenSettingsLanguage',
       desc: '',
       args: [],
     );

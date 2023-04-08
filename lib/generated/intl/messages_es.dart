@@ -274,6 +274,8 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Enable Mini Website with port 8888"),
         "screenSettingsEnableMqtt":
             MessageLookupByLibrary.simpleMessage("Enable MQTT"),
+        "screenSettingsEnglish":
+            MessageLookupByLibrary.simpleMessage("English"),
         "screenSettingsExitApp":
             MessageLookupByLibrary.simpleMessage("Exit app"),
         "screenSettingsFailedRestoringBackup":
@@ -283,6 +285,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Feedback and Crash reporting"),
         "screenSettingsFlushTimerS":
             MessageLookupByLibrary.simpleMessage("Flush timer [s]"),
+        "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("German"),
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage(
                 "Go back to Recipe screen if timeout occured"),
@@ -301,6 +304,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsKeepTabletChargedBetween6090":
             MessageLookupByLibrary.simpleMessage(
                 "Keep Tablet charged between 60-90%"),
+        "screenSettingsLanguage":
+            MessageLookupByLibrary.simpleMessage("Language"),
         "screenSettingsLightTheme":
             MessageLookupByLibrary.simpleMessage("Light theme"),
         "screenSettingsLoadScreensaverFiles":
@@ -374,6 +379,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Show Flush"),
         "screenSettingsSmartCharging":
             MessageLookupByLibrary.simpleMessage("Smart charging"),
+        "screenSettingsSpanish":
+            MessageLookupByLibrary.simpleMessage("Spanish"),
         "screenSettingsSpecialBluetoothDevices":
             MessageLookupByLibrary.simpleMessage("Special Bluetooth devices"),
         "screenSettingsStopBeforeWeightWasReachedS":
@@ -390,10 +397,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep":
             MessageLookupByLibrary.simpleMessage(
                 "Switch on screensaver if de1 manually switched to sleep"),
+        "screenSettingsTabletDefault":
+            MessageLookupByLibrary.simpleMessage("Tablet default"),
         "screenSettingsTabletGroup":
             MessageLookupByLibrary.simpleMessage("Tablet"),
-        "screenSettingsThemeSelection":
-            MessageLookupByLibrary.simpleMessage("Theme selection"),
+        "screenSettingsThemeSelection": MessageLookupByLibrary.simpleMessage(
+            "Language and Theme selection"),
         "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
             MessageLookupByLibrary.simpleMessage(
                 "This can lead to a higher load on your MQTT server as the message frequency is about 10Hz."),
