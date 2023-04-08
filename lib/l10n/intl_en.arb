@@ -296,6 +296,8 @@
   "@screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe": {},
   "screenSettingsKeepTabletChargedBetween6090": "Keep Tablet charged between 60-90%",
   "@screenSettingsKeepTabletChargedBetween6090": {},
+  "screenSettingsKorean": "Korean",
+  "@screenSettingsKorean": {},
   "screenSettingsLanguage": "Language",
   "@screenSettingsLanguage": {},
   "screenSettingsLightTheme": "Light theme",

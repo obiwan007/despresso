@@ -20,481 +20,496 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'es';
 
-  static String m0(sec) => "Pour: ${sec} s";
+  static String m0(sec) => "Vierta: ${sec} s";
 
   static String m1(sec) => "Total: ${sec} s";
 
   static String m2(sec) => "TTW: ${sec} s";
 
-  static String m3(desc) => "Describe your experience with shot from ${desc}";
+  static String m3(desc) => "Describa su experiencia con la toma de ${desc}";
 
-  static String m4(flow) => "Steam Flowrate ${flow} ml/s";
+  static String m4(flow) => "Caudal de vapor ${flow} ml/s";
 
-  static String m5(temp) => "Stop at Temperatur ${temp} °C";
+  static String m5(temp) => "Detener a la temperatura ${temp} °C";
 
-  static String m6(temp) => "Steam Temperaturs ${temp} °C";
+  static String m6(temp) => "Temperaturas de vapor ${temp} °C";
 
-  static String m7(t) => "Timer ${t} s";
+  static String m7(t) => "Temporizador ${t} s";
 
-  static String m8(w) => "Weight ${w} g";
+  static String m8(w) => "Peso ${w} g";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "beans": MessageLookupByLibrary.simpleMessage("Beans"),
-        "blue": MessageLookupByLibrary.simpleMessage("Blue"),
-        "disabled": MessageLookupByLibrary.simpleMessage("Disabled"),
-        "disconnected": MessageLookupByLibrary.simpleMessage("disconnected"),
-        "edit": MessageLookupByLibrary.simpleMessage("EDIT"),
-        "enabled": MessageLookupByLibrary.simpleMessage("Enabled"),
+        "beans": MessageLookupByLibrary.simpleMessage("Frijoles"),
+        "blue": MessageLookupByLibrary.simpleMessage("Azul"),
+        "disabled": MessageLookupByLibrary.simpleMessage("Desactivado"),
+        "disconnected": MessageLookupByLibrary.simpleMessage("desconectado"),
+        "edit": MessageLookupByLibrary.simpleMessage("EDITAR"),
+        "enabled": MessageLookupByLibrary.simpleMessage("Activado"),
         "error": MessageLookupByLibrary.simpleMessage("error"),
-        "exit": MessageLookupByLibrary.simpleMessage("Exit"),
-        "flow": MessageLookupByLibrary.simpleMessage("Flow"),
-        "footerBattery": MessageLookupByLibrary.simpleMessage("Battery"),
-        "footerConnect": MessageLookupByLibrary.simpleMessage("Connect"),
-        "footerGroup": MessageLookupByLibrary.simpleMessage("Group"),
-        "footerProbe": MessageLookupByLibrary.simpleMessage("Probe"),
+        "exit": MessageLookupByLibrary.simpleMessage("Salida"),
+        "flow": MessageLookupByLibrary.simpleMessage("Fluir"),
+        "footerBattery": MessageLookupByLibrary.simpleMessage("Batería"),
+        "footerConnect": MessageLookupByLibrary.simpleMessage("Conectar"),
+        "footerGroup": MessageLookupByLibrary.simpleMessage("Grupo"),
+        "footerProbe": MessageLookupByLibrary.simpleMessage("Investigacion"),
         "footerRefillWater":
-            MessageLookupByLibrary.simpleMessage("Refill water"),
-        "footerScale": MessageLookupByLibrary.simpleMessage("Scale"),
-        "footerTare": MessageLookupByLibrary.simpleMessage("  Tare  "),
-        "footerWater": MessageLookupByLibrary.simpleMessage("Water"),
+            MessageLookupByLibrary.simpleMessage("recargar agua"),
+        "footerScale": MessageLookupByLibrary.simpleMessage("Escala"),
+        "footerTare": MessageLookupByLibrary.simpleMessage("  Tara"),
+        "footerWater": MessageLookupByLibrary.simpleMessage("Agua"),
         "graphFlowMlsPressureBar": MessageLookupByLibrary.simpleMessage(
-            "Flow [ml/s] / Pressure [bar]"),
-        "graphTime": MessageLookupByLibrary.simpleMessage("Time/s"),
-        "green": MessageLookupByLibrary.simpleMessage("Green"),
-        "hide": MessageLookupByLibrary.simpleMessage("Hide"),
+            "Caudal [ml/s] / Presión [bar]"),
+        "graphTime": MessageLookupByLibrary.simpleMessage("Veces"),
+        "green": MessageLookupByLibrary.simpleMessage("Verde"),
+        "hide": MessageLookupByLibrary.simpleMessage("Esconder"),
         "mainMenuDespressoFeedback":
-            MessageLookupByLibrary.simpleMessage("Despresso Feedback"),
+            MessageLookupByLibrary.simpleMessage("Comentarios de café"),
         "mainMenuEspressoDiary":
-            MessageLookupByLibrary.simpleMessage("Espresso Diary"),
-        "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+            MessageLookupByLibrary.simpleMessage("Diario de espresso"),
+        "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("Comentario"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
-        "off": MessageLookupByLibrary.simpleMessage("Off"),
-        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
-        "on": MessageLookupByLibrary.simpleMessage("On"),
-        "orange": MessageLookupByLibrary.simpleMessage("Orange"),
-        "pressure": MessageLookupByLibrary.simpleMessage("Pressure"),
-        "privacy": MessageLookupByLibrary.simpleMessage("Privacy"),
-        "profile": MessageLookupByLibrary.simpleMessage("Profile"),
-        "profiles": MessageLookupByLibrary.simpleMessage("Profiles"),
-        "recipe": MessageLookupByLibrary.simpleMessage("Recipe"),
-        "reconnect": MessageLookupByLibrary.simpleMessage("Reconnect"),
-        "red": MessageLookupByLibrary.simpleMessage("Red"),
-        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "off": MessageLookupByLibrary.simpleMessage("Apagado"),
+        "ok": MessageLookupByLibrary.simpleMessage("De acuerdo"),
+        "on": MessageLookupByLibrary.simpleMessage("En"),
+        "orange": MessageLookupByLibrary.simpleMessage("Naranja"),
+        "pressure": MessageLookupByLibrary.simpleMessage("Presión"),
+        "privacy": MessageLookupByLibrary.simpleMessage("Privacidad"),
+        "profile": MessageLookupByLibrary.simpleMessage("Perfil"),
+        "profiles": MessageLookupByLibrary.simpleMessage("Perfiles"),
+        "recipe": MessageLookupByLibrary.simpleMessage("Receta"),
+        "reconnect": MessageLookupByLibrary.simpleMessage("reconectar"),
+        "red": MessageLookupByLibrary.simpleMessage("Rojo"),
+        "save": MessageLookupByLibrary.simpleMessage("Ahorrar"),
         "screenBeanSelectAcidity":
-            MessageLookupByLibrary.simpleMessage("Acidity"),
+            MessageLookupByLibrary.simpleMessage("Acidez"),
         "screenBeanSelectAddressOfRoaster":
-            MessageLookupByLibrary.simpleMessage("Address"),
+            MessageLookupByLibrary.simpleMessage("DIRECCIÓN"),
         "screenBeanSelectDaysAgo":
-            MessageLookupByLibrary.simpleMessage("days ago"),
+            MessageLookupByLibrary.simpleMessage("hace días"),
         "screenBeanSelectDescriptionOfBean":
-            MessageLookupByLibrary.simpleMessage("Description"),
+            MessageLookupByLibrary.simpleMessage("Descripción"),
         "screenBeanSelectDescriptionOfRoaster":
-            MessageLookupByLibrary.simpleMessage("Description"),
+            MessageLookupByLibrary.simpleMessage("Descripción"),
         "screenBeanSelectHomepageOfRoaster":
-            MessageLookupByLibrary.simpleMessage("Homepage"),
+            MessageLookupByLibrary.simpleMessage("Página principal"),
         "screenBeanSelectIntensity":
-            MessageLookupByLibrary.simpleMessage("Intensity"),
+            MessageLookupByLibrary.simpleMessage("Intensidad"),
         "screenBeanSelectNameOfBean":
-            MessageLookupByLibrary.simpleMessage("Name"),
+            MessageLookupByLibrary.simpleMessage("Nombre"),
         "screenBeanSelectNameOfRoaster":
-            MessageLookupByLibrary.simpleMessage("Name"),
+            MessageLookupByLibrary.simpleMessage("Nombre"),
         "screenBeanSelectRoastLevel":
-            MessageLookupByLibrary.simpleMessage("Roast Level"),
+            MessageLookupByLibrary.simpleMessage("Nivel de tueste"),
         "screenBeanSelectRoastingDate":
-            MessageLookupByLibrary.simpleMessage("Roasting date"),
+            MessageLookupByLibrary.simpleMessage("Fecha de tueste"),
         "screenBeanSelectSelectBeans":
-            MessageLookupByLibrary.simpleMessage("Select Beans"),
+            MessageLookupByLibrary.simpleMessage("Seleccione Frijoles"),
         "screenBeanSelectSelectRoaster":
-            MessageLookupByLibrary.simpleMessage("Select Roaster"),
+            MessageLookupByLibrary.simpleMessage("Seleccionar tostador"),
         "screenBeanSelectTasting":
-            MessageLookupByLibrary.simpleMessage("Tasting"),
+            MessageLookupByLibrary.simpleMessage("Saboreo"),
         "screenBeanSelectTitle":
-            MessageLookupByLibrary.simpleMessage("Beans and Roasters"),
+            MessageLookupByLibrary.simpleMessage("Frijoles y Tostadores"),
         "screenBeanSelectTypeOfBeans":
-            MessageLookupByLibrary.simpleMessage("Type of Beans"),
+            MessageLookupByLibrary.simpleMessage("Tipo de Frijoles"),
         "screenDiaryErrorUploadingShots":
-            MessageLookupByLibrary.simpleMessage("Error uploading shots"),
+            MessageLookupByLibrary.simpleMessage("Error al subir tomas"),
         "screenDiaryNoShotsToUploadSelected":
-            MessageLookupByLibrary.simpleMessage("No shots to upload selected"),
-        "screenDiaryNothingSelected":
-            MessageLookupByLibrary.simpleMessage("Nothing selected"),
-        "screenDiaryOverlaymode":
-            MessageLookupByLibrary.simpleMessage("Overlaymode:"),
-        "screenDiarySuccessUploadingYourShots":
             MessageLookupByLibrary.simpleMessage(
-                "Success uploading your shots"),
-        "screenEspressoBean": MessageLookupByLibrary.simpleMessage("Coffee"),
+                "No hay tomas para subir seleccionadas"),
+        "screenDiaryNothingSelected":
+            MessageLookupByLibrary.simpleMessage("Nada seleccionado"),
+        "screenDiaryOverlaymode":
+            MessageLookupByLibrary.simpleMessage("Modo de superposición:"),
+        "screenDiarySuccessUploadingYourShots":
+            MessageLookupByLibrary.simpleMessage("Éxito subiendo tus fotos"),
+        "screenEspressoBean": MessageLookupByLibrary.simpleMessage("Café"),
         "screenEspressoDiary":
-            MessageLookupByLibrary.simpleMessage("Espresso Diary"),
-        "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("Flow"),
+            MessageLookupByLibrary.simpleMessage("Diario de espresso"),
+        "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("Fluir"),
         "screenEspressoFlowMlsPressureBar":
             MessageLookupByLibrary.simpleMessage(
-                "Flow [ml/s] / Pressure [bar]"),
+                "Caudal [ml/s] / Presión [bar]"),
         "screenEspressoPour": m0,
         "screenEspressoPressure":
-            MessageLookupByLibrary.simpleMessage("Pressure"),
-        "screenEspressoProfile":
-            MessageLookupByLibrary.simpleMessage("Profile"),
-        "screenEspressoRecipe": MessageLookupByLibrary.simpleMessage("Recipe"),
+            MessageLookupByLibrary.simpleMessage("Presión"),
+        "screenEspressoProfile": MessageLookupByLibrary.simpleMessage("Perfil"),
+        "screenEspressoRecipe": MessageLookupByLibrary.simpleMessage("Receta"),
         "screenEspressoRefillTheWaterTank":
-            MessageLookupByLibrary.simpleMessage("Refill the water tank"),
-        "screenEspressoTarget": MessageLookupByLibrary.simpleMessage("Target"),
-        "screenEspressoTemp": MessageLookupByLibrary.simpleMessage("Temp"),
-        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("Timer"),
-        "screenEspressoTimes": MessageLookupByLibrary.simpleMessage("Time/s"),
+            MessageLookupByLibrary.simpleMessage("Rellene el tanque de agua"),
+        "screenEspressoTarget":
+            MessageLookupByLibrary.simpleMessage("Objetivo"),
+        "screenEspressoTemp":
+            MessageLookupByLibrary.simpleMessage("Temperatura"),
+        "screenEspressoTimer":
+            MessageLookupByLibrary.simpleMessage("Temporizador"),
+        "screenEspressoTimes": MessageLookupByLibrary.simpleMessage("Veces"),
         "screenEspressoTotal": m1,
         "screenEspressoTtw": m2,
-        "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("Weight"),
+        "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("Peso"),
         "screenEspressoWeightG":
-            MessageLookupByLibrary.simpleMessage("Weight [g]"),
+            MessageLookupByLibrary.simpleMessage("Peso (gramos]"),
         "screenRecipeAddRecipe":
-            MessageLookupByLibrary.simpleMessage("Add recipe"),
+            MessageLookupByLibrary.simpleMessage("Añadir receta"),
         "screenRecipeAdjustTempC":
-            MessageLookupByLibrary.simpleMessage("Adjust temp [°C]"),
+            MessageLookupByLibrary.simpleMessage("Ajustar temperatura [°C]"),
         "screenRecipeCoffeeNotes":
-            MessageLookupByLibrary.simpleMessage("Coffee notes"),
+            MessageLookupByLibrary.simpleMessage("notas de cafe"),
         "screenRecipeEditAdjustments":
-            MessageLookupByLibrary.simpleMessage("Adjustments"),
+            MessageLookupByLibrary.simpleMessage("Ajustes"),
         "screenRecipeEditDescription":
-            MessageLookupByLibrary.simpleMessage("Description"),
+            MessageLookupByLibrary.simpleMessage("Descripción"),
         "screenRecipeEditDoseWeightin":
-            MessageLookupByLibrary.simpleMessage("Dose Weight-in"),
+            MessageLookupByLibrary.simpleMessage("Peso de la dosis"),
         "screenRecipeEditDosingAndWeights":
-            MessageLookupByLibrary.simpleMessage("Dosing and weights"),
+            MessageLookupByLibrary.simpleMessage("Dosificación y pesos"),
         "screenRecipeEditGrinderModel":
-            MessageLookupByLibrary.simpleMessage("Model"),
+            MessageLookupByLibrary.simpleMessage("Modelo"),
         "screenRecipeEditGrinderSettings":
-            MessageLookupByLibrary.simpleMessage("Grinder Settings"),
+            MessageLookupByLibrary.simpleMessage("Configuración del molinillo"),
         "screenRecipeEditMilkAndWater":
-            MessageLookupByLibrary.simpleMessage("Milk and water"),
+            MessageLookupByLibrary.simpleMessage("leche y agua"),
         "screenRecipeEditMilkWeight":
-            MessageLookupByLibrary.simpleMessage("Milk weight"),
+            MessageLookupByLibrary.simpleMessage("Peso de la leche"),
         "screenRecipeEditNameOfRecipe":
-            MessageLookupByLibrary.simpleMessage("Name"),
-        "screenRecipeEditRatio": MessageLookupByLibrary.simpleMessage("Ratio"),
-        "screenRecipeEditRatioTo": MessageLookupByLibrary.simpleMessage("to"),
+            MessageLookupByLibrary.simpleMessage("Nombre"),
+        "screenRecipeEditRatio":
+            MessageLookupByLibrary.simpleMessage("Relación"),
+        "screenRecipeEditRatioTo": MessageLookupByLibrary.simpleMessage("a"),
         "screenRecipeEditTemperatureCorrection":
-            MessageLookupByLibrary.simpleMessage("Temperature correction"),
+            MessageLookupByLibrary.simpleMessage("Corrección de temperatura"),
         "screenRecipeEditTitle":
-            MessageLookupByLibrary.simpleMessage("Edit Recipe"),
+            MessageLookupByLibrary.simpleMessage("Editar receta"),
         "screenRecipeEditUseSteam":
-            MessageLookupByLibrary.simpleMessage("Use steam? "),
+            MessageLookupByLibrary.simpleMessage("¿Usar vapor?"),
         "screenRecipeEditUseWater":
-            MessageLookupByLibrary.simpleMessage("Use water? "),
+            MessageLookupByLibrary.simpleMessage("¿Usar agua?"),
         "screenRecipeEditWeightOut":
-            MessageLookupByLibrary.simpleMessage("Weight out"),
+            MessageLookupByLibrary.simpleMessage("Peso fuera"),
         "screenRecipeGrindSettings":
-            MessageLookupByLibrary.simpleMessage("Grind Settings:"),
+            MessageLookupByLibrary.simpleMessage("Ajustes de molienda:"),
         "screenRecipeInitialTemp":
-            MessageLookupByLibrary.simpleMessage("Initial temperature:"),
+            MessageLookupByLibrary.simpleMessage("Temperatura inicial:"),
         "screenRecipeProfileDetails":
-            MessageLookupByLibrary.simpleMessage("Profile Details"),
-        "screenRecipeRatio": MessageLookupByLibrary.simpleMessage("Ratio:"),
+            MessageLookupByLibrary.simpleMessage("detalles del perfil"),
+        "screenRecipeRatio": MessageLookupByLibrary.simpleMessage("Relación:"),
         "screenRecipeRecipeDetails":
-            MessageLookupByLibrary.simpleMessage("Recipe Details"),
+            MessageLookupByLibrary.simpleMessage("Detalles de la receta"),
         "screenRecipeSelectedBean":
-            MessageLookupByLibrary.simpleMessage("Selected Bean"),
+            MessageLookupByLibrary.simpleMessage("Frijol Seleccionado"),
         "screenRecipeSelectedProfile":
-            MessageLookupByLibrary.simpleMessage("Selected profile"),
+            MessageLookupByLibrary.simpleMessage("Perfil seleccionado"),
         "screenRecipeSetRatio":
-            MessageLookupByLibrary.simpleMessage("Set Ratio"),
+            MessageLookupByLibrary.simpleMessage("Establecer proporción"),
         "screenRecipeStopOnWeightG":
-            MessageLookupByLibrary.simpleMessage("Stop on Weight [g]"),
+            MessageLookupByLibrary.simpleMessage("Parada en peso [g]"),
         "screenRecipeWeightinBeansG":
-            MessageLookupByLibrary.simpleMessage("Weight-in beans [g]"),
+            MessageLookupByLibrary.simpleMessage("Peso en frijoles [g]"),
         "screenRecipehotWater":
-            MessageLookupByLibrary.simpleMessage("Hot water:"),
+            MessageLookupByLibrary.simpleMessage("Agua caliente:"),
         "screenRecipesteamMilk":
-            MessageLookupByLibrary.simpleMessage("Steam milk:"),
+            MessageLookupByLibrary.simpleMessage("Leche al vapor:"),
         "screenRoasterEditAddress":
-            MessageLookupByLibrary.simpleMessage("Address"),
+            MessageLookupByLibrary.simpleMessage("DIRECCIÓN"),
         "screenRoasterEditDescription":
-            MessageLookupByLibrary.simpleMessage("Description"),
+            MessageLookupByLibrary.simpleMessage("Descripción"),
         "screenRoasterEditHomepage":
-            MessageLookupByLibrary.simpleMessage("Homepage"),
+            MessageLookupByLibrary.simpleMessage("Página principal"),
         "screenRoasterEditNameOfRoaster":
-            MessageLookupByLibrary.simpleMessage("Name"),
+            MessageLookupByLibrary.simpleMessage("Nombre"),
         "screenRoasterEditTitle":
-            MessageLookupByLibrary.simpleMessage("Edit Roaster"),
+            MessageLookupByLibrary.simpleMessage("Editar tostador"),
         "screenSettingsApplicationSettings":
-            MessageLookupByLibrary.simpleMessage("Application Settings"),
+            MessageLookupByLibrary.simpleMessage(
+                "Configuraciones de la aplicación"),
         "screenSettingsApplicationSettingsHardwareAndConnections":
-            MessageLookupByLibrary.simpleMessage("Hardware and connections"),
+            MessageLookupByLibrary.simpleMessage("Hardware y conexiones"),
         "screenSettingsApplicationSettingsScanForDevices":
-            MessageLookupByLibrary.simpleMessage("Scan for Devices"),
+            MessageLookupByLibrary.simpleMessage("Buscar dispositivos"),
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
-                "Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)"),
+                "Busque DE1 y escalas (Lunar, Skale2, Eureka, Decent)"),
         "screenSettingsAutoTare":
-            MessageLookupByLibrary.simpleMessage("Auto Tare"),
-        "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("Backup"),
+            MessageLookupByLibrary.simpleMessage("Tara automática"),
+        "screenSettingsBackup":
+            MessageLookupByLibrary.simpleMessage("Respaldo"),
         "screenSettingsBackupAndMaintenance":
-            MessageLookupByLibrary.simpleMessage("Backup and maintenance"),
-        "screenSettingsBackupSettings":
-            MessageLookupByLibrary.simpleMessage("Backup Settings"),
-        "screenSettingsBackuprestore":
-            MessageLookupByLibrary.simpleMessage("Backup/Restore"),
+            MessageLookupByLibrary.simpleMessage(
+                "Copia de seguridad y mantenimiento"),
+        "screenSettingsBackupSettings": MessageLookupByLibrary.simpleMessage(
+            "Configuración de copia de seguridad"),
+        "screenSettingsBackuprestore": MessageLookupByLibrary.simpleMessage(
+            "Copia de seguridad de restauracion"),
         "screenSettingsBackuprestoreDatabase":
-            MessageLookupByLibrary.simpleMessage("Backup/Restore database"),
+            MessageLookupByLibrary.simpleMessage(
+                "Copia de seguridad/restauración de la base de datos"),
         "screenSettingsBahaviour":
-            MessageLookupByLibrary.simpleMessage("Bahaviour"),
+            MessageLookupByLibrary.simpleMessage("Comportamiento"),
         "screenSettingsBehaviour":
-            MessageLookupByLibrary.simpleMessage("Behaviour"),
+            MessageLookupByLibrary.simpleMessage("Comportamiento"),
         "screenSettingsBrightnessSleepAndScreensaver":
             MessageLookupByLibrary.simpleMessage(
-                "Brightness, sleep and screensaver"),
+                "Brillo, reposo y protector de pantalla"),
         "screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot":
             MessageLookupByLibrary.simpleMessage(
-                "Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while."),
+                "Cambie la forma en que la aplicación cambia el brillo de la pantalla si no está en uso, encienda el de1 y apáguelo si no lo usa después de un tiempo."),
         "screenSettingsChangeHowTheAppIsHandlingTheDe1InCase":
             MessageLookupByLibrary.simpleMessage(
-                "Change how the app is handling the de1 in case of wake up and sleep."),
+                "Cambie la forma en que la aplicación maneja el de1 en caso de despertarse y dormir."),
         "screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen":
             MessageLookupByLibrary.simpleMessage(
-                "Check your router for IP adress of your tablet. Open browser under"),
+                "Verifique su enrutador para la dirección IP de su tableta. Abra el navegador debajo"),
         "screenSettingsCloudAndNetwork":
-            MessageLookupByLibrary.simpleMessage("Cloud and Network"),
+            MessageLookupByLibrary.simpleMessage("Nube y red"),
         "screenSettingsCloudShotUpload":
-            MessageLookupByLibrary.simpleMessage("Cloud shot upload"),
+            MessageLookupByLibrary.simpleMessage("Carga de tomas en la nube"),
         "screenSettingsCoffeePouring":
-            MessageLookupByLibrary.simpleMessage("Coffee pouring"),
+            MessageLookupByLibrary.simpleMessage("Verter café"),
         "screenSettingsCoffeeSection":
-            MessageLookupByLibrary.simpleMessage("Coffee"),
+            MessageLookupByLibrary.simpleMessage("Café"),
         "screenSettingsDarkTheme":
-            MessageLookupByLibrary.simpleMessage("Dark theme"),
+            MessageLookupByLibrary.simpleMessage("tema oscuro"),
         "screenSettingsDeleteAllScreensaverFiles":
             MessageLookupByLibrary.simpleMessage(
-                "Delete all screensaver files"),
+                "Eliminar todos los archivos de salvapantallas"),
         "screenSettingsDoNotLetTabletGoToLockScreen0doNot":
             MessageLookupByLibrary.simpleMessage(
-                "Do not let tablet go to lock screen (0=do not lock screen, 240=keep always locked) [min]"),
+                "No permita que la tableta vaya a la pantalla de bloqueo (0 = no bloquear la pantalla, 240 = mantener siempre bloqueado) [min]"),
         "screenSettingsEnableMiniWebsiteWithPort8888":
             MessageLookupByLibrary.simpleMessage(
-                "Enable Mini Website with port 8888"),
+                "Habilitar mini sitio web con el puerto 8888"),
         "screenSettingsEnableMqtt":
-            MessageLookupByLibrary.simpleMessage("Enable MQTT"),
-        "screenSettingsEnglish":
-            MessageLookupByLibrary.simpleMessage("English"),
+            MessageLookupByLibrary.simpleMessage("Habilitar MQTT"),
+        "screenSettingsEnglish": MessageLookupByLibrary.simpleMessage("Inglés"),
         "screenSettingsExitApp":
-            MessageLookupByLibrary.simpleMessage("Exit app"),
+            MessageLookupByLibrary.simpleMessage("Salir de la aplicación"),
         "screenSettingsFailedRestoringBackup":
-            MessageLookupByLibrary.simpleMessage("Failed restoring backup"),
+            MessageLookupByLibrary.simpleMessage(
+                "Error al restaurar la copia de seguridad"),
         "screenSettingsFeedbackAndCrashReporting":
             MessageLookupByLibrary.simpleMessage(
-                "Feedback and Crash reporting"),
-        "screenSettingsFlushTimerS":
-            MessageLookupByLibrary.simpleMessage("Flush timer [s]"),
-        "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("German"),
+                "Comentarios e informes de fallos"),
+        "screenSettingsFlushTimerS": MessageLookupByLibrary.simpleMessage(
+            "Temporizador de descarga [s]"),
+        "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("Alemán"),
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage(
-                "Go back to Recipe screen if timeout occured"),
+                "Volver a la pantalla Receta si se agotó el tiempo de espera"),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
-                "Handling of connections to other external systems like MQTT and Visualizer."),
+                "Manejo de conexiones a otros sistemas externos como MQTT y Visualizer."),
         "screenSettingsIfAShotIsStartingAutotareTheScale":
             MessageLookupByLibrary.simpleMessage(
-                "If a shot is starting, auto-tare the scale"),
+                "Si está comenzando un disparo, tarar automáticamente la báscula"),
         "screenSettingsIfTheScaleIsConnectedItIsUsedToStop":
             MessageLookupByLibrary.simpleMessage(
-                "If the scale is connected it is used to stop the shot if the profile has a limit given."),
+                "Si la báscula está conectada sirve para parar el tiro si el perfil tiene un límite dado."),
         "screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe":
             MessageLookupByLibrary.simpleMessage(
-                "If you have no GHC installed, you would need the flush screen"),
+                "Si no tiene GHC instalado, necesitaría la pantalla de descarga"),
         "screenSettingsKeepTabletChargedBetween6090":
             MessageLookupByLibrary.simpleMessage(
-                "Keep Tablet charged between 60-90%"),
+                "Mantenga la tableta cargada entre 60-90%"),
+        "screenSettingsKorean": MessageLookupByLibrary.simpleMessage("coreano"),
         "screenSettingsLanguage":
-            MessageLookupByLibrary.simpleMessage("Language"),
+            MessageLookupByLibrary.simpleMessage("Idioma"),
         "screenSettingsLightTheme":
-            MessageLookupByLibrary.simpleMessage("Light theme"),
+            MessageLookupByLibrary.simpleMessage("Tema ligero"),
         "screenSettingsLoadScreensaverFiles":
-            MessageLookupByLibrary.simpleMessage("Load Screensaver files"),
+            MessageLookupByLibrary.simpleMessage(
+                "Cargar archivos de salvapantallas"),
         "screenSettingsMessageQueueBroadcastMqttClient":
             MessageLookupByLibrary.simpleMessage(
-                "Message Queue Broadcast (MQTT) client"),
+                "Cliente de difusión de cola de mensajes (MQTT)"),
         "screenSettingsMilkSteamingThermometerSupport":
             MessageLookupByLibrary.simpleMessage(
-                "Milk steaming thermometer support"),
+                "Soporte termometro vaporizador de leche"),
         "screenSettingsMiniWebsite":
-            MessageLookupByLibrary.simpleMessage("Mini Website"),
+            MessageLookupByLibrary.simpleMessage("Minisitio web"),
         "screenSettingsMqttPassword":
-            MessageLookupByLibrary.simpleMessage("MQTT Password"),
+            MessageLookupByLibrary.simpleMessage("Contraseña MQTT"),
         "screenSettingsMqttPort":
-            MessageLookupByLibrary.simpleMessage("MQTT Port"),
+            MessageLookupByLibrary.simpleMessage("Puerto MQTT"),
         "screenSettingsMqttRootTopic":
-            MessageLookupByLibrary.simpleMessage("MQTT root topic"),
+            MessageLookupByLibrary.simpleMessage("Tema raíz de MQTT"),
         "screenSettingsMqttServer":
-            MessageLookupByLibrary.simpleMessage("MQTT Server"),
+            MessageLookupByLibrary.simpleMessage("Servidor MQTT"),
         "screenSettingsMqttUser":
-            MessageLookupByLibrary.simpleMessage("MQTT User"),
+            MessageLookupByLibrary.simpleMessage("Usuario MQTT"),
         "screenSettingsPassword":
-            MessageLookupByLibrary.simpleMessage("password"),
+            MessageLookupByLibrary.simpleMessage("contraseña"),
         "screenSettingsPasswordCantBeSmallerThan7Letters":
             MessageLookupByLibrary.simpleMessage(
-                "Password can\'t be smaller than 7 letters"),
-        "screenSettingsPrivacySettings":
-            MessageLookupByLibrary.simpleMessage("Privacy Settings"),
+                "La contraseña no puede tener menos de 7 letras"),
+        "screenSettingsPrivacySettings": MessageLookupByLibrary.simpleMessage(
+            "La configuración de privacidad"),
         "screenSettingsReduceBrightnessToLevel":
-            MessageLookupByLibrary.simpleMessage("Reduce brightness to level"),
+            MessageLookupByLibrary.simpleMessage("Reducir el brillo al nivel"),
         "screenSettingsReduceScreenBrightnessAfter0offMin":
             MessageLookupByLibrary.simpleMessage(
-                "Reduce screen brightness after (0=off) [min]"),
+                "Reducir el brillo de la pantalla después de (0=apagado) [min]"),
         "screenSettingsRestore":
-            MessageLookupByLibrary.simpleMessage("Restore"),
-        "screenSettingsRestoredBackup":
-            MessageLookupByLibrary.simpleMessage("Restored backup"),
+            MessageLookupByLibrary.simpleMessage("Restaurar"),
+        "screenSettingsRestoredBackup": MessageLookupByLibrary.simpleMessage(
+            "Copia de seguridad restaurada"),
         "screenSettingsSavedBackup":
-            MessageLookupByLibrary.simpleMessage("Saved backup"),
+            MessageLookupByLibrary.simpleMessage("Copia de seguridad guardada"),
         "screenSettingsScaleSupport":
-            MessageLookupByLibrary.simpleMessage("Scale support"),
+            MessageLookupByLibrary.simpleMessage("Soporte de escala"),
         "screenSettingsScreenAndBrightness":
-            MessageLookupByLibrary.simpleMessage("Screen and Brightness"),
-        "screenSettingsSecondFlushTimerS":
-            MessageLookupByLibrary.simpleMessage("Second Flush timer [s]"),
+            MessageLookupByLibrary.simpleMessage("Pantalla y Brillo"),
+        "screenSettingsSecondFlushTimerS": MessageLookupByLibrary.simpleMessage(
+            "Temporizador de segunda descarga [s]"),
         "screenSettingsSelectFiles":
-            MessageLookupByLibrary.simpleMessage("Select files"),
+            MessageLookupByLibrary.simpleMessage("Selecciona archivos"),
         "screenSettingsSendDe1ShotUpdates":
-            MessageLookupByLibrary.simpleMessage("Send de1 shot updates"),
+            MessageLookupByLibrary.simpleMessage(
+                "Enviar actualizaciones de 1 toma"),
         "screenSettingsSendDe1StateUpdates":
-            MessageLookupByLibrary.simpleMessage("Send de1 state updates"),
+            MessageLookupByLibrary.simpleMessage(
+                "Enviar actualizaciones de estado de1"),
         "screenSettingsSendDe1WaterLevelUpdates":
             MessageLookupByLibrary.simpleMessage(
-                "Send de1 water level updates"),
+                "Enviar actualizaciones de nivel de agua de1"),
         "screenSettingsSendInformationsToSentryioIfTheAppCrashesOrYou":
             MessageLookupByLibrary.simpleMessage(
-                "Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description."),
+                "Envíe información a sentry.io si la aplicación falla o si usa la opción de comentarios. Consulte https://sentry.io/privacy/ para obtener una descripción detallada de la privacidad de datos."),
         "screenSettingsSendTabletBatteryLevelUpdates":
             MessageLookupByLibrary.simpleMessage(
-                "Send tablet battery level updates"),
+                "Enviar actualizaciones del nivel de batería de la tableta"),
         "screenSettingsSendingTheStatusOfTheDe1":
-            MessageLookupByLibrary.simpleMessage(
-                "Sending the status of the de1"),
+            MessageLookupByLibrary.simpleMessage("Envío del estado del de1"),
         "screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart":
             MessageLookupByLibrary.simpleMessage(
-                "Settings are restored. Please close app and restart."),
+                "Se restauran los ajustes. Cierra la aplicación y reinicia."),
         "screenSettingsShotSettings":
-            MessageLookupByLibrary.simpleMessage("Shot Settings"),
+            MessageLookupByLibrary.simpleMessage("Ajustes de tiro"),
         "screenSettingsShowFlush":
-            MessageLookupByLibrary.simpleMessage("Show Flush"),
+            MessageLookupByLibrary.simpleMessage("Mostrar al ras"),
         "screenSettingsSmartCharging":
-            MessageLookupByLibrary.simpleMessage("Smart charging"),
+            MessageLookupByLibrary.simpleMessage("Carga inteligente"),
         "screenSettingsSpanish":
-            MessageLookupByLibrary.simpleMessage("Spanish"),
+            MessageLookupByLibrary.simpleMessage("Español"),
         "screenSettingsSpecialBluetoothDevices":
-            MessageLookupByLibrary.simpleMessage("Special Bluetooth devices"),
+            MessageLookupByLibrary.simpleMessage(
+                "Dispositivos Bluetooth especiales"),
         "screenSettingsStopBeforeWeightWasReachedS":
             MessageLookupByLibrary.simpleMessage(
-                "Stop before weight was reached [s]"),
+                "Deténgase antes de alcanzar el peso [s]"),
         "screenSettingsStopOnWeightIfScaleDetected":
             MessageLookupByLibrary.simpleMessage(
-                "Stop on Weight if scale detected"),
+                "Detener en peso si se detecta una báscula"),
         "screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor":
             MessageLookupByLibrary.simpleMessage(
-                "Switch de1 to sleep mode if it is idle for some time [min]"),
+                "Cambie de1 al modo de suspensión si está inactivo durante algún tiempo [min]"),
         "screenSettingsSwitchOffSteamHeating":
-            MessageLookupByLibrary.simpleMessage("Switch off steam heating"),
+            MessageLookupByLibrary.simpleMessage(
+                "Apague la calefacción de vapor"),
         "screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep":
             MessageLookupByLibrary.simpleMessage(
-                "Switch on screensaver if de1 manually switched to sleep"),
-        "screenSettingsTabletDefault":
-            MessageLookupByLibrary.simpleMessage("Tablet default"),
+                "Encienda el protector de pantalla si de1 cambió manualmente a suspensión"),
+        "screenSettingsTabletDefault": MessageLookupByLibrary.simpleMessage(
+            "Valor predeterminado de la tableta"),
         "screenSettingsTabletGroup":
-            MessageLookupByLibrary.simpleMessage("Tablet"),
-        "screenSettingsThemeSelection": MessageLookupByLibrary.simpleMessage(
-            "Language and Theme selection"),
+            MessageLookupByLibrary.simpleMessage("Tableta"),
+        "screenSettingsThemeSelection":
+            MessageLookupByLibrary.simpleMessage("Selección de idioma y tema"),
         "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
             MessageLookupByLibrary.simpleMessage(
-                "This can lead to a higher load on your MQTT server as the message frequency is about 10Hz."),
+                "Esto puede generar una mayor carga en su servidor MQTT ya que la frecuencia de los mensajes es de aproximadamente 10 Hz."),
         "screenSettingsToSaveEnergyTheSteamHeaterWillBeTurnedOff":
             MessageLookupByLibrary.simpleMessage(
-                "To save energy the steam heater will be turned off and the steam tab will be hidden."),
+                "Para ahorrar energía, el calentador de vapor se apagará y la pestaña de vapor se ocultará."),
         "screenSettingsUploadShotsToVisualizer":
-            MessageLookupByLibrary.simpleMessage("Upload Shots to Visualizer"),
+            MessageLookupByLibrary.simpleMessage("Subir tomas al visualizador"),
         "screenSettingsUserNameCantBeSmallerThan4Letters":
             MessageLookupByLibrary.simpleMessage(
-                "User Name can\'t be smaller than 4 letters"),
-        "screenSettingsUserNameemail":
-            MessageLookupByLibrary.simpleMessage("User Name/email"),
+                "El nombre de usuario no puede tener menos de 4 letras"),
+        "screenSettingsUserNameemail": MessageLookupByLibrary.simpleMessage(
+            "Nombre de usuario/correo electrónico"),
         "screenSettingsWakeUpDe1IfAppIsLaunched":
             MessageLookupByLibrary.simpleMessage(
-                "Wake up de1 if app is launched"),
+                "Activar de1 si se inicia la aplicación"),
         "screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff":
             MessageLookupByLibrary.simpleMessage(
-                "Wake up de1 if screen tapped (if screen was off)"),
+                "Activar de1 si se toca la pantalla (si la pantalla estaba apagada)"),
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
-                "You changed critical settings. You need to restart the app to make the settings active."),
+                "Cambió la configuración crítica. Debe reiniciar la aplicación para activar la configuración."),
         "screenShotEditBarrista":
-            MessageLookupByLibrary.simpleMessage("Barrista"),
+            MessageLookupByLibrary.simpleMessage("barrista"),
         "screenShotEditDescribeYourExperience":
-            MessageLookupByLibrary.simpleMessage("Describe your experience"),
+            MessageLookupByLibrary.simpleMessage("Describe tu experiencia"),
         "screenShotEditDoseWeightG":
-            MessageLookupByLibrary.simpleMessage("Dose weight [g]"),
+            MessageLookupByLibrary.simpleMessage("Dosis peso [g]"),
         "screenShotEditDrinkWeightG":
-            MessageLookupByLibrary.simpleMessage("Drink weight [g]"),
+            MessageLookupByLibrary.simpleMessage("Peso de la bebida [g]"),
         "screenShotEditDrinker":
-            MessageLookupByLibrary.simpleMessage("Drinker"),
+            MessageLookupByLibrary.simpleMessage("Bebedor"),
         "screenShotEditEnjoyment":
-            MessageLookupByLibrary.simpleMessage("Enjoyment"),
+            MessageLookupByLibrary.simpleMessage("Disfrute"),
         "screenShotEditExtractionYield":
-            MessageLookupByLibrary.simpleMessage("Extraction yield"),
+            MessageLookupByLibrary.simpleMessage("Rendimiento de extracción"),
         "screenShotEditGrinder":
-            MessageLookupByLibrary.simpleMessage("Grinder"),
+            MessageLookupByLibrary.simpleMessage("Amoladora"),
         "screenShotEditGrinderSettings":
-            MessageLookupByLibrary.simpleMessage("Grinder settings"),
+            MessageLookupByLibrary.simpleMessage("Configuración del molinillo"),
         "screenShotEditOpenInVisualizercoffee":
-            MessageLookupByLibrary.simpleMessage("Open in Visualizer.coffee"),
+            MessageLookupByLibrary.simpleMessage("Abrir en Visualizer.coffee"),
         "screenShotEditPouringTimeS":
-            MessageLookupByLibrary.simpleMessage("Pouring time [s]"),
+            MessageLookupByLibrary.simpleMessage("Tiempo de vertido [s]"),
         "screenShotEditPouringWeightG":
-            MessageLookupByLibrary.simpleMessage("Pouring weight [g]"),
+            MessageLookupByLibrary.simpleMessage("Peso de colada [g]"),
         "screenShotEditSuccessUploadingYourShot":
-            MessageLookupByLibrary.simpleMessage("Success uploading your shot"),
+            MessageLookupByLibrary.simpleMessage("Éxito al subir tu foto"),
         "screenShotEditTitle": m3,
         "screenShotEditTotalDissolvedSolidssTds":
             MessageLookupByLibrary.simpleMessage(
-                "Total Dissolved Solidss (TDS)"),
-        "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambient"),
+                "Sólidos Disueltos Totales (TDS)"),
+        "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambiente"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":
             MessageLookupByLibrary.simpleMessage(
-                "Off (normal purge after stop)"),
-        "screenSteamOnSlowPurgeOn1stStop":
-            MessageLookupByLibrary.simpleMessage("On (slow purge on 1st stop)"),
-        "screenSteamReset": MessageLookupByLibrary.simpleMessage("Reset"),
+                "Apagado (purga normal después de la parada)"),
+        "screenSteamOnSlowPurgeOn1stStop": MessageLookupByLibrary.simpleMessage(
+            "Encendido (purga lenta en la primera parada)"),
+        "screenSteamReset": MessageLookupByLibrary.simpleMessage("Reiniciar"),
         "screenSteamStopAtTemperatur": m5,
-        "screenSteamTempTip": MessageLookupByLibrary.simpleMessage("Temp Tip"),
+        "screenSteamTempTip":
+            MessageLookupByLibrary.simpleMessage("Punta de temperatura"),
         "screenSteamTemperaturs": m6,
-        "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("Time/s"),
+        "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("Veces"),
         "screenSteamTimerS": m7,
         "screenSteamTwotapMode":
-            MessageLookupByLibrary.simpleMessage("Steam two-tap mode:"),
+            MessageLookupByLibrary.simpleMessage("Modo Steam de dos toques:"),
         "screenWaterWeightG": m8,
-        "settings": MessageLookupByLibrary.simpleMessage("Settings"),
-        "show": MessageLookupByLibrary.simpleMessage("Show"),
-        "start": MessageLookupByLibrary.simpleMessage("Start"),
+        "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
+        "show": MessageLookupByLibrary.simpleMessage("Espectáculo"),
+        "start": MessageLookupByLibrary.simpleMessage("Comenzar"),
         "stateDisconnected":
-            MessageLookupByLibrary.simpleMessage("disconnected"),
-        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("heated up"),
-        "statePour": MessageLookupByLibrary.simpleMessage("pour"),
+            MessageLookupByLibrary.simpleMessage("desconectado"),
+        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("calentado"),
+        "statePour": MessageLookupByLibrary.simpleMessage("verter"),
         "state_Disconnected":
-            MessageLookupByLibrary.simpleMessage("disconnected"),
-        "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
-        "stop": MessageLookupByLibrary.simpleMessage("Stop"),
+            MessageLookupByLibrary.simpleMessage("desconectado"),
+        "steamScreenTempC":
+            MessageLookupByLibrary.simpleMessage("temperatura [°C]"),
+        "stop": MessageLookupByLibrary.simpleMessage("Detener"),
         "subStateHeatWaterHeater":
-            MessageLookupByLibrary.simpleMessage("Heating Water"),
+            MessageLookupByLibrary.simpleMessage("Calentando agua"),
         "subStateHeatWaterTank":
-            MessageLookupByLibrary.simpleMessage("Heating Tank"),
-        "switchOn": MessageLookupByLibrary.simpleMessage("Switch on"),
-        "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Espresso"),
-        "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Flush"),
-        "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Steam"),
-        "tabHomeWater": MessageLookupByLibrary.simpleMessage("Water"),
-        "temp": MessageLookupByLibrary.simpleMessage("Temp"),
+            MessageLookupByLibrary.simpleMessage("Tanque de calefacción"),
+        "switchOn": MessageLookupByLibrary.simpleMessage("Encender"),
+        "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("Café exprés"),
+        "tabHomeFlush": MessageLookupByLibrary.simpleMessage("Enjuagar"),
+        "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("Receta"),
+        "tabHomeSteam": MessageLookupByLibrary.simpleMessage("Vapor"),
+        "tabHomeWater": MessageLookupByLibrary.simpleMessage("Agua"),
+        "temp": MessageLookupByLibrary.simpleMessage("Temperatura"),
         "validatorNotBeEmpty":
-            MessageLookupByLibrary.simpleMessage("must not be empty"),
-        "wait": MessageLookupByLibrary.simpleMessage("Wait"),
-        "weight": MessageLookupByLibrary.simpleMessage("Weight")
+            MessageLookupByLibrary.simpleMessage("no debe estar vacío"),
+        "wait": MessageLookupByLibrary.simpleMessage("Esperar"),
+        "weight": MessageLookupByLibrary.simpleMessage("Peso")
       };
 }

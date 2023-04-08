@@ -304,6 +304,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsKeepTabletChargedBetween6090":
             MessageLookupByLibrary.simpleMessage(
                 "Das Tablet immer geladen halten zwischen 60-90% (de1 USB Port)"),
+        "screenSettingsKorean":
+            MessageLookupByLibrary.simpleMessage("Koreanisch"),
         "screenSettingsLanguage":
             MessageLookupByLibrary.simpleMessage("Sprache"),
         "screenSettingsLightTheme":

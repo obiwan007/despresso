@@ -292,6 +292,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                               "en": S.of(context).screenSettingsEnglish,
                               "de": S.of(context).screenSettingsGerman,
                               "es": S.of(context).screenSettingsSpanish,
+                              "ko": S.of(context).screenSettingsKorean,
                             },
                             onChange: (value) {
                               settingsService.notifyDelayed();

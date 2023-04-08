@@ -296,6 +296,8 @@
   "@screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe": {},
   "screenSettingsKeepTabletChargedBetween6090": "Das Tablet immer geladen halten zwischen 60-90% (de1 USB Port)",
   "@screenSettingsKeepTabletChargedBetween6090": {},
+  "screenSettingsKorean": "Koreanisch",
+  "@screenSettingsKorean": {},
   "screenSettingsLanguage": "Sprache",
   "@screenSettingsLanguage": {},
   "screenSettingsLightTheme": "Helles Theme",

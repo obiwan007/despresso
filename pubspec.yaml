@@ -170,6 +170,7 @@ flutter_icons:
   image_path: "assets/icon.png"
   android: true
   ios: true
+
 flutter_intl:
   enabled: true
   localizely:
