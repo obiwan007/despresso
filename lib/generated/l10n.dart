@@ -50,321 +50,11 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `must not be empty`
-  String get validatorNotBeEmpty {
-    return Intl.message(
-      'must not be empty',
-      name: 'validatorNotBeEmpty',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `disconnected`
-  String get disconnected {
-    return Intl.message(
-      'disconnected',
-      name: 'disconnected',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `heated up`
-  String get stateIdleHeated {
-    return Intl.message(
-      'heated up',
-      name: 'stateIdleHeated',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Heating Water`
-  String get subStateHeatWaterHeater {
-    return Intl.message(
-      'Heating Water',
-      name: 'subStateHeatWaterHeater',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Heating Tank`
-  String get subStateHeatWaterTank {
-    return Intl.message(
-      'Heating Tank',
-      name: 'subStateHeatWaterTank',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `disconnected`
-  String get state_Disconnected {
-    return Intl.message(
-      'disconnected',
-      name: 'state_Disconnected',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `disconnected`
-  String get stateDisconnected {
-    return Intl.message(
-      'disconnected',
-      name: 'stateDisconnected',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `pour`
-  String get statePour {
-    return Intl.message(
-      'pour',
-      name: 'statePour',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Save`
-  String get save {
-    return Intl.message(
-      'Save',
-      name: 'save',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `No`
-  String get no {
-    return Intl.message(
-      'No',
-      name: 'no',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Ok`
-  String get ok {
-    return Intl.message(
-      'Ok',
-      name: 'ok',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Pressure`
-  String get pressure {
-    return Intl.message(
-      'Pressure',
-      name: 'pressure',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Flow`
-  String get flow {
-    return Intl.message(
-      'Flow',
-      name: 'flow',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Weight`
-  String get weight {
-    return Intl.message(
-      'Weight',
-      name: 'weight',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Temp`
-  String get temp {
-    return Intl.message(
-      'Temp',
-      name: 'temp',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Profiles`
-  String get profiles {
-    return Intl.message(
-      'Profiles',
-      name: 'profiles',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Beans`
   String get beans {
     return Intl.message(
       'Beans',
       name: 'beans',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Settings`
-  String get settings {
-    return Intl.message(
-      'Settings',
-      name: 'settings',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Privacy`
-  String get privacy {
-    return Intl.message(
-      'Privacy',
-      name: 'privacy',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Exit`
-  String get exit {
-    return Intl.message(
-      'Exit',
-      name: 'exit',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Recipe`
-  String get tabHomeRecipe {
-    return Intl.message(
-      'Recipe',
-      name: 'tabHomeRecipe',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Enabled`
-  String get enabled {
-    return Intl.message(
-      'Enabled',
-      name: 'enabled',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Disabled`
-  String get disabled {
-    return Intl.message(
-      'Disabled',
-      name: 'disabled',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Espresso`
-  String get tabHomeEspresso {
-    return Intl.message(
-      'Espresso',
-      name: 'tabHomeEspresso',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Steam`
-  String get tabHomeSteam {
-    return Intl.message(
-      'Steam',
-      name: 'tabHomeSteam',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Water`
-  String get tabHomeWater {
-    return Intl.message(
-      'Water',
-      name: 'tabHomeWater',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Flush`
-  String get tabHomeFlush {
-    return Intl.message(
-      'Flush',
-      name: 'tabHomeFlush',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `EDIT`
-  String get edit {
-    return Intl.message(
-      'EDIT',
-      name: 'edit',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Show`
-  String get show {
-    return Intl.message(
-      'Show',
-      name: 'show',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Hide`
-  String get hide {
-    return Intl.message(
-      'Hide',
-      name: 'hide',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Red`
-  String get red {
-    return Intl.message(
-      'Red',
-      name: 'red',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Orange`
-  String get orange {
-    return Intl.message(
-      'Orange',
-      name: 'orange',
       desc: '',
       args: [],
     );
@@ -380,11 +70,41 @@ class S {
     );
   }
 
-  /// `Green`
-  String get green {
+  /// `Disabled`
+  String get disabled {
     return Intl.message(
-      'Green',
-      name: 'green',
+      'Disabled',
+      name: 'disabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `disconnected`
+  String get disconnected {
+    return Intl.message(
+      'disconnected',
+      name: 'disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `EDIT`
+  String get edit {
+    return Intl.message(
+      'EDIT',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enabled`
+  String get enabled {
+    return Intl.message(
+      'Enabled',
+      name: 'enabled',
       desc: '',
       args: [],
     );
@@ -400,523 +120,153 @@ class S {
     );
   }
 
-  /// `Stop`
-  String get stop {
+  /// `Exit`
+  String get exit {
     return Intl.message(
-      'Stop',
-      name: 'stop',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Start`
-  String get start {
-    return Intl.message(
-      'Start',
-      name: 'start',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `On`
-  String get on {
-    return Intl.message(
-      'On',
-      name: 'on',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Off`
-  String get off {
-    return Intl.message(
-      'Off',
-      name: 'off',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Wait`
-  String get wait {
-    return Intl.message(
-      'Wait',
-      name: 'wait',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Switch on`
-  String get switchOn {
-    return Intl.message(
-      'Switch on',
-      name: 'switchOn',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Reconnect`
-  String get reconnect {
-    return Intl.message(
-      'Reconnect',
-      name: 'reconnect',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Recipe Details`
-  String get screenRecipeRecipeDetails {
-    return Intl.message(
-      'Recipe Details',
-      name: 'screenRecipeRecipeDetails',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Hot water:`
-  String get screenRecipehotWater {
-    return Intl.message(
-      'Hot water:',
-      name: 'screenRecipehotWater',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Steam milk:`
-  String get screenRecipesteamMilk {
-    return Intl.message(
-      'Steam milk:',
-      name: 'screenRecipesteamMilk',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Profile Details`
-  String get screenRecipeProfileDetails {
-    return Intl.message(
-      'Profile Details',
-      name: 'screenRecipeProfileDetails',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Coffee notes`
-  String get screenRecipeCoffeeNotes {
-    return Intl.message(
-      'Coffee notes',
-      name: 'screenRecipeCoffeeNotes',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Selected profile`
-  String get screenRecipeSelectedProfile {
-    return Intl.message(
-      'Selected profile',
-      name: 'screenRecipeSelectedProfile',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Initial temperature:`
-  String get screenRecipeInitialTemp {
-    return Intl.message(
-      'Initial temperature:',
-      name: 'screenRecipeInitialTemp',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Selected Bean`
-  String get screenRecipeSelectedBean {
-    return Intl.message(
-      'Selected Bean',
-      name: 'screenRecipeSelectedBean',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Grind Settings:`
-  String get screenRecipeGrindSettings {
-    return Intl.message(
-      'Grind Settings:',
-      name: 'screenRecipeGrindSettings',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Ratio:`
-  String get screenRecipeRatio {
-    return Intl.message(
-      'Ratio:',
-      name: 'screenRecipeRatio',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Weight-in beans [g]`
-  String get screenRecipeWeightinBeansG {
-    return Intl.message(
-      'Weight-in beans [g]',
-      name: 'screenRecipeWeightinBeansG',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Stop on Weight [g]`
-  String get screenRecipeStopOnWeightG {
-    return Intl.message(
-      'Stop on Weight [g]',
-      name: 'screenRecipeStopOnWeightG',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Adjust temp [°C]`
-  String get screenRecipeAdjustTempC {
-    return Intl.message(
-      'Adjust temp [°C]',
-      name: 'screenRecipeAdjustTempC',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Add recipe`
-  String get screenRecipeAddRecipe {
-    return Intl.message(
-      'Add recipe',
-      name: 'screenRecipeAddRecipe',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Set Ratio`
-  String get screenRecipeSetRatio {
-    return Intl.message(
-      'Set Ratio',
-      name: 'screenRecipeSetRatio',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Refill the water tank`
-  String get screenEspressoRefillTheWaterTank {
-    return Intl.message(
-      'Refill the water tank',
-      name: 'screenEspressoRefillTheWaterTank',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Recipe`
-  String get screenEspressoRecipe {
-    return Intl.message(
-      'Recipe',
-      name: 'screenEspressoRecipe',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Profile`
-  String get screenEspressoProfile {
-    return Intl.message(
-      'Profile',
-      name: 'screenEspressoProfile',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Coffee`
-  String get screenEspressoBean {
-    return Intl.message(
-      'Coffee',
-      name: 'screenEspressoBean',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Target`
-  String get screenEspressoTarget {
-    return Intl.message(
-      'Target',
-      name: 'screenEspressoTarget',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Timer`
-  String get screenEspressoTimer {
-    return Intl.message(
-      'Timer',
-      name: 'screenEspressoTimer',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Pour: {sec} s`
-  String screenEspressoPour(Object sec) {
-    return Intl.message(
-      'Pour: $sec s',
-      name: 'screenEspressoPour',
-      desc: '',
-      args: [sec],
-    );
-  }
-
-  /// `Total: {sec} s`
-  String screenEspressoTotal(Object sec) {
-    return Intl.message(
-      'Total: $sec s',
-      name: 'screenEspressoTotal',
-      desc: '',
-      args: [sec],
-    );
-  }
-
-  /// `TTW: {sec} s`
-  String screenEspressoTtw(Object sec) {
-    return Intl.message(
-      'TTW: $sec s',
-      name: 'screenEspressoTtw',
-      desc: '',
-      args: [sec],
-    );
-  }
-
-  /// `Espresso Diary`
-  String get screenEspressoDiary {
-    return Intl.message(
-      'Espresso Diary',
-      name: 'screenEspressoDiary',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Flow [ml/s] / Pressure [bar]`
-  String get screenEspressoFlowMlsPressureBar {
-    return Intl.message(
-      'Flow [ml/s] / Pressure [bar]',
-      name: 'screenEspressoFlowMlsPressureBar',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Time/s`
-  String get screenEspressoTimes {
-    return Intl.message(
-      'Time/s',
-      name: 'screenEspressoTimes',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Pressure`
-  String get screenEspressoPressure {
-    return Intl.message(
-      'Pressure',
-      name: 'screenEspressoPressure',
+      'Exit',
+      name: 'exit',
       desc: '',
       args: [],
     );
   }
 
   /// `Flow`
-  String get screenEspressoFlow {
+  String get flow {
     return Intl.message(
       'Flow',
-      name: 'screenEspressoFlow',
+      name: 'flow',
       desc: '',
       args: [],
     );
   }
 
-  /// `Weight`
-  String get screenEspressoWeight {
+  /// `Battery`
+  String get footerBattery {
     return Intl.message(
-      'Weight',
-      name: 'screenEspressoWeight',
+      'Battery',
+      name: 'footerBattery',
       desc: '',
       args: [],
     );
   }
 
-  /// `Temp`
-  String get screenEspressoTemp {
+  /// `Connect`
+  String get footerConnect {
     return Intl.message(
-      'Temp',
-      name: 'screenEspressoTemp',
+      'Connect',
+      name: 'footerConnect',
       desc: '',
       args: [],
     );
   }
 
-  /// `Weight [g]`
-  String get screenEspressoWeightG {
+  /// `Group`
+  String get footerGroup {
     return Intl.message(
-      'Weight [g]',
-      name: 'screenEspressoWeightG',
+      'Group',
+      name: 'footerGroup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Steam two-tap mode:`
-  String get screenSteamTwotapMode {
+  /// `Probe`
+  String get footerProbe {
     return Intl.message(
-      'Steam two-tap mode:',
-      name: 'screenSteamTwotapMode',
+      'Probe',
+      name: 'footerProbe',
       desc: '',
       args: [],
     );
   }
 
-  /// `On (slow purge on 1st stop)`
-  String get screenSteamOnSlowPurgeOn1stStop {
+  /// `Refill water`
+  String get footerRefillWater {
     return Intl.message(
-      'On (slow purge on 1st stop)',
-      name: 'screenSteamOnSlowPurgeOn1stStop',
+      'Refill water',
+      name: 'footerRefillWater',
       desc: '',
       args: [],
     );
   }
 
-  /// `Off (normal purge after stop)`
-  String get screenSteamOffNormalPurgeAfterStop {
+  /// `Scale`
+  String get footerScale {
     return Intl.message(
-      'Off (normal purge after stop)',
-      name: 'screenSteamOffNormalPurgeAfterStop',
+      'Scale',
+      name: 'footerScale',
       desc: '',
       args: [],
     );
   }
 
-  /// `Steam Temperaturs {temp} °C`
-  String screenSteamTemperaturs(Object temp) {
+  /// `  Tare  `
+  String get footerTare {
     return Intl.message(
-      'Steam Temperaturs $temp °C',
-      name: 'screenSteamTemperaturs',
+      '  Tare  ',
+      name: 'footerTare',
       desc: '',
-      args: [temp],
+      args: [],
     );
   }
 
-  /// `Timer {t} s`
-  String screenSteamTimerS(Object t) {
+  /// `Water`
+  String get footerWater {
     return Intl.message(
-      'Timer $t s',
-      name: 'screenSteamTimerS',
+      'Water',
+      name: 'footerWater',
       desc: '',
-      args: [t],
+      args: [],
     );
   }
 
-  /// `Stop at Temperature {temp} °C`
-  String screenSteamStopAtTemperatur(Object temp) {
+  /// `Flow [ml/s] / Pressure [bar]`
+  String get graphFlowMlsPressureBar {
     return Intl.message(
-      'Stop at Temperature $temp °C',
-      name: 'screenSteamStopAtTemperatur',
+      'Flow [ml/s] / Pressure [bar]',
+      name: 'graphFlowMlsPressureBar',
       desc: '',
-      args: [temp],
-    );
-  }
-
-  /// `Steam Flowrate {flow} ml/s`
-  String screenSteamFlowrate(Object flow) {
-    return Intl.message(
-      'Steam Flowrate $flow ml/s',
-      name: 'screenSteamFlowrate',
-      desc: '',
-      args: [flow],
+      args: [],
     );
   }
 
   /// `Time/s`
-  String get screenSteamTimeS {
+  String get graphTime {
     return Intl.message(
       'Time/s',
-      name: 'screenSteamTimeS',
+      name: 'graphTime',
       desc: '',
       args: [],
     );
   }
 
-  /// `Temp [°C]`
-  String get steamScreenTempC {
+  /// `Green`
+  String get green {
     return Intl.message(
-      'Temp [°C]',
-      name: 'steamScreenTempC',
+      'Green',
+      name: 'green',
       desc: '',
       args: [],
     );
   }
 
-  /// `Temp Tip`
-  String get screenSteamTempTip {
+  /// `Hide`
+  String get hide {
     return Intl.message(
-      'Temp Tip',
-      name: 'screenSteamTempTip',
+      'Hide',
+      name: 'hide',
       desc: '',
       args: [],
     );
   }
 
-  /// `Ambient`
-  String get screenSteamAmbient {
+  /// `Despresso Feedback`
+  String get mainMenuDespressoFeedback {
     return Intl.message(
-      'Ambient',
-      name: 'screenSteamAmbient',
+      'Despresso Feedback',
+      name: 'mainMenuDespressoFeedback',
       desc: '',
       args: [],
-    );
-  }
-
-  /// `Reset`
-  String get screenSteamReset {
-    return Intl.message(
-      'Reset',
-      name: 'screenSteamReset',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Weight {w} g`
-  String screenWaterWeightG(Object w) {
-    return Intl.message(
-      'Weight $w g',
-      name: 'screenWaterWeightG',
-      desc: '',
-      args: [w],
     );
   }
 
@@ -940,101 +290,171 @@ class S {
     );
   }
 
-  /// `Despresso Feedback`
-  String get mainMenuDespressoFeedback {
+  /// `No`
+  String get no {
     return Intl.message(
-      'Despresso Feedback',
-      name: 'mainMenuDespressoFeedback',
+      'No',
+      name: 'no',
       desc: '',
       args: [],
     );
   }
 
-  /// `No shots to upload selected`
-  String get screenDiaryNoShotsToUploadSelected {
+  /// `Off`
+  String get off {
     return Intl.message(
-      'No shots to upload selected',
-      name: 'screenDiaryNoShotsToUploadSelected',
+      'Off',
+      name: 'off',
       desc: '',
       args: [],
     );
   }
 
-  /// `Success uploading your shots`
-  String get screenDiarySuccessUploadingYourShots {
+  /// `Ok`
+  String get ok {
     return Intl.message(
-      'Success uploading your shots',
-      name: 'screenDiarySuccessUploadingYourShots',
+      'Ok',
+      name: 'ok',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error uploading shots`
-  String get screenDiaryErrorUploadingShots {
+  /// `On`
+  String get on {
     return Intl.message(
-      'Error uploading shots',
-      name: 'screenDiaryErrorUploadingShots',
+      'On',
+      name: 'on',
       desc: '',
       args: [],
     );
   }
 
-  /// `Nothing selected`
-  String get screenDiaryNothingSelected {
+  /// `Orange`
+  String get orange {
     return Intl.message(
-      'Nothing selected',
-      name: 'screenDiaryNothingSelected',
+      'Orange',
+      name: 'orange',
       desc: '',
       args: [],
     );
   }
 
-  /// `Overlaymode:`
-  String get screenDiaryOverlaymode {
+  /// `Pressure`
+  String get pressure {
     return Intl.message(
-      'Overlaymode:',
-      name: 'screenDiaryOverlaymode',
+      'Pressure',
+      name: 'pressure',
       desc: '',
       args: [],
     );
   }
 
-  /// `Beans and Roasters`
-  String get screenBeanSelectTitle {
+  /// `Privacy`
+  String get privacy {
     return Intl.message(
-      'Beans and Roasters',
-      name: 'screenBeanSelectTitle',
+      'Privacy',
+      name: 'privacy',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select Roaster`
-  String get screenBeanSelectSelectRoaster {
+  /// `Profile`
+  String get profile {
     return Intl.message(
-      'Select Roaster',
-      name: 'screenBeanSelectSelectRoaster',
+      'Profile',
+      name: 'profile',
       desc: '',
       args: [],
     );
   }
 
-  /// `Select Beans`
-  String get screenBeanSelectSelectBeans {
+  /// `Profiles`
+  String get profiles {
     return Intl.message(
-      'Select Beans',
-      name: 'screenBeanSelectSelectBeans',
+      'Profiles',
+      name: 'profiles',
       desc: '',
       args: [],
     );
   }
 
-  /// `Name`
-  String get screenBeanSelectNameOfRoaster {
+  /// `Recipe`
+  String get recipe {
     return Intl.message(
-      'Name',
-      name: 'screenBeanSelectNameOfRoaster',
+      'Recipe',
+      name: 'recipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reconnect`
+  String get reconnect {
+    return Intl.message(
+      'Reconnect',
+      name: 'reconnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Red`
+  String get red {
+    return Intl.message(
+      'Red',
+      name: 'red',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Acidity`
+  String get screenBeanSelectAcidity {
+    return Intl.message(
+      'Acidity',
+      name: 'screenBeanSelectAcidity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address`
+  String get screenBeanSelectAddressOfRoaster {
+    return Intl.message(
+      'Address',
+      name: 'screenBeanSelectAddressOfRoaster',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `days ago`
+  String get screenBeanSelectDaysAgo {
+    return Intl.message(
+      'days ago',
+      name: 'screenBeanSelectDaysAgo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get screenBeanSelectDescriptionOfBean {
+    return Intl.message(
+      'Description',
+      name: 'screenBeanSelectDescriptionOfBean',
       desc: '',
       args: [],
     );
@@ -1060,11 +480,11 @@ class S {
     );
   }
 
-  /// `Address`
-  String get screenBeanSelectAddressOfRoaster {
+  /// `Intensity`
+  String get screenBeanSelectIntensity {
     return Intl.message(
-      'Address',
-      name: 'screenBeanSelectAddressOfRoaster',
+      'Intensity',
+      name: 'screenBeanSelectIntensity',
       desc: '',
       args: [],
     );
@@ -1080,31 +500,11 @@ class S {
     );
   }
 
-  /// `Description`
-  String get screenBeanSelectDescriptionOfBean {
+  /// `Name`
+  String get screenBeanSelectNameOfRoaster {
     return Intl.message(
-      'Description',
-      name: 'screenBeanSelectDescriptionOfBean',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Tasting`
-  String get screenBeanSelectTasting {
-    return Intl.message(
-      'Tasting',
-      name: 'screenBeanSelectTasting',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Type of Beans`
-  String get screenBeanSelectTypeOfBeans {
-    return Intl.message(
-      'Type of Beans',
-      name: 'screenBeanSelectTypeOfBeans',
+      'Name',
+      name: 'screenBeanSelectNameOfRoaster',
       desc: '',
       args: [],
     );
@@ -1120,26 +520,6 @@ class S {
     );
   }
 
-  /// `Acidity`
-  String get screenBeanSelectAcidity {
-    return Intl.message(
-      'Acidity',
-      name: 'screenBeanSelectAcidity',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Intensity`
-  String get screenBeanSelectIntensity {
-    return Intl.message(
-      'Intensity',
-      name: 'screenBeanSelectIntensity',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Roast Level`
   String get screenBeanSelectRoastLevel {
     return Intl.message(
@@ -1150,973 +530,301 @@ class S {
     );
   }
 
-  /// `days ago`
-  String get screenBeanSelectDaysAgo {
+  /// `Select Beans`
+  String get screenBeanSelectSelectBeans {
     return Intl.message(
-      'days ago',
-      name: 'screenBeanSelectDaysAgo',
+      'Select Beans',
+      name: 'screenBeanSelectSelectBeans',
       desc: '',
       args: [],
     );
   }
 
-  /// `Application Settings`
-  String get screenSettingsApplicationSettings {
+  /// `Select Roaster`
+  String get screenBeanSelectSelectRoaster {
     return Intl.message(
-      'Application Settings',
-      name: 'screenSettingsApplicationSettings',
+      'Select Roaster',
+      name: 'screenBeanSelectSelectRoaster',
       desc: '',
       args: [],
     );
   }
 
-  /// `Hardware and connections`
-  String get screenSettingsApplicationSettingsHardwareAndConnections {
+  /// `Tasting`
+  String get screenBeanSelectTasting {
     return Intl.message(
-      'Hardware and connections',
-      name: 'screenSettingsApplicationSettingsHardwareAndConnections',
+      'Tasting',
+      name: 'screenBeanSelectTasting',
       desc: '',
       args: [],
     );
   }
 
-  /// `Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)`
-  String get screenSettingsApplicationSettingsScanStart {
+  /// `Beans and Roasters`
+  String get screenBeanSelectTitle {
     return Intl.message(
-      'Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)',
-      name: 'screenSettingsApplicationSettingsScanStart',
+      'Beans and Roasters',
+      name: 'screenBeanSelectTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Scan for Devices`
-  String get screenSettingsApplicationSettingsScanForDevices {
+  /// `Type of Beans`
+  String get screenBeanSelectTypeOfBeans {
     return Intl.message(
-      'Scan for Devices',
-      name: 'screenSettingsApplicationSettingsScanForDevices',
+      'Type of Beans',
+      name: 'screenBeanSelectTypeOfBeans',
       desc: '',
       args: [],
     );
   }
 
-  /// `Special Bluetooth devices`
-  String get screenSettingsSpecialBluetoothDevices {
+  /// `Error uploading shots`
+  String get screenDiaryErrorUploadingShots {
     return Intl.message(
-      'Special Bluetooth devices',
-      name: 'screenSettingsSpecialBluetoothDevices',
+      'Error uploading shots',
+      name: 'screenDiaryErrorUploadingShots',
       desc: '',
       args: [],
     );
   }
 
-  /// `Scale support`
-  String get screenSettingsScaleSupport {
+  /// `No shots to upload selected`
+  String get screenDiaryNoShotsToUploadSelected {
     return Intl.message(
-      'Scale support',
-      name: 'screenSettingsScaleSupport',
+      'No shots to upload selected',
+      name: 'screenDiaryNoShotsToUploadSelected',
       desc: '',
       args: [],
     );
   }
 
-  /// `Milk steaming thermometer support`
-  String get screenSettingsMilkSteamingThermometerSupport {
+  /// `Nothing selected`
+  String get screenDiaryNothingSelected {
     return Intl.message(
-      'Milk steaming thermometer support',
-      name: 'screenSettingsMilkSteamingThermometerSupport',
+      'Nothing selected',
+      name: 'screenDiaryNothingSelected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Overlaymode:`
+  String get screenDiaryOverlaymode {
+    return Intl.message(
+      'Overlaymode:',
+      name: 'screenDiaryOverlaymode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Success uploading your shots`
+  String get screenDiarySuccessUploadingYourShots {
+    return Intl.message(
+      'Success uploading your shots',
+      name: 'screenDiarySuccessUploadingYourShots',
       desc: '',
       args: [],
     );
   }
 
   /// `Coffee`
-  String get screenSettingsCoffeeSection {
+  String get screenEspressoBean {
     return Intl.message(
       'Coffee',
-      name: 'screenSettingsCoffeeSection',
+      name: 'screenEspressoBean',
       desc: '',
       args: [],
     );
   }
 
-  /// `Stop on Weight if scale detected`
-  String get screenSettingsStopOnWeightIfScaleDetected {
+  /// `Espresso Diary`
+  String get screenEspressoDiary {
     return Intl.message(
-      'Stop on Weight if scale detected',
-      name: 'screenSettingsStopOnWeightIfScaleDetected',
+      'Espresso Diary',
+      name: 'screenEspressoDiary',
       desc: '',
       args: [],
     );
   }
 
-  /// `If the scale is connected it is used to stop the shot if the profile has a limit given.`
-  String get screenSettingsIfTheScaleIsConnectedItIsUsedToStop {
+  /// `Flow`
+  String get screenEspressoFlow {
     return Intl.message(
-      'If the scale is connected it is used to stop the shot if the profile has a limit given.',
-      name: 'screenSettingsIfTheScaleIsConnectedItIsUsedToStop',
+      'Flow',
+      name: 'screenEspressoFlow',
       desc: '',
       args: [],
     );
   }
 
-  /// `Stop before weight was reached [s]`
-  String get screenSettingsStopBeforeWeightWasReachedS {
+  /// `Flow [ml/s] / Pressure [bar]`
+  String get screenEspressoFlowMlsPressureBar {
     return Intl.message(
-      'Stop before weight was reached [s]',
-      name: 'screenSettingsStopBeforeWeightWasReachedS',
+      'Flow [ml/s] / Pressure [bar]',
+      name: 'screenEspressoFlowMlsPressureBar',
       desc: '',
       args: [],
     );
   }
 
-  /// `Auto Tare`
-  String get screenSettingsAutoTare {
+  /// `Pour: {sec} s`
+  String screenEspressoPour(Object sec) {
     return Intl.message(
-      'Auto Tare',
-      name: 'screenSettingsAutoTare',
+      'Pour: $sec s',
+      name: 'screenEspressoPour',
       desc: '',
-      args: [],
-    );
-  }
-
-  /// `If a shot is starting, auto-tare the scale`
-  String get screenSettingsIfAShotIsStartingAutotareTheScale {
-    return Intl.message(
-      'If a shot is starting, auto-tare the scale',
-      name: 'screenSettingsIfAShotIsStartingAutotareTheScale',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Switch off steam heating`
-  String get screenSettingsSwitchOffSteamHeating {
-    return Intl.message(
-      'Switch off steam heating',
-      name: 'screenSettingsSwitchOffSteamHeating',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `To save energy the steam heater will be turned off and the steam tab will be hidden.`
-  String get screenSettingsToSaveEnergyTheSteamHeaterWillBeTurnedOff {
-    return Intl.message(
-      'To save energy the steam heater will be turned off and the steam tab will be hidden.',
-      name: 'screenSettingsToSaveEnergyTheSteamHeaterWillBeTurnedOff',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Show Flush`
-  String get screenSettingsShowFlush {
-    return Intl.message(
-      'Show Flush',
-      name: 'screenSettingsShowFlush',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `If you have no GHC installed, you would need the flush screen`
-  String get screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe {
-    return Intl.message(
-      'If you have no GHC installed, you would need the flush screen',
-      name: 'screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Flush timer [s]`
-  String get screenSettingsFlushTimerS {
-    return Intl.message(
-      'Flush timer [s]',
-      name: 'screenSettingsFlushTimerS',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Second Flush timer [s]`
-  String get screenSettingsSecondFlushTimerS {
-    return Intl.message(
-      'Second Flush timer [s]',
-      name: 'screenSettingsSecondFlushTimerS',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Tablet`
-  String get screenSettingsTabletGroup {
-    return Intl.message(
-      'Tablet',
-      name: 'screenSettingsTabletGroup',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Language and Theme selection`
-  String get screenSettingsThemeSelection {
-    return Intl.message(
-      'Language and Theme selection',
-      name: 'screenSettingsThemeSelection',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Dark theme`
-  String get screenSettingsDarkTheme {
-    return Intl.message(
-      'Dark theme',
-      name: 'screenSettingsDarkTheme',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Light theme`
-  String get screenSettingsLightTheme {
-    return Intl.message(
-      'Light theme',
-      name: 'screenSettingsLightTheme',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Screen and Brightness`
-  String get screenSettingsScreenAndBrightness {
-    return Intl.message(
-      'Screen and Brightness',
-      name: 'screenSettingsScreenAndBrightness',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while.`
-  String get screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot {
-    return Intl.message(
-      'Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while.',
-      name: 'screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Brightness, sleep and screensaver`
-  String get screenSettingsBrightnessSleepAndScreensaver {
-    return Intl.message(
-      'Brightness, sleep and screensaver',
-      name: 'screenSettingsBrightnessSleepAndScreensaver',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Reduce screen brightness after (0=off) [min]`
-  String get screenSettingsReduceScreenBrightnessAfter0offMin {
-    return Intl.message(
-      'Reduce screen brightness after (0=off) [min]',
-      name: 'screenSettingsReduceScreenBrightnessAfter0offMin',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Reduce brightness to level`
-  String get screenSettingsReduceBrightnessToLevel {
-    return Intl.message(
-      'Reduce brightness to level',
-      name: 'screenSettingsReduceBrightnessToLevel',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Load Screensaver files`
-  String get screenSettingsLoadScreensaverFiles {
-    return Intl.message(
-      'Load Screensaver files',
-      name: 'screenSettingsLoadScreensaverFiles',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Select files`
-  String get screenSettingsSelectFiles {
-    return Intl.message(
-      'Select files',
-      name: 'screenSettingsSelectFiles',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Delete all screensaver files`
-  String get screenSettingsDeleteAllScreensaverFiles {
-    return Intl.message(
-      'Delete all screensaver files',
-      name: 'screenSettingsDeleteAllScreensaverFiles',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Do not let tablet go to lock screen (0=do not lock screen, 240=keep always locked) [min]`
-  String get screenSettingsDoNotLetTabletGoToLockScreen0doNot {
-    return Intl.message(
-      'Do not let tablet go to lock screen (0=do not lock screen, 240=keep always locked) [min]',
-      name: 'screenSettingsDoNotLetTabletGoToLockScreen0doNot',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Bahaviour`
-  String get screenSettingsBahaviour {
-    return Intl.message(
-      'Bahaviour',
-      name: 'screenSettingsBahaviour',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Change how the app is handling the de1 in case of wake up and sleep.`
-  String get screenSettingsChangeHowTheAppIsHandlingTheDe1InCase {
-    return Intl.message(
-      'Change how the app is handling the de1 in case of wake up and sleep.',
-      name: 'screenSettingsChangeHowTheAppIsHandlingTheDe1InCase',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Behaviour`
-  String get screenSettingsBehaviour {
-    return Intl.message(
-      'Behaviour',
-      name: 'screenSettingsBehaviour',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Switch de1 to sleep mode if it is idle for some time [min]`
-  String get screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor {
-    return Intl.message(
-      'Switch de1 to sleep mode if it is idle for some time [min]',
-      name: 'screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Wake up de1 if app is launched`
-  String get screenSettingsWakeUpDe1IfAppIsLaunched {
-    return Intl.message(
-      'Wake up de1 if app is launched',
-      name: 'screenSettingsWakeUpDe1IfAppIsLaunched',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Wake up de1 if screen tapped (if screen was off)`
-  String get screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff {
-    return Intl.message(
-      'Wake up de1 if screen tapped (if screen was off)',
-      name: 'screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Switch on screensaver if de1 manually switched to sleep`
-  String get screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep {
-    return Intl.message(
-      'Switch on screensaver if de1 manually switched to sleep',
-      name: 'screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Go back to Recipe screen if timeout occured`
-  String get screenSettingsGoBackToRecipeScreenIfTimeoutOccured {
-    return Intl.message(
-      'Go back to Recipe screen if timeout occured',
-      name: 'screenSettingsGoBackToRecipeScreenIfTimeoutOccured',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Smart charging`
-  String get screenSettingsSmartCharging {
-    return Intl.message(
-      'Smart charging',
-      name: 'screenSettingsSmartCharging',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Keep Tablet charged between 60-90%`
-  String get screenSettingsKeepTabletChargedBetween6090 {
-    return Intl.message(
-      'Keep Tablet charged between 60-90%',
-      name: 'screenSettingsKeepTabletChargedBetween6090',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Cloud and Network`
-  String get screenSettingsCloudAndNetwork {
-    return Intl.message(
-      'Cloud and Network',
-      name: 'screenSettingsCloudAndNetwork',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Handling of connections to other external systems like MQTT and Visualizer.`
-  String
-      get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd {
-    return Intl.message(
-      'Handling of connections to other external systems like MQTT and Visualizer.',
-      name:
-          'screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Message Queue Broadcast (MQTT) client`
-  String get screenSettingsMessageQueueBroadcastMqttClient {
-    return Intl.message(
-      'Message Queue Broadcast (MQTT) client',
-      name: 'screenSettingsMessageQueueBroadcastMqttClient',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Enable MQTT`
-  String get screenSettingsEnableMqtt {
-    return Intl.message(
-      'Enable MQTT',
-      name: 'screenSettingsEnableMqtt',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `MQTT Server`
-  String get screenSettingsMqttServer {
-    return Intl.message(
-      'MQTT Server',
-      name: 'screenSettingsMqttServer',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `MQTT Port`
-  String get screenSettingsMqttPort {
-    return Intl.message(
-      'MQTT Port',
-      name: 'screenSettingsMqttPort',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `MQTT User`
-  String get screenSettingsMqttUser {
-    return Intl.message(
-      'MQTT User',
-      name: 'screenSettingsMqttUser',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `MQTT Password`
-  String get screenSettingsMqttPassword {
-    return Intl.message(
-      'MQTT Password',
-      name: 'screenSettingsMqttPassword',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `MQTT root topic`
-  String get screenSettingsMqttRootTopic {
-    return Intl.message(
-      'MQTT root topic',
-      name: 'screenSettingsMqttRootTopic',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Send de1 state updates`
-  String get screenSettingsSendDe1StateUpdates {
-    return Intl.message(
-      'Send de1 state updates',
-      name: 'screenSettingsSendDe1StateUpdates',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Sending the status of the de1`
-  String get screenSettingsSendingTheStatusOfTheDe1 {
-    return Intl.message(
-      'Sending the status of the de1',
-      name: 'screenSettingsSendingTheStatusOfTheDe1',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Send de1 shot updates`
-  String get screenSettingsSendDe1ShotUpdates {
-    return Intl.message(
-      'Send de1 shot updates',
-      name: 'screenSettingsSendDe1ShotUpdates',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `This can lead to a higher load on your MQTT server as the message frequency is about 10Hz.`
-  String get screenSettingsThisCanLeadToAHigherLoadOnYourMqtt {
-    return Intl.message(
-      'This can lead to a higher load on your MQTT server as the message frequency is about 10Hz.',
-      name: 'screenSettingsThisCanLeadToAHigherLoadOnYourMqtt',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Send de1 water level updates`
-  String get screenSettingsSendDe1WaterLevelUpdates {
-    return Intl.message(
-      'Send de1 water level updates',
-      name: 'screenSettingsSendDe1WaterLevelUpdates',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Send tablet battery level updates`
-  String get screenSettingsSendTabletBatteryLevelUpdates {
-    return Intl.message(
-      'Send tablet battery level updates',
-      name: 'screenSettingsSendTabletBatteryLevelUpdates',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Cloud shot upload`
-  String get screenSettingsCloudShotUpload {
-    return Intl.message(
-      'Cloud shot upload',
-      name: 'screenSettingsCloudShotUpload',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Upload Shots to Visualizer`
-  String get screenSettingsUploadShotsToVisualizer {
-    return Intl.message(
-      'Upload Shots to Visualizer',
-      name: 'screenSettingsUploadShotsToVisualizer',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `User Name/email`
-  String get screenSettingsUserNameemail {
-    return Intl.message(
-      'User Name/email',
-      name: 'screenSettingsUserNameemail',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `User Name can't be smaller than 4 letters`
-  String get screenSettingsUserNameCantBeSmallerThan4Letters {
-    return Intl.message(
-      'User Name can\'t be smaller than 4 letters',
-      name: 'screenSettingsUserNameCantBeSmallerThan4Letters',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `password`
-  String get screenSettingsPassword {
-    return Intl.message(
-      'password',
-      name: 'screenSettingsPassword',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Password can't be smaller than 7 letters`
-  String get screenSettingsPasswordCantBeSmallerThan7Letters {
-    return Intl.message(
-      'Password can\'t be smaller than 7 letters',
-      name: 'screenSettingsPasswordCantBeSmallerThan7Letters',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Mini Website`
-  String get screenSettingsMiniWebsite {
-    return Intl.message(
-      'Mini Website',
-      name: 'screenSettingsMiniWebsite',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Enable Mini Website with port 8888`
-  String get screenSettingsEnableMiniWebsiteWithPort8888 {
-    return Intl.message(
-      'Enable Mini Website with port 8888',
-      name: 'screenSettingsEnableMiniWebsiteWithPort8888',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Check your router for IP adress of your tablet. Open browser under`
-  String get screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen {
-    return Intl.message(
-      'Check your router for IP adress of your tablet. Open browser under',
-      name: 'screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Backup and maintenance`
-  String get screenSettingsBackupAndMaintenance {
-    return Intl.message(
-      'Backup and maintenance',
-      name: 'screenSettingsBackupAndMaintenance',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Backup Settings`
-  String get screenSettingsBackupSettings {
-    return Intl.message(
-      'Backup Settings',
-      name: 'screenSettingsBackupSettings',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Backup/Restore`
-  String get screenSettingsBackuprestore {
-    return Intl.message(
-      'Backup/Restore',
-      name: 'screenSettingsBackuprestore',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Backup/Restore database`
-  String get screenSettingsBackuprestoreDatabase {
-    return Intl.message(
-      'Backup/Restore database',
-      name: 'screenSettingsBackuprestoreDatabase',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Backup`
-  String get screenSettingsBackup {
-    return Intl.message(
-      'Backup',
-      name: 'screenSettingsBackup',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Restore`
-  String get screenSettingsRestore {
-    return Intl.message(
-      'Restore',
-      name: 'screenSettingsRestore',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Privacy Settings`
-  String get screenSettingsPrivacySettings {
-    return Intl.message(
-      'Privacy Settings',
-      name: 'screenSettingsPrivacySettings',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Feedback and Crash reporting`
-  String get screenSettingsFeedbackAndCrashReporting {
-    return Intl.message(
-      'Feedback and Crash reporting',
-      name: 'screenSettingsFeedbackAndCrashReporting',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.`
-  String get screenSettingsSendInformationsToSentryioIfTheAppCrashesOrYou {
-    return Intl.message(
-      'Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.',
-      name: 'screenSettingsSendInformationsToSentryioIfTheAppCrashesOrYou',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `You changed critical settings. You need to restart the app to make the settings active.`
-  String get screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp {
-    return Intl.message(
-      'You changed critical settings. You need to restart the app to make the settings active.',
-      name: 'screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Saved backup`
-  String get screenSettingsSavedBackup {
-    return Intl.message(
-      'Saved backup',
-      name: 'screenSettingsSavedBackup',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Restored backup`
-  String get screenSettingsRestoredBackup {
-    return Intl.message(
-      'Restored backup',
-      name: 'screenSettingsRestoredBackup',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Failed restoring backup`
-  String get screenSettingsFailedRestoringBackup {
-    return Intl.message(
-      'Failed restoring backup',
-      name: 'screenSettingsFailedRestoringBackup',
-      desc: '',
-      args: [],
+      args: [sec],
     );
   }
 
-  /// `Settings are restored. Please close app and restart.`
-  String get screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart {
+  /// `Pressure`
+  String get screenEspressoPressure {
     return Intl.message(
-      'Settings are restored. Please close app and restart.',
-      name: 'screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart',
+      'Pressure',
+      name: 'screenEspressoPressure',
       desc: '',
       args: [],
     );
   }
 
-  /// `Exit app`
-  String get screenSettingsExitApp {
+  /// `Profile`
+  String get screenEspressoProfile {
     return Intl.message(
-      'Exit app',
-      name: 'screenSettingsExitApp',
+      'Profile',
+      name: 'screenEspressoProfile',
       desc: '',
       args: [],
     );
   }
 
-  /// `Coffee pouring`
-  String get screenSettingsCoffeePouring {
+  /// `Recipe`
+  String get screenEspressoRecipe {
     return Intl.message(
-      'Coffee pouring',
-      name: 'screenSettingsCoffeePouring',
+      'Recipe',
+      name: 'screenEspressoRecipe',
       desc: '',
       args: [],
     );
   }
 
-  /// `Shot Settings`
-  String get screenSettingsShotSettings {
+  /// `Refill the water tank`
+  String get screenEspressoRefillTheWaterTank {
     return Intl.message(
-      'Shot Settings',
-      name: 'screenSettingsShotSettings',
+      'Refill the water tank',
+      name: 'screenEspressoRefillTheWaterTank',
       desc: '',
       args: [],
     );
   }
 
-  /// `Group`
-  String get footerGroup {
+  /// `Target`
+  String get screenEspressoTarget {
     return Intl.message(
-      'Group',
-      name: 'footerGroup',
+      'Target',
+      name: 'screenEspressoTarget',
       desc: '',
       args: [],
     );
   }
 
-  /// `Connect`
-  String get footerConnect {
+  /// `Temp`
+  String get screenEspressoTemp {
     return Intl.message(
-      'Connect',
-      name: 'footerConnect',
+      'Temp',
+      name: 'screenEspressoTemp',
       desc: '',
       args: [],
     );
   }
 
-  /// `Probe`
-  String get footerProbe {
+  /// `Timer`
+  String get screenEspressoTimer {
     return Intl.message(
-      'Probe',
-      name: 'footerProbe',
+      'Timer',
+      name: 'screenEspressoTimer',
       desc: '',
       args: [],
     );
   }
 
-  /// `Battery`
-  String get footerBattery {
+  /// `Time/s`
+  String get screenEspressoTimes {
     return Intl.message(
-      'Battery',
-      name: 'footerBattery',
+      'Time/s',
+      name: 'screenEspressoTimes',
       desc: '',
       args: [],
     );
   }
 
-  /// `  Tare  `
-  String get footerTare {
+  /// `Total: {sec} s`
+  String screenEspressoTotal(Object sec) {
     return Intl.message(
-      '  Tare  ',
-      name: 'footerTare',
+      'Total: $sec s',
+      name: 'screenEspressoTotal',
       desc: '',
-      args: [],
-    );
-  }
-
-  /// `Refill water`
-  String get footerRefillWater {
-    return Intl.message(
-      'Refill water',
-      name: 'footerRefillWater',
-      desc: '',
-      args: [],
+      args: [sec],
     );
   }
 
-  /// `Water`
-  String get footerWater {
+  /// `TTW: {sec} s`
+  String screenEspressoTtw(Object sec) {
     return Intl.message(
-      'Water',
-      name: 'footerWater',
+      'TTW: $sec s',
+      name: 'screenEspressoTtw',
       desc: '',
-      args: [],
-    );
-  }
-
-  /// `Scale`
-  String get footerScale {
-    return Intl.message(
-      'Scale',
-      name: 'footerScale',
-      desc: '',
-      args: [],
+      args: [sec],
     );
   }
 
-  /// `Edit Recipe`
-  String get screenRecipeEditTitle {
+  /// `Weight`
+  String get screenEspressoWeight {
     return Intl.message(
-      'Edit Recipe',
-      name: 'screenRecipeEditTitle',
+      'Weight',
+      name: 'screenEspressoWeight',
       desc: '',
       args: [],
     );
   }
 
-  /// `Name`
-  String get screenRecipeEditNameOfRecipe {
+  /// `Weight [g]`
+  String get screenEspressoWeightG {
     return Intl.message(
-      'Name',
-      name: 'screenRecipeEditNameOfRecipe',
+      'Weight [g]',
+      name: 'screenEspressoWeightG',
       desc: '',
       args: [],
     );
   }
 
-  /// `Description`
-  String get screenRecipeEditDescription {
+  /// `Add recipe`
+  String get screenRecipeAddRecipe {
     return Intl.message(
-      'Description',
-      name: 'screenRecipeEditDescription',
+      'Add recipe',
+      name: 'screenRecipeAddRecipe',
       desc: '',
       args: [],
     );
   }
 
-  /// `Grinder Settings`
-  String get screenRecipeEditGrinderSettings {
+  /// `Adjust temp [°C]`
+  String get screenRecipeAdjustTempC {
     return Intl.message(
-      'Grinder Settings',
-      name: 'screenRecipeEditGrinderSettings',
+      'Adjust temp [°C]',
+      name: 'screenRecipeAdjustTempC',
       desc: '',
       args: [],
     );
   }
 
-  /// `Model`
-  String get screenRecipeEditGrinderModel {
+  /// `Coffee notes`
+  String get screenRecipeCoffeeNotes {
     return Intl.message(
-      'Model',
-      name: 'screenRecipeEditGrinderModel',
+      'Coffee notes',
+      name: 'screenRecipeCoffeeNotes',
       desc: '',
       args: [],
     );
@@ -2132,11 +840,51 @@ class S {
     );
   }
 
-  /// `Temperature correction`
-  String get screenRecipeEditTemperatureCorrection {
+  /// `Description`
+  String get screenRecipeEditDescription {
     return Intl.message(
-      'Temperature correction',
-      name: 'screenRecipeEditTemperatureCorrection',
+      'Description',
+      name: 'screenRecipeEditDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dose Weight-in`
+  String get screenRecipeEditDoseWeightin {
+    return Intl.message(
+      'Dose Weight-in',
+      name: 'screenRecipeEditDoseWeightin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dosing and weights`
+  String get screenRecipeEditDosingAndWeights {
+    return Intl.message(
+      'Dosing and weights',
+      name: 'screenRecipeEditDosingAndWeights',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Model`
+  String get screenRecipeEditGrinderModel {
+    return Intl.message(
+      'Model',
+      name: 'screenRecipeEditGrinderModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grinder Settings`
+  String get screenRecipeEditGrinderSettings {
+    return Intl.message(
+      'Grinder Settings',
+      name: 'screenRecipeEditGrinderSettings',
       desc: '',
       args: [],
     );
@@ -2152,16 +900,6 @@ class S {
     );
   }
 
-  /// `Use steam? `
-  String get screenRecipeEditUseSteam {
-    return Intl.message(
-      'Use steam? ',
-      name: 'screenRecipeEditUseSteam',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Milk weight`
   String get screenRecipeEditMilkWeight {
     return Intl.message(
@@ -2172,21 +910,11 @@ class S {
     );
   }
 
-  /// `Use water? `
-  String get screenRecipeEditUseWater {
+  /// `Name`
+  String get screenRecipeEditNameOfRecipe {
     return Intl.message(
-      'Use water? ',
-      name: 'screenRecipeEditUseWater',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Dosing and weights`
-  String get screenRecipeEditDosingAndWeights {
-    return Intl.message(
-      'Dosing and weights',
-      name: 'screenRecipeEditDosingAndWeights',
+      'Name',
+      name: 'screenRecipeEditNameOfRecipe',
       desc: '',
       args: [],
     );
@@ -2212,11 +940,41 @@ class S {
     );
   }
 
-  /// `Dose Weight-in`
-  String get screenRecipeEditDoseWeightin {
+  /// `Temperature correction`
+  String get screenRecipeEditTemperatureCorrection {
     return Intl.message(
-      'Dose Weight-in',
-      name: 'screenRecipeEditDoseWeightin',
+      'Temperature correction',
+      name: 'screenRecipeEditTemperatureCorrection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Recipe`
+  String get screenRecipeEditTitle {
+    return Intl.message(
+      'Edit Recipe',
+      name: 'screenRecipeEditTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use steam? `
+  String get screenRecipeEditUseSteam {
+    return Intl.message(
+      'Use steam? ',
+      name: 'screenRecipeEditUseSteam',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use water? `
+  String get screenRecipeEditUseWater {
+    return Intl.message(
+      'Use water? ',
+      name: 'screenRecipeEditUseWater',
       desc: '',
       args: [],
     );
@@ -2232,31 +990,121 @@ class S {
     );
   }
 
-  /// `Edit Roaster`
-  String get screenRoasterEditTitle {
+  /// `Grind Settings:`
+  String get screenRecipeGrindSettings {
     return Intl.message(
-      'Edit Roaster',
-      name: 'screenRoasterEditTitle',
+      'Grind Settings:',
+      name: 'screenRecipeGrindSettings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Name`
-  String get screenRoasterEditNameOfRoaster {
+  /// `Hot water:`
+  String get screenRecipehotWater {
     return Intl.message(
-      'Name',
-      name: 'screenRoasterEditNameOfRoaster',
+      'Hot water:',
+      name: 'screenRecipehotWater',
       desc: '',
       args: [],
     );
   }
 
-  /// `Description`
-  String get screenRoasterEditDescription {
+  /// `Initial temperature:`
+  String get screenRecipeInitialTemp {
     return Intl.message(
-      'Description',
-      name: 'screenRoasterEditDescription',
+      'Initial temperature:',
+      name: 'screenRecipeInitialTemp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Details`
+  String get screenRecipeProfileDetails {
+    return Intl.message(
+      'Profile Details',
+      name: 'screenRecipeProfileDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ratio:`
+  String get screenRecipeRatio {
+    return Intl.message(
+      'Ratio:',
+      name: 'screenRecipeRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recipe Details`
+  String get screenRecipeRecipeDetails {
+    return Intl.message(
+      'Recipe Details',
+      name: 'screenRecipeRecipeDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected Bean`
+  String get screenRecipeSelectedBean {
+    return Intl.message(
+      'Selected Bean',
+      name: 'screenRecipeSelectedBean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected profile`
+  String get screenRecipeSelectedProfile {
+    return Intl.message(
+      'Selected profile',
+      name: 'screenRecipeSelectedProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set Ratio`
+  String get screenRecipeSetRatio {
+    return Intl.message(
+      'Set Ratio',
+      name: 'screenRecipeSetRatio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steam milk:`
+  String get screenRecipesteamMilk {
+    return Intl.message(
+      'Steam milk:',
+      name: 'screenRecipesteamMilk',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop on Weight [g]`
+  String get screenRecipeStopOnWeightG {
+    return Intl.message(
+      'Stop on Weight [g]',
+      name: 'screenRecipeStopOnWeightG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight-in beans [g]`
+  String get screenRecipeWeightinBeansG {
+    return Intl.message(
+      'Weight-in beans [g]',
+      name: 'screenRecipeWeightinBeansG',
       desc: '',
       args: [],
     );
@@ -2272,6 +1120,16 @@ class S {
     );
   }
 
+  /// `Description`
+  String get screenRoasterEditDescription {
+    return Intl.message(
+      'Description',
+      name: 'screenRoasterEditDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Homepage`
   String get screenRoasterEditHomepage {
     return Intl.message(
@@ -2282,81 +1140,903 @@ class S {
     );
   }
 
-  /// `Describe your experience with shot from {desc}`
-  String screenShotEditTitle(Object desc) {
+  /// `Name`
+  String get screenRoasterEditNameOfRoaster {
     return Intl.message(
-      'Describe your experience with shot from $desc',
-      name: 'screenShotEditTitle',
-      desc: '',
-      args: [desc],
-    );
-  }
-
-  /// `Success uploading your shot`
-  String get screenShotEditSuccessUploadingYourShot {
-    return Intl.message(
-      'Success uploading your shot',
-      name: 'screenShotEditSuccessUploadingYourShot',
+      'Name',
+      name: 'screenRoasterEditNameOfRoaster',
       desc: '',
       args: [],
     );
   }
 
-  /// `Recipe`
-  String get recipe {
+  /// `Edit Roaster`
+  String get screenRoasterEditTitle {
     return Intl.message(
-      'Recipe',
-      name: 'recipe',
+      'Edit Roaster',
+      name: 'screenRoasterEditTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Profile`
-  String get profile {
+  /// `Application Settings`
+  String get screenSettingsApplicationSettings {
     return Intl.message(
-      'Profile',
-      name: 'profile',
+      'Application Settings',
+      name: 'screenSettingsApplicationSettings',
       desc: '',
       args: [],
     );
   }
 
-  /// `Open in Visualizer.coffee`
-  String get screenShotEditOpenInVisualizercoffee {
+  /// `Hardware and connections`
+  String get screenSettingsApplicationSettingsHardwareAndConnections {
     return Intl.message(
-      'Open in Visualizer.coffee',
-      name: 'screenShotEditOpenInVisualizercoffee',
+      'Hardware and connections',
+      name: 'screenSettingsApplicationSettingsHardwareAndConnections',
       desc: '',
       args: [],
     );
   }
 
-  /// `Describe your experience`
-  String get screenShotEditDescribeYourExperience {
+  /// `Scan for Devices`
+  String get screenSettingsApplicationSettingsScanForDevices {
     return Intl.message(
-      'Describe your experience',
-      name: 'screenShotEditDescribeYourExperience',
+      'Scan for Devices',
+      name: 'screenSettingsApplicationSettingsScanForDevices',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enjoyment`
-  String get screenShotEditEnjoyment {
+  /// `Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)`
+  String get screenSettingsApplicationSettingsScanStart {
     return Intl.message(
-      'Enjoyment',
-      name: 'screenShotEditEnjoyment',
+      'Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)',
+      name: 'screenSettingsApplicationSettingsScanStart',
       desc: '',
       args: [],
     );
   }
 
-  /// `Drinker`
-  String get screenShotEditDrinker {
+  /// `Auto Tare`
+  String get screenSettingsAutoTare {
     return Intl.message(
-      'Drinker',
-      name: 'screenShotEditDrinker',
+      'Auto Tare',
+      name: 'screenSettingsAutoTare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup`
+  String get screenSettingsBackup {
+    return Intl.message(
+      'Backup',
+      name: 'screenSettingsBackup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup and maintenance`
+  String get screenSettingsBackupAndMaintenance {
+    return Intl.message(
+      'Backup and maintenance',
+      name: 'screenSettingsBackupAndMaintenance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup/Restore`
+  String get screenSettingsBackuprestore {
+    return Intl.message(
+      'Backup/Restore',
+      name: 'screenSettingsBackuprestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup/Restore database`
+  String get screenSettingsBackuprestoreDatabase {
+    return Intl.message(
+      'Backup/Restore database',
+      name: 'screenSettingsBackuprestoreDatabase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Backup Settings`
+  String get screenSettingsBackupSettings {
+    return Intl.message(
+      'Backup Settings',
+      name: 'screenSettingsBackupSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bahaviour`
+  String get screenSettingsBahaviour {
+    return Intl.message(
+      'Bahaviour',
+      name: 'screenSettingsBahaviour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Behaviour`
+  String get screenSettingsBehaviour {
+    return Intl.message(
+      'Behaviour',
+      name: 'screenSettingsBehaviour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Brightness, sleep and screensaver`
+  String get screenSettingsBrightnessSleepAndScreensaver {
+    return Intl.message(
+      'Brightness, sleep and screensaver',
+      name: 'screenSettingsBrightnessSleepAndScreensaver',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while.`
+  String get screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot {
+    return Intl.message(
+      'Change how the app is changing screen brightness if not in use, switch the de1 on and shut it off if not used after a while.',
+      name: 'screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change how the app is handling the de1 in case of wake up and sleep.`
+  String get screenSettingsChangeHowTheAppIsHandlingTheDe1InCase {
+    return Intl.message(
+      'Change how the app is handling the de1 in case of wake up and sleep.',
+      name: 'screenSettingsChangeHowTheAppIsHandlingTheDe1InCase',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check your router for IP adress of your tablet. Open browser under`
+  String get screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen {
+    return Intl.message(
+      'Check your router for IP adress of your tablet. Open browser under',
+      name: 'screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cloud and Network`
+  String get screenSettingsCloudAndNetwork {
+    return Intl.message(
+      'Cloud and Network',
+      name: 'screenSettingsCloudAndNetwork',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cloud shot upload`
+  String get screenSettingsCloudShotUpload {
+    return Intl.message(
+      'Cloud shot upload',
+      name: 'screenSettingsCloudShotUpload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coffee pouring`
+  String get screenSettingsCoffeePouring {
+    return Intl.message(
+      'Coffee pouring',
+      name: 'screenSettingsCoffeePouring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coffee`
+  String get screenSettingsCoffeeSection {
+    return Intl.message(
+      'Coffee',
+      name: 'screenSettingsCoffeeSection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dark theme`
+  String get screenSettingsDarkTheme {
+    return Intl.message(
+      'Dark theme',
+      name: 'screenSettingsDarkTheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete all screensaver files`
+  String get screenSettingsDeleteAllScreensaverFiles {
+    return Intl.message(
+      'Delete all screensaver files',
+      name: 'screenSettingsDeleteAllScreensaverFiles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do not let tablet go to lock screen (0=do not lock screen, 240=keep always locked) [min]`
+  String get screenSettingsDoNotLetTabletGoToLockScreen0doNot {
+    return Intl.message(
+      'Do not let tablet go to lock screen (0=do not lock screen, 240=keep always locked) [min]',
+      name: 'screenSettingsDoNotLetTabletGoToLockScreen0doNot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Mini Website with port 8888`
+  String get screenSettingsEnableMiniWebsiteWithPort8888 {
+    return Intl.message(
+      'Enable Mini Website with port 8888',
+      name: 'screenSettingsEnableMiniWebsiteWithPort8888',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable MQTT`
+  String get screenSettingsEnableMqtt {
+    return Intl.message(
+      'Enable MQTT',
+      name: 'screenSettingsEnableMqtt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get screenSettingsEnglish {
+    return Intl.message(
+      'English',
+      name: 'screenSettingsEnglish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit app`
+  String get screenSettingsExitApp {
+    return Intl.message(
+      'Exit app',
+      name: 'screenSettingsExitApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed restoring backup`
+  String get screenSettingsFailedRestoringBackup {
+    return Intl.message(
+      'Failed restoring backup',
+      name: 'screenSettingsFailedRestoringBackup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feedback and Crash reporting`
+  String get screenSettingsFeedbackAndCrashReporting {
+    return Intl.message(
+      'Feedback and Crash reporting',
+      name: 'screenSettingsFeedbackAndCrashReporting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flush timer [s]`
+  String get screenSettingsFlushTimerS {
+    return Intl.message(
+      'Flush timer [s]',
+      name: 'screenSettingsFlushTimerS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `German`
+  String get screenSettingsGerman {
+    return Intl.message(
+      'German',
+      name: 'screenSettingsGerman',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go back to Recipe screen if timeout occured`
+  String get screenSettingsGoBackToRecipeScreenIfTimeoutOccured {
+    return Intl.message(
+      'Go back to Recipe screen if timeout occured',
+      name: 'screenSettingsGoBackToRecipeScreenIfTimeoutOccured',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Handling of connections to other external systems like MQTT and Visualizer.`
+  String
+      get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd {
+    return Intl.message(
+      'Handling of connections to other external systems like MQTT and Visualizer.',
+      name:
+          'screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If a shot is starting, auto-tare the scale`
+  String get screenSettingsIfAShotIsStartingAutotareTheScale {
+    return Intl.message(
+      'If a shot is starting, auto-tare the scale',
+      name: 'screenSettingsIfAShotIsStartingAutotareTheScale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If the scale is connected it is used to stop the shot if the profile has a limit given.`
+  String get screenSettingsIfTheScaleIsConnectedItIsUsedToStop {
+    return Intl.message(
+      'If the scale is connected it is used to stop the shot if the profile has a limit given.',
+      name: 'screenSettingsIfTheScaleIsConnectedItIsUsedToStop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you have no GHC installed, you would need the flush screen`
+  String get screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe {
+    return Intl.message(
+      'If you have no GHC installed, you would need the flush screen',
+      name: 'screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep Tablet charged between 60-90%`
+  String get screenSettingsKeepTabletChargedBetween6090 {
+    return Intl.message(
+      'Keep Tablet charged between 60-90%',
+      name: 'screenSettingsKeepTabletChargedBetween6090',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language`
+  String get screenSettingsLanguage {
+    return Intl.message(
+      'Language',
+      name: 'screenSettingsLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light theme`
+  String get screenSettingsLightTheme {
+    return Intl.message(
+      'Light theme',
+      name: 'screenSettingsLightTheme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load Screensaver files`
+  String get screenSettingsLoadScreensaverFiles {
+    return Intl.message(
+      'Load Screensaver files',
+      name: 'screenSettingsLoadScreensaverFiles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Message Queue Broadcast (MQTT) client`
+  String get screenSettingsMessageQueueBroadcastMqttClient {
+    return Intl.message(
+      'Message Queue Broadcast (MQTT) client',
+      name: 'screenSettingsMessageQueueBroadcastMqttClient',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Milk steaming thermometer support`
+  String get screenSettingsMilkSteamingThermometerSupport {
+    return Intl.message(
+      'Milk steaming thermometer support',
+      name: 'screenSettingsMilkSteamingThermometerSupport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mini Website`
+  String get screenSettingsMiniWebsite {
+    return Intl.message(
+      'Mini Website',
+      name: 'screenSettingsMiniWebsite',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MQTT Password`
+  String get screenSettingsMqttPassword {
+    return Intl.message(
+      'MQTT Password',
+      name: 'screenSettingsMqttPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MQTT Port`
+  String get screenSettingsMqttPort {
+    return Intl.message(
+      'MQTT Port',
+      name: 'screenSettingsMqttPort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MQTT root topic`
+  String get screenSettingsMqttRootTopic {
+    return Intl.message(
+      'MQTT root topic',
+      name: 'screenSettingsMqttRootTopic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MQTT Server`
+  String get screenSettingsMqttServer {
+    return Intl.message(
+      'MQTT Server',
+      name: 'screenSettingsMqttServer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MQTT User`
+  String get screenSettingsMqttUser {
+    return Intl.message(
+      'MQTT User',
+      name: 'screenSettingsMqttUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `password`
+  String get screenSettingsPassword {
+    return Intl.message(
+      'password',
+      name: 'screenSettingsPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password can't be smaller than 7 letters`
+  String get screenSettingsPasswordCantBeSmallerThan7Letters {
+    return Intl.message(
+      'Password can\'t be smaller than 7 letters',
+      name: 'screenSettingsPasswordCantBeSmallerThan7Letters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Settings`
+  String get screenSettingsPrivacySettings {
+    return Intl.message(
+      'Privacy Settings',
+      name: 'screenSettingsPrivacySettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reduce brightness to level`
+  String get screenSettingsReduceBrightnessToLevel {
+    return Intl.message(
+      'Reduce brightness to level',
+      name: 'screenSettingsReduceBrightnessToLevel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reduce screen brightness after (0=off) [min]`
+  String get screenSettingsReduceScreenBrightnessAfter0offMin {
+    return Intl.message(
+      'Reduce screen brightness after (0=off) [min]',
+      name: 'screenSettingsReduceScreenBrightnessAfter0offMin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore`
+  String get screenSettingsRestore {
+    return Intl.message(
+      'Restore',
+      name: 'screenSettingsRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restored backup`
+  String get screenSettingsRestoredBackup {
+    return Intl.message(
+      'Restored backup',
+      name: 'screenSettingsRestoredBackup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saved backup`
+  String get screenSettingsSavedBackup {
+    return Intl.message(
+      'Saved backup',
+      name: 'screenSettingsSavedBackup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scale support`
+  String get screenSettingsScaleSupport {
+    return Intl.message(
+      'Scale support',
+      name: 'screenSettingsScaleSupport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Screen and Brightness`
+  String get screenSettingsScreenAndBrightness {
+    return Intl.message(
+      'Screen and Brightness',
+      name: 'screenSettingsScreenAndBrightness',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Second Flush timer [s]`
+  String get screenSettingsSecondFlushTimerS {
+    return Intl.message(
+      'Second Flush timer [s]',
+      name: 'screenSettingsSecondFlushTimerS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select files`
+  String get screenSettingsSelectFiles {
+    return Intl.message(
+      'Select files',
+      name: 'screenSettingsSelectFiles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send de1 shot updates`
+  String get screenSettingsSendDe1ShotUpdates {
+    return Intl.message(
+      'Send de1 shot updates',
+      name: 'screenSettingsSendDe1ShotUpdates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send de1 state updates`
+  String get screenSettingsSendDe1StateUpdates {
+    return Intl.message(
+      'Send de1 state updates',
+      name: 'screenSettingsSendDe1StateUpdates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send de1 water level updates`
+  String get screenSettingsSendDe1WaterLevelUpdates {
+    return Intl.message(
+      'Send de1 water level updates',
+      name: 'screenSettingsSendDe1WaterLevelUpdates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.`
+  String get screenSettingsSendInformationsToSentryioIfTheAppCrashesOrYou {
+    return Intl.message(
+      'Send informations to sentry.io if the app crashes or you use the feedback option. Check https://sentry.io/privacy/ for detailed data privacy description.',
+      name: 'screenSettingsSendInformationsToSentryioIfTheAppCrashesOrYou',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sending the status of the de1`
+  String get screenSettingsSendingTheStatusOfTheDe1 {
+    return Intl.message(
+      'Sending the status of the de1',
+      name: 'screenSettingsSendingTheStatusOfTheDe1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send tablet battery level updates`
+  String get screenSettingsSendTabletBatteryLevelUpdates {
+    return Intl.message(
+      'Send tablet battery level updates',
+      name: 'screenSettingsSendTabletBatteryLevelUpdates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings are restored. Please close app and restart.`
+  String get screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart {
+    return Intl.message(
+      'Settings are restored. Please close app and restart.',
+      name: 'screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shot Settings`
+  String get screenSettingsShotSettings {
+    return Intl.message(
+      'Shot Settings',
+      name: 'screenSettingsShotSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show Flush`
+  String get screenSettingsShowFlush {
+    return Intl.message(
+      'Show Flush',
+      name: 'screenSettingsShowFlush',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Smart charging`
+  String get screenSettingsSmartCharging {
+    return Intl.message(
+      'Smart charging',
+      name: 'screenSettingsSmartCharging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spanish`
+  String get screenSettingsSpanish {
+    return Intl.message(
+      'Spanish',
+      name: 'screenSettingsSpanish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Special Bluetooth devices`
+  String get screenSettingsSpecialBluetoothDevices {
+    return Intl.message(
+      'Special Bluetooth devices',
+      name: 'screenSettingsSpecialBluetoothDevices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop before weight was reached [s]`
+  String get screenSettingsStopBeforeWeightWasReachedS {
+    return Intl.message(
+      'Stop before weight was reached [s]',
+      name: 'screenSettingsStopBeforeWeightWasReachedS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop on Weight if scale detected`
+  String get screenSettingsStopOnWeightIfScaleDetected {
+    return Intl.message(
+      'Stop on Weight if scale detected',
+      name: 'screenSettingsStopOnWeightIfScaleDetected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch de1 to sleep mode if it is idle for some time [min]`
+  String get screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor {
+    return Intl.message(
+      'Switch de1 to sleep mode if it is idle for some time [min]',
+      name: 'screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch off steam heating`
+  String get screenSettingsSwitchOffSteamHeating {
+    return Intl.message(
+      'Switch off steam heating',
+      name: 'screenSettingsSwitchOffSteamHeating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch on screensaver if de1 manually switched to sleep`
+  String get screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep {
+    return Intl.message(
+      'Switch on screensaver if de1 manually switched to sleep',
+      name: 'screenSettingsSwitchOnScreensaverIfDe1ManuallySwitchedToSleep',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tablet default`
+  String get screenSettingsTabletDefault {
+    return Intl.message(
+      'Tablet default',
+      name: 'screenSettingsTabletDefault',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tablet`
+  String get screenSettingsTabletGroup {
+    return Intl.message(
+      'Tablet',
+      name: 'screenSettingsTabletGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language and Theme selection`
+  String get screenSettingsThemeSelection {
+    return Intl.message(
+      'Language and Theme selection',
+      name: 'screenSettingsThemeSelection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This can lead to a higher load on your MQTT server as the message frequency is about 10Hz.`
+  String get screenSettingsThisCanLeadToAHigherLoadOnYourMqtt {
+    return Intl.message(
+      'This can lead to a higher load on your MQTT server as the message frequency is about 10Hz.',
+      name: 'screenSettingsThisCanLeadToAHigherLoadOnYourMqtt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To save energy the steam heater will be turned off and the steam tab will be hidden.`
+  String get screenSettingsToSaveEnergyTheSteamHeaterWillBeTurnedOff {
+    return Intl.message(
+      'To save energy the steam heater will be turned off and the steam tab will be hidden.',
+      name: 'screenSettingsToSaveEnergyTheSteamHeaterWillBeTurnedOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload Shots to Visualizer`
+  String get screenSettingsUploadShotsToVisualizer {
+    return Intl.message(
+      'Upload Shots to Visualizer',
+      name: 'screenSettingsUploadShotsToVisualizer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Name can't be smaller than 4 letters`
+  String get screenSettingsUserNameCantBeSmallerThan4Letters {
+    return Intl.message(
+      'User Name can\'t be smaller than 4 letters',
+      name: 'screenSettingsUserNameCantBeSmallerThan4Letters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Name/email`
+  String get screenSettingsUserNameemail {
+    return Intl.message(
+      'User Name/email',
+      name: 'screenSettingsUserNameemail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wake up de1 if app is launched`
+  String get screenSettingsWakeUpDe1IfAppIsLaunched {
+    return Intl.message(
+      'Wake up de1 if app is launched',
+      name: 'screenSettingsWakeUpDe1IfAppIsLaunched',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wake up de1 if screen tapped (if screen was off)`
+  String get screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff {
+    return Intl.message(
+      'Wake up de1 if screen tapped (if screen was off)',
+      name: 'screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You changed critical settings. You need to restart the app to make the settings active.`
+  String get screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp {
+    return Intl.message(
+      'You changed critical settings. You need to restart the app to make the settings active.',
+      name: 'screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp',
       desc: '',
       args: [],
     );
@@ -2372,11 +2052,51 @@ class S {
     );
   }
 
-  /// `Total Dissolved Solidss (TDS)`
-  String get screenShotEditTotalDissolvedSolidssTds {
+  /// `Describe your experience`
+  String get screenShotEditDescribeYourExperience {
     return Intl.message(
-      'Total Dissolved Solidss (TDS)',
-      name: 'screenShotEditTotalDissolvedSolidssTds',
+      'Describe your experience',
+      name: 'screenShotEditDescribeYourExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dose weight [g]`
+  String get screenShotEditDoseWeightG {
+    return Intl.message(
+      'Dose weight [g]',
+      name: 'screenShotEditDoseWeightG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drinker`
+  String get screenShotEditDrinker {
+    return Intl.message(
+      'Drinker',
+      name: 'screenShotEditDrinker',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drink weight [g]`
+  String get screenShotEditDrinkWeightG {
+    return Intl.message(
+      'Drink weight [g]',
+      name: 'screenShotEditDrinkWeightG',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enjoyment`
+  String get screenShotEditEnjoyment {
+    return Intl.message(
+      'Enjoyment',
+      name: 'screenShotEditEnjoyment',
       desc: '',
       args: [],
     );
@@ -2412,21 +2132,11 @@ class S {
     );
   }
 
-  /// `Dose weight [g]`
-  String get screenShotEditDoseWeightG {
+  /// `Open in Visualizer.coffee`
+  String get screenShotEditOpenInVisualizercoffee {
     return Intl.message(
-      'Dose weight [g]',
-      name: 'screenShotEditDoseWeightG',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Drink weight [g]`
-  String get screenShotEditDrinkWeightG {
-    return Intl.message(
-      'Drink weight [g]',
-      name: 'screenShotEditDrinkWeightG',
+      'Open in Visualizer.coffee',
+      name: 'screenShotEditOpenInVisualizercoffee',
       desc: '',
       args: [],
     );
@@ -2452,71 +2162,361 @@ class S {
     );
   }
 
+  /// `Success uploading your shot`
+  String get screenShotEditSuccessUploadingYourShot {
+    return Intl.message(
+      'Success uploading your shot',
+      name: 'screenShotEditSuccessUploadingYourShot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Describe your experience with shot from {desc}`
+  String screenShotEditTitle(Object desc) {
+    return Intl.message(
+      'Describe your experience with shot from $desc',
+      name: 'screenShotEditTitle',
+      desc: '',
+      args: [desc],
+    );
+  }
+
+  /// `Total Dissolved Solidss (TDS)`
+  String get screenShotEditTotalDissolvedSolidssTds {
+    return Intl.message(
+      'Total Dissolved Solidss (TDS)',
+      name: 'screenShotEditTotalDissolvedSolidssTds',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ambient`
+  String get screenSteamAmbient {
+    return Intl.message(
+      'Ambient',
+      name: 'screenSteamAmbient',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steam Flowrate {flow} ml/s`
+  String screenSteamFlowrate(Object flow) {
+    return Intl.message(
+      'Steam Flowrate $flow ml/s',
+      name: 'screenSteamFlowrate',
+      desc: '',
+      args: [flow],
+    );
+  }
+
+  /// `Off (normal purge after stop)`
+  String get screenSteamOffNormalPurgeAfterStop {
+    return Intl.message(
+      'Off (normal purge after stop)',
+      name: 'screenSteamOffNormalPurgeAfterStop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On (slow purge on 1st stop)`
+  String get screenSteamOnSlowPurgeOn1stStop {
+    return Intl.message(
+      'On (slow purge on 1st stop)',
+      name: 'screenSteamOnSlowPurgeOn1stStop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset`
+  String get screenSteamReset {
+    return Intl.message(
+      'Reset',
+      name: 'screenSteamReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop at Temperature {temp} °C`
+  String screenSteamStopAtTemperatur(Object temp) {
+    return Intl.message(
+      'Stop at Temperature $temp °C',
+      name: 'screenSteamStopAtTemperatur',
+      desc: '',
+      args: [temp],
+    );
+  }
+
+  /// `Steam Temperaturs {temp} °C`
+  String screenSteamTemperaturs(Object temp) {
+    return Intl.message(
+      'Steam Temperaturs $temp °C',
+      name: 'screenSteamTemperaturs',
+      desc: '',
+      args: [temp],
+    );
+  }
+
+  /// `Temp Tip`
+  String get screenSteamTempTip {
+    return Intl.message(
+      'Temp Tip',
+      name: 'screenSteamTempTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timer {t} s`
+  String screenSteamTimerS(Object t) {
+    return Intl.message(
+      'Timer $t s',
+      name: 'screenSteamTimerS',
+      desc: '',
+      args: [t],
+    );
+  }
+
   /// `Time/s`
-  String get graphTime {
+  String get screenSteamTimeS {
     return Intl.message(
       'Time/s',
-      name: 'graphTime',
+      name: 'screenSteamTimeS',
       desc: '',
       args: [],
     );
   }
 
-  /// `Flow [ml/s] / Pressure [bar]`
-  String get graphFlowMlsPressureBar {
+  /// `Steam two-tap mode:`
+  String get screenSteamTwotapMode {
     return Intl.message(
-      'Flow [ml/s] / Pressure [bar]',
-      name: 'graphFlowMlsPressureBar',
+      'Steam two-tap mode:',
+      name: 'screenSteamTwotapMode',
       desc: '',
       args: [],
     );
   }
 
-  /// `Tablet default`
-  String get screenSettingsTabletDefault {
+  /// `Weight {w} g`
+  String screenWaterWeightG(Object w) {
     return Intl.message(
-      'Tablet default',
-      name: 'screenSettingsTabletDefault',
+      'Weight $w g',
+      name: 'screenWaterWeightG',
+      desc: '',
+      args: [w],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
       desc: '',
       args: [],
     );
   }
 
-  /// `English`
-  String get screenSettingsEnglish {
+  /// `Show`
+  String get show {
     return Intl.message(
-      'English',
-      name: 'screenSettingsEnglish',
+      'Show',
+      name: 'show',
       desc: '',
       args: [],
     );
   }
 
-  /// `German`
-  String get screenSettingsGerman {
+  /// `Start`
+  String get start {
     return Intl.message(
-      'German',
-      name: 'screenSettingsGerman',
+      'Start',
+      name: 'start',
       desc: '',
       args: [],
     );
   }
 
-  /// `Spanish`
-  String get screenSettingsSpanish {
+  /// `disconnected`
+  String get stateDisconnected {
     return Intl.message(
-      'Spanish',
-      name: 'screenSettingsSpanish',
+      'disconnected',
+      name: 'stateDisconnected',
       desc: '',
       args: [],
     );
   }
 
-  /// `Language`
-  String get screenSettingsLanguage {
+  /// `disconnected`
+  String get state_Disconnected {
     return Intl.message(
-      'Language',
-      name: 'screenSettingsLanguage',
+      'disconnected',
+      name: 'state_Disconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `heated up`
+  String get stateIdleHeated {
+    return Intl.message(
+      'heated up',
+      name: 'stateIdleHeated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `pour`
+  String get statePour {
+    return Intl.message(
+      'pour',
+      name: 'statePour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp [°C]`
+  String get steamScreenTempC {
+    return Intl.message(
+      'Temp [°C]',
+      name: 'steamScreenTempC',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop`
+  String get stop {
+    return Intl.message(
+      'Stop',
+      name: 'stop',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Heating Water`
+  String get subStateHeatWaterHeater {
+    return Intl.message(
+      'Heating Water',
+      name: 'subStateHeatWaterHeater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Heating Tank`
+  String get subStateHeatWaterTank {
+    return Intl.message(
+      'Heating Tank',
+      name: 'subStateHeatWaterTank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switch on`
+  String get switchOn {
+    return Intl.message(
+      'Switch on',
+      name: 'switchOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Espresso`
+  String get tabHomeEspresso {
+    return Intl.message(
+      'Espresso',
+      name: 'tabHomeEspresso',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Flush`
+  String get tabHomeFlush {
+    return Intl.message(
+      'Flush',
+      name: 'tabHomeFlush',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recipe`
+  String get tabHomeRecipe {
+    return Intl.message(
+      'Recipe',
+      name: 'tabHomeRecipe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Steam`
+  String get tabHomeSteam {
+    return Intl.message(
+      'Steam',
+      name: 'tabHomeSteam',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water`
+  String get tabHomeWater {
+    return Intl.message(
+      'Water',
+      name: 'tabHomeWater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temp`
+  String get temp {
+    return Intl.message(
+      'Temp',
+      name: 'temp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `must not be empty`
+  String get validatorNotBeEmpty {
+    return Intl.message(
+      'must not be empty',
+      name: 'validatorNotBeEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wait`
+  String get wait {
+    return Intl.message(
+      'Wait',
+      name: 'wait',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight`
+  String get weight {
+    return Intl.message(
+      'Weight',
+      name: 'weight',
       desc: '',
       args: [],
     );

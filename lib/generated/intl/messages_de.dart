@@ -478,6 +478,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "stateDisconnected": MessageLookupByLibrary.simpleMessage("GETRENNT"),
         "stateIdleHeated": MessageLookupByLibrary.simpleMessage("aufgeheizt"),
         "statePour": MessageLookupByLibrary.simpleMessage("Bezug"),
+        "state_Disconnected": MessageLookupByLibrary.simpleMessage(""),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
         "stop": MessageLookupByLibrary.simpleMessage("Stop"),
         "subStateHeatWaterHeater":

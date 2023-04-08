@@ -172,3 +172,5 @@ flutter_icons:
   ios: true
 flutter_intl:
   enabled: true
+  localizely:
+    project_id: 819bd5bc-26cf-4ba3-b737-0271dd8202e9
