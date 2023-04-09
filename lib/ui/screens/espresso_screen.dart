@@ -22,6 +22,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:despresso/generated/l10n.dart';
 
 import '../../devices/decent_de1.dart';
 import '../widgets/start_stop_button.dart';
@@ -128,7 +129,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   void checkForRefill() {
     if (refillAnounced == false && machineService.state.coffeeState == EspressoMachineState.refill) {
       var snackBar = SnackBar(
-          content: const Text('Refill the water tank'),
+          content: Text(S.of(context).screenEspressoRefillTheWaterTank),
           action: SnackBarAction(
             label: 'ok',
             onPressed: () {
@@ -319,7 +320,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Flow [ml/s] / Pressure [bar]',
+              S.of(context).screenEspressoFlowMlsPressureBar,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -360,7 +361,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           bottomTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Time/s',
+              S.of(context).screenEspressoTimes,
               style: Theme.of(context).textTheme.labelSmall,
               // style: TextStyle(
               //     // fontSize: 15,
@@ -376,7 +377,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Weight [g]',
+              S.of(context).screenEspressoWeightG,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -399,10 +400,10 @@ class EspressoScreenState extends State<EspressoScreen> {
             height: 30,
             child: LegendsListWidget(
               legends: [
-                Legend('Pressure', theme.ThemeColors.pressureColor),
-                Legend('Flow', theme.ThemeColors.flowColor),
-                Legend('Weight', theme.ThemeColors.weightColor),
-                Legend('Temp', theme.ThemeColors.tempColor),
+                Legend(S.of(context).screenEspressoPressure, theme.ThemeColors.pressureColor),
+                Legend(S.of(context).screenEspressoFlow, theme.ThemeColors.flowColor),
+                Legend(S.of(context).screenEspressoWeight, theme.ThemeColors.weightColor),
+                Legend(S.of(context).screenEspressoTemp, theme.ThemeColors.tempColor),
               ],
             ),
           ),
@@ -447,15 +448,24 @@ class EspressoScreenState extends State<EspressoScreen> {
       key: _mywidgetkey,
       children: [
         if (machineService.state.coffeeState == EspressoMachineState.disconnected) const Icon(Icons.bluetooth_disabled),
-        KeyValueWidget(width: width, label: "Recipe", value: coffeeSelectionService.currentRecipe?.name ?? "no recipe"),
-        KeyValueWidget(width: width, label: "Profile", value: profileService.currentProfile?.title ?? "no profile"),
         KeyValueWidget(
             width: width,
-            label: "Coffee",
+            label: S.of(context).screenEspressoRecipe,
+            value: coffeeSelectionService.currentRecipe?.name ?? "no recipe"),
+        KeyValueWidget(
+            width: width,
+            label: S.of(context).screenEspressoProfile,
+            value: profileService.currentProfile?.title ?? "no profile"),
+        KeyValueWidget(
+            width: width,
+            label: S.of(context).screenEspressoBean,
             value: coffeeSelectionService.selectedCoffeeId > 0
                 ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
                 : "No Beans"),
-        KeyValueWidget(width: width, label: "Target", value: '${settingsService.targetEspressoWeight} g'),
+        KeyValueWidget(
+            width: width,
+            label: S.of(context).screenEspressoTarget,
+            value: '${settingsService.targetEspressoWeight} g'),
         if (machineService.lastPourTime > 0)
           const Divider(
             height: 20,
@@ -465,13 +475,20 @@ class EspressoScreenState extends State<EspressoScreen> {
           ),
         if (machineService.lastPourTime > 0)
           KeyValueWidget(
-              width: width, label: "Timer", value: 'Pour: ${machineService.lastPourTime.toStringAsFixed(1)} s'),
+              width: width,
+              label: S.of(context).screenEspressoTimer,
+              value: S.of(context).screenEspressoPour(machineService.lastPourTime.toStringAsFixed(1))),
         if (machineService.getOverallTime() > 0)
           KeyValueWidget(
-              width: width, label: "", value: 'Total: ${machineService.getOverallTime().toStringAsFixed(1)} s'),
+              width: width,
+              label: "",
+              value: S.of(context).screenEspressoTotal(machineService.getOverallTime().toStringAsFixed(1))),
         if (machineService.isPouring)
           KeyValueWidget(
-              width: width, label: "", value: 'TTW: ${machineService.state.shot?.timeToWeight.toStringAsFixed(1)} s'),
+              width: width,
+              label: "",
+              value:
+                  S.of(context).screenEspressoTtw(machineService.state.shot?.timeToWeight.toStringAsFixed(1) ?? "?")),
         const Divider(
           height: 20,
           thickness: 5,
@@ -490,7 +507,7 @@ class EspressoScreenState extends State<EspressoScreen> {
             ).then((value) => _screensaver.resume());
           },
           icon: const Icon(Icons.note_add),
-          label: const Text("Espresso Diary"),
+          label: Text(S.of(context).screenEspressoDiary),
         ),
         const Divider(
           height: 20,

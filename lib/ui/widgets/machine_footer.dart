@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/helper/message.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
@@ -93,9 +94,15 @@ class _MachineFooterState extends State<MachineFooter> {
                           machineService.currentFullState.state == EspressoMachineState.refill
                               ? Container(
                                   color: Colors.red,
-                                  child: const FooterValue(value: "Refill water", label: "Water", width: 200),
+                                  child: FooterValue(
+                                      value: S.of(context).footerRefillWater,
+                                      label: S.of(context).footerWater,
+                                      width: 200),
                                 )
-                              : FooterValue(value: "${snapshot.data?.getLevelML()} ml", label: "Water", width: 200)
+                              : FooterValue(
+                                  value: "${snapshot.data?.getLevelML()} ml",
+                                  label: S.of(context).footerWater,
+                                  width: 200)
                         ]
                       : [],
                 );
@@ -110,12 +117,17 @@ class _MachineFooterState extends State<MachineFooter> {
                 return Row(
                   children: snapshot.data != null && machineService.currentFullState.state != EspressoMachineState.sleep
                       ? [
-                          FooterValue(value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C", label: "Group"),
+                          FooterValue(
+                              value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C",
+                              label: S.of(context).footerGroup),
                           if (machineService.currentFullState.state != EspressoMachineState.idle)
                             FooterValue(
-                                value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar", label: "Pressure"),
+                                value: "${snapshot.data?.groupPressure.toStringAsFixed(1)} bar",
+                                label: S.of(context).pressure),
                           if (machineService.currentFullState.state != EspressoMachineState.idle)
-                            FooterValue(value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s", label: "Flow"),
+                            FooterValue(
+                                value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s",
+                                label: S.of(context).flow),
                         ]
                       : [],
                 );
@@ -129,7 +141,7 @@ class _MachineFooterState extends State<MachineFooter> {
                         snapshot.data?.state != EspressoMachineState.connecting)
                     ? Row(
                         children: [
-                          Text(isOn(snapshot.data?.state) ? 'On' : 'Off'),
+                          Text(isOn(snapshot.data?.state) ? S.of(context).on : S.of(context).off),
                           Switch(
                             value: isOn(snapshot.data?.state), //set true to enable switch by default
                             onChanged: (bool value) {
@@ -188,8 +200,8 @@ class ThermprobeFooter extends StatelessWidget {
                           onPressed: () {
                             machineService.tempService.connect();
                           },
-                          child: const Text(
-                            "Connect",
+                          child: Text(
+                            S.of(context).footerConnect,
                           ),
                         ),
                       if (machineService.tempService.state == TempState.connected)
@@ -239,8 +251,8 @@ class ThermprobeFooter extends StatelessWidget {
                   );
                 }),
           ),
-          const Text(
-            'Probe',
+          Text(
+            S.of(context).footerProbe,
             style: theme.TextStyles.subHeadingFooter,
           ),
           StreamBuilder<Object>(
@@ -251,7 +263,7 @@ class ThermprobeFooter extends StatelessWidget {
                   backgroundColor: Colors.black38,
                   color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
                   value: bat,
-                  semanticsLabel: 'Battery',
+                  semanticsLabel: S.of(context).footerBattery,
                 );
               }),
         ],
@@ -272,101 +284,121 @@ class ScaleFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 310,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 36,
-            child: StreamBuilder<WeightMeassurement>(
-                stream: machineService.scaleService.stream,
-                builder: (context, snapshot) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (machineService.scaleService.state != ScaleState.connecting)
-                        OutlinedButton(
-                          onPressed: () {
-                            machineService.scaleService.state == ScaleState.connected
-                                ? machineService.scaleService.tare()
-                                : machineService.scaleService.connect();
-                          },
-                          child: Text(
-                            machineService.scaleService.state == ScaleState.connected ? "  Tare  " : "Connect",
-                          ),
-                        ),
-                      if (machineService.scaleService.state == ScaleState.connecting)
-                        Text(
-                          textAlign: TextAlign.right,
-                          machineService.scaleService.state.name,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      if (machineService.scaleService.state == ScaleState.connected)
-                        SizedBox(
-                          width: 190,
-                          child: Row(
+      child: StreamBuilder<WeightMeassurement>(
+          stream: machineService.scaleService.stream,
+          builder: (context, snapshot) {
+            return Container(
+              color: machineService.scaleService.state != ScaleState.connecting
+                  ? machineService.scaleService.state != ScaleState.connected
+                      ? Colors.red
+                      : null
+                  : Colors.orange.shade900,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 36,
+                    child: StreamBuilder<WeightMeassurement>(
+                        stream: machineService.scaleService.stream,
+                        builder: (context, snapshot) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                width: 100,
-                                child: FittedBox(
-                                  fit: BoxFit.fitHeight,
-                                  child: machineService.scaleService.state == ScaleState.connected
-                                      ? Text(
-                                          textAlign: TextAlign.right,
-                                          "${snapshot.data?.weight.toStringAsFixed(1)} g",
-                                          style: Theme.of(context).textTheme.headlineSmall,
-                                        )
-                                      : machineService.scaleService.state != ScaleState.disconnected
-                                          ? FittedBox(
-                                              fit: BoxFit.fitWidth,
-                                              child: Text(
-                                                textAlign: TextAlign.right,
-                                                machineService.scaleService.state.name,
-                                                style: Theme.of(context).textTheme.labelSmall,
-                                              ),
-                                            )
-                                          : Text(""),
+                              if (machineService.scaleService.state != ScaleState.connecting &&
+                                  machineService.scaleService.state == ScaleState.connected)
+                                OutlinedButton(
+                                  onPressed: () {
+                                    machineService.scaleService.tare();
+                                  },
+                                  child: Text(S.of(context).footerTare),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 90,
-                                child: Text(
+                              if (machineService.scaleService.state != ScaleState.connecting &&
+                                  machineService.scaleService.state != ScaleState.connected)
+                                ElevatedButton(
+                                  onPressed: () {
+                                    machineService.scaleService.connect();
+                                  },
+                                  child: Text(
+                                    S.of(context).footerConnect,
+                                  ),
+                                ),
+
+                              if (machineService.scaleService.state == ScaleState.connecting)
+                                Text(
                                   textAlign: TextAlign.right,
-                                  machineService.scaleService.state == ScaleState.connected
-                                      ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
-                                      : "",
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  machineService.scaleService.state.name,
+                                  style: Theme.of(context).textTheme.labelMedium,
                                 ),
-                              ),
+                              if (machineService.scaleService.state == ScaleState.connected)
+                                SizedBox(
+                                  width: 190,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 100,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitHeight,
+                                          child: machineService.scaleService.state == ScaleState.connected
+                                              ? Text(
+                                                  textAlign: TextAlign.right,
+                                                  "${snapshot.data?.weight.toStringAsFixed(1)} g",
+                                                  style: Theme.of(context).textTheme.headlineSmall,
+                                                )
+                                              : machineService.scaleService.state != ScaleState.disconnected
+                                                  ? FittedBox(
+                                                      fit: BoxFit.fitWidth,
+                                                      child: Text(
+                                                        textAlign: TextAlign.right,
+                                                        machineService.scaleService.state.name,
+                                                        style: Theme.of(context).textTheme.labelSmall,
+                                                      ),
+                                                    )
+                                                  : Text(""),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 90,
+                                        child: Text(
+                                          textAlign: TextAlign.right,
+                                          machineService.scaleService.state == ScaleState.connected
+                                              ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
+                                              : "",
+                                          style: Theme.of(context).textTheme.bodyMedium,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              // if (machineService.scaleService.state == ScaleState.connected)
+                              //   ElevatedButton(
+                              //     onPressed: () => {},
+                              //     child: const Text("To Shot"),
+                              //   ),
                             ],
-                          ),
-                        ),
-                      // if (machineService.scaleService.state == ScaleState.connected)
-                      //   ElevatedButton(
-                      //     onPressed: () => {},
-                      //     child: const Text("To Shot"),
-                      //   ),
-                    ],
-                  );
-                }),
-          ),
-          Text(
-            'Scale',
-            style: Theme.of(context).textTheme.labelSmall,
-          ),
-          StreamBuilder<Object>(
-              stream: machineService.scaleService.streamBattery,
-              builder: (context, snapshot) {
-                var bat = snapshot.hasData ? (snapshot.data as int) / 100.0 : 0.0;
-                return LinearProgressIndicator(
-                  backgroundColor: Colors.black38,
-                  color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
-                  value: bat,
-                  semanticsLabel: 'Battery',
-                );
-              }),
-        ],
-      ),
+                          );
+                        }),
+                  ),
+                  Text(
+                    S.of(context).footerScale,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                  if (machineService.scaleService.state == ScaleState.connected)
+                    StreamBuilder<Object>(
+                        stream: machineService.scaleService.streamBattery,
+                        builder: (context, snapshot) {
+                          var bat = snapshot.hasData ? (snapshot.data as int) / 100.0 : 0.0;
+                          return LinearProgressIndicator(
+                            backgroundColor: Colors.black38,
+                            color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
+                            value: bat,
+                            semanticsLabel: S.of(context).footerBattery,
+                          );
+                        }),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

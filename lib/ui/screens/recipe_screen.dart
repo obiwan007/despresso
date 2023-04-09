@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
+import 'package:despresso/generated/l10n.dart';
 
 import '../../model/shotstate.dart';
 
@@ -130,7 +131,7 @@ class RecipeScreenState extends State<RecipeScreen> {
               profileId: profileService.currentProfile?.id ?? "Default");
         },
         // backgroundColor: Colors.green,
-        label: const Text('Add recipe'),
+        label: Text(S.of(context).screenRecipeAddRecipe),
         icon: const Icon(Icons.add),
       ),
       body: Container(
@@ -206,7 +207,7 @@ class RecipeDescription extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          "Recipe Details",
+          S.of(context).screenRecipeRecipeDetails,
           style: Theme.of(context).textTheme.titleMedium,
         ),
 
@@ -219,8 +220,8 @@ class RecipeDescription extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
           child: Row(
             children: [
-              const Text("Hot water:"),
-              Text("${(coffeeService.currentRecipe?.useWater ?? false) ? "" : "No"}"),
+              Text(S.of(context).screenRecipehotWater),
+              Text("${(coffeeService.currentRecipe?.useWater ?? false) ? "" : S.of(context).no}"),
               Text((coffeeService.currentRecipe?.useWater ?? false)
                   ? " ${coffeeService.currentRecipe?.weightWater} g"
                   : ""),
@@ -231,8 +232,8 @@ class RecipeDescription extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
           child: Row(
             children: [
-              const Text("Steam milk:"),
-              Text((coffeeService.currentRecipe?.useSteam ?? false) ? "" : "No"),
+              Text(S.of(context).screenRecipesteamMilk),
+              Text((coffeeService.currentRecipe?.useSteam ?? false) ? "" : S.of(context).no),
               Text((coffeeService.currentRecipe?.useSteam ?? false)
                   ? " ${coffeeService.currentRecipe?.weightMilk} g"
                   : ""),
@@ -242,7 +243,7 @@ class RecipeDescription extends StatelessWidget {
         const Divider(),
 
         Text(
-          "Profile Details",
+          S.of(context).screenRecipeProfileDetails,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         if (profileService.currentProfile != null)
@@ -260,7 +261,7 @@ class RecipeDescription extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Coffee notes",
+              S.of(context).screenRecipeCoffeeNotes,
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
@@ -359,7 +360,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Selected profile")),
+                          Expanded(child: Text(S.of(context).screenRecipeSelectedProfile)),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,7 +410,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Expanded(child: Text("Initial temperature:")),
+                            Expanded(child: Text(S.of(context).screenRecipeInitialTemp)),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -424,7 +425,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Selected Bean")),
+                          Expanded(child: Text(S.of(context).screenRecipeSelectedBean)),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,7 +440,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                       MaterialPageRoute(builder: (context) => CoffeeSelectionTab(saveToRecipe: true)),
                                     );
                                   },
-                                  child: Text(widget.coffeeService.currentCoffee?.name ?? "No Coffee selected"),
+                                  child: Text(widget.coffeeService.currentCoffee?.name ?? "No Bean selected"),
                                 ),
                               ],
                             ),
@@ -452,7 +453,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Grind Settings:")),
+                          Expanded(child: Text(S.of(context).screenRecipeGrindSettings)),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -489,7 +490,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Ratio:")),
+                          Expanded(child: Text(S.of(context).screenRecipeRatio)),
                           Expanded(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -512,7 +513,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Weight-in beans [g]")),
+                          Expanded(child: Text(S.of(context).screenRecipeWeightinBeansG)),
                           Expanded(
                             child: Column(
                               children: [
@@ -549,7 +550,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Stop on Weight [g]")),
+                          Expanded(child: Text(S.of(context).screenRecipeStopOnWeightG)),
                           Expanded(
                             child: Column(
                               children: [
@@ -586,7 +587,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(child: Text("Adjust temp [°C]")),
+                          Expanded(child: Text(S.of(context).screenRecipeAdjustTempC)),
                           Expanded(
                             child: Column(
                               children: [
@@ -639,7 +640,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Set Ratio'),
+          title: Text(S.current.screenRecipeSetRatio),
           content: SizedBox(
             height: 200,
             child: Column(
@@ -698,7 +699,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Ok'),
+              child: Text(S.current.ok),
               onPressed: () {
                 // widget.coffeeService.currentRecipe?.ratio1 = double.parse(_ratio1);
                 var r = widget.coffeeService.currentRecipe!;

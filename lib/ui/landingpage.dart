@@ -24,6 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
 import 'screens/flush_screen.dart';
+import 'package:despresso/generated/l10n.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key, required this.title}) : super(key: key);
@@ -176,7 +177,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.auto_graph_outlined),
-              title: const Text('Espresso Diary'),
+              title: Text(S.of(context).mainMenuEspressoDiary),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -188,7 +189,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.add),
-              title: const Text('Profiles'),
+              title: Text(S.of(context).profiles),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -203,7 +204,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.coffee),
-              title: const Text('Beans'),
+              title: Text(S.of(context).beans),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -218,7 +219,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(S.of(context).settings),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -234,7 +235,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.feedback),
-              title: const Text('Feedback'),
+              title: Text(S.of(context).mainMenuFeedback),
               onTap: () async {
                 Navigator.pop(context);
                 var settings = getIt<SettingsService>();
@@ -245,14 +246,14 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                   return;
                 }
                 BetterFeedback.of(context).showAndUploadToSentry(
-                  name: 'Despresso Feedback', // optional
+                  name: S.of(context).mainMenuDespressoFeedback, // optional
                   email: 'foo_bar@example.com', // optional
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy'),
+              title: Text(S.of(context).privacy),
               onTap: () async {
                 Navigator.pop(context);
                 final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
@@ -292,7 +293,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             if (Platform.isAndroid)
               ListTile(
                 leading: const Icon(Icons.exit_to_app),
-                title: const Text('Exit'),
+                title: Text(S.of(context).exit),
                 onTap: () {
                   Navigator.pop(context);
                   var snackBar = SnackBar(
@@ -328,27 +329,27 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
         tabs: <Widget>[
-          const Tab(
-            icon: Icon(Icons.document_scanner),
-            child: Text("Recipe"),
+          Tab(
+            icon: const Icon(Icons.document_scanner),
+            child: Text(S.of(context).tabHomeRecipe),
           ),
-          const Tab(
-            icon: Icon(Icons.coffee),
-            child: Text("Espresso"),
+          Tab(
+            icon: const Icon(Icons.coffee),
+            child: Text(S.of(context).tabHomeEspresso),
           ),
           if (!_settings.steamHeaterOff)
-            const Tab(
-              icon: Icon(Icons.stream),
-              child: Text("Steam"),
+            Tab(
+              icon: const Icon(Icons.stream),
+              child: Text(S.of(context).tabHomeSteam),
             ),
-          const Tab(
-            icon: Icon(Icons.water_drop),
-            child: Text("Water"),
+          Tab(
+            icon: const Icon(Icons.water_drop),
+            child: Text(S.of(context).tabHomeWater),
           ),
           if (_settings.showFlushScreen)
-            const Tab(
-              icon: Icon(Icons.water),
-              child: Text("Flush"),
+            Tab(
+              icon: const Icon(Icons.water),
+              child: Text(S.of(context).tabHomeFlush),
             ),
         ],
       ),
@@ -356,17 +357,17 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     return tb;
   }
 
-  void configureCoffee() {
-    var snackBar = SnackBar(
-        content: const Text('Configure your coffee'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            // Some code to undo the change.
-          },
-        ));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  // void configureCoffee() {
+  //   var snackBar = SnackBar(
+  //       content: const Text('Configure your coffee'),
+  //       action: SnackBarAction(
+  //         label: 'Undo',
+  //         onPressed: () {
+  //           // Some code to undo the change.
+  //         },
+  //       ));
+  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // }
 
   void updatedProfile() {
     setState(() {});

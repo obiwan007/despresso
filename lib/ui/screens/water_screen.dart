@@ -5,6 +5,7 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
+import 'package:despresso/generated/l10n.dart';
 
 import '../../model/shotstate.dart';
 import '../widgets/start_stop_button.dart';
@@ -63,7 +64,8 @@ class WaterScreenState extends State<WaterScreen> {
                       flex: 1,
                       child: Column(
                         children: [
-                          Text("Temperatur ${settings.targetHotWaterTemp}°C", style: theme.TextStyles.tabHeading),
+                          Text(S.of(context).screenSteamTemperaturs(settings.targetHotWaterTemp),
+                              style: theme.TextStyles.tabHeading),
                           Slider(
                             value: settings.targetHotWaterTemp.toDouble(),
                             max: 100,
@@ -117,7 +119,8 @@ class WaterScreenState extends State<WaterScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Timer ${settings.targetHotWaterLength} s", style: theme.TextStyles.tabHeading),
+                            Text(S.of(context).screenSteamTimerS(settings.targetHotWaterLength),
+                                style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetHotWaterLength.toDouble(),
                               max: 100,
@@ -174,7 +177,8 @@ class WaterScreenState extends State<WaterScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Weight ${settings.targetHotWaterWeight} g", style: theme.TextStyles.tabHeading),
+                            Text(S.of(context).screenWaterWeightG(settings.targetHotWaterWeight),
+                                style: theme.TextStyles.tabHeading),
                             Slider(
                               value: settings.targetHotWaterWeight.toDouble(),
                               max: 200,

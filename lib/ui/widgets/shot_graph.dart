@@ -6,6 +6,7 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:despresso/generated/l10n.dart';
 
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
@@ -77,7 +78,7 @@ class _ShotGraphState extends State<ShotGraph> {
                     );
                   },
                   icon: const Icon(Icons.note_add),
-                  label: const Text("Diary"))
+                  label: Text(S.of(context).screenEspressoDiary))
             ]),
           ),
           _buildGraphs()['single'],
@@ -194,7 +195,7 @@ class _ShotGraphState extends State<ShotGraph> {
 
     var flowChart1 = LineChart(
       LineChartData(
-        minY: 0,
+        // minY: 0,
         // maxY: 15,
         // minX: data["pressure${overlayIds!.first}"]!.first.x,
         // maxX: maxTime,
@@ -245,7 +246,7 @@ class _ShotGraphState extends State<ShotGraph> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Flow [ml/s] / Pressure [bar]',
+              S.of(context).graphFlowMlsPressureBar,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -260,7 +261,7 @@ class _ShotGraphState extends State<ShotGraph> {
 
     var flowChart2 = LineChart(
       LineChartData(
-        minY: 0,
+        // minY: 0,
         // maxY: 15,
         // minX: data["pressure${overlayIds!.first}"]!.first.x,
         // maxX: maxTime,
@@ -281,7 +282,7 @@ class _ShotGraphState extends State<ShotGraph> {
           bottomTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Time/s',
+              S.of(context).graphTime,
               style: Theme.of(context).textTheme.labelSmall,
               // style: TextStyle(
               //     // fontSize: 15,
@@ -297,7 +298,7 @@ class _ShotGraphState extends State<ShotGraph> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              'Weight [g]',
+              S.of(context).screenEspressoWeightG,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(

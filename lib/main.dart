@@ -17,6 +17,8 @@ import 'ui/landingpage.dart';
 import 'package:wakelock/wakelock.dart';
 import 'color_schemes.g.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 
 // import 'package:logging_appenders/logging_appenders.dart';
 
@@ -83,25 +85,44 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
-  late SettingsService _services;
+  late SettingsService _settings;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _services = getIt<SettingsService>();
-    _services.addListener(() {
+    _settings = getIt<SettingsService>();
+    _settings.addListener(() {
       setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var schemaLight = lightColorSchemes[int.parse(_services.screenThemeIndex)];
-    var themeDark = darkColorSchemes[int.parse(_services.screenThemeIndex)];
+    var schemaLight = lightColorSchemes[int.parse(_settings.screenThemeIndex)];
+    var themeDark = darkColorSchemes[int.parse(_settings.screenThemeIndex)];
     return BetterFeedback(
       child: MaterialApp(
         title: 'despresso',
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        locale: _settings.locale == "auto" ? null : Locale(_settings.locale),
+        // localizationsDelegates: const [
+        //   AppLocalizations.delegate,
+        //   GlobalMaterialLocalizations.delegate,
+        //   GlobalWidgetsLocalizations.delegate,
+        //   GlobalCupertinoLocalizations.delegate,
+        // ],
+        // supportedLocales: const [
+        //   Locale('en'), // English
+        //   Locale('de'), // German
+        //   Locale('es'), // German
+        // ],
         theme: ThemeData.from(
           useMaterial3: true,
           colorScheme: schemaLight,
@@ -131,7 +152,7 @@ class _MyAppState extends State<MyApp> {
         //   //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         //   //     ),
         // ),
-        themeMode: _services.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
+        themeMode: _settings.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
 
         // theme: ThemeData(
         //   useMaterial3: true,
