@@ -23,6 +23,7 @@ For a normal build it should just work.
 ## Supported devices
 
 - decent de1 (tested with 1.43 hardware)
+- Atomax Skale 2 (thx for sponsoring us!)
 - Acaia Lunar '21
 - Eureka
 - Decent scale
