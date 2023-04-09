@@ -8,6 +8,7 @@ import 'package:despresso/devices/decent_scale.dart';
 import 'package:despresso/devices/felicita_scale.dart';
 import 'package:despresso/devices/meater_thermometer.dart';
 import 'package:despresso/devices/skale2_scale.dart';
+import 'package:despresso/helper/permissioncheck.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -33,8 +34,6 @@ class BLEService extends ChangeNotifier {
   StreamSubscription<ble.DiscoveredDevice>? _subscription;
 
   bool isScanning = false;
-
-  bool checkInProgress = false;
 
   String error = "";
 
@@ -172,28 +171,5 @@ class BLEService extends ChangeNotifier {
         }
       }
     }
-  }
-
-  Future<void> checkPermissions() async {
-    // if (Permission.location.serviceStatus.isEnabled == true){
-    // var status2 = await Permission.bluetooth.request();
-    // var status1 = await Permission.location.request();
-
-// You can request multiple permissions at once.
-    checkInProgress = true;
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.location,
-      Permission.bluetoothScan,
-      Permission.bluetoothConnect,
-    ].request();
-    checkInProgress = false;
-    if (!statuses.values.any((element) => element.isDenied)) {
-      return;
-    }
-    return Future.error(Exception('Location permission not granted'));
-
-    // }else{
-    //   return Future.error(Exception('Location permission not granted'));
-    // }
   }
 }
