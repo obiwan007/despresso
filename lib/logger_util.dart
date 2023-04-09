@@ -45,7 +45,13 @@ Future<Directory?> getDirectory() async {
     try {
       await dir.create(recursive: true);
     } catch (e) {
-      dir = await getExternalStorageDirectory();
+      try {
+        dir = await getExternalStorageDirectory();
+      } on UnsupportedError catch (ex) {
+        // ignore: avoid_print
+        print("Not possible to store to external $ex");
+        dir = await getApplicationDocumentsDirectory();
+      }
     }
   } else {
     try {

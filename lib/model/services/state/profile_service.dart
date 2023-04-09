@@ -124,6 +124,7 @@ class ProfileService extends ChangeNotifier {
     log.info("Saving as a new profile");
     profile.isDefault = false;
     profile.id = const Uuid().toString();
+    save(profile);
   }
 
   save(De1ShotProfile profile) async {
@@ -296,6 +297,7 @@ class ProfileService extends ChangeNotifier {
           .replaceAll(" ", "")
           .replaceAll("´", "")
           .replaceAll("/", "")
+          .replaceAll("'", "")
           .replaceAll(",", "");
       log.info("Saving new profile id as ${profile.id}");
     }
