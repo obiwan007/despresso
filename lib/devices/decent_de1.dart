@@ -389,6 +389,7 @@ class DE1 extends ChangeNotifier {
   }
 
   Future<List<int>> read(Endpoint e) {
+    if (flutterReactiveBle.status != BleStatus.ready) throw ("de1 not connected ${flutterReactiveBle.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
     var data = flutterReactiveBle.readCharacteristic(characteristic);
@@ -397,6 +398,7 @@ class DE1 extends ChangeNotifier {
   }
 
   Future<void> write(Endpoint e, Uint8List data) {
+    if (flutterReactiveBle.status != BleStatus.ready) throw ("de1 not connected ${flutterReactiveBle.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
     return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
@@ -405,6 +407,7 @@ class DE1 extends ChangeNotifier {
   }
 
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
+    if (flutterReactiveBle.status != BleStatus.ready) throw ("de1 not connected ${flutterReactiveBle.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
     return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);

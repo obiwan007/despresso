@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/labeled_checkbox.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
@@ -45,6 +46,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   late EspressoMachineService machineService;
   late TextEditingController shortCodeController;
   late CoffeeService coffeeService;
+  late SettingsService settingsService;
 
   De1ShotProfile? _selectedProfile;
   FilePickerResult? filePickerResult;
@@ -68,7 +70,10 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
     coffeeService = getIt<CoffeeService>();
+    settingsService = getIt<SettingsService>();
     shortCodeController = TextEditingController();
+
+    selectedFilter = settingsService.profileFilterList;
 
     profileService.addListener(profileListener);
     log.info(profileService.currentProfile.toString());
@@ -137,14 +142,16 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           // Use Builder to get the widget context
           Builder(
             builder: (BuildContext context) {
-              return ElevatedButton(
+              return TextButton.icon(
+                label: Text("Share"),
                 onPressed: () => _onShare(context),
-                child: const Icon(Icons.ios_share),
+                icon: const Icon(Icons.ios_share),
               );
             },
           ),
-          ElevatedButton(
-            child: const Icon(Icons.cloud_download),
+          TextButton.icon(
+            icon: const Icon(Icons.cloud_download),
+            label: Text("visualizer code"),
             onPressed: () async {
               final shortCode = await _openShortCodeDialog();
               if (shortCode == null || shortCode.isEmpty) return;
@@ -175,14 +182,16 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             },
           ),
 
-          ElevatedButton(
-            child: const Icon(Icons.file_download),
+          TextButton.icon(
+            label: Text("Import json"),
+            icon: const Icon(Icons.file_download),
             onPressed: () {
               getProfileFromFolder(context);
             },
           ),
-          ElevatedButton(
-            child: const Icon(Icons.edit),
+          TextButton.icon(
+            label: Text("Edit"),
+            icon: const Icon(Icons.edit),
             onPressed: () {
               setState(() {
                 log.info("Edit profile $_selectedProfile");
@@ -383,6 +392,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                         label: item,
                         onChanged: (value) {
                           !value! ? selectedFilter.remove(item) : selectedFilter.add(item);
+                          settingsService.profileFilterList = selectedFilter;
                           setState(() {});
                           menuSetState(() {});
                         },
