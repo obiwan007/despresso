@@ -5,6 +5,7 @@ import 'package:flutter_archive/flutter_archive.dart';
 import 'package:logging/logging.dart';
 import 'package:logging_appenders/logging_appenders.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> initLogger() async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -40,6 +41,9 @@ Future<void> initLogger() async {
 
 Future<Directory?> getDirectory() async {
   Directory? dir;
+
+  await checkPermissions();
+
   if (Platform.isAndroid) {
     dir = Directory('/storage/emulated/0/Download/despresso');
     try {
@@ -64,6 +68,27 @@ Future<Directory?> getDirectory() async {
   }
 
   return dir;
+}
+
+Future<void> checkPermissions() async {
+  // if (Permission.location.serviceStatus.isEnabled == true){
+  // var status2 = await Permission.bluetooth.request();
+  // var status1 = await Permission.location.request();
+
+// You can request multiple permissions at once.
+
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.storage,
+  ].request();
+
+  if (!statuses.values.any((element) => element.isDenied)) {
+    return;
+  }
+  return Future.error(Exception('Location permission not granted'));
+
+  // }else{
+  //   return Future.error(Exception('Location permission not granted'));
+  // }
 }
 
 Future<Uint8List> getLoggerBackupData() async {
