@@ -35,7 +35,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   late ScaleService scaleService;
 
-  static const _heartbeatTime = Duration(seconds: 3);
+  static const _heartbeatTime = Duration(seconds: 1);
   static const List<int> _heartbeatPayload = [0x02, 0x00];
   static const List<int> _identPayload = [
     0x2D,
@@ -81,6 +81,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   StreamSubscription<List<int>>? _characteristicsSubscription;
+
+  DateTime _lastResponse = DateTime.now();
 
   AcaiaPyxisScale(this.device) {
     scaleService = getIt<ScaleService>();
@@ -138,7 +140,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           case 5: // weight
             double? weight = decodeWeight(payload);
             if (weight != null) scaleService.setWeight(weight);
-
+            _lastResponse = DateTime.now();
             break;
           case 8: // Tara done
             scaleService.setTara();
@@ -156,7 +158,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             if (payload[3] == 7) time = decodeTime(payload.sublist(3));
             // scaleService.setWeight(weight);
             scaleService.setWeight(weight);
-            log.finer("Heartbeat Response: Weight: PL3: ${payload[3]} $weight Time: $time ${payload.sublist(3)}");
+            log.info("Heartbeat Response: Weight: PL3: ${payload[3]} $weight Time: $time ${payload.sublist(3)}");
+
             break;
           default:
             log.fine('Acaia: 12 Subtype $subType');
@@ -222,7 +225,19 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
 
+    var now = DateTime.now().difference(_lastResponse).inMilliseconds;
+
+    if (now > 200) {
+      log.info('Last Heartbeat $now');
+      log.severe('Init disconnection');
+      _onStateChange(DeviceConnectionState.disconnected);
+      // _characteristicsSubscription!.cancel();
+      // registerForNotifications();
+      // _sendConfig();
+    }
+    return;
     try {
+      log.info("Heartbeat");
       await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
           value: encode(0x00, _heartbeatPayload));
     } catch (e) {
@@ -293,10 +308,9 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
       case DeviceConnectionState.connected:
         log.info('Connected');
+        _lastResponse = DateTime.now();
         scaleService.setState(ScaleState.connected);
-
         registerForNotifications();
-
         await Future.delayed(
           const Duration(milliseconds: 1000),
           () async {
@@ -318,24 +332,27 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             }
           },
         );
-        // await Future.delayed(
-        //   const Duration(seconds: 1),
-        //   () async {
-        //     _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
-        //     //
-        //   },
-        // );
-        // heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+        await Future.delayed(
+          const Duration(seconds: 5),
+          () {
+            _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+            //
+          },
+        );
+        // _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
         // Timer(const Duration(seconds: 3), _sendIdent);
         // Timer(const Duration(seconds: 5), _sendConfig);
 
         return;
       case DeviceConnectionState.disconnected:
+        log.info('Acaia Scale disconnected. Destroying');
+        if (_heartBeatTimer != null) _heartBeatTimer!.cancel();
+        _heartBeatTimer = null;
         scaleService.setState(ScaleState.disconnected);
         scaleService.setBattery(0);
-        log.info('Acaia Scale disconnected. Destroying');
+
         _characteristicsSubscription?.cancel();
-        if (_heartBeatTimer != null) _heartBeatTimer!.cancel();
+
         _deviceListener.cancel();
         notifyListeners();
         return;
@@ -345,6 +362,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   }
 
   void registerForNotifications() {
+    log.info("Register for notifications");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicStatusUUID, deviceId: device.id);
 
