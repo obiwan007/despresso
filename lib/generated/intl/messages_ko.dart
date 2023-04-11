@@ -26,7 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(sec) => "TTW: ${sec}초";
 
-  static String m3(desc) => "${desc}에서 촬영한 경험을 설명하세요.";
+  static String m3(desc) => "${desc}에서 샷의 느낌을 설명하세요";
 
   static String m4(flow) => "증기 유량 ${flow} ml/s";
 
@@ -40,28 +40,28 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "beans": MessageLookupByLibrary.simpleMessage("콩"),
+        "beans": MessageLookupByLibrary.simpleMessage("원두"),
         "blue": MessageLookupByLibrary.simpleMessage("파란색"),
-        "disabled": MessageLookupByLibrary.simpleMessage("장애가 있는"),
+        "disabled": MessageLookupByLibrary.simpleMessage("사용 안함"),
         "disconnected": MessageLookupByLibrary.simpleMessage("연결이 끊긴"),
         "edit": MessageLookupByLibrary.simpleMessage("편집하다"),
         "enabled": MessageLookupByLibrary.simpleMessage("사용"),
         "error": MessageLookupByLibrary.simpleMessage("오류"),
-        "exit": MessageLookupByLibrary.simpleMessage("출구"),
+        "exit": MessageLookupByLibrary.simpleMessage("종료"),
         "flow": MessageLookupByLibrary.simpleMessage("흐름"),
         "footerBattery": MessageLookupByLibrary.simpleMessage("배터리"),
         "footerConnect": MessageLookupByLibrary.simpleMessage("연결하다"),
         "footerGroup": MessageLookupByLibrary.simpleMessage("그룹"),
         "footerProbe": MessageLookupByLibrary.simpleMessage("조사"),
         "footerRefillWater": MessageLookupByLibrary.simpleMessage("리필 물"),
-        "footerScale": MessageLookupByLibrary.simpleMessage("규모"),
-        "footerTare": MessageLookupByLibrary.simpleMessage("  살갈퀴"),
+        "footerScale": MessageLookupByLibrary.simpleMessage("저울"),
+        "footerTare": MessageLookupByLibrary.simpleMessage("  영점"),
         "footerWater": MessageLookupByLibrary.simpleMessage("물"),
         "graphFlowMlsPressureBar":
             MessageLookupByLibrary.simpleMessage("유량[ml/s] / 압력[bar]"),
-        "graphTime": MessageLookupByLibrary.simpleMessage("타임스"),
+        "graphTime": MessageLookupByLibrary.simpleMessage("시간/s"),
         "green": MessageLookupByLibrary.simpleMessage("녹색"),
-        "hide": MessageLookupByLibrary.simpleMessage("숨다"),
+        "hide": MessageLookupByLibrary.simpleMessage("숨기다"),
         "mainMenuDespressoFeedback":
             MessageLookupByLibrary.simpleMessage("에스프레소 피드백"),
         "mainMenuEspressoDiary":
@@ -70,16 +70,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "no": MessageLookupByLibrary.simpleMessage("아니요"),
         "off": MessageLookupByLibrary.simpleMessage("끄다"),
         "ok": MessageLookupByLibrary.simpleMessage("좋아요"),
-        "on": MessageLookupByLibrary.simpleMessage("~에"),
+        "on": MessageLookupByLibrary.simpleMessage("켜다"),
         "orange": MessageLookupByLibrary.simpleMessage("주황색"),
         "pressure": MessageLookupByLibrary.simpleMessage("압력"),
-        "privacy": MessageLookupByLibrary.simpleMessage("은둔"),
+        "privacy": MessageLookupByLibrary.simpleMessage("비공개"),
         "profile": MessageLookupByLibrary.simpleMessage("프로필"),
         "profiles": MessageLookupByLibrary.simpleMessage("프로필"),
         "recipe": MessageLookupByLibrary.simpleMessage("레시피"),
         "reconnect": MessageLookupByLibrary.simpleMessage("다시 연결"),
         "red": MessageLookupByLibrary.simpleMessage("빨간색"),
-        "save": MessageLookupByLibrary.simpleMessage("구하다"),
+        "save": MessageLookupByLibrary.simpleMessage("저장"),
         "screenBeanSelectAcidity": MessageLookupByLibrary.simpleMessage("신맛"),
         "screenBeanSelectAddressOfRoaster":
             MessageLookupByLibrary.simpleMessage("주소"),
@@ -101,11 +101,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenBeanSelectRoastingDate":
             MessageLookupByLibrary.simpleMessage("로스팅 날짜"),
         "screenBeanSelectSelectBeans":
-            MessageLookupByLibrary.simpleMessage("콩 선택"),
+            MessageLookupByLibrary.simpleMessage("원두 선택"),
         "screenBeanSelectSelectRoaster":
             MessageLookupByLibrary.simpleMessage("로스터 선택"),
-        "screenBeanSelectTasting": MessageLookupByLibrary.simpleMessage("시식"),
-        "screenBeanSelectTitle": MessageLookupByLibrary.simpleMessage("콩과 로스터"),
+        "screenBeanSelectTasting": MessageLookupByLibrary.simpleMessage("테스팅팅"),
+        "screenBeanSelectTitle":
+            MessageLookupByLibrary.simpleMessage("원두와 로스터"),
         "screenBeanSelectTypeOfBeans":
             MessageLookupByLibrary.simpleMessage("콩의 종류"),
         "screenDiaryErrorUploadingShots":
@@ -132,8 +133,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("물 탱크를 다시 채우십시오"),
         "screenEspressoTarget": MessageLookupByLibrary.simpleMessage("표적"),
         "screenEspressoTemp": MessageLookupByLibrary.simpleMessage("온도"),
-        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("시간제 노동자"),
-        "screenEspressoTimes": MessageLookupByLibrary.simpleMessage("타임스"),
+        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("타이머"),
+        "screenEspressoTimes": MessageLookupByLibrary.simpleMessage("시간/s"),
         "screenEspressoTotal": m1,
         "screenEspressoTtw": m2,
         "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("무게"),
@@ -167,11 +168,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("온도 보정"),
         "screenRecipeEditTitle": MessageLookupByLibrary.simpleMessage("레시피 편집"),
         "screenRecipeEditUseSteam":
-            MessageLookupByLibrary.simpleMessage("스팀 사용?"),
+            MessageLookupByLibrary.simpleMessage("스팀을 사용합니까?"),
         "screenRecipeEditUseWater":
             MessageLookupByLibrary.simpleMessage("물을 사용합니까?"),
         "screenRecipeEditWeightOut":
-            MessageLookupByLibrary.simpleMessage("체중 감량"),
+            MessageLookupByLibrary.simpleMessage("추출량"),
         "screenRecipeGrindSettings":
             MessageLookupByLibrary.simpleMessage("분쇄 설정:"),
         "screenRecipeInitialTemp":
@@ -182,7 +183,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeRecipeDetails":
             MessageLookupByLibrary.simpleMessage("레시피 세부정보"),
         "screenRecipeSelectedBean":
-            MessageLookupByLibrary.simpleMessage("선택한 콩"),
+            MessageLookupByLibrary.simpleMessage("선택한 원두"),
         "screenRecipeSelectedProfile":
             MessageLookupByLibrary.simpleMessage("선택한 프로필"),
         "screenRecipeSetRatio": MessageLookupByLibrary.simpleMessage("비율 설정"),
@@ -210,8 +211,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
                 "DE1 및 저울 스캔(Lunar, Skale2, Eureka, Decent)"),
-        "screenSettingsAutoTare": MessageLookupByLibrary.simpleMessage("자동 용기"),
-        "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("지원"),
+        "screenSettingsAutoTare": MessageLookupByLibrary.simpleMessage("자동 영점"),
+        "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("백업업"),
         "screenSettingsBackupAndMaintenance":
             MessageLookupByLibrary.simpleMessage("백업 및 유지 관리"),
         "screenSettingsBackupSettings":
@@ -220,8 +221,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("백업/복원"),
         "screenSettingsBackuprestoreDatabase":
             MessageLookupByLibrary.simpleMessage("데이터베이스 백업/복원"),
-        "screenSettingsBahaviour":
-            MessageLookupByLibrary.simpleMessage("바하비우르"),
+        "screenSettingsBahaviour": MessageLookupByLibrary.simpleMessage("행동"),
         "screenSettingsBehaviour": MessageLookupByLibrary.simpleMessage("행동"),
         "screenSettingsBrightnessSleepAndScreensaver":
             MessageLookupByLibrary.simpleMessage("밝기, 절전 및 화면 보호기"),
@@ -239,7 +239,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsCloudShotUpload":
             MessageLookupByLibrary.simpleMessage("클라우드샷 업로드"),
         "screenSettingsCoffeePouring":
-            MessageLookupByLibrary.simpleMessage("커피 따르기"),
+            MessageLookupByLibrary.simpleMessage("커피 푸어링"),
         "screenSettingsCoffeeSection":
             MessageLookupByLibrary.simpleMessage("커피"),
         "screenSettingsDarkTheme":
@@ -261,7 +261,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("피드백 및 충돌 보고"),
         "screenSettingsFlushTimerS":
             MessageLookupByLibrary.simpleMessage("플러시 타이머 [s]"),
-        "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("독일 사람"),
+        "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("독일어"),
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage("시간 초과가 발생한 경우 레시피 화면으로 돌아가기"),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
@@ -277,7 +277,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "GHC가 설치되어 있지 않으면 플러시 스크린이 필요합니다."),
         "screenSettingsKeepTabletChargedBetween6090":
             MessageLookupByLibrary.simpleMessage("태블릿을 60-90% 사이로 충전 상태 유지"),
-        "screenSettingsKorean": MessageLookupByLibrary.simpleMessage("한국인"),
+        "screenSettingsKorean": MessageLookupByLibrary.simpleMessage("한국어"),
         "screenSettingsLanguage": MessageLookupByLibrary.simpleMessage("언어"),
         "screenSettingsLightTheme":
             MessageLookupByLibrary.simpleMessage("밝은 테마"),
@@ -286,7 +286,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsMessageQueueBroadcastMqttClient":
             MessageLookupByLibrary.simpleMessage("MQTT(메시지 큐 브로드캐스트) 클라이언트"),
         "screenSettingsMilkSteamingThermometerSupport":
-            MessageLookupByLibrary.simpleMessage("우유 김이 나는 온도계 지원"),
+            MessageLookupByLibrary.simpleMessage("우유 스티밍 온도계 지원"),
         "screenSettingsMiniWebsite":
             MessageLookupByLibrary.simpleMessage("미니 웹사이트"),
         "screenSettingsMqttPassword":
@@ -308,13 +308,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("밝기를 수준으로 낮추십시오."),
         "screenSettingsReduceScreenBrightnessAfter0offMin":
             MessageLookupByLibrary.simpleMessage("이후 화면 밝기 감소(0=꺼짐)[분]"),
-        "screenSettingsRestore": MessageLookupByLibrary.simpleMessage("복원하다"),
+        "screenSettingsRestore": MessageLookupByLibrary.simpleMessage("복원"),
         "screenSettingsRestoredBackup":
-            MessageLookupByLibrary.simpleMessage("복원된 백업"),
+            MessageLookupByLibrary.simpleMessage("백업 복원"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("저장된 백업"),
         "screenSettingsScaleSupport":
-            MessageLookupByLibrary.simpleMessage("확장 지원"),
+            MessageLookupByLibrary.simpleMessage("저울 지원"),
         "screenSettingsScreenAndBrightness":
             MessageLookupByLibrary.simpleMessage("화면 및 밝기"),
         "screenSettingsSecondFlushTimerS":
@@ -331,19 +331,19 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "앱이 충돌하거나 피드백 옵션을 사용하는 경우 sentry.io에 정보를 보냅니다. 자세한 개인 정보 보호 설명은 https://sentry.io/privacy/를 확인하세요."),
         "screenSettingsSendTabletBatteryLevelUpdates":
-            MessageLookupByLibrary.simpleMessage("태블릿 배터리 수준 업데이트 보내기"),
+            MessageLookupByLibrary.simpleMessage("태블릿 배터리 량 업데이트 보내기"),
         "screenSettingsSendingTheStatusOfTheDe1":
             MessageLookupByLibrary.simpleMessage("de1의 상태 보내기"),
         "screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart":
             MessageLookupByLibrary.simpleMessage(
                 "설정이 복원됩니다. 앱을 닫고 다시 시작해 주세요."),
         "screenSettingsShotSettings":
-            MessageLookupByLibrary.simpleMessage("촬영 설정"),
+            MessageLookupByLibrary.simpleMessage("샷 설정"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("플러시 표시"),
         "screenSettingsSmartCharging":
             MessageLookupByLibrary.simpleMessage("스마트 충전"),
-        "screenSettingsSpanish": MessageLookupByLibrary.simpleMessage("스페인의"),
+        "screenSettingsSpanish": MessageLookupByLibrary.simpleMessage("스페인어"),
         "screenSettingsSpecialBluetoothDevices":
             MessageLookupByLibrary.simpleMessage("특수 블루투스 장치"),
         "screenSettingsStopBeforeWeightWasReachedS":
@@ -386,29 +386,29 @@ class MessageLookup extends MessageLookupByLibrary {
                 "중요한 설정을 변경했습니다. 설정을 활성화하려면 앱을 다시 시작해야 합니다."),
         "screenShotEditBarrista": MessageLookupByLibrary.simpleMessage("바리스타"),
         "screenShotEditDescribeYourExperience":
-            MessageLookupByLibrary.simpleMessage("당신의 경험을 기술하십시오"),
+            MessageLookupByLibrary.simpleMessage("느낌을 설명하세요"),
         "screenShotEditDoseWeightG":
-            MessageLookupByLibrary.simpleMessage("복용량 무게 [g]"),
+            MessageLookupByLibrary.simpleMessage("도징량 [g]"),
         "screenShotEditDrinkWeightG":
             MessageLookupByLibrary.simpleMessage("음료 무게 [g]"),
-        "screenShotEditDrinker": MessageLookupByLibrary.simpleMessage("술꾼"),
+        "screenShotEditDrinker": MessageLookupByLibrary.simpleMessage("마시는 사람"),
         "screenShotEditEnjoyment": MessageLookupByLibrary.simpleMessage("향유"),
         "screenShotEditExtractionYield":
             MessageLookupByLibrary.simpleMessage("추출 수율"),
-        "screenShotEditGrinder": MessageLookupByLibrary.simpleMessage("분쇄기"),
+        "screenShotEditGrinder": MessageLookupByLibrary.simpleMessage("그라인더"),
         "screenShotEditGrinderSettings":
             MessageLookupByLibrary.simpleMessage("그라인더 설정"),
         "screenShotEditOpenInVisualizercoffee":
             MessageLookupByLibrary.simpleMessage("Visualizer.coffee에서 열기"),
         "screenShotEditPouringTimeS":
-            MessageLookupByLibrary.simpleMessage("붓는 시간 [s]"),
+            MessageLookupByLibrary.simpleMessage("푸어링 시간 [s]"),
         "screenShotEditPouringWeightG":
-            MessageLookupByLibrary.simpleMessage("쏟아지는 무게 [g]"),
+            MessageLookupByLibrary.simpleMessage("푸어링 무게 [g]"),
         "screenShotEditSuccessUploadingYourShot":
             MessageLookupByLibrary.simpleMessage("샷 업로드 성공"),
         "screenShotEditTitle": m3,
         "screenShotEditTotalDissolvedSolidssTds":
-            MessageLookupByLibrary.simpleMessage("총 용존 고형물(TDS)"),
+            MessageLookupByLibrary.simpleMessage("총 용존성 고형물질(TDS)"),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("주변"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":
@@ -419,7 +419,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSteamStopAtTemperatur": m5,
         "screenSteamTempTip": MessageLookupByLibrary.simpleMessage("온도 팁"),
         "screenSteamTemperaturs": m6,
-        "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("타임스"),
+        "screenSteamTimeS": MessageLookupByLibrary.simpleMessage("시간/s"),
         "screenSteamTimerS": m7,
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("Steam 투탭 모드:"),
@@ -428,13 +428,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "show": MessageLookupByLibrary.simpleMessage("보여주다"),
         "start": MessageLookupByLibrary.simpleMessage("시작"),
         "stateDisconnected": MessageLookupByLibrary.simpleMessage("연결이 끊긴"),
-        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("데우다"),
+        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("가열 하다"),
         "statePour": MessageLookupByLibrary.simpleMessage("붓다"),
         "state_Disconnected": MessageLookupByLibrary.simpleMessage("연결이 끊긴"),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("온도 [°C]"),
         "stop": MessageLookupByLibrary.simpleMessage("멈추다"),
         "subStateHeatWaterHeater": MessageLookupByLibrary.simpleMessage("난방수"),
-        "subStateHeatWaterTank": MessageLookupByLibrary.simpleMessage("난방 탱크"),
+        "subStateHeatWaterTank": MessageLookupByLibrary.simpleMessage("가열 탱크"),
         "switchOn": MessageLookupByLibrary.simpleMessage("켜다"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("에스프레소"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("플러시"),
