@@ -11,13 +11,15 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
+int instances = 0;
+
 ///
 ///Implementation for the Acaia scale models
 ///Lunar 2021,
 ///PYXIS
 ///PEARLS
 class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('AcaiaPyxisScale');
+  var log = l.Logger('AcaiaPyxisScale');
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = Platform.isAndroid
       ? Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455')
@@ -83,8 +85,11 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   StreamSubscription<List<int>>? _characteristicsSubscription;
 
   DateTime _lastResponse = DateTime.now();
-
+  int instance = 0;
   AcaiaPyxisScale(this.device) {
+    instances++;
+    instance = instances;
+    log = l.Logger('AcaiaPyxisScale $instance');
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
     scaleService.setScaleInstance(this);
@@ -104,6 +109,12 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     //   _onStateChange(connectionState);
     // });
     // device.connect();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _deviceListener.cancel();
+    log.info('Disposed AcaiaPyxisScale');
   }
 
   Uint8List encode(int msgType, List<int> payload) {
@@ -215,6 +226,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   }
 
   Future<void> _sendHeatbeat() async {
+    if (_heartBeatTimer == null) return;
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
 
@@ -227,7 +239,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
     var now = DateTime.now().difference(_lastResponse).inMilliseconds;
 
-    if (now > 200) {
+    if (now > 400) {
       log.info('Last Heartbeat $now');
       log.severe('Init disconnection');
       _onStateChange(DeviceConnectionState.disconnected);
@@ -273,6 +285,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   @override
   writeTare() async {
     // tare command
+
     var list = [
       0x00,
     ];
@@ -315,7 +328,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           const Duration(milliseconds: 1000),
           () async {
             try {
-              await _sendIdent();
+              if (_state == DeviceConnectionState.connected) await _sendIdent();
             } catch (e) {
               log.severe("Error in config scale $e");
             }
@@ -326,7 +339,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           const Duration(seconds: 1),
           () async {
             try {
-              await _sendConfig();
+              if (_state == DeviceConnectionState.connected) await _sendConfig();
             } catch (e) {
               log.severe("Error in config scale $e");
             }
@@ -335,7 +348,9 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
         await Future.delayed(
           const Duration(seconds: 10),
           () {
-            _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+            log.info("Heartbeat watchdog started");
+            if (_state == DeviceConnectionState.connected)
+              _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
             //
           },
         );
@@ -346,15 +361,23 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
         return;
       case DeviceConnectionState.disconnected:
         log.info('Acaia Scale disconnected. Destroying');
-        if (_heartBeatTimer != null) _heartBeatTimer!.cancel();
-        _heartBeatTimer = null;
-        scaleService.setState(ScaleState.disconnected);
-        scaleService.setBattery(0);
+        try {
+          if (_heartBeatTimer != null) {
+            _heartBeatTimer!.cancel();
+            log.info("Timer canceled");
+          }
+          _heartBeatTimer = null;
+          scaleService.setState(ScaleState.disconnected);
+          scaleService.setBattery(0);
 
-        _characteristicsSubscription?.cancel();
+          _characteristicsSubscription?.cancel();
 
-        _deviceListener.cancel();
-        notifyListeners();
+          _deviceListener.cancel();
+          Future.delayed(Duration(seconds: 2), () => notifyListeners());
+        } catch (e) {
+          log.severe("Error shutting down $e");
+        }
+
         return;
       default:
         return;
