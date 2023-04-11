@@ -51,7 +51,7 @@ Future<Directory?> getDirectory() async {
     } catch (e) {
       try {
         dir = await getExternalStorageDirectory();
-      } on UnsupportedError catch (ex) {
+      } catch (ex) {
         // ignore: avoid_print
         print("Not possible to store to external $ex");
         dir = await getApplicationDocumentsDirectory();
@@ -60,7 +60,7 @@ Future<Directory?> getDirectory() async {
   } else {
     try {
       dir = await getExternalStorageDirectory();
-    } on UnsupportedError catch (ex) {
+    } catch (ex) {
       // ignore: avoid_print
       print("Not possible to store to external $ex");
       dir = await getApplicationDocumentsDirectory();
