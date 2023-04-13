@@ -146,8 +146,8 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 children: [
                   const RecipeScreen(),
                   const EspressoScreen(),
-                  if (!_settings.steamHeaterOff) const SteamScreen(),
-                  const WaterScreen(),
+                  if (_settings.useSteam) const SteamScreen(),
+                  if (_settings.useWater) const WaterScreen(),
                   if (_settings.showFlushScreen) const FlushScreen(),
                 ],
               ),
@@ -337,15 +337,16 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             icon: const Icon(Icons.coffee),
             child: Text(S.of(context).tabHomeEspresso),
           ),
-          if (!_settings.steamHeaterOff)
+          if (_settings.useSteam)
             Tab(
               icon: const Icon(Icons.stream),
               child: Text(S.of(context).tabHomeSteam),
             ),
-          Tab(
-            icon: const Icon(Icons.water_drop),
-            child: Text(S.of(context).tabHomeWater),
-          ),
+          if (_settings.useWater)
+            Tab(
+              icon: const Icon(Icons.water_drop),
+              child: Text(S.of(context).tabHomeWater),
+            ),
           if (_settings.showFlushScreen)
             Tab(
               icon: const Icon(Icons.water),
@@ -374,11 +375,16 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   }
 
   void updatedSettings() {
-    var newTabCount = _settings.steamHeaterOff ? 3 : 4;
-    if (_settings.showFlushScreen) newTabCount++;
+    var count = 4;
+    if (!_settings.useSteam) count--;
+    if (!_settings.useWater) count--;
+    if (!_settings.showFlushScreen) count--;
+
+    var newTabCount = count;
+
     if (_tabController.length != newTabCount) {
       log.info("New tab size: $newTabCount");
-      _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 1);
+      _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 0);
       setState(() {});
     }
   }
@@ -414,25 +420,34 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     if (lastState != machineService.state.coffeeState) {
       log.info("Machine state: ${machineService.state.coffeeState}");
       lastState = machineService.state.coffeeState;
-      var offset = _settings.steamHeaterOff == true ? -1 : 0;
+      var offset = 1; // _settings.useSteam == true ? -1 : 0;
+
+      var steam = _settings.useSteam ? 1 : 0;
+      var water = _settings.useWater ? steam + 1 : 0;
+      var flush = _settings.showFlushScreen ? water + 1 : 0;
+
       setState(() {
         switch (lastState) {
           case EspressoMachineState.espresso:
             currentPageIndex = 1;
             break;
           case EspressoMachineState.steam:
-            if (!_settings.steamHeaterOff) currentPageIndex = 2;
-            break;
-          case EspressoMachineState.flush:
-            if (_settings.showFlushScreen) currentPageIndex = 4 + offset;
+            currentPageIndex = steam + offset;
             break;
           case EspressoMachineState.water:
-            currentPageIndex = 3 + offset;
+            currentPageIndex = water + offset;
+            break;
+          case EspressoMachineState.flush:
+            currentPageIndex = flush + offset;
             break;
           case EspressoMachineState.idle:
             break;
           case EspressoMachineState.sleep:
             currentPageIndex = 0;
+            if (_settings.screensaverOnIfIdle) {
+              var screensaver = getIt<ScreensaverService>();
+              screensaver.activateScreenSaver();
+            }
             break;
           case EspressoMachineState.disconnected:
             break;
