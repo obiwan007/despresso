@@ -129,6 +129,9 @@ class ScaleService extends ChangeNotifier {
 
   void setState(ScaleState state) {
     _state = state;
+    if (state == ScaleState.disconnected) {
+      scale = null;
+    }
     log.info('Scale State: $_state');
     _controller.add(WeightMeassurement(_weight, _flow, _state));
   }

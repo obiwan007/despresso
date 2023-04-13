@@ -65,6 +65,8 @@ enum SettingKeys {
   screensaverOnIfIdle,
   locale,
   profileFilter,
+  useSteam,
+  useWater,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -229,6 +231,12 @@ class SettingsService extends ChangeNotifier {
 
   List<String> get profileFilterList => profileFilter.split(',');
   set profileFilterList(List<String> value) => profileFilter = value.join(',');
+
+  bool get useSteam => Settings.getValue<bool>(SettingKeys.useSteam.name) ?? true;
+  set useSteam(bool value) => Settings.setValue<bool>(SettingKeys.useSteam.name, value);
+
+  bool get useWater => Settings.getValue<bool>(SettingKeys.useWater.name) ?? true;
+  set useWater(bool value) => Settings.setValue<bool>(SettingKeys.useWater.name, value);
 
   void notifyDelayed() {
     Future.delayed(
