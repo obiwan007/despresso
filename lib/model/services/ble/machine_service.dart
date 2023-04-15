@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:despresso/devices/abstract_decent_de1.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
@@ -64,7 +65,7 @@ class EspressoMachineService extends ChangeNotifier {
   final MachineState _state = MachineState(null, EspressoMachineState.disconnected);
   final log = Logger('EspressoMachineService');
 
-  DE1? de1;
+  IDe1? de1;
 
   late SharedPreferences prefs;
 
@@ -207,6 +208,7 @@ class EspressoMachineService extends ChangeNotifier {
       }
 
       if (state.coffeeState == EspressoMachineState.idle) {
+        isPouring = false;
         try {
           log.fine("Machine is still idle $idleTime < ${settingsService.sleepTimer * 60}");
           idleTime += 10;
@@ -347,7 +349,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   MachineState get state => _state;
 
-  void setDecentInstance(DE1 de1) {
+  void setDecentInstance(IDe1 de1) {
     this.de1 = de1;
   }
 
@@ -779,7 +781,7 @@ class EspressoMachineService extends ChangeNotifier {
     ).toList();
     if (weightData.isNotEmpty) {
       var regressionData = Line.limit(linearRegression(weightData));
-      log.info("Regression: ${regressionData.m} ${regressionData.b}");      
+      log.info("Regression: ${regressionData.m} ${regressionData.b}");
       currentShot.estimatedWeightReachedTime = (currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
       currentShot.estimatedWeight_m = regressionData.m;
       currentShot.estimatedWeight_b = regressionData.b;

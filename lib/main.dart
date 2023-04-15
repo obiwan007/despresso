@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:despresso/devices/decent_de1_simulated.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:sentry_logging/sentry_logging.dart';
@@ -46,6 +48,13 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
 
   initSettings().then((_) async {
+    if (Platform.isWindows) {
+      Timer(
+        const Duration(seconds: 1),
+        () => DE1Simulated(),
+      );
+    }
+
     String dsn = Settings.getValue<bool>(SettingKeys.useSentry.name, defaultValue: true)! ? '<SENTRY_KEY>' : '';
 
     bool noSentry = dsn.isEmpty || dsn.length == 12;
