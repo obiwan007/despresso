@@ -18,6 +18,7 @@ class ThemeColors {
 
   static const Color pressureColor = Color.fromARGB(255, 166, 250, 29); //Color(0xFFFFFFFF);
   static const Color tempColor = Color.fromARGB(255, 250, 45, 45);
+  static const Color tempColor2 = Color.fromARGB(255, 255, 153, 0);
   static const Color flowColor = Color.fromARGB(255, 58, 157, 244);
   static const Color weightColor = Color.fromARGB(255, 131, 109, 105);
 

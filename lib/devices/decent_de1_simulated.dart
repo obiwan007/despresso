@@ -177,8 +177,8 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
 
     service.scaleService.setState(ScaleState.connected);
     service.scaleService.setWeight(0.1);
-
-    Timer.periodic(Duration(milliseconds: 200), (Timer t) => _stateTick());
+    var hz = 4.0;
+    Timer.periodic(Duration(milliseconds: (1.0 / hz * 1000).toInt()), (Timer t) => _stateTick());
     Timer(
       Duration(seconds: 1),
       () {
