@@ -299,7 +299,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     bool hasFlow = settingsService.showFlowGraph;
     bool hasPressure = settingsService.showPressureGraph;
     const double sep = 5;
-    double minX = 0; // max(0, (data["pressureSet"]!.last.x) - 5); //data["pressure"]!.first.x;
+    double minX = data["pressure"]!.first.x; // max(0, (data["pressureSet"]!.last.x) - 5); //data["pressure"]!.first.x;
     // maxTime = (data["pressureSet"]!.last.x) + 1;
 
     double maxY1 =
