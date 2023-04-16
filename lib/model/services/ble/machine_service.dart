@@ -119,6 +119,8 @@ class EspressoMachineService extends ChangeNotifier {
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
 
+  double _sampleTime = 0;
+
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -636,7 +638,71 @@ class EspressoMachineService extends ChangeNotifier {
       if (inShot == true) {
         shot.isPouring = isPouring;
         if (isPouring) {
+          var t = 50;
+          // var index = shotList.entries.length - 5;
+          // if (index > 0) {
+          //   shotList.entries.removeAt(index);
+          //   shotList.entries.removeAt(index);
+          //   shotList.entries.removeAt(index);
+          //   shotList.entries.removeAt(index);
+          // }
+          var l = shotList.entries.length;
+          shot.isInterpolated = false;
+
+          // shotList.entries.removeWhere(
+          //     (element) => (element.isInterpolated == true && (_sampleTime - element.sampleTimeCorrected) > 1.3));
+          shotList.entries.removeWhere((element) => (element.isInterpolated == true));
+          // var oldShot = shotList.entries.indexWhere((element) => (element.isInterpolated == true));
+          var c = 5;
+          var hz = 4;
+          var f = 1 / hz * 1000;
+          int ms = (f / (c)).toInt();
+          var newShot = ShotState.fromJson(shot.toJson());
+          newShot.isInterpolated = true;
+          // if (oldShot == -1) {
           shotList.add(shot);
+          // } else {
+          //   shotList.entries[oldShot] = shot;
+          // }
+          shotList.add(newShot);
+
+          for (var t = 1; t <= c; t += 1) {
+            log.info("Shot: $t");
+
+            Timer(Duration(milliseconds: t * ms), () {
+              // if (t == 1) shotList.entries.removeWhere((element) => (element.isInterpolated == true));
+              // var newShot = ShotState.fromJson(shot.toJson());
+              // newShot.groupPressure = 1;
+              newShot.sampleTimeCorrected += ms / 1000;
+              shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
+
+              // shotList.add(newShot);
+              notifyListeners();
+              _sampleTime = newShot.sampleTimeCorrected;
+            });
+          }
+
+          // Timer(Duration(milliseconds: 125), () {
+          //   var newShot = ShotState.fromJson(shot.toJson());
+
+          //   newShot.sampleTimeCorrected += 0.125;
+          //   var index = shotList.entries.length - 2;
+          //   if (index > 0) shotList.entries.removeAt(index);
+          //   shotList.add(newShot);
+
+          //   notifyListeners();
+          // });
+          // Timer(Duration(milliseconds: 125), () {
+          //   var newShot = ShotState.fromJson(shot.toJson());
+
+          //   newShot.sampleTimeCorrected += 0.125;
+          //   var index = shotList.entries.length - 2;
+          //   if (index > 0) shotList.entries.removeAt(index);
+          //   shotList.add(newShot);
+
+          //   notifyListeners();
+          // });
+          shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
         } else {
           // make a single value for the first few seconds to show some action ongoing
           if (shotList.entries.isEmpty) {

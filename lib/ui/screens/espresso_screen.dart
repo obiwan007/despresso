@@ -146,7 +146,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   _buildGraphs() {
-    if (machineService.inShot || ranges.isEmpty || machineService.shotList.entries.length != _lastLength) {
+    if (machineService.inShot || ranges.isEmpty || machineService.shotList.lastTouched != _lastLength) {
       ranges = _createPhasesFl();
       data = _createDataFlCharts();
 
@@ -165,7 +165,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       }
 
       List<ShotState> raw = machineService.shotList.entries;
-      _lastLength = raw.length;
+      _lastLength = machineService.shotList.lastTouched; // raw.length;
       var tEnd = machineService.currentShot.estimatedWeight_tEnd;
       var tStart = machineService.currentShot.estimatedWeight_tStart;
       tStart = tEnd - 3;
@@ -252,15 +252,22 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col, List<int>? dash) {
+    var data = machineService.shotList.entries;
+    var last = data.lastIndexWhere((element) => !element.isInterpolated);
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
         show: false,
         getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
           radius: 1,
-          color: col,
+          // color: (index < points.length - 1) ? col : Colors.orange,
           // strokeWidth: 2,
-          strokeColor: col,
+          color: col, //(data[index].isInterpolated) ? Colors.white : col,
+          strokeColor: col, //(data[index].isInterpolated)
+          // ? Colors.white
+          // : (index == last)
+          //     ? Colors.red
+          //     : col,
         ),
       ),
       barWidth: barWidth,
@@ -292,6 +299,8 @@ class EspressoScreenState extends State<EspressoScreen> {
     bool hasFlow = settingsService.showFlowGraph;
     bool hasPressure = settingsService.showPressureGraph;
     const double sep = 5;
+    double minX = 0; // max(0, (data["pressureSet"]!.last.x) - 5); //data["pressure"]!.first.x;
+    // maxTime = (data["pressureSet"]!.last.x) + 1;
 
     double maxY1 =
         (!hasPressure) ? 0 : data["pressureSet"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
@@ -301,7 +310,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       LineChartData(
         minY: 0,
         maxY: max(maxY1, maxY2),
-        minX: data["pressure"]!.first.x,
+        minX: minX,
         maxX: maxTime,
         borderData: borderData,
         lineTouchData: LineTouchData(enabled: false),
@@ -396,7 +405,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       LineChartData(
         minY: 0,
         maxY: machineService.currentShot.targetEspressoWeight * 1.15,
-        minX: data["pressure"]!.first.x,
+        minX: minX,
         maxX: maxTime,
         borderData: borderData,
         lineTouchData: LineTouchData(enabled: false),
@@ -462,7 +471,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       LineChartData(
         minY: 80,
         maxY: 100,
-        minX: data["temp"]!.first.x,
+        minX: minX,
         maxX: maxTime,
         borderData: borderData,
         lineTouchData: LineTouchData(enabled: false),

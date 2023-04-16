@@ -12,6 +12,7 @@ class ShotList {
   final log = Logger('ShotList');
 
   bool saving = false;
+  int lastTouched = 0;
 
   bool saved = true;
 
@@ -125,6 +126,9 @@ class ShotState {
 
   @Transient()
   bool isPouring = false;
+
+  @Transient()
+  bool isInterpolated = false;
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
