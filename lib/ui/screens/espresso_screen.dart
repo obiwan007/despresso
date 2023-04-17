@@ -458,10 +458,18 @@ class EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
     );
+
+    maxY1 = 0;
+    double minY1 = 100;
+    ["mixTempSet", "mixTemp", "temp", "tempSet"].forEach((s) {
+      maxY1 = max(maxY1, data[s]!.map((e) => e.y).reduce((value, element) => max(value, element))) + 0.5;
+      minY1 = min(minY1, data[s]!.map((e) => e.y).reduce((value, element) => min(value, element))) - 1;
+    });
+
     var flowChart3 = LineChart(
       LineChartData(
-        minY: 80,
-        maxY: 100,
+        minY: minY1,
+        maxY: maxY1,
         minX: data["temp"]!.first.x,
         maxX: maxTime,
         borderData: borderData,
