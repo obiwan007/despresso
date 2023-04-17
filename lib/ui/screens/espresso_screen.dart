@@ -258,17 +258,16 @@ class EspressoScreenState extends State<EspressoScreen> {
       spots: points,
       dotData: FlDotData(
         show: false,
-        getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-          radius: 1,
-          // color: (index < points.length - 1) ? col : Colors.orange,
-          // strokeWidth: 2,
-          // color: (data[index].isInterpolated) ? Colors.orange : col,
-          // strokeColor: (data[index].isInterpolated)
-          //     ? Colors.orange
-          //     : (index == last)
-          //         ? Colors.red
-          //         : col,
-        ),
+        // getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+        //   radius: 1,
+        //   strokeWidth: 2,
+        //   color: (data[index].isInterpolated) ? Colors.orange : col,
+        //   strokeColor: (data[index].isInterpolated)
+        //       ? Colors.orange
+        //       : (index == last)
+        //           ? Colors.red
+        //           : col,
+        // ),
       ),
       barWidth: barWidth,
       isCurved: false,

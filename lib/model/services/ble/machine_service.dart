@@ -124,6 +124,8 @@ class EspressoMachineService extends ChangeNotifier {
   ShotState? _previousShot;
   ShotState? _newestShot;
 
+  ShotState? _floatingShot;
+
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -675,6 +677,11 @@ class EspressoMachineService extends ChangeNotifier {
           ;
 
           if (_previousShot != null) {
+            if (_floatingShot == null) {
+              // _floatingShot = ShotState.fromJson(shot!.toJson());
+              // shotList.add(_floatingShot!);
+            }
+
             var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupPressure, _previousShot!.groupPressure);
 
@@ -692,31 +699,42 @@ class EspressoMachineService extends ChangeNotifier {
 
             // var newShot = ShotState.fromJson(_previousShot!.toJson());
             // shotList.add(newShot);
+            // _floatingShot = ShotState.fromJson(_previousShot!.toJson());
+            _floatingShot = ShotState.fromJson(_previousShot!.toJson());
+            shotList.add(_floatingShot!);
+            var base = ShotState.fromJson(_previousShot!.toJson());
+            var fs = _floatingShot!;
+            // fs.sampleTimeCorrected = base.sampleTimeCorrected;
+
             for (var t = 0; t < c; t += 1) {
               await Future.delayed(Duration(milliseconds: ms), () {
-                var newShot = ShotState.fromJson(_previousShot!.toJson());
-                newShot.isInterpolated = t == 0 ? false : true;
+                fs.isInterpolated = t == c - 1 ? false : true;
 
                 // if (t == 1) shotList.entries.removeWhere((element) => (element.isInterpolated == true));
                 // var newShot = ShotState.fromJson(shot.toJson());
                 // newShot.groupPressure = 1;
-                newShot.sampleTimeCorrected = newShot.sampleTimeCorrected + (t) * ms / 1000;
-                newShot.groupPressure = linGP.getY(newShot.sampleTimeCorrected);
-                newShot.setGroupPressure = linGP_S.getY(newShot.sampleTimeCorrected);
-                newShot.groupFlow = linGF.getY(newShot.sampleTimeCorrected);
-                newShot.setGroupFlow = linGF_S.getY(newShot.sampleTimeCorrected);
-                newShot.flowWeight = linWF.getY(newShot.sampleTimeCorrected);
+                fs.sampleTimeCorrected += (t) * ms / 1000;
+                fs.groupPressure = linGP.getY(fs.sampleTimeCorrected);
+                fs.setGroupPressure = linGP_S.getY(fs.sampleTimeCorrected);
+                fs.groupFlow = linGF.getY(fs.sampleTimeCorrected);
+                fs.setGroupFlow = linGF_S.getY(fs.sampleTimeCorrected);
+                fs.flowWeight = linWF.getY(fs.sampleTimeCorrected);
                 // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");
                 // shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
-                shotList.add(newShot);
+
                 shotList.lastTouched++;
                 notifyListeners();
               });
             }
+            // shotList.lastTouched++;
+            // shotList.entries.insert(shotList.entries.length - 3, shot);
+            // // shotList.add(shot);
+            // notifyListeners();
             // notifyListeners();
           } else {
             shotList.lastTouched++;
             shotList.add(shot);
+
             notifyListeners();
           }
         } else {
