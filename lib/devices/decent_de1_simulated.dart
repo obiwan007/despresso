@@ -178,7 +178,11 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     service.scaleService.setState(ScaleState.connected);
     service.scaleService.setWeight(0.1);
     var hz = 4;
-    Timer.periodic(Duration(milliseconds: (1.0 / hz * 1000).toInt()), (Timer t) => _stateTick());
+    Timer.periodic(Duration(milliseconds: (1.0 / hz * 1000).toInt()), (Timer t) {
+      try {
+        _stateTick();
+      } catch (e) {}
+    });
     Timer(
       Duration(seconds: 1),
       () {
@@ -215,24 +219,26 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
 
     if (_state == De1StateEnum.espresso && _shot != null) {
       if (shotPointer < (_shot?.shotstates.length ?? 0)) {
-        ShotState s = (_shot?.shotstates[shotPointer])!;
-        _groupPressure = s.groupPressure;
-        _groupFlow = s.groupFlow;
-        _mixTemp = s.mixTemp;
-        _headTemp = s.headTemp;
-        _setMixTemp = s.setMixTemp;
-        _setHeadTemp = s.setHeadTemp;
-        _setGroupPressure = s.setGroupPressure;
-        _setGroupFlow = s.setGroupFlow;
-        _frameNumber = s.frameNumber;
-        _steamTemp = s.steamTemp;
-        service.scaleService.setWeight(s.weight);
-        log.info("$_groupPressure ${s.subState} $shotPointer");
-        shotPointer++;
-        if (s.subState != _lastSubState && s.subState != "") {
-          log.info("Substate ${s.subState}");
-          service.setSubState(s.subState);
-          _lastSubState = s.subState;
+        if (_shot?.shotstates[shotPointer] != null) {
+          ShotState s = (_shot?.shotstates[shotPointer])!;
+          _groupPressure = s.groupPressure;
+          _groupFlow = s.groupFlow;
+          _mixTemp = s.mixTemp;
+          _headTemp = s.headTemp;
+          _setMixTemp = s.setMixTemp;
+          _setHeadTemp = s.setHeadTemp;
+          _setGroupPressure = s.setGroupPressure;
+          _setGroupFlow = s.setGroupFlow;
+          _frameNumber = s.frameNumber;
+          _steamTemp = s.steamTemp;
+          service.scaleService.setWeight(s.weight);
+          log.info("$_groupPressure ${s.subState} $shotPointer");
+          shotPointer++;
+          if (s.subState != _lastSubState && s.subState != "") {
+            log.info("Substate ${s.subState}");
+            service.setSubState(s.subState);
+            _lastSubState = s.subState;
+          }
         }
         // service.setShot(s);
       } else {

@@ -121,6 +121,9 @@ class EspressoMachineService extends ChangeNotifier {
 
   double _sampleTime = 0;
 
+  ShotState? _previousShot;
+  ShotState? _newestShot;
+
   Stream<ShotState> get streamShotState => _streamShotState;
 
   late StreamController<WaterLevel> _controllerWaterLevel;
@@ -290,6 +293,7 @@ class EspressoMachineService extends ChangeNotifier {
   updateProfile() {}
 
   void setShot(ShotState shot) {
+    if (shot == null) return;
     _state.shot = shot;
     _count++;
     if (_count % 10 == 0) {
@@ -300,7 +304,7 @@ class EspressoMachineService extends ChangeNotifier {
       t1 = t;
     }
     handleShotData();
-    notifyListeners();
+    // notifyListeners();
     _controllerShotState.add(shot);
   }
 
@@ -433,7 +437,7 @@ class EspressoMachineService extends ChangeNotifier {
     return Future.value("");
   }
 
-  void handleShotData() {
+  Future<void> handleShotData() async {
     // checkForRefill();
 
     if (state.coffeeState == EspressoMachineState.sleep ||
@@ -490,6 +494,8 @@ class EspressoMachineService extends ChangeNotifier {
         state.subState == "pour") {
       pourTimeStart = DateTime.now().millisecondsSinceEpoch / 1000.0;
       isPouring = true;
+      _previousShot = null;
+      _newestShot = null;
     } else if (state.coffeeState == EspressoMachineState.espresso &&
         lastSubstate != state.subState &&
         state.subState != "pour") {
@@ -651,65 +657,77 @@ class EspressoMachineService extends ChangeNotifier {
 
           // shotList.entries.removeWhere(
           //     (element) => (element.isInterpolated == true && (_sampleTime - element.sampleTimeCorrected) > 1.3));
-          shotList.entries.removeWhere((element) => (element.isInterpolated == true));
+          // shotList.entries.removeWhere((element) => (element.isInterpolated == true));
           // var oldShot = shotList.entries.indexWhere((element) => (element.isInterpolated == true));
           var c = 5;
           var hz = 4;
           var f = 1 / hz * 1000;
-          int ms = (f / (c)).toInt();
-          var newShot = ShotState.fromJson(shot.toJson());
-          newShot.isInterpolated = true;
+          int ms = (f / (c + 1)).toInt();
+
           // if (oldShot == -1) {
-          shotList.add(shot);
-          // } else {
-          //   shotList.entries[oldShot] = shot;
-          // }
-          shotList.add(newShot);
-
-          for (var t = 1; t <= c; t += 1) {
-            log.info("Shot: $t");
-
-            Timer(Duration(milliseconds: t * ms), () {
-              // if (t == 1) shotList.entries.removeWhere((element) => (element.isInterpolated == true));
-              // var newShot = ShotState.fromJson(shot.toJson());
-              // newShot.groupPressure = 1;
-              newShot.sampleTimeCorrected += ms / 1000;
-              shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
-
-              // shotList.add(newShot);
-              notifyListeners();
-              _sampleTime = newShot.sampleTimeCorrected;
-            });
+          if (_newestShot != null) {
+            // shotList.add(_newestShot!);
+            // shotList.add(ShotState.fromJson(shot.toJson()));
+            _previousShot = ShotState.fromJson(_newestShot!.toJson());
           }
 
-          // Timer(Duration(milliseconds: 125), () {
-          //   var newShot = ShotState.fromJson(shot.toJson());
+          _newestShot = ShotState.fromJson(shot.toJson());
+          ;
 
-          //   newShot.sampleTimeCorrected += 0.125;
-          //   var index = shotList.entries.length - 2;
-          //   if (index > 0) shotList.entries.removeAt(index);
-          //   shotList.add(newShot);
+          if (_previousShot != null) {
+            var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.groupPressure, _previousShot!.groupPressure);
 
-          //   notifyListeners();
-          // });
-          // Timer(Duration(milliseconds: 125), () {
-          //   var newShot = ShotState.fromJson(shot.toJson());
+            var linGP_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
+                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
 
-          //   newShot.sampleTimeCorrected += 0.125;
-          //   var index = shotList.entries.length - 2;
-          //   if (index > 0) shotList.entries.removeAt(index);
-          //   shotList.add(newShot);
+            var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.groupFlow, _previousShot!.groupFlow);
 
-          //   notifyListeners();
-          // });
-          shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
+            var linGF_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
+                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
+
+            var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.flowWeight, _previousShot!.flowWeight);
+
+            // var newShot = ShotState.fromJson(_previousShot!.toJson());
+            // shotList.add(newShot);
+            for (var t = 0; t < c; t += 1) {
+              await Future.delayed(Duration(milliseconds: ms), () {
+                var newShot = ShotState.fromJson(_previousShot!.toJson());
+                newShot.isInterpolated = t == 0 ? false : true;
+
+                // if (t == 1) shotList.entries.removeWhere((element) => (element.isInterpolated == true));
+                // var newShot = ShotState.fromJson(shot.toJson());
+                // newShot.groupPressure = 1;
+                newShot.sampleTimeCorrected = newShot.sampleTimeCorrected + (t) * ms / 1000;
+                newShot.groupPressure = linGP.getY(newShot.sampleTimeCorrected);
+                newShot.setGroupPressure = linGP_S.getY(newShot.sampleTimeCorrected);
+                newShot.groupFlow = linGF.getY(newShot.sampleTimeCorrected);
+                newShot.setGroupFlow = linGF_S.getY(newShot.sampleTimeCorrected);
+                newShot.flowWeight = linWF.getY(newShot.sampleTimeCorrected);
+                // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");
+                // shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
+                shotList.add(newShot);
+                shotList.lastTouched++;
+                notifyListeners();
+              });
+            }
+            // notifyListeners();
+          } else {
+            shotList.lastTouched++;
+            shotList.add(shot);
+            notifyListeners();
+          }
         } else {
           // make a single value for the first few seconds to show some action ongoing
+          shotList.lastTouched++;
           if (shotList.entries.isEmpty) {
             shotList.entries.add(shot);
           } else if (shotList.entries.length == 1) {
             shotList.entries[0] = shot;
           }
+          notifyListeners();
         }
       }
     }
@@ -732,7 +750,8 @@ class EspressoMachineService extends ChangeNotifier {
       cs.coffee.targetId = coffeeService.selectedCoffeeId;
       cs.recipe.targetId = coffeeService.selectedRecipeId;
 
-      cs.shotstates.addAll(shotList.entries.where((element) => element.isPouring == true));
+      cs.shotstates
+          .addAll(shotList.entries.where((element) => element.isPouring == true && element.isInterpolated == false));
 
       cs.pourTime = lastPourTime;
       cs.profileId = profileService.currentProfile?.id ?? "";
@@ -855,5 +874,27 @@ class EspressoMachineService extends ChangeNotifier {
     } else {
       return 0;
     }
+  }
+}
+
+class LineEq {
+  var log = Logger("lin");
+  double m;
+  double b;
+  double x1;
+  LineEq(this.m, this.b, this.x1);
+
+  static LineEq calcLinearEquation(double x2, double x1, double y2, double y1) {
+    double dx = (x2 - x1);
+    double dy = (y2 - y1);
+    double m = dy / dx;
+    double b = y1;
+    return LineEq(m, b, x1);
+  }
+
+  getY(double x) {
+    double y = (m) * (x - x1) + b;
+    log.info("lin: $y = ($m * $x + $b");
+    return y;
   }
 }

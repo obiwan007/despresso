@@ -262,12 +262,12 @@ class EspressoScreenState extends State<EspressoScreen> {
           radius: 1,
           // color: (index < points.length - 1) ? col : Colors.orange,
           // strokeWidth: 2,
-          color: col, //(data[index].isInterpolated) ? Colors.white : col,
-          strokeColor: col, //(data[index].isInterpolated)
-          // ? Colors.white
-          // : (index == last)
-          //     ? Colors.red
-          //     : col,
+          // color: (data[index].isInterpolated) ? Colors.orange : col,
+          // strokeColor: (data[index].isInterpolated)
+          //     ? Colors.orange
+          //     : (index == last)
+          //         ? Colors.red
+          //         : col,
         ),
       ),
       barWidth: barWidth,
@@ -467,10 +467,18 @@ class EspressoScreenState extends State<EspressoScreen> {
         ),
       ),
     );
+    maxY1 = 0;
+    double minY1 = 100;
+    ["mixTempSet", "mixTemp", "temp", "tempSet"].forEach((s) {
+      maxY1 = max(maxY1, data[s]!.map((e) => e.y).reduce((value, element) => max(value, element))) + 0.5;
+      minY1 = min(minY1, data[s]!.map((e) => e.y).reduce((value, element) => min(value, element))) - 1;
+    });
+
     var flowChart3 = LineChart(
       LineChartData(
-        minY: 80,
-        maxY: 100,
+        // minY: 80,
+        maxY: maxY1,
+        minY: minY1,
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
