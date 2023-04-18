@@ -67,6 +67,10 @@ enum SettingKeys {
   profileFilter,
   useSteam,
   useWater,
+  showPressureGraph,
+  showWeightGraph,
+  showTempGraph,
+  showFlowGraph,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -237,6 +241,18 @@ class SettingsService extends ChangeNotifier {
 
   bool get useWater => Settings.getValue<bool>(SettingKeys.useWater.name) ?? true;
   set useWater(bool value) => Settings.setValue<bool>(SettingKeys.useWater.name, value);
+
+  bool get showPressureGraph => Settings.getValue<bool>(SettingKeys.showPressureGraph.name) ?? true;
+  set showPressureGraph(bool value) => Settings.setValue<bool>(SettingKeys.showPressureGraph.name, value);
+
+  bool get showFlowGraph => Settings.getValue<bool>(SettingKeys.showFlowGraph.name) ?? true;
+  set showFlowGraph(bool value) => Settings.setValue<bool>(SettingKeys.showFlowGraph.name, value);
+
+  bool get showWeightGraph => Settings.getValue<bool>(SettingKeys.showWeightGraph.name) ?? true;
+  set showWeightGraph(bool value) => Settings.setValue<bool>(SettingKeys.showWeightGraph.name, value);
+
+  bool get showTempGraph => Settings.getValue<bool>(SettingKeys.showTempGraph.name) ?? true;
+  set showTempGraph(bool value) => Settings.setValue<bool>(SettingKeys.showTempGraph.name, value);
 
   void notifyDelayed() {
     Future.delayed(

@@ -61,9 +61,9 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   void initState() {
     super.initState();
     _settings = getIt<SettingsService>();
-    var l = _settings.steamHeaterOff ? 3 : 4;
-    if (_settings.showFlushScreen) l++;
-    _tabController = TabController(length: l, vsync: this, initialIndex: 1);
+    // var l = _settings.steamHeaterOff ? 3 : 4;
+    // if (_settings.showFlushScreen) l++;
+    _tabController = TabController(length: calcTabs(), vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -374,13 +374,26 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     setState(() {});
   }
 
-  void updatedSettings() {
-    var count = 4;
-    if (!_settings.useSteam) count--;
-    if (!_settings.useWater) count--;
-    if (!_settings.showFlushScreen) count--;
+  int calcTabs() {
+    var count = 5;
+    if (!_settings.useSteam) {
+      count--;
+      log.info("No Steam");
+    }
+    if (!_settings.useWater) {
+      count--;
+      log.info("No Water");
+    }
+    if (!_settings.showFlushScreen) {
+      count--;
+      log.info("No Flush");
+    }
+    log.info("Number of Tabs $count ${_settings.useSteam} ${_settings.useWater} ${_settings.showFlushScreen}");
+    return count;
+  }
 
-    var newTabCount = count;
+  void updatedSettings() {
+    var newTabCount = calcTabs();
 
     if (_tabController.length != newTabCount) {
       log.info("New tab size: $newTabCount");

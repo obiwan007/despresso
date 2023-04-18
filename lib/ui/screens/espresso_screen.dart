@@ -19,6 +19,7 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
+
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:url_launcher/url_launcher.dart';
@@ -67,6 +68,9 @@ class EspressoScreenState extends State<EspressoScreen> {
   int _lastLength = 0;
 
   String bleError = "";
+
+  int _count = 0;
+  DateTime _lastCount = DateTime.now();
 
   EspressoScreenState();
 
@@ -142,7 +146,7 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   _buildGraphs() {
-    if (machineService.inShot || ranges.isEmpty || machineService.shotList.entries.length != _lastLength) {
+    if (machineService.inShot || ranges.isEmpty || machineService.shotList.lastTouched != _lastLength) {
       ranges = _createPhasesFl();
       data = _createDataFlCharts();
 
@@ -161,7 +165,7 @@ class EspressoScreenState extends State<EspressoScreen> {
       }
 
       List<ShotState> raw = machineService.shotList.entries;
-      _lastLength = raw.length;
+      _lastLength = machineService.shotList.lastTouched; // raw.length;
       var tEnd = machineService.currentShot.estimatedWeight_tEnd;
       var tStart = machineService.currentShot.estimatedWeight_tStart;
       tStart = tEnd - 3;
@@ -239,6 +243,8 @@ class EspressoScreenState extends State<EspressoScreen> {
       "flow": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.groupFlow)).toList(),
       "flowSet": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.setGroupFlow)).toList(),
       "temp": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.headTemp)).toList(),
+      "mixTemp": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.mixTemp)).toList(),
+      "mixTempSet": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.setMixTemp)).toList(),
       "tempSet": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.setHeadTemp)).toList(),
       "weight": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.weight)).toList(),
       "flowG": machineService.shotList.entries.map((e) => FlSpot(e.sampleTimeCorrected, e.flowWeight)).toList(),
@@ -246,10 +252,22 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col, List<int>? dash) {
+    var data = machineService.shotList.entries;
+    var last = data.lastIndexWhere((element) => !element.isInterpolated);
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
         show: false,
+        // getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+        //   radius: 1,
+        //   strokeWidth: 2,
+        //   color: (data[index].isInterpolated) ? Colors.orange : col,
+        //   strokeColor: (data[index].isInterpolated)
+        //       ? Colors.orange
+        //       : (index == last)
+        //           ? Colors.red
+        //           : col,
+        // ),
       ),
       barWidth: barWidth,
       isCurved: false,
@@ -260,13 +278,40 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   Widget _buildGraphSingleFlCharts(
       Map<String, List<FlSpot>> data, double maxTime, Iterable<VerticalRangeAnnotation> ranges) {
+    var borderData = FlBorderData(
+      show: true,
+      border: Border.all(
+        width: 2,
+        color: Theme.of(context).secondaryHeaderColor,
+      ),
+    );
+
+    _count++;
+    final nr = 10;
+    if (_count % nr == 0) {
+      var t = DateTime.now();
+      var ms = t.difference(_lastCount).inMilliseconds;
+      var hz = nr / ms * 1000.0;
+      if (_count & 10 == 0) log.info("Graph Hz: $ms $hz");
+      _lastCount = t;
+    }
+    bool hasFlow = settingsService.showFlowGraph;
+    bool hasPressure = settingsService.showPressureGraph;
+    const double sep = 5;
+    double minX = data["pressure"]!.first.x; // max(0, (data["pressureSet"]!.last.x) - 5); //data["pressure"]!.first.x;
+    // maxTime = (data["pressureSet"]!.last.x) + 1;
+
+    double maxY1 =
+        (!hasPressure) ? 0 : data["pressureSet"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
+    double maxY2 =
+        (!hasFlow) ? 0 : data["flowSet"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
     var flowChart1 = LineChart(
       LineChartData(
         minY: 0,
-        // maxY: 15,
-
-        minX: data["pressure"]!.first.x,
+        maxY: max(maxY1, maxY2),
+        minX: minX,
         maxX: maxTime,
+        borderData: borderData,
         lineTouchData: LineTouchData(enabled: false),
         clipData: FlClipData.all(),
         gridData: FlGridData(
@@ -274,15 +319,15 @@ class EspressoScreenState extends State<EspressoScreen> {
           drawVerticalLine: true,
         ),
         lineBarsData: [
-          createChartLineDatapoints(data["pressure"]!, 4, theme.ThemeColors.pressureColor, null),
-          createChartLineDatapoints(data["pressureSet"]!, 2, theme.ThemeColors.pressureColor, null),
-          createChartLineDatapoints(data["flow"]!, 4, theme.ThemeColors.flowColor, null),
-          createChartLineDatapoints(data["flowSet"]!, 2, theme.ThemeColors.flowColor, null),
-          createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor, null),
+          if (hasPressure) createChartLineDatapoints(data["pressure"]!, 4, theme.ThemeColors.pressureColor, null),
+          if (hasPressure) createChartLineDatapoints(data["pressureSet"]!, 1, theme.ThemeColors.pressureColor, [5, 5]),
+          if (hasFlow) createChartLineDatapoints(data["flow"]!, 4, theme.ThemeColors.flowColor, null),
+          if (hasFlow) createChartLineDatapoints(data["flowSet"]!, 1, theme.ThemeColors.flowColor, [5, 5]),
+          if (hasFlow) createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor, null),
         ],
         rangeAnnotations: RangeAnnotations(
           verticalRangeAnnotations: [
-            ...ranges,
+            // ...ranges,
           ],
           // horizontalRangeAnnotations: [
           //   HorizontalRangeAnnotation(
@@ -299,9 +344,31 @@ class EspressoScreenState extends State<EspressoScreen> {
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+
+          bottomTitles: (!settingsService.showTempGraph && !settingsService.showWeightGraph)
+              ? AxisTitles(
+                  axisNameSize: 25,
+                  axisNameWidget: Text(
+                    S.of(context).screenEspressoTimes,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    // style: TextStyle(
+                    //     // fontSize: 15,
+                    //     ),
+                  ),
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                )
+              : AxisTitles(
+                  axisNameSize: 25,
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                ),
           // bottomTitles: AxisTitles(
           //   axisNameWidget: const Text(
           //     'Time/s',
@@ -337,8 +404,9 @@ class EspressoScreenState extends State<EspressoScreen> {
       LineChartData(
         minY: 0,
         maxY: machineService.currentShot.targetEspressoWeight * 1.15,
-        minX: data["pressure"]!.first.x,
+        minX: minX,
         maxX: maxTime,
+        borderData: borderData,
         lineTouchData: LineTouchData(enabled: false),
         clipData: FlClipData.all(),
         gridData: FlGridData(
@@ -358,8 +426,87 @@ class EspressoScreenState extends State<EspressoScreen> {
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
+          bottomTitles: (!settingsService.showTempGraph)
+              ? AxisTitles(
+                  axisNameSize: 25,
+                  axisNameWidget: Text(
+                    S.of(context).screenEspressoTimes,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    // style: TextStyle(
+                    //     // fontSize: 15,
+                    //     ),
+                  ),
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                )
+              : AxisTitles(
+                  axisNameSize: 25,
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                ),
+          show: true,
+          leftTitles: AxisTitles(
+            axisNameSize: 25,
+            axisNameWidget: Text(
+              S.of(context).screenEspressoWeightG,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: leftTitleWidgets,
+              reservedSize: 56,
+            ),
+          ),
+        ),
+      ),
+    );
+    maxY1 = 0;
+    double minY1 = 100;
+    ["mixTempSet", "mixTemp", "temp", "tempSet"].forEach((s) {
+      maxY1 = max(maxY1, data[s]!.map((e) => e.y).reduce((value, element) => max(value, element))) + 0.5;
+      minY1 = min(minY1, data[s]!.map((e) => e.y).reduce((value, element) => min(value, element))) - 1;
+    });
+
+    var flowChart3 = LineChart(
+      LineChartData(
+        // minY: 80,
+        maxY: maxY1,
+        minY: minY1,
+        minX: minX,
+        maxX: maxTime,
+        borderData: borderData,
+        lineTouchData: LineTouchData(enabled: false),
+        clipData: FlClipData.all(),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+        ),
+        lineBarsData: [
+          createChartLineDatapoints(data["temp"]!, 2, theme.ThemeColors.tempColor, null),
+          createChartLineDatapoints(data["tempSet"]!, 1, theme.ThemeColors.tempColor, [5, 5]),
+          createChartLineDatapoints(data["mixTemp"]!, 2, theme.ThemeColors.tempColor2, null),
+          createChartLineDatapoints(data["mixTempSet"]!, 1, theme.ThemeColors.tempColor2, [5, 5]),
+
+          // createChartLineDatapoints(data["temp"]!, 4, theme.ThemeColors.tempColor, null),
+          // createChartLineDatapoints(data["tempSet"]!, 2, theme.ThemeColors.tempColor, null),
+          // createChartLineDatapoints(data["weightApprox"]!, 2, theme.ThemeColors.weightColor, [5, 5]),
+        ],
+        titlesData: FlTitlesData(
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             axisNameSize: 25,
+            drawBehindEverything: false,
             axisNameWidget: Text(
               S.of(context).screenEspressoTimes,
               style: Theme.of(context).textTheme.labelSmall,
@@ -377,7 +524,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              S.of(context).screenEspressoWeightG,
+              S.of(context).screenEspressoTemp,
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -391,53 +538,111 @@ class EspressoScreenState extends State<EspressoScreen> {
     );
 
     return Padding(
-      padding: const EdgeInsets.all(18.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (settingsService.showPressureGraph || settingsService.showFlowGraph)
+            Expanded(
+                flex: 1,
+                child: InkWell(
+                    onTap: () {
+                      if (settingsService.showPressureGraph == false && settingsService.showFlowGraph == true) {
+                        settingsService.showPressureGraph = false;
+                        settingsService.showFlowGraph = false;
+                      } else if (settingsService.showPressureGraph == true && settingsService.showFlowGraph == false) {
+                        settingsService.showPressureGraph = false;
+                        settingsService.showFlowGraph = true;
+                      } else if (settingsService.showPressureGraph == true && settingsService.showFlowGraph == true) {
+                        settingsService.showPressureGraph = false;
+                        settingsService.showFlowGraph = true;
+                      }
+
+                      setState(() {});
+                    },
+                    child: flowChart1)),
+          if (settingsService.showWeightGraph || settingsService.showTempGraph) const SizedBox(height: sep),
+          if (settingsService.showWeightGraph)
+            Expanded(
+                flex: 1,
+                child: InkWell(
+                    onTap: () {
+                      settingsService.showWeightGraph = false;
+                      setState(() {});
+                    },
+                    child: flowChart2)),
+          if (settingsService.showTempGraph) const SizedBox(height: sep),
+          if (settingsService.showTempGraph)
+            Expanded(
+                flex: 1,
+                child: InkWell(
+                    onTap: () {
+                      settingsService.showTempGraph = false;
+                      setState(() {});
+                    },
+                    child: flowChart3)),
           SizedBox(
             height: 30,
             child: LegendsListWidget(
               legends: [
-                Legend(S.of(context).screenEspressoPressure, theme.ThemeColors.pressureColor),
-                Legend(S.of(context).screenEspressoFlow, theme.ThemeColors.flowColor),
-                Legend(S.of(context).screenEspressoWeight, theme.ThemeColors.weightColor),
-                Legend(S.of(context).screenEspressoTemp, theme.ThemeColors.tempColor),
+                Legend(
+                  S.of(context).screenEspressoPressure,
+                  theme.ThemeColors.pressureColor,
+                  value: settingsService.showPressureGraph,
+                  onChanged: (p0) {
+                    settingsService.showPressureGraph = p0;
+                    setState(() {});
+                  },
+                ),
+                Legend(
+                  S.of(context).screenEspressoFlow,
+                  theme.ThemeColors.flowColor,
+                  value: settingsService.showFlowGraph,
+                  onChanged: (p0) {
+                    settingsService.showFlowGraph = p0;
+                    setState(() {});
+                  },
+                ),
+                Legend(
+                  S.of(context).screenEspressoWeight,
+                  theme.ThemeColors.weightColor,
+                  value: settingsService.showWeightGraph,
+                  onChanged: (p0) {
+                    settingsService.showWeightGraph = p0;
+                    setState(() {});
+                  },
+                ),
+                Legend(
+                  S.of(context).screenEspressoTemp,
+                  theme.ThemeColors.tempColor,
+                  value: settingsService.showTempGraph,
+                  onChanged: (p0) {
+                    settingsService.showTempGraph = p0;
+                    setState(() {});
+                  },
+                ),
               ],
             ),
           ),
-          Expanded(flex: 1, child: flowChart1),
-          const SizedBox(height: 20),
-          Expanded(flex: 1, child: flowChart2),
         ],
       ),
     );
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
-      fontWeight: FontWeight.bold,
-      fontSize: 10,
-    );
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 6,
-      child: Text(meta.formattedValue, style: style),
+      child: Text(meta.formattedValue, style: Theme.of(context).textTheme.labelSmall),
     );
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
-      fontWeight: FontWeight.bold,
-      fontSize: 10,
-    );
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 16,
-      child: Text(meta.formattedValue, style: style),
+      space: 6,
+      child: Text(meta.formattedValue, style: Theme.of(context).textTheme.labelSmall),
     );
   }
 

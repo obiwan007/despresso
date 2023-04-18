@@ -182,7 +182,7 @@ class WaterScreenState extends State<WaterScreen> {
                             Slider(
                               value: settings.targetHotWaterWeight.toDouble(),
                               max: 200,
-                              min: 10,
+                              min: 0,
                               divisions: 200,
                               label: "${settings.targetHotWaterWeight} g",
                               onChanged: (double value) {

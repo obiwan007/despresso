@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:despresso/devices/abstract_decent_de1.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
@@ -64,7 +65,7 @@ class EspressoMachineService extends ChangeNotifier {
   final MachineState _state = MachineState(null, EspressoMachineState.disconnected);
   final log = Logger('EspressoMachineService');
 
-  DE1? de1;
+  IDe1? de1;
 
   late SharedPreferences prefs;
 
@@ -117,6 +118,13 @@ class EspressoMachineService extends ChangeNotifier {
 
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
+
+  double _sampleTime = 0;
+
+  ShotState? _previousShot;
+  ShotState? _newestShot;
+
+  ShotState? _floatingShot;
 
   Stream<ShotState> get streamShotState => _streamShotState;
 
@@ -207,6 +215,7 @@ class EspressoMachineService extends ChangeNotifier {
       }
 
       if (state.coffeeState == EspressoMachineState.idle) {
+        isPouring = false;
         try {
           log.fine("Machine is still idle $idleTime < ${settingsService.sleepTimer * 60}");
           idleTime += 10;
@@ -286,6 +295,7 @@ class EspressoMachineService extends ChangeNotifier {
   updateProfile() {}
 
   void setShot(ShotState shot) {
+    if (shot == null) return;
     _state.shot = shot;
     _count++;
     if (_count % 10 == 0) {
@@ -296,7 +306,7 @@ class EspressoMachineService extends ChangeNotifier {
       t1 = t;
     }
     handleShotData();
-    notifyListeners();
+    // notifyListeners();
     _controllerShotState.add(shot);
   }
 
@@ -347,7 +357,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   MachineState get state => _state;
 
-  void setDecentInstance(DE1 de1) {
+  void setDecentInstance(IDe1 de1) {
     this.de1 = de1;
   }
 
@@ -429,7 +439,7 @@ class EspressoMachineService extends ChangeNotifier {
     return Future.value("");
   }
 
-  void handleShotData() {
+  Future<void> handleShotData() async {
     // checkForRefill();
 
     if (state.coffeeState == EspressoMachineState.sleep ||
@@ -486,6 +496,8 @@ class EspressoMachineService extends ChangeNotifier {
         state.subState == "pour") {
       pourTimeStart = DateTime.now().millisecondsSinceEpoch / 1000.0;
       isPouring = true;
+      _previousShot = null;
+      _newestShot = null;
     } else if (state.coffeeState == EspressoMachineState.espresso &&
         lastSubstate != state.subState &&
         state.subState != "pour") {
@@ -634,14 +646,106 @@ class EspressoMachineService extends ChangeNotifier {
       if (inShot == true) {
         shot.isPouring = isPouring;
         if (isPouring) {
-          shotList.add(shot);
+          var t = 50;
+          // var index = shotList.entries.length - 5;
+          // if (index > 0) {
+          //   shotList.entries.removeAt(index);
+          //   shotList.entries.removeAt(index);
+          //   shotList.entries.removeAt(index);
+          //   shotList.entries.removeAt(index);
+          // }
+          var l = shotList.entries.length;
+          shot.isInterpolated = false;
+
+          // shotList.entries.removeWhere(
+          //     (element) => (element.isInterpolated == true && (_sampleTime - element.sampleTimeCorrected) > 1.3));
+          // shotList.entries.removeWhere((element) => (element.isInterpolated == true));
+          // var oldShot = shotList.entries.indexWhere((element) => (element.isInterpolated == true));
+          var c = 5;
+          var hz = 4;
+          var f = 1 / hz * 1000;
+          int ms = (f / (c + 1)).toInt();
+
+          // if (oldShot == -1) {
+          if (_newestShot != null) {
+            // shotList.add(_newestShot!);
+            // shotList.add(ShotState.fromJson(shot.toJson()));
+            _previousShot = ShotState.fromJson(_newestShot!.toJson());
+          }
+
+          _newestShot = ShotState.fromJson(shot.toJson());
+          ;
+
+          if (_previousShot != null) {
+            if (_floatingShot == null) {
+              // _floatingShot = ShotState.fromJson(shot!.toJson());
+              // shotList.add(_floatingShot!);
+            }
+
+            var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.groupPressure, _previousShot!.groupPressure);
+
+            var linGP_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
+                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
+
+            var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.groupFlow, _previousShot!.groupFlow);
+
+            var linGF_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
+                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
+
+            var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.flowWeight, _previousShot!.flowWeight);
+
+            // var newShot = ShotState.fromJson(_previousShot!.toJson());
+            // shotList.add(newShot);
+            // _floatingShot = ShotState.fromJson(_previousShot!.toJson());
+            _floatingShot = ShotState.fromJson(_previousShot!.toJson());
+            shotList.add(_floatingShot!);
+            var base = ShotState.fromJson(_previousShot!.toJson());
+            var fs = _floatingShot!;
+            // fs.sampleTimeCorrected = base.sampleTimeCorrected;
+
+            for (var t = 0; t < c; t += 1) {
+              await Future.delayed(Duration(milliseconds: ms), () {
+                fs.isInterpolated = t == c - 1 ? false : true;
+
+                // if (t == 1) shotList.entries.removeWhere((element) => (element.isInterpolated == true));
+                // var newShot = ShotState.fromJson(shot.toJson());
+                // newShot.groupPressure = 1;
+                fs.sampleTimeCorrected += (t) * ms / 1000;
+                fs.groupPressure = linGP.getY(fs.sampleTimeCorrected);
+                fs.setGroupPressure = linGP_S.getY(fs.sampleTimeCorrected);
+                fs.groupFlow = linGF.getY(fs.sampleTimeCorrected);
+                fs.setGroupFlow = linGF_S.getY(fs.sampleTimeCorrected);
+                fs.flowWeight = linWF.getY(fs.sampleTimeCorrected);
+                // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");
+                // shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
+
+                shotList.lastTouched++;
+                notifyListeners();
+              });
+            }
+            // shotList.lastTouched++;
+            // shotList.entries.insert(shotList.entries.length - 3, shot);
+            // // shotList.add(shot);
+            // notifyListeners();
+            // notifyListeners();
+          } else {
+            shotList.lastTouched++;
+            shotList.add(shot);
+
+            notifyListeners();
+          }
         } else {
           // make a single value for the first few seconds to show some action ongoing
+          shotList.lastTouched++;
           if (shotList.entries.isEmpty) {
             shotList.entries.add(shot);
           } else if (shotList.entries.length == 1) {
             shotList.entries[0] = shot;
           }
+          notifyListeners();
         }
       }
     }
@@ -664,7 +768,8 @@ class EspressoMachineService extends ChangeNotifier {
       cs.coffee.targetId = coffeeService.selectedCoffeeId;
       cs.recipe.targetId = coffeeService.selectedRecipeId;
 
-      cs.shotstates.addAll(shotList.entries.where((element) => element.isPouring == true));
+      cs.shotstates
+          .addAll(shotList.entries.where((element) => element.isPouring == true && element.isInterpolated == false));
 
       cs.pourTime = lastPourTime;
       cs.profileId = profileService.currentProfile?.id ?? "";
@@ -779,7 +884,7 @@ class EspressoMachineService extends ChangeNotifier {
     ).toList();
     if (weightData.isNotEmpty) {
       var regressionData = Line.limit(linearRegression(weightData));
-      log.info("Regression: ${regressionData.m} ${regressionData.b}");      
+      log.info("Regression: ${regressionData.m} ${regressionData.b}");
       currentShot.estimatedWeightReachedTime = (currentShot.targetEspressoWeight - regressionData.b) / regressionData.m;
       currentShot.estimatedWeight_m = regressionData.m;
       currentShot.estimatedWeight_b = regressionData.b;
@@ -787,5 +892,27 @@ class EspressoMachineService extends ChangeNotifier {
     } else {
       return 0;
     }
+  }
+}
+
+class LineEq {
+  var log = Logger("lin");
+  double m;
+  double b;
+  double x1;
+  LineEq(this.m, this.b, this.x1);
+
+  static LineEq calcLinearEquation(double x2, double x1, double y2, double y1) {
+    double dx = (x2 - x1);
+    double dy = (y2 - y1);
+    double m = dy / dx;
+    double b = y1;
+    return LineEq(m, b, x1);
+  }
+
+  getY(double x) {
+    double y = (m) * (x - x1) + b;
+    log.info("lin: $y = ($m * $x + $b");
+    return y;
   }
 }
