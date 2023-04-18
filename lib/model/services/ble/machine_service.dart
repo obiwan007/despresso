@@ -615,7 +615,7 @@ class EspressoMachineService extends ChangeNotifier {
               timer.inSeconds > settingsService.targetSteamLength) {
             log.info("Steam Timer reached ${timer.inSeconds} > ${settingsService.targetSteamLength}");
 
-            triggerEndOfShot();
+            // triggerEndOfShot(); - not needed the machine automatically ends steaming after the timer ends
           }
 
           break;
