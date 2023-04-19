@@ -255,23 +255,17 @@ class DE1 extends ChangeNotifier implements IDe1 {
     0x07: 'steaming', // 7 Steam only
     0x08: 'descale_int', // 8 Starting descale
     0x09: 'descale_fill_group', // 9 get some descaling solution into the group and let it sit
-    // 0x0a: 'descale_return', // A descaling internals
-    // 0x0b: 'descale_group', // B descaling group
-    // 0x0c: 'descale_steam', // C descaling steam
-    // 0x0d: 'clean_init', // D Starting clean
-    // 0x0e: 'clean_fill_group', // E Fill the group
-    // 0x0f: 'clean_soak', // F Wait for 60 seconds so we soak the group head
-    0x10: 'decale return', // 10 descaling internals
-    0x11: 'decale_group', // 11 descaling group
-    0x12: 'descale_steam', // 12 descaling steam
-    0x13: 'clen_init', // 13 Starting clean
-    0x14: 'clean_fill_group', // 14 Fill the group
-    0x15: 'clean_soak', // 15 Wait for 60 seconds so we soak the group head
-    0x16: 'clean_group', // 16 Flush through group
-    0x17: 'refill', // 17 Have we given up on a refill
-    0x18: 'paused_steam', // 18 Are we paused in steam?
-    0x19: 'user_not_present',
-    0x20: 'puffing',
+    0x0a: 'descale_return', // A descaling internals
+    0x0b: 'descale_group', // B descaling group
+    0x0c: 'descale_steam', // C descaling steam
+    0x0d: 'clean_init', // D Starting clean
+    0x0e: 'clean_fill_group', // E Fill the group
+    0x0f: 'clean_soak', // F Wait for 60 seconds so we soak the group head
+    0x10: 'clean_group', // 16 Flush through group
+    0x11: 'refill', // 17 Have we given up on a refill
+    0x12: 'paused_steam', // 18 Are we paused in steam?
+    0x13: 'user_not_present',
+    0x14: 'puffing',
 
     200: 'error_nan', // 200 Something died with a NaN
     201: 'error_inf', // 201 Something died with an Inf
