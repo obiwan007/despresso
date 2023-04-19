@@ -697,9 +697,6 @@ class EspressoMachineService extends ChangeNotifier {
             var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.flowWeight, _previousShot!.flowWeight);
 
-            // var linW = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-            //     _newestShot!.weight, _previousShot!.weight);
-
             // var newShot = ShotState.fromJson(_previousShot!.toJson());
             // shotList.add(newShot);
             // _floatingShot = ShotState.fromJson(_previousShot!.toJson());
