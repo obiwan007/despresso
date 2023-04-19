@@ -174,7 +174,7 @@ class CoffeeService extends ChangeNotifier {
         if (roasterBox.count() == 0) {
           log.info("No roasters available. Creating a default one.");
           var r = Roaster();
-          r.name = "Sample Rouaster";
+          r.name = "Sample Roaster";
           selectedRoasterId = roasterBox.put(r);
           settings.selectedRoaster = selectedRoasterId;
         }
