@@ -561,7 +561,7 @@ class EspressoMachineService extends ChangeNotifier {
               if (valuesCount > 0) {
                 var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
                 // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
-                shot.timeToWeight = timeToWeight;
+                shot.timeToWeight = timeToWeight > 0 && timeToWeight < 100 ? timeToWeight : 0;
                 log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
                 if (timeToWeight > 0 &&
                     timeToWeight < 2.5 &&
@@ -697,6 +697,9 @@ class EspressoMachineService extends ChangeNotifier {
             var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.flowWeight, _previousShot!.flowWeight);
 
+            // var linW = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+            //     _newestShot!.weight, _previousShot!.weight);
+
             // var newShot = ShotState.fromJson(_previousShot!.toJson());
             // shotList.add(newShot);
             // _floatingShot = ShotState.fromJson(_previousShot!.toJson());
@@ -719,6 +722,7 @@ class EspressoMachineService extends ChangeNotifier {
                 fs.groupFlow = linGF.getY(fs.sampleTimeCorrected);
                 fs.setGroupFlow = linGF_S.getY(fs.sampleTimeCorrected);
                 fs.flowWeight = linWF.getY(fs.sampleTimeCorrected);
+                fs.weight = scaleService.weight; //  linW.getY(fs.sampleTimeCorrected);
                 // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");
                 // shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
 

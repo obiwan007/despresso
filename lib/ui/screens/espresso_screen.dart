@@ -688,7 +688,7 @@ class EspressoScreenState extends State<EspressoScreen> {
               width: width,
               label: "",
               value: S.of(context).screenEspressoTotal(machineService.getOverallTime().toStringAsFixed(1))),
-        if (machineService.isPouring)
+        if (machineService.isPouring && (machineService.state.shot?.timeToWeight ?? 0) > 0)
           KeyValueWidget(
               width: width,
               label: "",
