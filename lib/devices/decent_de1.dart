@@ -251,7 +251,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
     0x03: 'stabilize_mix_temp', // 3 Stabilize mix temp and get entire water path up to temperature.
     0x04: 'pre_infuse', // 4 Espresso only. Hot Water and Steam will skip this state.
     0x05: 'pour', // 5 Not used in Steam
-    0x06: 'flush', // 6 Espresso only, atm
+    0x06: 'end', // 6 Espresso only, atm
     0x07: 'steaming', // 7 Steam only
     0x08: 'descale_int', // 8 Starting descale
     0x09: 'descale_fill_group', // 9 get some descaling solution into the group and let it sit
@@ -261,9 +261,11 @@ class DE1 extends ChangeNotifier implements IDe1 {
     0x0d: 'clean_init', // D Starting clean
     0x0e: 'clean_fill_group', // E Fill the group
     0x0f: 'clean_soak', // F Wait for 60 seconds so we soak the group head
-    0x10: 'clean_group', // 10 Flush through group
-    0x11: 'paused_refill', // 11 Have we given up on a refill
-    0x12: 'paused_steam', // 12 Are we paused in steam?
+    0x10: 'clean_group', // 16 Flush through group
+    0x11: 'refill', // 17 Have we given up on a refill
+    0x12: 'paused_steam', // 18 Are we paused in steam?
+    0x13: 'user_not_present',
+    0x14: 'puffing',
 
     200: 'error_nan', // 200 Something died with a NaN
     201: 'error_inf', // 201 Something died with an Inf
@@ -279,6 +281,10 @@ class DE1 extends ChangeNotifier implements IDe1 {
     211: 'error_flash', // 211 Error accessing external flash
     212: 'error_oom', // 212 Could not allocate memory
     213: 'error_deadline', // 213 Realtime deadline missed
+    214: 'error_hi_current', // 214 Measured a current that is out of bounds.
+    215: 'error_lo_current', // 215 Not enough current flowing, despite something being turned on
+    216: 'error_boot_fill', // 216 Could not get up to pressure during boot pressure test, possibly because no water
+    217: 'error_no_ac' // 217 Front button off
   };
 
   final DiscoveredDevice device;
