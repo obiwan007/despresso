@@ -532,7 +532,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                   max: 120.0,
                                   value: widget.coffeeService.currentRecipe?.grinderDoseWeight ?? 0.0,
                                   decimals: 1,
-                                  step: 0.5,
+                                  step: 0.1,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     focusedBorder: InputBorder.none,
@@ -569,7 +569,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                   max: 300.0,
                                   value: widget.settingsService.targetEspressoWeight,
                                   decimals: 1,
-                                  step: 0.5,
+                                  step: 0.1,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     focusedBorder: InputBorder.none,
