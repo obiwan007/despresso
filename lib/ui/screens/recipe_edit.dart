@@ -106,6 +106,7 @@ class RecipeEditState extends State<RecipeEdit> {
         Validators.max(1000.0),
       ],
       'id': [_editedRecipe.id],
+      'disableStopOnWeight': [_editedRecipe.disableStopOnWeight],
     });
   }
 
@@ -351,11 +352,22 @@ class RecipeEditState extends State<RecipeEdit> {
                   ),
                 ],
               ),
+              const Divider(),
+              Row(
+                children: [
+                  Text(S.of(context).screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo),
+                  ReactiveSwitch(
+                    formControlName: 'disableStopOnWeight',
+                    onChanged: (control) => setState(() {}),
+                  ),
+                ],
+              ),
             ],
           ),
         )),
 
         SizedBox(height: 20),
+
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -469,6 +481,7 @@ class RecipeEditState extends State<RecipeEdit> {
     _editedRecipe.timeWater = form.value["timeWater"] as double? ?? 0;
     _editedRecipe.useSteam = form.value["useSteam"] as bool;
     _editedRecipe.useWater = form.value["useWater"] as bool;
+    _editedRecipe.disableStopOnWeight = form.value["disableStopOnWeight"] as bool;
     _editedRecipe.weightMilk = form.value["weightMilk"] as double? ?? 0;
     _editedRecipe.weightWater = form.value["weightWater"] as double? ?? 0;
 

@@ -148,6 +148,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("조정"),
         "screenRecipeEditDescription":
             MessageLookupByLibrary.simpleMessage("설명"),
+        "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo":
+            MessageLookupByLibrary.simpleMessage(
+                "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): "),
         "screenRecipeEditDoseWeightin":
             MessageLookupByLibrary.simpleMessage("복용량 가중치"),
         "screenRecipeEditDosingAndWeights":
@@ -187,6 +190,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeSelectedProfile":
             MessageLookupByLibrary.simpleMessage("선택한 프로필"),
         "screenRecipeSetRatio": MessageLookupByLibrary.simpleMessage("비율 설정"),
+        "screenRecipeStopOnWeight":
+            MessageLookupByLibrary.simpleMessage("Stop on weight: "),
         "screenRecipeStopOnWeightG":
             MessageLookupByLibrary.simpleMessage("무게에 정지 [g]"),
         "screenRecipeWeightinBeansG":

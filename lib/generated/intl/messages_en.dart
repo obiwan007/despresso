@@ -158,6 +158,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Adjustments"),
         "screenRecipeEditDescription":
             MessageLookupByLibrary.simpleMessage("Description"),
+        "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo":
+            MessageLookupByLibrary.simpleMessage(
+                "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): "),
         "screenRecipeEditDoseWeightin":
             MessageLookupByLibrary.simpleMessage("Dose Weight-in"),
         "screenRecipeEditDosingAndWeights":
@@ -199,6 +202,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Selected profile"),
         "screenRecipeSetRatio":
             MessageLookupByLibrary.simpleMessage("Set Ratio"),
+        "screenRecipeStopOnWeight":
+            MessageLookupByLibrary.simpleMessage("Stop on weight: "),
         "screenRecipeStopOnWeightG":
             MessageLookupByLibrary.simpleMessage("Stop on Weight [g]"),
         "screenRecipeWeightinBeansG":
@@ -238,7 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsBackuprestoreDatabase":
             MessageLookupByLibrary.simpleMessage("Backup/Restore database"),
         "screenSettingsBahaviour":
-            MessageLookupByLibrary.simpleMessage("Bahaviour"),
+            MessageLookupByLibrary.simpleMessage("Behaviour"),
         "screenSettingsBehaviour":
             MessageLookupByLibrary.simpleMessage("Behaviour"),
         "screenSettingsBrightnessSleepAndScreensaver":

@@ -1260,10 +1260,10 @@ class S {
     );
   }
 
-  /// `Bahaviour`
+  /// `Behaviour`
   String get screenSettingsBahaviour {
     return Intl.message(
-      'Bahaviour',
+      'Behaviour',
       name: 'screenSettingsBahaviour',
       desc: '',
       args: [],
@@ -2527,6 +2527,28 @@ class S {
     return Intl.message(
       'Weight',
       name: 'weight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop on weight: `
+  String get screenRecipeStopOnWeight {
+    return Intl.message(
+      'Stop on weight: ',
+      name: 'screenRecipeStopOnWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): `
+  String
+      get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo {
+    return Intl.message(
+      'Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): ',
+      name:
+          'screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo',
       desc: '',
       args: [],
     );

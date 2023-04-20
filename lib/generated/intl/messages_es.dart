@@ -160,6 +160,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ajustes"),
         "screenRecipeEditDescription":
             MessageLookupByLibrary.simpleMessage("Descripción"),
+        "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo":
+            MessageLookupByLibrary.simpleMessage(
+                "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): "),
         "screenRecipeEditDoseWeightin":
             MessageLookupByLibrary.simpleMessage("Peso de la dosis"),
         "screenRecipeEditDosingAndWeights":
@@ -202,6 +205,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Perfil seleccionado"),
         "screenRecipeSetRatio":
             MessageLookupByLibrary.simpleMessage("Establecer proporción"),
+        "screenRecipeStopOnWeight":
+            MessageLookupByLibrary.simpleMessage("Stop on weight: "),
         "screenRecipeStopOnWeightG":
             MessageLookupByLibrary.simpleMessage("Parada en peso [g]"),
         "screenRecipeWeightinBeansG":

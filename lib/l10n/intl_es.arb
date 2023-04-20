@@ -495,5 +495,7 @@
   "wait": "Esperar",
   "@wait": {},
   "weight": "Peso",
-  "@weight": {}
+  "@weight": {},
+  "screenRecipeStopOnWeight": "Stop on weight: ",
+  "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo": "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): "
 }

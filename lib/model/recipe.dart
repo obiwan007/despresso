@@ -29,6 +29,7 @@ class Recipe {
   /// For added water
   double weightWater = 120;
   bool useWater = true;
+  bool disableStopOnWeight = false;
   double tempWater = 85;
   double timeWater = 20;
 

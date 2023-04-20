@@ -228,6 +228,16 @@ class RecipeDescription extends StatelessWidget {
             ],
           ),
         ),
+        if (coffeeService.currentRecipe?.disableStopOnWeight == true)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+            child: Row(
+              children: [
+                Text(S.of(context).screenRecipeStopOnWeight),
+                Text("${(coffeeService.currentRecipe?.disableStopOnWeight ?? false) ? S.of(context).no : ""}"),
+              ],
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
           child: Row(
@@ -547,43 +557,44 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                           ),
                         ],
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(child: Text(S.of(context).screenRecipeStopOnWeightG)),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                SpinBox(
-                                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                                  textInputAction: TextInputAction.done,
-                                  onChanged: (value) {
-                                    var r = widget.coffeeService.currentRecipe;
-                                    if (r != null) {
-                                      r.adjustedWeight = value;
-                                      widget.coffeeService.updateRecipe(r);
-                                      widget.settingsService.targetEspressoWeight = value;
-                                    }
-                                  },
-                                  min: 0.0,
-                                  max: 300.0,
-                                  value: widget.settingsService.targetEspressoWeight,
-                                  decimals: 1,
-                                  step: 0.1,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                      if (widget.coffeeService.currentRecipe?.disableStopOnWeight == false)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(child: Text(S.of(context).screenRecipeStopOnWeightG)),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  SpinBox(
+                                    keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                                    textInputAction: TextInputAction.done,
+                                    onChanged: (value) {
+                                      var r = widget.coffeeService.currentRecipe;
+                                      if (r != null) {
+                                        r.adjustedWeight = value;
+                                        widget.coffeeService.updateRecipe(r);
+                                        widget.settingsService.targetEspressoWeight = value;
+                                      }
+                                    },
+                                    min: 0.0,
+                                    max: 300.0,
+                                    value: widget.settingsService.targetEspressoWeight,
+                                    decimals: 1,
+                                    step: 0.1,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(left: 5, bottom: 24, top: 24, right: 5),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
