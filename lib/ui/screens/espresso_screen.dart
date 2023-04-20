@@ -303,12 +303,14 @@ class EspressoScreenState extends State<EspressoScreen> {
 
     double maxY1 =
         (!hasPressure) ? 0 : data["pressureSet"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
+    double maxY3 =
+        (!hasPressure) ? 0 : data["pressure"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
     double maxY2 =
         (!hasFlow) ? 0 : data["flowSet"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
     var flowChart1 = LineChart(
       LineChartData(
         minY: 0,
-        maxY: max(maxY1, maxY2),
+        maxY: max(maxY3, max(maxY1, maxY2)),
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
@@ -400,10 +402,13 @@ class EspressoScreenState extends State<EspressoScreen> {
       ),
     );
 
+    maxY3 = (!settingsService.showWeightGraph)
+        ? 0
+        : data["weight"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
     var flowChart2 = LineChart(
       LineChartData(
         minY: 0,
-        maxY: machineService.currentShot.targetEspressoWeight * 1.15,
+        maxY: max(maxY3, machineService.currentShot.targetEspressoWeight * 1.15),
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
@@ -667,10 +672,11 @@ class EspressoScreenState extends State<EspressoScreen> {
             value: coffeeSelectionService.selectedCoffeeId > 0
                 ? coffeeSelectionService.coffeeBox.get(coffeeSelectionService.selectedCoffeeId)?.name ?? ""
                 : "No Beans"),
-        KeyValueWidget(
-            width: width,
-            label: S.of(context).screenEspressoTarget,
-            value: '${settingsService.targetEspressoWeight} g'),
+        if ((coffeeSelectionService.currentRecipe?.disableStopOnWeight ?? false) == false)
+          KeyValueWidget(
+              width: width,
+              label: S.of(context).screenEspressoTarget,
+              value: '${settingsService.targetEspressoWeight} g'),
         if (machineService.lastPourTime > 0)
           const Divider(
             height: 20,
