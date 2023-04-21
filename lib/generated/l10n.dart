@@ -850,6 +850,18 @@ class S {
     );
   }
 
+  /// `Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): `
+  String
+      get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo {
+    return Intl.message(
+      'Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): ',
+      name:
+          'screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Dose Weight-in`
   String get screenRecipeEditDoseWeightin {
     return Intl.message(
@@ -1085,6 +1097,16 @@ class S {
     return Intl.message(
       'Steam milk:',
       name: 'screenRecipesteamMilk',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stop on weight: `
+  String get screenRecipeStopOnWeight {
+    return Intl.message(
+      'Stop on weight: ',
+      name: 'screenRecipeStopOnWeight',
       desc: '',
       args: [],
     );

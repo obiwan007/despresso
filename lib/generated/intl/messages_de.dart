@@ -156,6 +156,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Anpassungen"),
         "screenRecipeEditDescription":
             MessageLookupByLibrary.simpleMessage("Beschreibung"),
+        "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo":
+            MessageLookupByLibrary.simpleMessage(
+                "Stop-on-Weight deaktivieren (Wählen Sie dies für Profile, wo Sie nicht bei erreichen eines Gewichts stoppen möchten):"),
         "screenRecipeEditDoseWeightin":
             MessageLookupByLibrary.simpleMessage("Bohnen Einwaage"),
         "screenRecipeEditDosingAndWeights":
@@ -199,6 +202,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Gewähltes Profil"),
         "screenRecipeSetRatio":
             MessageLookupByLibrary.simpleMessage("Verhältniss einstellen"),
+        "screenRecipeStopOnWeight":
+            MessageLookupByLibrary.simpleMessage("Stop bei Gewicht: :"),
         "screenRecipeStopOnWeightG":
             MessageLookupByLibrary.simpleMessage("Stop bei Gewicht [g]"),
         "screenRecipeWeightinBeansG":
@@ -480,7 +485,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "stateDisconnected": MessageLookupByLibrary.simpleMessage("GETRENNT"),
         "stateIdleHeated": MessageLookupByLibrary.simpleMessage("aufgeheizt"),
         "statePour": MessageLookupByLibrary.simpleMessage("Bezug"),
-        "state_Disconnected": MessageLookupByLibrary.simpleMessage(""),
+        "state_Disconnected": MessageLookupByLibrary.simpleMessage("getrennt"),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("Temp [°C]"),
         "stop": MessageLookupByLibrary.simpleMessage("Stop"),
         "subStateHeatWaterHeater":

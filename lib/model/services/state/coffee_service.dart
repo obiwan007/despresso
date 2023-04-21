@@ -220,6 +220,7 @@ class CoffeeService extends ChangeNotifier {
     settings.targetHotWaterVol = recipe.weightWater.toInt();
     settings.useSteam = recipe.useSteam;
     settings.useWater = recipe.useWater;
+    settings.shotStopOnWeight = !recipe.disableStopOnWeight;
 
     profileService.setProfileFromId(recipe.profileId);
     try {

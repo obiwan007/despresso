@@ -100,6 +100,8 @@ class SettingsService extends ChangeNotifier {
   }
 
   bool get shotStopOnWeight => Settings.getValue<bool>(SettingKeys.shotStopOnWeight.name) ?? true;
+  set shotStopOnWeight(bool value) => Settings.setValue<bool>(SettingKeys.shotStopOnWeight.name, value);
+
   bool get shotAutoTare => Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
 
   bool get visualizerUpload => Settings.getValue(SettingKeys.visualizerUpload.name) ?? false;
