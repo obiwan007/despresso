@@ -68,9 +68,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("에스프레소 다이어리"),
         "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("피드백"),
         "no": MessageLookupByLibrary.simpleMessage("아니요"),
-        "off": MessageLookupByLibrary.simpleMessage("끄다"),
+        "off": MessageLookupByLibrary.simpleMessage("꺼짐"),
         "ok": MessageLookupByLibrary.simpleMessage("좋아요"),
-        "on": MessageLookupByLibrary.simpleMessage("켜다"),
+        "on": MessageLookupByLibrary.simpleMessage("켜짐"),
         "orange": MessageLookupByLibrary.simpleMessage("주황색"),
         "pressure": MessageLookupByLibrary.simpleMessage("압력"),
         "privacy": MessageLookupByLibrary.simpleMessage("비공개"),
@@ -149,8 +149,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeEditDescription":
             MessageLookupByLibrary.simpleMessage("설명"),
         "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo":
-            MessageLookupByLibrary.simpleMessage(
-                "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): "),
+            MessageLookupByLibrary.simpleMessage("Stop-on-Weight 비활성화"),
         "screenRecipeEditDoseWeightin":
             MessageLookupByLibrary.simpleMessage("복용량 가중치"),
         "screenRecipeEditDosingAndWeights":
@@ -191,7 +190,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("선택한 프로필"),
         "screenRecipeSetRatio": MessageLookupByLibrary.simpleMessage("비율 설정"),
         "screenRecipeStopOnWeight":
-            MessageLookupByLibrary.simpleMessage("Stop on weight: "),
+            MessageLookupByLibrary.simpleMessage("중량 중지:"),
         "screenRecipeStopOnWeightG":
             MessageLookupByLibrary.simpleMessage("무게에 정지 [g]"),
         "screenRecipeWeightinBeansG":
@@ -440,7 +439,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "stop": MessageLookupByLibrary.simpleMessage("멈추다"),
         "subStateHeatWaterHeater": MessageLookupByLibrary.simpleMessage("난방수"),
         "subStateHeatWaterTank": MessageLookupByLibrary.simpleMessage("가열 탱크"),
-        "switchOn": MessageLookupByLibrary.simpleMessage("켜다"),
+        "switchOn": MessageLookupByLibrary.simpleMessage("시작"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("에스프레소"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("플러시"),
         "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("레시피"),

@@ -160,6 +160,8 @@
   "@screenRecipeEditAdjustments": {},
   "screenRecipeEditDescription": "Description",
   "@screenRecipeEditDescription": {},
+  "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo": "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): ",
+  "@screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo": {},
   "screenRecipeEditDoseWeightin": "Dose Weight-in",
   "@screenRecipeEditDoseWeightin": {},
   "screenRecipeEditDosingAndWeights": "Dosing and weights",
@@ -208,6 +210,8 @@
   "@screenRecipeSetRatio": {},
   "screenRecipesteamMilk": "Steam milk:",
   "@screenRecipesteamMilk": {},
+  "screenRecipeStopOnWeight": "Stop on weight: ",
+  "@screenRecipeStopOnWeight": {},
   "screenRecipeStopOnWeightG": "Stop on Weight [g]",
   "@screenRecipeStopOnWeightG": {},
   "screenRecipeWeightinBeansG": "Weight-in beans [g]",
@@ -242,7 +246,7 @@
   "@screenSettingsBackuprestoreDatabase": {},
   "screenSettingsBackupSettings": "Backup Settings",
   "@screenSettingsBackupSettings": {},
-  "screenSettingsBahaviour": "Behaviour",
+  "screenSettingsBahaviour": "Bahaviour",
   "@screenSettingsBahaviour": {},
   "screenSettingsBehaviour": "Behaviour",
   "@screenSettingsBehaviour": {},
@@ -495,7 +499,5 @@
   "wait": "Wait",
   "@wait": {},
   "weight": "Weight",
-  "@weight": {},
-  "screenRecipeStopOnWeight": "Stop on weight: ",
-  "screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo": "Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): "
+  "@weight": {}
 }

@@ -243,7 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsBackuprestoreDatabase":
             MessageLookupByLibrary.simpleMessage("Backup/Restore database"),
         "screenSettingsBahaviour":
-            MessageLookupByLibrary.simpleMessage("Behaviour"),
+            MessageLookupByLibrary.simpleMessage("Bahaviour"),
         "screenSettingsBehaviour":
             MessageLookupByLibrary.simpleMessage("Behaviour"),
         "screenSettingsBrightnessSleepAndScreensaver":
