@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -32,8 +33,8 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
   bool weightStability = true;
-
-  DecentScale(this.device) {
+  DeviceCommunication connection;
+  DecentScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {

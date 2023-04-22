@@ -71,6 +71,7 @@ enum SettingKeys {
   showWeightGraph,
   showTempGraph,
   showFlowGraph,
+  chUrl,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -255,6 +256,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get showTempGraph => Settings.getValue<bool>(SettingKeys.showTempGraph.name) ?? true;
   set showTempGraph(bool value) => Settings.setValue<bool>(SettingKeys.showTempGraph.name, value);
+
+  String get chUrl => Settings.getValue<String>(SettingKeys.chUrl.name) ?? "ws://192.168.178.97:8765";
+  set chUrl(String value) => Settings.setValue<String>(SettingKeys.chUrl.name, value);
 
   void notifyDelayed() {
     Future.delayed(

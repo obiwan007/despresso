@@ -5,6 +5,7 @@ import 'dart:collection';
 import 'dart:io' show Platform;
 import 'dart:math';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -101,10 +102,9 @@ enum MMRAddrEnum {
 class DE1 extends ChangeNotifier implements IDe1 {
   final log = l.Logger('DE1');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB') : Uuid.parse('A000');
+  static Uuid ServiceUUID = !Platform.isIOS ? Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB') : Uuid.parse('A000');
 
-  static var cuuids = Platform.isAndroid
+  static var cuuids = !Platform.isIOS
       ? {
           '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
           '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,
@@ -290,7 +290,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
   final DiscoveredDevice device;
 
   EspressoMachineService service = getIt<EspressoMachineService>();
-  final flutterReactiveBle = FlutterReactiveBle();
+  // final flutterReactiveBle = FlutterReactiveBle();
 
   bool mmrAvailable = true;
 
@@ -331,8 +331,8 @@ class DE1 extends ChangeNotifier implements IDe1 {
   bool ghcTouchPresent = false;
 
   bool ghcActive = false;
-
-  DE1(this.device) {
+  DeviceCommunication connection;
+  DE1(this.device, this.connection) {
     // device
     //     .observeConnectionState(
     //         emitCurrentValue: false, completeOnDisconnect: true)
@@ -345,7 +345,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
     _streamMMR = _controllerMmrStream.stream.asBroadcastStream();
 
     service.setState(EspressoMachineState.connecting);
-    _connectToDeviceSubscription = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _connectToDeviceSubscription = connection.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
       log.info('DE1 Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
@@ -362,7 +362,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
 
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+    connection.subscribeToCharacteristic(characteristic).listen((data) {
       // Handle connection state updates
       try {
         callback(ByteData.sublistView(Uint8List.fromList(data)));
@@ -400,28 +400,28 @@ class DE1 extends ChangeNotifier implements IDe1 {
   }
 
   Future<List<int>> _read(Endpoint e) {
-    if (flutterReactiveBle.status != BleStatus.ready) throw ("de1 not connected ${flutterReactiveBle.status}");
+    if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    var data = flutterReactiveBle.readCharacteristic(characteristic);
+    var data = connection.readCharacteristic(characteristic);
     // return device.readCharacteristic(ServiceUUID, getCharacteristic(e));
     return data;
   }
 
   Future<void> _write(Endpoint e, Uint8List data) {
-    if (flutterReactiveBle.status != BleStatus.ready) throw ("de1 not connected ${flutterReactiveBle.status}");
+    if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
+    return connection.writeCharacteristicWithResponse(characteristic, value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
 
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
-    if (flutterReactiveBle.status != BleStatus.ready) throw ("de1 not connected ${flutterReactiveBle.status}");
+    if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    return flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: data);
+    return connection.writeCharacteristicWithResponse(characteristic, value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }

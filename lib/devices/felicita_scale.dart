@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:collection/collection.dart';
+import 'package:despresso/devices/abstract_comm.dart';
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_scale.dart';
@@ -36,16 +37,15 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
-
-  FelicitaScale(this.device) {
+  DeviceCommunication connection;
+  FelicitaScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -81,8 +81,7 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Felicita");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -101,7 +100,7 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           _notificationCallback(data);
         }, onError: (dynamic error) {
           log.severe("Subscribe to $characteristic failed: $error");
