@@ -36,6 +36,14 @@ class RequestEntry {
   RequestEntry({required this.id, required this.onResponse});
 }
 
+class GATTNotify {
+  String deviceId;
+  String characteristicsId;
+  List<int> data;
+
+  GATTNotify({required this.deviceId, required this.characteristicsId, required this.data});
+}
+
 class CallbackHandler {
   List<RequestEntry> store = [];
   addRequest(RequestEntry request) {
@@ -80,7 +88,11 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   StreamController<ble.ConnectionStateUpdate> _controllerConnectionStream =
       StreamController<ble.ConnectionStateUpdate>();
 
+  StreamController<GATTNotify> _gattNotificationController = StreamController<GATTNotify>();
+
   ble.BleStatus _status = ble.BleStatus.unknown;
+
+  late Stream<GATTNotify> _gattNotificationStream;
 
   CHService() {
     _settings = getIt<SettingsService>();
@@ -92,7 +104,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
         }
       },
     );
-
+    _gattNotificationStream = _gattNotificationController.stream.asBroadcastStream();
     _connectionString = _settings.chUrl;
     init();
   }
@@ -109,11 +121,20 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     _channel?.stream.listen((message) {
       _status = ble.BleStatus.ready;
       // log.info("REC: $message");
-      debugPrint("CHService: REC: $message");
+      log.info("Stream: REC: $message");
       var msg = makeIncomingMsgFromJSON(message);
-      var cb = _store.get(msg.id);
-      cb?.onResponse(msg);
-      log.info("RESP: $msg");
+
+      if (msg.type == "UPDATE" && (msg as dynamic).update == "GATTNotify") {
+        log.info("RESP GATT NOTIFY: $msg");
+        _gattNotificationController.add(GATTNotify(
+            deviceId: msg.results!["MAC"],
+            characteristicsId: msg.results!["Char"],
+            data: base64.decode(msg.results!["Data"])));
+      } else {
+        var cb = _store.get(msg.id);
+        cb?.onResponse(msg);
+        log.info("RESP: $msg");
+      }
       // channel.sink.add('received!');
       // channel.sink.close(status.goingAway);
     }, onError: (e) {
@@ -326,6 +347,16 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     return makeReq("GATTRead", rid, params);
   }
 
+  T_Request makeGATTWrite(String mac, String char, List<int> data, int rid, bool requireresponse) {
+    Map<String, dynamic> params = {'MAC': mac, 'Char': char, 'Data': base64.encode(data), 'RR': requireresponse};
+    return makeReq("GATTWrite", rid, params);
+  }
+
+  T_Request makeGATTSetNotify(String mac, String char, bool enable, int rid) {
+    Map<String, dynamic> params = {'MAC': mac, 'Char': char, 'Enable': enable};
+    return makeReq("GATTSetNotify", rid, params);
+  }
+
   @override
   Stream<ble.ConnectionStateUpdate> connectToDevice(
       {required String id,
@@ -357,6 +388,12 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     // }
 
     _sendRequest(makeConnect(id, 0), (data) {
+      if ((data as dynamic).update == "ExecutionError") {
+        ble.ConnectionStateUpdate update = ble.ConnectionStateUpdate(
+            failure: null, deviceId: id, connectionState: ble.DeviceConnectionState.disconnected);
+        _controllerConnectionStream.add(update);
+        return;
+      }
       var state = T_ConnectionStateNotify.fromJson(data.results!);
       ble.ConnectionStateUpdate? update;
       // type T_ConnectionState = "INIT" | "DISCONNECTED" | "CONNECTED" | "CANCELLED";
@@ -419,8 +456,8 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
         var res = data.results!["Data:"].toString();
         log.info("Resposne: $res");
 
-        List<int> codeUnits = res.codeUnits;
-        c.complete(codeUnits);
+        List<int> result = base64.decode(res).toList();
+        c.complete(result);
       }
     });
 
@@ -436,21 +473,74 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   @override
   Stream<List<int>> subscribeToCharacteristic(ble.QualifiedCharacteristic characteristic) {
-    // TODO: implement subscribeToCharacteristic
-    throw UnimplementedError();
+    StreamController<List<int>> ctrl = StreamController();
+
+    _sendRequest(makeGATTSetNotify(characteristic.deviceId, characteristic.characteristicId.toString(), true, 0),
+        (data) {
+      if (data.type == "UPDATE") {
+        log.severe(data.results!["errmsg"]);
+      } else {
+        /// todo: wait until "Data:" is only "Data"
+        if (data.results?.containsKey("Data:") == true) {
+          var res = data.results!["Data:"].toString();
+          log.info("Resposne: $res");
+
+          List<int> codeUnits = res.codeUnits;
+          if (codeUnits != null) {
+            ctrl.add(codeUnits);
+          }
+        }
+      }
+    });
+    _gattNotificationStream.listen((event) {
+      log.info("Listening for Message");
+      if (event.characteristicsId == characteristic.characteristicId.toString() &&
+          event.deviceId == characteristic.deviceId) {
+        log.info("Found for Message");
+        ctrl.add(event.data);
+      }
+    });
+    return ctrl.stream;
   }
 
   @override
   Future<void> writeCharacteristicWithResponse(ble.QualifiedCharacteristic characteristic, {required List<int> value}) {
-    // TODO: implement writeCharacteristicWithResponse
-    throw UnimplementedError();
+    var c = Completer<List<int>>();
+
+    _sendRequest(makeGATTWrite(characteristic.deviceId, characteristic.characteristicId.toString(), value, 0, true),
+        (data) {
+      if (data.type == "UPDATE") {
+        c.completeError(data.results!["errmsg"]);
+      } else {
+        /// todo: wait until "Data:" is only "Data"
+        var res = base64.decode(data.results!["Data:"]);
+        log.info("Resposne: $res");
+
+        c.complete(res);
+      }
+    });
+
+    return c.future;
   }
 
   @override
   Future<void> writeCharacteristicWithoutResponse(ble.QualifiedCharacteristic characteristic,
       {required List<int> value}) {
-    // TODO: implement writeCharacteristicWithoutResponse
-    throw UnimplementedError();
+    var c = Completer<List<int>>();
+    _sendRequest(makeGATTWrite(characteristic.deviceId, characteristic.characteristicId.toString(), value, 0, false),
+        (data) {
+      if (data.type == "UPDATE") {
+        c.completeError(data.results!["errmsg"]);
+      } else {
+        /// todo: wait until "Data:" is only "Data"
+        var res = base64.decode(data.results!["Data:"]);
+        log.info("Resposne: $res");
+
+        c.complete(res);
+      }
+    });
+
+    return c.future;
   }
 
   @override
