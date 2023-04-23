@@ -144,21 +144,26 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
       _channel?.stream.listen(
           (message) {
             _status = ble.BleStatus.ready;
-            // log.info("REC: $message");
+            log.fine("WS RECEIVED: $message");
             // log.info("Stream: REC: $message");
-            var msg = makeIncomingMsgFromJSON(message);
+            try {
+              var msg = makeIncomingMsgFromJSON(message);
 
-            if (msg.type == "UPDATE" && (msg as dynamic).update == "GATTNotify") {
-              // log.info("RESP GATT NOTIFY: $msg");
-              _gattNotificationController.add(GATTNotify(
-                  deviceId: msg.results!["MAC"],
-                  characteristicsId: msg.results!["Char"],
-                  data: base64.decode(msg.results!["Data"])));
-            } else {
-              var cb = _store.get(msg.id);
-              cb?.onResponse(msg);
-              // log.info("RESP: $msg");
+              if (msg.type == "UPDATE" && (msg as dynamic).update == "GATTNotify") {
+                // log.info("RESP GATT NOTIFY: $msg");
+                _gattNotificationController.add(GATTNotify(
+                    deviceId: msg.results!["MAC"],
+                    characteristicsId: msg.results!["Char"],
+                    data: base64.decode(msg.results!["Data"])));
+              } else {
+                var cb = _store.get(msg.id);
+                cb?.onResponse(msg);
+                // log.info("RESP: $msg");
+              }
+            } catch (e) {
+              log.severe("Handling message failed $e");
             }
+
             // channel.sink.add('received!');
             // channel.sink.close(status.goingAway);
           },
