@@ -656,6 +656,37 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
           ],
         ),
+        SettingsGroup(
+          title: "Experimental",
+          children: [
+            SimpleSettingsTile(
+              title: "Experimental",
+              leading: const Icon(Icons.privacy_tip),
+              child: SettingsScreen(
+                title: "Experimental",
+                children: <Widget>[
+                  SwitchSettingsTile(
+                    leading: const Icon(Icons.settings_remote),
+                    settingKey: SettingKeys.useCafeHub.name,
+                    defaultValue: settingsService.useCafeHub,
+                    title: "Use CafeHub instead of BlueTooth",
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
+                  TextInputSettingsTile(
+                    title: "CafeHub Websocket Endpoint (Usually: ws://IP_OF_YOUR_TABLET_RUNNING_CAFEHUB:8765)",
+                    settingKey: SettingKeys.chUrl.name,
+                    initialValue: settingsService.chUrl,
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

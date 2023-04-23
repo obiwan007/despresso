@@ -85,21 +85,29 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   int _id = 1;
 
   CallbackHandler _store = CallbackHandler();
-  StreamController<ble.ConnectionStateUpdate> _controllerConnectionStream =
-      StreamController<ble.ConnectionStateUpdate>();
+  StreamController<ble.ConnectionStateUpdate> _controllerConnection = StreamController<ble.ConnectionStateUpdate>();
 
   StreamController<GATTNotify> _gattNotificationController = StreamController<GATTNotify>();
+  late Stream<ble.ConnectionStateUpdate> _controllerConnectionStream;
 
   ble.BleStatus _status = ble.BleStatus.unknown;
 
   late Stream<GATTNotify> _gattNotificationStream;
 
+  bool _useCafeHub = false;
+  int _scanTime = 10;
+  DateTime _scanStart = DateTime.now();
+
+  Timer? _scanTimer;
+
   CHService() {
+    _controllerConnectionStream = _controllerConnection.stream.asBroadcastStream();
     _settings = getIt<SettingsService>();
     _settings.addListener(
       () {
-        if (_settings.chUrl != _connectionString) {
+        if (_settings.useCafeHub != _useCafeHub || _settings.chUrl != _connectionString) {
           _connectionString = _settings.chUrl;
+          _useCafeHub = _settings.useCafeHub;
           init();
         }
       },
@@ -115,33 +123,70 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
     // bleManager.observeBluetoothState().listen(btStateListener);
     // startScanning();
-    final wsUrl = Uri.parse(_connectionString);
-    _channel = WebSocketChannel.connect(wsUrl);
+    if (!_settings.useCafeHub) {
+      log.info("CafeHub is deactivated");
+      return;
+    }
 
-    _channel?.stream.listen((message) {
+    if (_channel != null) {
+      log.info("CafeHub is connected already");
+      return;
+    }
+    log.info("CafeHub trying to connect");
+
+    try {
+      final wsUrl = Uri.parse(_connectionString);
+      _channel = WebSocketChannel.connect(wsUrl);
+      await _channel?.ready;
+      log.info("CafeHub connected to Websocket");
       _status = ble.BleStatus.ready;
-      // log.info("REC: $message");
-      log.info("Stream: REC: $message");
-      var msg = makeIncomingMsgFromJSON(message);
+      startScan();
+      _channel?.stream.listen(
+          (message) {
+            _status = ble.BleStatus.ready;
+            // log.info("REC: $message");
+            // log.info("Stream: REC: $message");
+            var msg = makeIncomingMsgFromJSON(message);
 
-      if (msg.type == "UPDATE" && (msg as dynamic).update == "GATTNotify") {
-        log.info("RESP GATT NOTIFY: $msg");
-        _gattNotificationController.add(GATTNotify(
-            deviceId: msg.results!["MAC"],
-            characteristicsId: msg.results!["Char"],
-            data: base64.decode(msg.results!["Data"])));
-      } else {
-        var cb = _store.get(msg.id);
-        cb?.onResponse(msg);
-        log.info("RESP: $msg");
-      }
-      // channel.sink.add('received!');
-      // channel.sink.close(status.goingAway);
-    }, onError: (e) {
-      log.info("ERROR: $e");
-    });
-
-    startScan();
+            if (msg.type == "UPDATE" && (msg as dynamic).update == "GATTNotify") {
+              // log.info("RESP GATT NOTIFY: $msg");
+              _gattNotificationController.add(GATTNotify(
+                  deviceId: msg.results!["MAC"],
+                  characteristicsId: msg.results!["Char"],
+                  data: base64.decode(msg.results!["Data"])));
+            } else {
+              var cb = _store.get(msg.id);
+              cb?.onResponse(msg);
+              // log.info("RESP: $msg");
+            }
+            // channel.sink.add('received!');
+            // channel.sink.close(status.goingAway);
+          },
+          cancelOnError: true,
+          onDone: () {
+            log.info("CafeHub Listening Done");
+            _status = ble.BleStatus.unknown;
+            _channel = null;
+            _scanTimer?.cancel();
+            _scanTimer = null;
+            isScanning = false;
+            notifyListeners();
+            Future.delayed(Duration(seconds: 10), () => init());
+          },
+          onError: (e) {
+            _status = ble.BleStatus.unknown;
+            log.info("CafeHub Listening ERROR: $e");
+            _channel = null;
+            notifyListeners();
+            Future.delayed(Duration(seconds: 10), () => init());
+          });
+    } catch (e) {
+      _status = ble.BleStatus.unknown;
+      log.severe("Could not connect to CafeHub $e");
+      Future.delayed(Duration(seconds: 10), () => init());
+      _channel = null;
+      notifyListeners();
+    }
   }
 
   T_Request makeScan(int timeout) {
@@ -157,12 +202,12 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   T_IncomingMsg makeIncomingMsgFromJSON(String jsondata) {
     final parsedJson = json.decode(jsondata);
     String type = parsedJson["type"];
-    log.info(parsedJson["type"]);
+
     if (type == "RESP") {
       // Response
       // let resp = msg as T_Response;
       // return resp;
-      log.info("RESP: $parsedJson");
+      // log.info("RESP: $parsedJson");
 
       var res = T_Response.fromJson(parsedJson);
       return res;
@@ -187,6 +232,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   //   print(btState);
   // }
 
+  @override
   void startScan() {
     if (isScanning) {
       log.info("Already scanning");
@@ -195,7 +241,13 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
     isScanning = true;
 
-    var s = makeScan(30);
+    ScaleService scaleService = getIt<ScaleService>();
+    if (scaleService.state != ScaleState.connected) {
+      scaleService.setState(ScaleState.connecting);
+    }
+
+    _scanStart = DateTime.now();
+    var s = makeScan(_scanTime);
     _sendAsJSON(s);
     _store.addRequest(RequestEntry(
         id: s.id,
@@ -241,16 +293,16 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     //   notifyListeners();
     // });
 
-    // Timer(const Duration(seconds: 30), () {
-    //   _subscription?.cancel();
-    //   log.info('stoppedScan');
-    //   _subscription = null;
-    //   isScanning = false;
-    //   if (scaleService.state == ScaleState.connecting) {
-    //     scaleService.setState(ScaleState.disconnected);
-    //   }
-    //   notifyListeners();
-    // });
+    _scanTimer = Timer(Duration(seconds: _scanTime + 1), () {
+      log.info('stoppedScan');
+
+      isScanning = false;
+      if (scaleService.state == ScaleState.connecting) {
+        scaleService.setState(ScaleState.disconnected);
+      }
+      notifyListeners();
+      _scanTimer = null;
+    });
 
     // var _scanSubscription =
     //     bleManager.startPeripheralScan().listen((ScanResult result) {
@@ -278,48 +330,59 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   }
 
   void _addDeviceTolist(final ble.DiscoveredDevice device) async {
+    var timeToEnd = _scanTime - DateTime.now().difference(_scanStart).inSeconds;
+
+    // Future.delayed(
+    //   Duration(seconds: timeToEnd + 2),
+    //   () {
+    //     log.info("DELAYED INIT");
+    //   },
+    // );
+
     if (device.name.isNotEmpty) {
       if (!_devicesIgnoreList.map((e) => e.id).contains(device.id) &&
           !_devicesList.map((e) => e.id).contains(device.id)) {
+        var delay = Duration(seconds: timeToEnd + 2);
+        log.info("SCANTIME: Time Left for device creation $timeToEnd");
         log.fine(
             'Found new device: ${device.name} ID: ${device.id} UUIDs: ${device.serviceUuids} RSSI ${device.rssi} ');
         if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
           log.info('Creating Acaia Scale!');
-          AcaiaScale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => AcaiaScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('PEARLS') ||
             device.name.startsWith('LUNAR') ||
             device.name.startsWith('PYXIS')) {
           log.info('Creating AcaiaPYXIS Scale!');
-          AcaiaPyxisScale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => AcaiaPyxisScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('CFS-9002')) {
           log.info('eureka scale found');
-          EurekaScale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => EurekaScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('Decent')) {
           log.info('decent scale found');
-          DecentScale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => DecentScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('DE1')) {
           log.info('Creating DE1 machine!');
-          DE1(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => DE1(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('MEATER')) {
           log.info('Meater thermometer ');
-          MeaterThermometer(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => MeaterThermometer(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('Skale')) {
           log.info('Skala 2');
-          Skale2Scale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => Skale2Scale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('FELICITA')) {
           log.info('Felicita Scale');
-          FelicitaScale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => FelicitaScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('HIROIA')) {
           log.info('Hiroia Scale');
-          HiroiaScale(device, this).addListener(() => _checkdevice(device));
+          Future.delayed(delay, () => HiroiaScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else {
           _devicesIgnoreList.add(device);
@@ -391,7 +454,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
       if ((data as dynamic).update == "ExecutionError") {
         ble.ConnectionStateUpdate update = ble.ConnectionStateUpdate(
             failure: null, deviceId: id, connectionState: ble.DeviceConnectionState.disconnected);
-        _controllerConnectionStream.add(update);
+        _controllerConnection.add(update);
         return;
       }
       var state = T_ConnectionStateNotify.fromJson(data.results!);
@@ -418,12 +481,12 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
           break;
       }
       if (update != null) {
-        _controllerConnectionStream.add(update);
+        _controllerConnection.add(update);
       }
       log.info("Connection update: $data $state");
     });
 
-    return _controllerConnectionStream.stream;
+    return _controllerConnectionStream;
   }
 
 // /**
@@ -481,22 +544,20 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
         log.severe(data.results!["errmsg"]);
       } else {
         /// todo: wait until "Data:" is only "Data"
-        if (data.results?.containsKey("Data:") == true) {
-          var res = data.results!["Data:"].toString();
-          log.info("Resposne: $res");
+        // if (data.results?.containsKey("Data:") == true) {
+        //   var res = data.results!["Data:"].toString();
+        //   log.info("Resposne: $res");
 
-          List<int> codeUnits = res.codeUnits;
-          if (codeUnits != null) {
-            ctrl.add(codeUnits);
-          }
-        }
+        //   List<int> codeUnits = res.codeUnits;
+        //   if (codeUnits != null) {
+        //     ctrl.add(codeUnits);
+        //   }
+        // }
       }
     });
     _gattNotificationStream.listen((event) {
-      log.info("Listening for Message");
       if (event.characteristicsId == characteristic.characteristicId.toString() &&
           event.deviceId == characteristic.deviceId) {
-        log.info("Found for Message");
         ctrl.add(event.data);
       }
     });
@@ -505,7 +566,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   @override
   Future<void> writeCharacteristicWithResponse(ble.QualifiedCharacteristic characteristic, {required List<int> value}) {
-    var c = Completer<List<int>>();
+    var c = Completer<void>();
 
     _sendRequest(makeGATTWrite(characteristic.deviceId, characteristic.characteristicId.toString(), value, 0, true),
         (data) {
@@ -513,10 +574,10 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
         c.completeError(data.results!["errmsg"]);
       } else {
         /// todo: wait until "Data:" is only "Data"
-        var res = base64.decode(data.results!["Data:"]);
-        log.info("Resposne: $res");
+        // var res = base64.decode(data.results!["Data:"]);
+        log.info("Resposne: ");
 
-        c.complete(res);
+        c.complete();
       }
     });
 
@@ -526,17 +587,15 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   @override
   Future<void> writeCharacteristicWithoutResponse(ble.QualifiedCharacteristic characteristic,
       {required List<int> value}) {
-    var c = Completer<List<int>>();
+    var c = Completer<void>();
     _sendRequest(makeGATTWrite(characteristic.deviceId, characteristic.characteristicId.toString(), value, 0, false),
         (data) {
       if (data.type == "UPDATE") {
         c.completeError(data.results!["errmsg"]);
       } else {
         /// todo: wait until "Data:" is only "Data"
-        var res = base64.decode(data.results!["Data:"]);
-        log.info("Resposne: $res");
-
-        c.complete(res);
+        //var res = base64.decode(data.results!["Data:"]);
+        c.complete();
       }
     });
 
@@ -544,6 +603,5 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   }
 
   @override
-  // TODO: implement status
   ble.BleStatus get status => _status;
 }

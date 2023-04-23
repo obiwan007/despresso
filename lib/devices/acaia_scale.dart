@@ -63,7 +63,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
   late DeviceConnectionState _state;
 
   List<int> commandBuffer = [];
-  late Timer _heartBeatTimer;
+  Timer? _heartBeatTimer;
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
@@ -205,6 +205,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x00, _heartbeatPayload));
     } catch (e) {
       log.severe("Heartbeat failure $e");
+      scaleService.setState(ScaleState.disconnected);
+      _onStateChange(DeviceConnectionState.disconnected);
     }
   }
 
@@ -298,7 +300,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         scaleService.setBattery(0);
         log.info('Acaia Scale disconnected. Destroying');
         _characteristicsSubscription?.cancel();
-        _heartBeatTimer.cancel();
+        _heartBeatTimer?.cancel();
+        _heartBeatTimer = null;
         _deviceListener.cancel();
         notifyListeners();
         return;

@@ -10,6 +10,7 @@ import 'package:despresso/devices/meater_thermometer.dart';
 import 'package:despresso/devices/skale2_scale.dart';
 import 'package:despresso/helper/permissioncheck.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -31,18 +32,34 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
 
   final List<ble.DiscoveredDevice> _devicesList = <ble.DiscoveredDevice>[];
   final List<ble.DiscoveredDevice> _devicesIgnoreList = <ble.DiscoveredDevice>[];
-
+  late SettingsService _settings;
   StreamSubscription<ble.DiscoveredDevice>? _subscription;
 
   bool isScanning = false;
 
   String error = "";
 
+  bool _useCafeHub = false;
+
   BLEService() {
     init();
+    _settings = getIt<SettingsService>();
+    _settings.addListener(
+      () {
+        if (_settings.useCafeHub != _useCafeHub) {
+          _useCafeHub = _settings.useCafeHub;
+          init();
+        }
+      },
+    );
   }
 
   void init() async {
+    if (_settings.useCafeHub) {
+      log.info("BLE is deactivated");
+      return;
+    }
+    log.info("BLE trying to connect");
     await checkPermissions();
     // await bleManager.createClient();
 
@@ -55,6 +72,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
   //   print(btState);
   // }
 
+  @override
   void startScan() {
     if (isScanning) {
       log.info("Already scanning");
@@ -86,7 +104,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
       _subscription = null;
       isScanning = false;
       if (scaleService.state == ScaleState.connecting) {
-        scaleService.setState(ScaleState.disconnected);
+        // scaleService.setState(ScaleState.disconnected);
       }
       notifyListeners();
     });

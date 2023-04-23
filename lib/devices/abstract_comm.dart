@@ -9,4 +9,5 @@ abstract class DeviceCommunication {
   Future<void> writeCharacteristicWithoutResponse(QualifiedCharacteristic characteristic, {required List<int> value});
   Stream<List<int>> subscribeToCharacteristic(QualifiedCharacteristic characteristic);
   BleStatus get status;
+  void startScan() {}
 }
