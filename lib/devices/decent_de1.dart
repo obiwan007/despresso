@@ -102,9 +102,10 @@ enum MMRAddrEnum {
 class DE1 extends ChangeNotifier implements IDe1 {
   final log = l.Logger('DE1');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = !Platform.isIOS ? Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB') : Uuid.parse('A000');
+  static Uuid ServiceUUID =
+      useLongCharacteristics() ? Uuid.parse('0000A000-0000-1000-8000-00805F9B34FB') : Uuid.parse('A000');
 
-  static var cuuids = !Platform.isIOS
+  static var cuuids = useLongCharacteristics()
       ? {
           '0000A001-0000-1000-8000-00805F9B34FB': Endpoint.versions,
           '0000A002-0000-1000-8000-00805F9B34FB': Endpoint.requestedState,

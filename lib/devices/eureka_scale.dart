@@ -16,19 +16,19 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
+      useLongCharacteristics() ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
   // ignore: non_constant_identifier_names
   static Uuid CharateristicUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
+      useLongCharacteristics() ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
   // ignore: non_constant_identifier_names
   static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+      useLongCharacteristics() ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // ignore: non_constant_identifier_names
   static Uuid BatteryCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
+      useLongCharacteristics() ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
   // ignore: non_constant_identifier_names
   static Uuid CommandUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
+      useLongCharacteristics() ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
 
   late ScaleService scaleService;
 

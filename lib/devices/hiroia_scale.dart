@@ -16,11 +16,13 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('06c31822-8682-4744-9211-febc93e3bece') : Uuid.parse('1822');
+      useLongCharacteristics() ? Uuid.parse('06c31822-8682-4744-9211-febc93e3bece') : Uuid.parse('1822');
   // ignore: non_constant_identifier_names
-  static Uuid DataUUID = Platform.isAndroid ? Uuid.parse('06c31823-8682-4744-9211-febc93e3bece') : Uuid.parse('1823');
+  static Uuid DataUUID =
+      useLongCharacteristics() ? Uuid.parse('06c31823-8682-4744-9211-febc93e3bece') : Uuid.parse('1823');
   // ignore: non_constant_identifier_names
-  static Uuid WriteUUID = Platform.isAndroid ? Uuid.parse('06c31824-8682-4744-9211-febc93e3bece') : Uuid.parse('1824');
+  static Uuid WriteUUID =
+      useLongCharacteristics() ? Uuid.parse('06c31824-8682-4744-9211-febc93e3bece') : Uuid.parse('1824');
 
   late ScaleService scaleService;
 

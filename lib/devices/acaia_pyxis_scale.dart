@@ -22,17 +22,17 @@ int instances = 0;
 class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   var log = l.Logger('AcaiaPyxisScale');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Platform.isAndroid
+  static Uuid ServiceUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455')
       : Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455');
 
   /// Command
-  static Uuid characteristicCommandUUID = Platform.isAndroid
+  static Uuid characteristicCommandUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3')
       : Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3');
 
   /// Command
-  static Uuid characteristicStatusUUID = Platform.isAndroid
+  static Uuid characteristicStatusUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616')
       : Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616');
 

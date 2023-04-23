@@ -17,9 +17,10 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000ffe0-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffe0');
+      useLongCharacteristics() ? Uuid.parse('0000ffe0-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffe0');
   // ignore: non_constant_identifier_names
-  static Uuid DataUUID = Platform.isAndroid ? Uuid.parse('0000ffe1-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffe1');
+  static Uuid DataUUID =
+      useLongCharacteristics() ? Uuid.parse('0000ffe1-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffe1');
 
   late ScaleService scaleService;
 

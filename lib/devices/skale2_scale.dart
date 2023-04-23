@@ -17,20 +17,20 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('Skale2Scale');
 
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
+      useLongCharacteristics() ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
   static Uuid WeightCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
+      useLongCharacteristics() ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
 
   static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+      useLongCharacteristics() ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // Platform.isAndroid ? Uuid.parse('0000180F-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   static Uuid BatteryCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
+      useLongCharacteristics() ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
   static Uuid CommandUUID =
-      Platform.isAndroid ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
+      useLongCharacteristics() ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
 
   static Uuid ButtonNotifyUUID =
-      Platform.isAndroid ? Uuid.parse('0000ef82-0000-1000-8000-00805F9B34FB') : Uuid.parse('ef82');
+      useLongCharacteristics() ? Uuid.parse('0000ef82-0000-1000-8000-00805F9B34FB') : Uuid.parse('ef82');
 
   late ScaleService scaleService;
 
