@@ -15,6 +15,11 @@ class T_Request {
 
   Map<String, dynamic> toJson() => _$T_RequestToJson(this);
   factory T_Request.fromJson(Map<String, dynamic> json) => _$T_RequestFromJson(json);
+
+  @override
+  toString() {
+    return "$id $type $command $params";
+  }
 }
 
 // export type T_UpdateResult = T_ScanResult | T_Results_GATTNotify | T_ConnectionStateNotify | T_ErrorDesc;

@@ -32,8 +32,14 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' as ble;
 
 class RequestEntry {
   int id;
+  T_Request request;
   void Function(T_IncomingMsg) onResponse;
-  RequestEntry({required this.id, required this.onResponse});
+  RequestEntry({required this.id, required this.request, required this.onResponse});
+
+  @override
+  toString() {
+    return "$request";
+  }
 }
 
 class GATTNotify {
@@ -157,6 +163,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
                     data: base64.decode(msg.results!["Data"])));
               } else {
                 var cb = _store.get(msg.id);
+                log.info("Response for ${msg.id} $cb");
                 cb?.onResponse(msg);
                 // log.info("RESP: $msg");
               }
@@ -256,6 +263,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     _sendAsJSON(s);
     _store.addRequest(RequestEntry(
         id: s.id,
+        request: s,
         onResponse: (data) {
           var d = (data as T_Update);
           if (d.results == null) {
@@ -430,38 +438,23 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
       {required String id,
       Map<ble.Uuid, List<ble.Uuid>>? servicesWithCharacteristicsToDiscover,
       Duration? connectionTimeout}) {
-    // TODO: implement connectToDevice
+    StreamController<ble.ConnectionStateUpdate> controllerConnection = StreamController<ble.ConnectionStateUpdate>();
 
-    /**
-   * Request a connection to the GATT server on a device
-   * 
-   * Will return with a connection state after connection fails or succeeds, and then
-   * the callback will be forgotten.
-   * 
-   * Register for unsolicited callbacks using registerForNotifies to be informed
-   * of things like disconnects.
-   * 
-   * @param mac MAC address of server, eg "20:C3:8F:E3:B6:A3"
-   * @param callback Function to call back with the result
-   */
-    // requestGATTConnect = (mac : string, callback : I_ConnectionStateCallback) => {
-    // const conncb = (request: T_Request, response: T_IncomingMsg): boolean => {
-    //   // We proxy the callback so we can update our list of connected devices.
-    //   const update = this.MM.updateFromMsg(response)
-    //   let connstate = this.MM.connStateFromUpdate(update);
-    //   this._updateConnState(connstate.MAC, connstate.CState);
-    //   console.log("BLE: requestGATTConnect response:", connstate)
-    //   callback(request, connstate);
-    //   return false;
-    // }
-
-    _sendRequest(makeConnect(id, 0), (data) {
+    int rId = 0;
+    rId = _sendRequest(makeConnect(id, 0), (data) {
+      if (rId != data.id) {
+        log.severe("Error in callback");
+        return;
+      }
       if ((data as dynamic).update == "ExecutionError") {
         ble.ConnectionStateUpdate update = ble.ConnectionStateUpdate(
             failure: null, deviceId: id, connectionState: ble.DeviceConnectionState.disconnected);
-        _controllerConnection.add(update);
+        controllerConnection.add(update);
+        log.severe("Error in callback $rId $data");
         return;
       }
+
+      log.info("ConnectionUpdate for Request $rId == ${data.id}");
       var state = T_ConnectionStateNotify.fromJson(data.results!);
       ble.ConnectionStateUpdate? update;
       // type T_ConnectionState = "INIT" | "DISCONNECTED" | "CONNECTED" | "CANCELLED";
@@ -486,12 +479,12 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
           break;
       }
       if (update != null) {
-        _controllerConnection.add(update);
+        controllerConnection.add(update);
       }
       log.info("Connection update: $data $state");
     });
 
-    return _controllerConnectionStream;
+    return controllerConnection.stream.asBroadcastStream();
   }
 
 // /**
@@ -532,11 +525,12 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     return c.future;
   }
 
-  _sendRequest(T_Request reqtosend, Function(T_IncomingMsg) callback) {
+  int _sendRequest(T_Request reqtosend, Function(T_IncomingMsg) callback) {
     var id = _id++;
     reqtosend.id = id;
-    _store.addRequest(RequestEntry(id: id, onResponse: callback));
+    _store.addRequest(RequestEntry(id: id, request: reqtosend, onResponse: callback));
     _sendAsJSON(reqtosend);
+    return id;
   }
 
   @override
