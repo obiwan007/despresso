@@ -18,8 +18,11 @@ abstract class DeviceCommunication {
 }
 
 bool useLongCharacteristics() {
-  bool ch = (getIt<SettingsService>()).useCafeHub;
-  if (ch) return true;
+  var service = getIt<SettingsService>();
+  bool ch = (service).useCafeHub;
+  if (ch) {
+    return service.useLongUUID;
+  }
   if (Platform.isAndroid) return true;
   return false;
 }

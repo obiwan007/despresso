@@ -439,7 +439,9 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
       Map<ble.Uuid, List<ble.Uuid>>? servicesWithCharacteristicsToDiscover,
       Duration? connectionTimeout}) {
     StreamController<ble.ConnectionStateUpdate> controllerConnection = StreamController<ble.ConnectionStateUpdate>();
-
+    ble.ConnectionStateUpdate update =
+        ble.ConnectionStateUpdate(failure: null, deviceId: id, connectionState: ble.DeviceConnectionState.connecting);
+    controllerConnection.add(update);
     int rId = 0;
     rId = _sendRequest(makeConnect(id, 0), (data) {
       if (rId != data.id) {

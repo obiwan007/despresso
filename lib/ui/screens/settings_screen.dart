@@ -682,6 +682,15 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       settingsService.notifyDelayed();
                     },
                   ),
+                  SwitchSettingsTile(
+                    leading: const Icon(Icons.settings_remote),
+                    settingKey: SettingKeys.useLongUUID.name,
+                    defaultValue: settingsService.useLongUUID,
+                    title: "Use Long UUID (usually if Android)",
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
                 ],
               ),
             ),
