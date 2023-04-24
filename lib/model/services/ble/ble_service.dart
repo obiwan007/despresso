@@ -42,7 +42,6 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
   bool _useCafeHub = false;
 
   BLEService() {
-    init();
     _settings = getIt<SettingsService>();
     _settings.addListener(
       () {
@@ -52,6 +51,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
         }
       },
     );
+    init();
   }
 
   void init() async {
