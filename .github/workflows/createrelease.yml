@@ -3,6 +3,10 @@ name: CreateRelease
 on:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   TestFlight:
     uses: ./.github/workflows/testflight.yml
