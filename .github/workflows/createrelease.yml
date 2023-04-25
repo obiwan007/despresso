@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   TestFlight:
-    uses: obiwan007/despresso/.github/workflows/testflight.yml
+    uses: ./.github/workflows/testflight.yml
 
   Playstore:
-    uses: obiwan007/despresso/.github/workflows/playstore.yml
+    uses: ./.github/workflows/playstore.yml
