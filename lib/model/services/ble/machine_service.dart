@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_decent_de1.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
+import 'package:despresso/model/services/cafehub/ch_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 
@@ -70,7 +72,7 @@ class EspressoMachineService extends ChangeNotifier {
   late SharedPreferences prefs;
 
   late ProfileService profileService;
-  late BLEService bleService;
+  late DeviceCommunication bleService;
 
   bool refillAnounced = false;
 
@@ -161,7 +163,12 @@ class EspressoMachineService extends ChangeNotifier {
   void init() async {
     profileService = getIt<ProfileService>();
     settingsService = getIt<SettingsService>();
-    bleService = getIt<BLEService>();
+
+    if (settingsService.useCafeHub) {
+      bleService = getIt<CHService>();
+    } else {
+      bleService = getIt<BLEService>();
+    }
 
     objectBox = getIt<ObjectBox>();
     profileService.addListener(updateProfile);

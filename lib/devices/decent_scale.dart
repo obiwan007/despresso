@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -13,13 +14,13 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('DecentScale');
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
+      useLongCharacteristics() ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
 // ignore: non_constant_identifier_names
   static Uuid ReadCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff4-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff4');
+      useLongCharacteristics() ? Uuid.parse('0000fff4-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff4');
 // ignore: non_constant_identifier_names
   static Uuid WriteCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('000036f5-0000-1000-8000-00805f9b34fb') : Uuid.parse('36f5');
+      useLongCharacteristics() ? Uuid.parse('000036f5-0000-1000-8000-00805f9b34fb') : Uuid.parse('36f5');
 
   late ScaleService scaleService;
 
@@ -32,8 +33,8 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
   bool weightStability = true;
-
-  DecentScale(this.device) {
+  DeviceCommunication connection;
+  DecentScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
     _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -15,11 +16,13 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('06c31822-8682-4744-9211-febc93e3bece') : Uuid.parse('1822');
+      useLongCharacteristics() ? Uuid.parse('06c31822-8682-4744-9211-febc93e3bece') : Uuid.parse('1822');
   // ignore: non_constant_identifier_names
-  static Uuid DataUUID = Platform.isAndroid ? Uuid.parse('06c31823-8682-4744-9211-febc93e3bece') : Uuid.parse('1823');
+  static Uuid DataUUID =
+      useLongCharacteristics() ? Uuid.parse('06c31823-8682-4744-9211-febc93e3bece') : Uuid.parse('1823');
   // ignore: non_constant_identifier_names
-  static Uuid WriteUUID = Platform.isAndroid ? Uuid.parse('06c31824-8682-4744-9211-febc93e3bece') : Uuid.parse('1824');
+  static Uuid WriteUUID =
+      useLongCharacteristics() ? Uuid.parse('06c31824-8682-4744-9211-febc93e3bece') : Uuid.parse('1824');
 
   late ScaleService scaleService;
 
@@ -28,16 +31,15 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
-
-  HiroiaScale(this.device) {
+  DeviceCommunication connection;
+  HiroiaScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -82,8 +84,7 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Hiroia");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -102,7 +103,7 @@ class HiroiaScale extends ChangeNotifier implements AbstractScale {
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'dart:convert';
 import 'package:despresso/helper/permissioncheck.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 import 'package:logging/logging.dart';
@@ -13,7 +13,7 @@ Future<void> initLogger() async {
   //   print('APP#${record.level.name}: ${record.time}:${record.loggerName}# ${record.message}');
   // });
   Logger.root.clearListeners();
-  PrintAppender(formatter: const ColorFormatter()).attachToLogger(Logger.root);
+  PrintAppender(formatter: MultilineColorFormatter()).attachToLogger(Logger.root);
 
   Directory? dir;
   try {
@@ -174,14 +174,21 @@ Future<Uint8List> getLoggerBackupData() async {
 //     }
 //   }
 // }
+LineSplitter ls = const LineSplitter();
 
 class UtcLogRecordFormatter extends LogRecordFormatter {
   const UtcLogRecordFormatter();
 
   @override
   StringBuffer formatToStringBuffer(LogRecord rec, StringBuffer sb) {
-    sb.write('${rec.time.toUtc()} ${rec.level.name} '
-        '${rec.loggerName} - ${rec.message}');
+    var split = ls.convert(rec.message);
+    if (split.length > 0) {
+      split.forEach((line) => sb.write('${rec.time.toUtc()} ${rec.level.name} '
+          '${rec.loggerName} - ${line}'));
+    } else {
+      sb.write('${rec.time.toUtc()} ${rec.level.name} '
+          '${rec.loggerName} - ${rec.message}');
+    }
 
     if (rec.error != null) {
       sb.writeln();
@@ -194,6 +201,24 @@ class UtcLogRecordFormatter extends LogRecordFormatter {
       sb.writeln();
       sb.write(stackTrace);
     }
+    return sb;
+  }
+}
+
+/// dart:io logger which adds ansi escape characters to set the color
+/// of the output depending on log level.
+class MultilineColorFormatter extends ColorFormatter {
+  MultilineColorFormatter();
+
+  @override
+  StringBuffer formatToStringBuffer(LogRecord rec, StringBuffer sb) {
+    var split = ls.convert(rec.message);
+    split.forEach((element) {
+      super.formatToStringBuffer(
+          LogRecord(rec.level, element, rec.loggerName, rec.error, rec.stackTrace, rec.zone, rec.object), sb);
+      sb.writeln();
+    });
+
     return sb;
   }
 }

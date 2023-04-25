@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'dart:math' show pow;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:logging/logging.dart' as l;
@@ -21,17 +22,17 @@ int instances = 0;
 class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   var log = l.Logger('AcaiaPyxisScale');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Platform.isAndroid
+  static Uuid ServiceUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455')
       : Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455');
 
   /// Command
-  static Uuid characteristicCommandUUID = Platform.isAndroid
+  static Uuid characteristicCommandUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3')
       : Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3');
 
   /// Command
-  static Uuid characteristicStatusUUID = Platform.isAndroid
+  static Uuid characteristicStatusUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616')
       : Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616');
 
@@ -78,7 +79,6 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   List<int> commandBuffer = [];
   Timer? _heartBeatTimer;
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
@@ -86,14 +86,15 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   DateTime _lastResponse = DateTime.now();
   int instance = 0;
-  AcaiaPyxisScale(this.device) {
+  DeviceCommunication connection;
+  AcaiaPyxisScale(this.device, this.connection) {
     instances++;
     instance = instances;
     log = l.Logger('AcaiaPyxisScale $instance');
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
       log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
@@ -250,8 +251,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     return;
     try {
       log.info("Heartbeat");
-      await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-          value: encode(0x00, _heartbeatPayload));
+      await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x00, _heartbeatPayload));
     } catch (e) {
       log.severe("Heartbeat failure $e");
     }
@@ -267,7 +267,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
-    await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
+    await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
   }
 
   Future<void> _sendConfig() async {
@@ -279,7 +279,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
-    await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
+    await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
   }
 
   @override
@@ -293,7 +293,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     try {
-      await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
+      await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
 
       await _sendConfig();
       log.info("tara send Ok");
@@ -306,7 +306,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Acaia");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: payload);
+    return await connection.writeCharacteristicWithResponse(characteristic, value: payload);
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -389,7 +389,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicStatusUUID, deviceId: device.id);
 
-    _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+    _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
       // code to handle incoming data
       try {
         _notificationCallback(data);

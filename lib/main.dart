@@ -48,12 +48,12 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky, overlays: []);
 
   initSettings().then((_) async {
-    if (Platform.isWindows) {
-      Timer(
-        const Duration(seconds: 1),
-        () => DE1Simulated(),
-      );
-    }
+    // if (Platform.isWindows) {
+    //   Timer(
+    //     const Duration(seconds: 1),
+    //     () => DE1Simulated(),
+    //   );
+    // }
 
     String dsn = Settings.getValue<bool>(SettingKeys.useSentry.name, defaultValue: true)! ? '<SENTRY_KEY>' : '';
 

@@ -71,6 +71,9 @@ enum SettingKeys {
   showWeightGraph,
   showTempGraph,
   showFlowGraph,
+  chUrl,
+  useCafeHub,
+  useLongUUID,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -255,6 +258,15 @@ class SettingsService extends ChangeNotifier {
 
   bool get showTempGraph => Settings.getValue<bool>(SettingKeys.showTempGraph.name) ?? true;
   set showTempGraph(bool value) => Settings.setValue<bool>(SettingKeys.showTempGraph.name, value);
+
+  String get chUrl => Settings.getValue<String>(SettingKeys.chUrl.name) ?? "ws://192.168.178.97:8765";
+  set chUrl(String value) => Settings.setValue<String>(SettingKeys.chUrl.name, value);
+
+  bool get useCafeHub => Settings.getValue<bool>(SettingKeys.useCafeHub.name) ?? false;
+  set useCafeHub(bool value) => Settings.setValue<bool>(SettingKeys.useCafeHub.name, value);
+
+  bool get useLongUUID => Settings.getValue<bool>(SettingKeys.useLongUUID.name) ?? true;
+  set useLongUUID(bool value) => Settings.setValue<bool>(SettingKeys.useLongUUID.name, value);
 
   void notifyDelayed() {
     Future.delayed(

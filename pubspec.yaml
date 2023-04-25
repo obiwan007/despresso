@@ -87,6 +87,7 @@ dependencies:
   sentry_logging: ^7.4.0
   flutter_localizations:
     sdk: flutter
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:
