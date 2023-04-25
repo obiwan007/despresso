@@ -104,7 +104,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
       _subscription = null;
       isScanning = false;
       if (scaleService.state == ScaleState.connecting) {
-        // scaleService.setState(ScaleState.disconnected);
+        scaleService.setState(ScaleState.disconnected);
       }
       notifyListeners();
     });
