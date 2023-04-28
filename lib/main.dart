@@ -112,6 +112,7 @@ class _MyAppState extends State<MyApp> {
     var themeDark = darkColorSchemes[int.parse(_settings.screenThemeIndex)];
     return BetterFeedback(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'despresso',
         localizationsDelegates: const [
           S.delegate,
