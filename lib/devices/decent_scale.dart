@@ -33,6 +33,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
   bool weightStability = true;
+  int tareCounter = 0;
   DeviceCommunication connection;
   DecentScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
@@ -69,8 +70,12 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   @override
   writeTare() {
-    List<int> payload = [0x03, 0x0F, 0xFD, 0x00, 0x00, 0x00];
+    List<int> payload = [0x03, 0x0F, 0xFD, tareCounter, 0x00, 0x00];
     payload.add(getXOR(payload));
+    tareCounter++;
+    if (tareCounter > 255) {
+      tareCounter = 0;
+    }
     return writeToDecentScale(payload);
   }
 
@@ -109,6 +114,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Decent");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteCharacteristicUUID, deviceId: device.id);
+    await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
     return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
