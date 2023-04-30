@@ -21,6 +21,8 @@ import '../../model/services/ble/machine_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../service_locator.dart';
 import './profiles_edit_screen.dart';
+import './profiles_d-flow_edit_screen.dart';
+import './profiles_advanced_edit_screen.dart';
 
 enum FilterModes {
   Default,
@@ -194,11 +196,25 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             icon: const Icon(Icons.edit),
             onPressed: () {
               setState(() {
-                log.info("Edit profile $_selectedProfile");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilesEditScreen(_selectedProfile!.clone())),
-                );
+                if (_selectedProfile!.shotHeader.type == "advanced") {
+                  if (_selectedProfile!.title.startsWith("D-Flow")) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DFlowEditScreen(_selectedProfile!.clone())),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AdvancedProfilesEditScreen(_selectedProfile!.clone())),
+                    );
+                  }
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfilesEditScreen(_selectedProfile!.clone())),
+                  );
+                }
+
               });
             },
           ),
