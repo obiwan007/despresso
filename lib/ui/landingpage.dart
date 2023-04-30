@@ -24,6 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
 import 'screens/flush_screen.dart';
+import 'package:despresso/generated/l10n.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key, required this.title}) : super(key: key);
@@ -60,9 +61,9 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   void initState() {
     super.initState();
     _settings = getIt<SettingsService>();
-    var l = _settings.steamHeaterOff ? 3 : 4;
-    if (_settings.showFlushScreen) l++;
-    _tabController = TabController(length: l, vsync: this, initialIndex: 1);
+    // var l = _settings.steamHeaterOff ? 3 : 4;
+    // if (_settings.showFlushScreen) l++;
+    _tabController = TabController(length: calcTabs(), vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
     coffeeSelection = getIt<CoffeeService>();
 
@@ -145,8 +146,8 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 children: [
                   const RecipeScreen(),
                   const EspressoScreen(),
-                  if (!_settings.steamHeaterOff) const SteamScreen(),
-                  const WaterScreen(),
+                  if (_settings.useSteam) const SteamScreen(),
+                  if (_settings.useWater) const WaterScreen(),
                   if (_settings.showFlushScreen) const FlushScreen(),
                 ],
               ),
@@ -176,7 +177,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.auto_graph_outlined),
-              title: const Text('Shot Database'),
+              title: Text(S.of(context).mainMenuEspressoDiary),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -188,7 +189,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.add),
-              title: const Text('Profiles'),
+              title: Text(S.of(context).profiles),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -203,7 +204,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.coffee),
-              title: const Text('Coffees'),
+              title: Text(S.of(context).beans),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -218,7 +219,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(S.of(context).settings),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -234,7 +235,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.feedback),
-              title: const Text('Feedback'),
+              title: Text(S.of(context).mainMenuFeedback),
               onTap: () async {
                 Navigator.pop(context);
                 var settings = getIt<SettingsService>();
@@ -245,14 +246,14 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                   return;
                 }
                 BetterFeedback.of(context).showAndUploadToSentry(
-                  name: 'Despresso Feedback', // optional
+                  name: S.of(context).mainMenuDespressoFeedback, // optional
                   email: 'foo_bar@example.com', // optional
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy'),
+              title: Text(S.of(context).privacy),
               onTap: () async {
                 Navigator.pop(context);
                 final Uri url = Uri.parse("https://obiwan007.github.io/myagbs/");
@@ -263,14 +264,14 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 }
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip),
-              title: const Text('Test'),
-              onTap: () async {
-                Navigator.pop(context);
-                showScreenSaver();
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.privacy_tip),
+            //   title: const Text('Test'),
+            //   onTap: () async {
+            //     Navigator.pop(context);
+            //     showScreenSaver();
+            //   },
+            // ),
             FutureBuilder<PackageInfo>(
               future: PackageInfo.fromPlatform(),
               builder: (context, snapshot) {
@@ -292,7 +293,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             if (Platform.isAndroid)
               ListTile(
                 leading: const Icon(Icons.exit_to_app),
-                title: const Text('Exit'),
+                title: Text(S.of(context).exit),
                 onTap: () {
                   Navigator.pop(context);
                   var snackBar = SnackBar(
@@ -328,27 +329,28 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         // indicator:
         //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
         tabs: <Widget>[
-          const Tab(
-            icon: Icon(Icons.document_scanner),
-            child: Text("Recipe"),
+          Tab(
+            icon: const Icon(Icons.document_scanner),
+            child: Text(S.of(context).tabHomeRecipe),
           ),
-          const Tab(
-            icon: Icon(Icons.coffee),
-            child: Text("Espresso"),
+          Tab(
+            icon: const Icon(Icons.coffee),
+            child: Text(S.of(context).tabHomeEspresso),
           ),
-          if (!_settings.steamHeaterOff)
-            const Tab(
-              icon: Icon(Icons.stream),
-              child: Text("Steam"),
+          if (_settings.useSteam)
+            Tab(
+              icon: const Icon(Icons.stream),
+              child: Text(S.of(context).tabHomeSteam),
             ),
-          const Tab(
-            icon: Icon(Icons.water_drop),
-            child: Text("Water"),
-          ),
+          if (_settings.useWater)
+            Tab(
+              icon: const Icon(Icons.water_drop),
+              child: Text(S.of(context).tabHomeWater),
+            ),
           if (_settings.showFlushScreen)
-            const Tab(
-              icon: Icon(Icons.water),
-              child: Text("Flush"),
+            Tab(
+              icon: const Icon(Icons.water),
+              child: Text(S.of(context).tabHomeFlush),
             ),
         ],
       ),
@@ -356,28 +358,46 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     return tb;
   }
 
-  void configureCoffee() {
-    var snackBar = SnackBar(
-        content: const Text('Configure your coffee'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            // Some code to undo the change.
-          },
-        ));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  // void configureCoffee() {
+  //   var snackBar = SnackBar(
+  //       content: const Text('Configure your coffee'),
+  //       action: SnackBarAction(
+  //         label: 'Undo',
+  //         onPressed: () {
+  //           // Some code to undo the change.
+  //         },
+  //       ));
+  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // }
 
   void updatedProfile() {
     setState(() {});
   }
 
+  int calcTabs() {
+    var count = 5;
+    if (!_settings.useSteam) {
+      count--;
+      log.info("No Steam");
+    }
+    if (!_settings.useWater) {
+      count--;
+      log.info("No Water");
+    }
+    if (!_settings.showFlushScreen) {
+      count--;
+      log.info("No Flush");
+    }
+    log.info("Number of Tabs $count ${_settings.useSteam} ${_settings.useWater} ${_settings.showFlushScreen}");
+    return count;
+  }
+
   void updatedSettings() {
-    var newTabCount = _settings.steamHeaterOff ? 3 : 4;
-    if (_settings.showFlushScreen) newTabCount++;
+    var newTabCount = calcTabs();
+
     if (_tabController.length != newTabCount) {
       log.info("New tab size: $newTabCount");
-      _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 1);
+      _tabController = TabController(length: newTabCount, vsync: this, initialIndex: 0);
       setState(() {});
     }
   }
@@ -413,25 +433,34 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     if (lastState != machineService.state.coffeeState) {
       log.info("Machine state: ${machineService.state.coffeeState}");
       lastState = machineService.state.coffeeState;
-      var offset = _settings.steamHeaterOff == true ? -1 : 0;
+      var offset = 1; // _settings.useSteam == true ? -1 : 0;
+
+      var steam = _settings.useSteam ? 1 : 0;
+      var water = _settings.useWater ? steam + 1 : 0;
+      var flush = _settings.showFlushScreen ? water + 1 : 0;
+
       setState(() {
         switch (lastState) {
           case EspressoMachineState.espresso:
             currentPageIndex = 1;
             break;
           case EspressoMachineState.steam:
-            if (!_settings.steamHeaterOff) currentPageIndex = 2;
-            break;
-          case EspressoMachineState.flush:
-            if (_settings.showFlushScreen) currentPageIndex = 4 + offset;
+            currentPageIndex = steam + offset;
             break;
           case EspressoMachineState.water:
-            currentPageIndex = 3 + offset;
+            currentPageIndex = water + offset;
+            break;
+          case EspressoMachineState.flush:
+            currentPageIndex = flush + offset;
             break;
           case EspressoMachineState.idle:
             break;
           case EspressoMachineState.sleep:
             currentPageIndex = 0;
+            if (_settings.screensaverOnIfIdle) {
+              var screensaver = getIt<ScreensaverService>();
+              screensaver.activateScreenSaver();
+            }
             break;
           case EspressoMachineState.disconnected:
             break;

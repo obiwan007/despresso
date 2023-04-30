@@ -427,7 +427,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 7693652674048295668),
       name: 'Recipe',
-      lastPropertyId: const IdUid(23, 4030549021668168783),
+      lastPropertyId: const IdUid(27, 5975506820285440095),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -540,6 +540,21 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(23, 4030549021668168783),
             name: 'useSteam',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(24, 5553698550197971705),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(25, 1050422726627456052),
+            name: 'grinderModel',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(27, 5975506820285440095),
+            name: 'disableStopOnWeight',
             type: 1,
             flags: 0)
       ],
@@ -656,7 +671,8 @@ ModelDefinition getObjectBoxModel() {
         5124145356428750686,
         1973948115627604173,
         7066844979841951108,
-        1831677913184358060
+        1831677913184358060,
+        9066171640428561255
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -997,7 +1013,9 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Recipe object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
           final profileIdOffset = fbb.writeString(object.profileId);
-          fbb.startTable(24);
+          final descriptionOffset = fbb.writeString(object.description);
+          final grinderModelOffset = fbb.writeString(object.grinderModel);
+          fbb.startTable(28);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.coffee.targetId);
           fbb.addFloat64(2, object.adjustedWeight);
@@ -1020,6 +1038,9 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(20, object.timeSteam);
           fbb.addFloat64(21, object.weightMilk);
           fbb.addBool(22, object.useSteam);
+          fbb.addOffset(23, descriptionOffset);
+          fbb.addOffset(24, grinderModelOffset);
+          fbb.addBool(26, object.disableStopOnWeight);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1068,7 +1089,13 @@ ModelDefinition getObjectBoxModel() {
             ..weightMilk =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0)
             ..useSteam =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false);
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false)
+            ..description = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 50, '')
+            ..grinderModel = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 52, '')
+            ..disableStopOnWeight =
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false);
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
@@ -1485,6 +1512,18 @@ class Recipe_ {
   /// see [Recipe.useSteam]
   static final useSteam =
       QueryBooleanProperty<Recipe>(_entities[5].properties[21]);
+
+  /// see [Recipe.description]
+  static final description =
+      QueryStringProperty<Recipe>(_entities[5].properties[22]);
+
+  /// see [Recipe.grinderModel]
+  static final grinderModel =
+      QueryStringProperty<Recipe>(_entities[5].properties[23]);
+
+  /// see [Recipe.disableStopOnWeight]
+  static final disableStopOnWeight =
+      QueryBooleanProperty<Recipe>(_entities[5].properties[24]);
 }
 
 /// [SettingsEntry] entity fields to define ObjectBox queries.

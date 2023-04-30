@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'dart:math' show pow;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:logging/logging.dart' as l;
@@ -11,31 +12,33 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
+int instances = 0;
+
 ///
 ///Implementation for the Acaia scale models
 ///Lunar 2021,
 ///PYXIS
 ///PEARLS
 class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('AcaiaPyxisScale');
+  var log = l.Logger('AcaiaPyxisScale');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = Platform.isAndroid
+  static Uuid ServiceUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455')
       : Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455');
 
   /// Command
-  static Uuid characteristicCommandUUID = Platform.isAndroid
+  static Uuid characteristicCommandUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3')
       : Uuid.parse('49535343-8841-43F4-A8D4-ECBE34729BB3');
 
   /// Command
-  static Uuid characteristicStatusUUID = Platform.isAndroid
+  static Uuid characteristicStatusUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616')
       : Uuid.parse('49535343-1E4D-4BD9-BA61-23C647249616');
 
   late ScaleService scaleService;
 
-  static const _heartbeatTime = Duration(seconds: 3);
+  static const _heartbeatTime = Duration(seconds: 1);
   static const List<int> _heartbeatPayload = [0x02, 0x00];
   static const List<int> _identPayload = [
     0x2D,
@@ -76,17 +79,22 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   List<int> commandBuffer = [];
   Timer? _heartBeatTimer;
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   StreamSubscription<List<int>>? _characteristicsSubscription;
 
-  AcaiaPyxisScale(this.device) {
+  DateTime _lastResponse = DateTime.now();
+  int instance = 0;
+  DeviceCommunication connection;
+  AcaiaPyxisScale(this.device, this.connection) {
+    instances++;
+    instance = instances;
+    log = l.Logger('AcaiaPyxisScale $instance');
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
       log.info('Peripheral ${device.name} connection state is $connectionState');
       _onStateChange(connectionState.connectionState);
@@ -102,6 +110,12 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     //   _onStateChange(connectionState);
     // });
     // device.connect();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _deviceListener.cancel();
+    log.info('Disposed AcaiaPyxisScale');
   }
 
   Uint8List encode(int msgType, List<int> payload) {
@@ -138,7 +152,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           case 5: // weight
             double? weight = decodeWeight(payload);
             if (weight != null) scaleService.setWeight(weight);
-
+            _lastResponse = DateTime.now();
             break;
           case 8: // Tara done
             scaleService.setTara();
@@ -156,7 +170,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             if (payload[3] == 7) time = decodeTime(payload.sublist(3));
             // scaleService.setWeight(weight);
             scaleService.setWeight(weight);
-            log.finer("Heartbeat Response: Weight: PL3: ${payload[3]} $weight Time: $time ${payload.sublist(3)}");
+            log.info("Heartbeat Response: Weight: PL3: ${payload[3]} $weight Time: $time ${payload.sublist(3)}");
+
             break;
           default:
             log.fine('Acaia: 12 Subtype $subType');
@@ -212,6 +227,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   }
 
   Future<void> _sendHeatbeat() async {
+    if (_heartBeatTimer == null) return;
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
 
@@ -222,9 +238,20 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
 
+    var now = DateTime.now().difference(_lastResponse).inMilliseconds;
+
+    if (now > 400) {
+      log.info('Last Heartbeat $now');
+      log.severe('Init disconnection');
+      _onStateChange(DeviceConnectionState.disconnected);
+      // _characteristicsSubscription!.cancel();
+      // registerForNotifications();
+      // _sendConfig();
+    }
+    return;
     try {
-      await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-          value: encode(0x00, _heartbeatPayload));
+      log.info("Heartbeat");
+      await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x00, _heartbeatPayload));
     } catch (e) {
       log.severe("Heartbeat failure $e");
     }
@@ -240,7 +267,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
-    await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
+    await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
   }
 
   Future<void> _sendConfig() async {
@@ -252,12 +279,13 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
-    await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
+    await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
   }
 
   @override
   writeTare() async {
     // tare command
+
     var list = [
       0x00,
     ];
@@ -265,7 +293,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     try {
-      await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
+      await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
 
       await _sendConfig();
       log.info("tara send Ok");
@@ -278,7 +306,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Acaia");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: payload);
+    return await connection.writeCharacteristicWithResponse(characteristic, value: payload);
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -293,15 +321,14 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
       case DeviceConnectionState.connected:
         log.info('Connected');
+        _lastResponse = DateTime.now();
         scaleService.setState(ScaleState.connected);
-
         registerForNotifications();
-
         await Future.delayed(
           const Duration(milliseconds: 1000),
           () async {
             try {
-              await _sendIdent();
+              if (_state == DeviceConnectionState.connected) await _sendIdent();
             } catch (e) {
               log.severe("Error in config scale $e");
             }
@@ -312,32 +339,45 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           const Duration(seconds: 1),
           () async {
             try {
-              await _sendConfig();
+              if (_state == DeviceConnectionState.connected) await _sendConfig();
             } catch (e) {
               log.severe("Error in config scale $e");
             }
           },
         );
-        // await Future.delayed(
-        //   const Duration(seconds: 1),
-        //   () async {
-        //     _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
-        //     //
-        //   },
-        // );
-        // heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+        await Future.delayed(
+          const Duration(seconds: 10),
+          () {
+            log.info("Heartbeat watchdog started");
+            if (_state == DeviceConnectionState.connected)
+              _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+            //
+          },
+        );
+        // _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
         // Timer(const Duration(seconds: 3), _sendIdent);
         // Timer(const Duration(seconds: 5), _sendConfig);
 
         return;
       case DeviceConnectionState.disconnected:
-        scaleService.setState(ScaleState.disconnected);
-        scaleService.setBattery(0);
         log.info('Acaia Scale disconnected. Destroying');
-        _characteristicsSubscription?.cancel();
-        if (_heartBeatTimer != null) _heartBeatTimer!.cancel();
-        _deviceListener.cancel();
-        notifyListeners();
+        try {
+          if (_heartBeatTimer != null) {
+            _heartBeatTimer!.cancel();
+            log.info("Timer canceled");
+          }
+          _heartBeatTimer = null;
+          scaleService.setState(ScaleState.disconnected);
+          scaleService.setBattery(0);
+
+          _characteristicsSubscription?.cancel();
+
+          _deviceListener.cancel();
+          Future.delayed(Duration(seconds: 2), () => notifyListeners());
+        } catch (e) {
+          log.severe("Error shutting down $e");
+        }
+
         return;
       default:
         return;
@@ -345,10 +385,11 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   }
 
   void registerForNotifications() {
+    log.info("Register for notifications");
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicStatusUUID, deviceId: device.id);
 
-    _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+    _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
       // code to handle incoming data
       try {
         _notificationCallback(data);

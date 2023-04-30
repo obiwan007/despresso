@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -15,19 +16,19 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
+      useLongCharacteristics() ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
   // ignore: non_constant_identifier_names
   static Uuid CharateristicUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
+      useLongCharacteristics() ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
   // ignore: non_constant_identifier_names
   static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+      useLongCharacteristics() ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // ignore: non_constant_identifier_names
   static Uuid BatteryCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
+      useLongCharacteristics() ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
   // ignore: non_constant_identifier_names
   static Uuid CommandUUID =
-      Platform.isAndroid ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
+      useLongCharacteristics() ? Uuid.parse('0000fff2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff2');
 
   late ScaleService scaleService;
 
@@ -41,16 +42,15 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
-
-  EurekaScale(this.device) {
+  DeviceCommunication connection;
+  EurekaScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -86,8 +86,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Eureka");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CommandUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -106,7 +105,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
@@ -115,7 +114,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
         final batteryCharacteristic = QualifiedCharacteristic(
             characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
-        final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
+        final batteryLevel = await connection.readCharacteristic(batteryCharacteristic);
         scaleService.setBattery(batteryLevel[0]);
 
         return;

@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
@@ -62,7 +63,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     declineObject.temp = _profile.shotFrames.first.temp;
     try {
       var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
-      preInfusion = pre.toList().first;
+      preInfusion = pre.isEmpty ? null : pre.toList().first;
 
       var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold" || element.name == "hold"));
       riseAndHold = riseW.isNotEmpty ? riseW.first : null;
@@ -120,7 +121,16 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
         //Text('Profile Edit: ${_profile.shotHeader.title}'),
         actions: <Widget>[
           ElevatedButton(
-            child: const Text('Save'),
+            child: const Text('Save as new'),
+            onPressed: () {
+              setState(() {
+                profileService.saveAsNew(_profile);
+                Navigator.pop(context);
+              });
+            },
+          ),
+          ElevatedButton(
+            child: Text(S.of(context).save),
             onPressed: () {
               setState(() {
                 profileService.save(_profile);

@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/ui/widgets/height_widget.dart';
@@ -128,8 +129,8 @@ class ShotEditState extends State<ShotEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            'Describe your experience with shot from ${DateFormat.yMd().format(_editedShot.date)} ${DateFormat.Hm().format(_editedShot.date)} '),
+        title: Text(S.of(context).screenShotEditTitle(
+            '${DateFormat.yMd().format(_editedShot.date)} ${DateFormat.Hm().format(_editedShot.date)}')),
         actions: <Widget>[
           // Builder(
           //   builder: (BuildContext context) {
@@ -166,7 +167,7 @@ class ShotEditState extends State<ShotEdit> {
                   }
                   var snackBar = SnackBar(
                       backgroundColor: Colors.greenAccent,
-                      content: const Text("Success uploading your shot"),
+                      content: Text(S.of(context).screenShotEditSuccessUploadingYourShot),
                       action: SnackBarAction(
                         label: 'Ok',
                         onPressed: () {
@@ -179,7 +180,7 @@ class ShotEditState extends State<ShotEdit> {
                       backgroundColor: const Color.fromARGB(255, 250, 141, 141),
                       content: Text("Error uploading shot: $e"),
                       action: SnackBarAction(
-                        label: 'Ok',
+                        label: S.of(context).ok,
                         onPressed: () {
                           // Some code to undo the change.
                         },
@@ -196,8 +197,8 @@ class ShotEditState extends State<ShotEdit> {
 
           TextButton.icon(
             icon: const Icon(Icons.save_alt),
-            label: const Text(
-              'Save',
+            label: Text(
+              S.of(context).save,
             ),
             onPressed: () {
               if (currentForm != null && currentForm!.valid) {
@@ -250,11 +251,12 @@ class ShotEditState extends State<ShotEdit> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(children: [
-                KeyValueWidget(width: width, label: "Recipe", value: _editedShot.recipe.target?.name ?? "No Recipe"),
-                KeyValueWidget(width: width, label: "Profile", value: _editedShot.profileId),
+                KeyValueWidget(
+                    width: width, label: S.of(context).recipe, value: _editedShot.recipe.target?.name ?? "No Recipe"),
+                KeyValueWidget(width: width, label: S.of(context).profile, value: _editedShot.profileId),
                 KeyValueWidget(
                     width: width,
-                    label: "Coffee",
+                    label: S.of(context).beans,
                     value: (_editedShot.recipe.target?.coffee.targetId ?? 0) > 0
                         ? _editedShot.recipe.target?.coffee.target?.name ?? ""
                         : "No Beans"),
@@ -265,8 +267,8 @@ class ShotEditState extends State<ShotEdit> {
                     value: "",
                     widget: InkWell(
                       onTap: () => launchUrl(Uri.parse('https://visualizer.coffee/shots/${_editedShot.visualizerId}')),
-                      child: const Text(
-                        'Open in Visualizer.coffee',
+                      child: Text(
+                        S.of(context).screenShotEditOpenInVisualizercoffee,
                         style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                       ),
                     ),
@@ -285,15 +287,15 @@ class ShotEditState extends State<ShotEdit> {
                 ReactiveTextField<String>(
                   formControlName: 'description',
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Describe your experience',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditDescribeYourExperience,
                   ),
                   validationMessages: {
-                    ValidationMessage.required: (_) => 'Name must not be empty',
+                    ValidationMessage.required: (_) => S.of(context).validatorNotBeEmpty,
                   },
                 ),
                 HeightWidget(height: 20),
-                KeyValueWidget(label: "Enjoyment", value: ""),
+                KeyValueWidget(label: S.of(context).screenShotEditEnjoyment, value: ""),
                 ReactiveRatingBarBuilder<double>(
                   formControlName: 'enjoyment',
                   minRating: 1,
@@ -321,15 +323,15 @@ class ShotEditState extends State<ShotEdit> {
                 ReactiveTextField<String>(
                   keyboardType: TextInputType.text,
                   formControlName: 'drinker',
-                  decoration: const InputDecoration(
-                    labelText: 'Drinker',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditDrinker,
                   ),
                 ),
                 ReactiveTextField<String>(
                   formControlName: 'barrista',
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Barrista',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditBarrista,
                   ),
                 ),
               ]),
@@ -346,15 +348,15 @@ class ShotEditState extends State<ShotEdit> {
                 ReactiveTextField<double>(
                   formControlName: 'totalDissolvedSolids',
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Total Dissolved Solidss (TDS)',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditTotalDissolvedSolidssTds,
                   ),
                 ),
                 ReactiveTextField<double>(
                   formControlName: 'extractionYield',
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Extraction yield',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditExtractionYield,
                   ),
                 ),
               ],
@@ -370,15 +372,15 @@ class ShotEditState extends State<ShotEdit> {
                 ReactiveTextField<String>(
                   formControlName: 'grinderName',
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Grinder',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditGrinder,
                   ),
                 ),
                 ReactiveTextField<double>(
                   formControlName: 'grinderSettings',
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Grinder settings',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditGrinderSettings,
                   ),
                 ),
               ]),
@@ -395,29 +397,29 @@ class ShotEditState extends State<ShotEdit> {
                 ReactiveTextField<double>(
                   formControlName: 'doseWeight',
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Dose weight [g]',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditDoseWeightG,
                   ),
                 ),
                 ReactiveTextField<double>(
                   formControlName: 'drinkWeight',
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Drink weight [g]',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditDrinkWeightG,
                   ),
                 ),
                 ReactiveTextField<double>(
                   formControlName: 'pourTime',
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Pouring time [s]',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditPouringTimeS,
                   ),
                 ),
                 ReactiveTextField<double>(
                   formControlName: 'pourWeight',
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Pouring weight [g]',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).screenShotEditPouringWeightG,
                   ),
                 ),
               ]),
@@ -448,18 +450,18 @@ class ShotEditState extends State<ShotEdit> {
   void saveFormData(FormGroup form) {
     _editedShot.description = form.value["description"] as String;
     _editedShot.barrista = form.value["barrista"] as String;
-    _editedShot.doseWeight = form.value["doseWeight"] as double;
-    _editedShot.drinkWeight = form.value["drinkWeight"] as double;
+    _editedShot.doseWeight = form.value["doseWeight"] as double? ?? 0.0;
+    _editedShot.drinkWeight = form.value["drinkWeight"] as double? ?? 0.0;
     _editedShot.drinker = form.value["drinker"] as String;
     _editedShot.enjoyment = form.value["enjoyment"] as double;
 
-    _editedShot.extractionYield = form.value["extractionYield"] as double;
+    _editedShot.extractionYield = form.value["extractionYield"] as double? ?? 0.0;
     _editedShot.grinderName = form.value["grinderName"] as String;
-    _editedShot.grinderSettings = form.value["grinderSettings"] as double;
-    _editedShot.pourTime = form.value["pourTime"] as double;
-    _editedShot.pourWeight = form.value["pourWeight"] as double;
-    _editedShot.targetEspressoWeight = form.value["targetEspressoWeight"] as double;
-    _editedShot.totalDissolvedSolids = form.value["totalDissolvedSolids"] as double;
+    _editedShot.grinderSettings = form.value["grinderSettings"] as double? ?? 0.0;
+    _editedShot.pourTime = form.value["pourTime"] as double? ?? 0.0;
+    _editedShot.pourWeight = form.value["pourWeight"] as double? ?? 0.0;
+    _editedShot.targetEspressoWeight = form.value["targetEspressoWeight"] as double? ?? 0.0;
+    _editedShot.totalDissolvedSolids = form.value["totalDissolvedSolids"] as double? ?? 0.0;
 
     coffeeService.updateShot(_editedShot);
   }

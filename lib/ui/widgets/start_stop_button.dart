@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -65,33 +66,43 @@ class _StartStopButtonState extends State<StartStopButton> {
               snapshot.data?.state == EspressoMachineState.steam ||
               snapshot.data?.state == EspressoMachineState.flush;
 
-          var mainState = snapshot.data?.state.name.toUpperCase() ?? "disconnected";
+          var mainState = snapshot.data?.state.name.toUpperCase() ?? S.of(context).disconnected;
           var subState = snapshot.data?.subState ?? '';
-          var title = isBusy ? "Stop" : "Start";
+          var title = isBusy ? S.of(context).stop : S.of(context).start;
           mode = isBusy ? Colors.red : Colors.green;
+
+          switch (mainState) {
+            case 'DISCONNECTED':
+              mainState = S.of(context).stateDisconnected;
+              break;
+
+            case 'POUR':
+              mainState = S.of(context).statePour;
+              break;
+          }
 
           switch (subState) {
             case "no_state":
               subState = "";
               break;
             case "idle":
-              subState = "heated up";
+              subState = S.of(context).stateIdleHeated;
               break;
             case "heat_water_tank":
-              subState = "Heating Tank";
+              subState = S.of(context).subStateHeatWaterTank;
               title = "Wait";
               mode = Colors.orange;
               break;
             case "heat_water_heater":
-              subState = "Heating Water";
-              title = "Wait";
+              subState = S.of(context).subStateHeatWaterHeater;
+              title = S.of(context).wait;
               mode = Colors.orange;
               break;
           }
           switch (snapshot.data?.state) {
             case EspressoMachineState.sleep:
               mode = Colors.blue;
-              title = "Switch on";
+              title = S.of(context).switchOn;
               break;
 
             case EspressoMachineState.idle:
@@ -104,7 +115,7 @@ class _StartStopButtonState extends State<StartStopButton> {
               break;
             case EspressoMachineState.disconnected:
               mode = Colors.orange;
-              title = "Reconnect";
+              title = S.of(context).reconnect;
               break;
             case EspressoMachineState.connecting:
               break;

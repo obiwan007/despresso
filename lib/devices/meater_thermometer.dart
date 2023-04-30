@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 
 import 'package:despresso/devices/abstract_thermometer.dart';
@@ -26,16 +27,15 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
-
-  MeaterThermometer(this.device) {
+  DeviceCommunication connection;
+  MeaterThermometer(this.device, this.connection) {
     tempService = getIt<TempService>();
     log.info("Connect to Meater ${device.serviceUuids}");
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -83,7 +83,7 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
@@ -94,7 +94,7 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
           final batteryCharacteristic = QualifiedCharacteristic(
               characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
 
-          flutterReactiveBle.subscribeToCharacteristic(batteryCharacteristic).listen((data) {
+          connection.subscribeToCharacteristic(batteryCharacteristic).listen((data) {
             // code to handle incoming data
             int bat = bytesToInt(data[0], data[1]) * 10;
             tempService.setBattery(bat);
@@ -102,7 +102,7 @@ class MeaterThermometer extends ChangeNotifier implements AbstractThermometer {
             log.severe("Error subscribing to battery characteristics $error");
           });
 
-          final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
+          final batteryLevel = await connection.readCharacteristic(batteryCharacteristic);
           int bat = bytesToInt(batteryLevel[0], batteryLevel[1]) * 10;
           tempService.setBattery(bat);
         } catch (e) {

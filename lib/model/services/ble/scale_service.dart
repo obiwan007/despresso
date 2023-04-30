@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'dart:math' as math;
 import 'package:collection/collection.dart';
+import 'package:despresso/model/services/cafehub/ch_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -129,13 +131,22 @@ class ScaleService extends ChangeNotifier {
 
   void setState(ScaleState state) {
     _state = state;
+    if (state == ScaleState.disconnected) {
+      // scale = null;
+    }
     log.info('Scale State: $_state');
     _controller.add(WeightMeassurement(_weight, _flow, _state));
   }
 
   void connect() {
-    var bleService = getIt<BLEService>();
-    bleService.startScan();
+    var settings = getIt<SettingsService>();
+    if (settings.useCafeHub) {
+      var bleService = getIt<CHService>();
+      bleService.startScan();
+    } else {
+      var bleService = getIt<BLEService>();
+      bleService.startScan();
+    }
   }
 
   void setBattery(int batteryLevel) {

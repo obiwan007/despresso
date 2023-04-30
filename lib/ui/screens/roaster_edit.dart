@@ -1,3 +1,4 @@
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -76,11 +77,11 @@ class RoasterEditState extends State<RoasterEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Roaster'),
+        title: Text(S.of(context).screenRoasterEditTitle),
         actions: <Widget>[
           ElevatedButton(
-            child: const Text(
-              'Save',
+            child: Text(
+              S.of(context).save,
             ),
             onPressed: () {
               if (currentForm != null && currentForm!.valid) {
@@ -119,29 +120,29 @@ class RoasterEditState extends State<RoasterEdit> {
       children: [
         ReactiveTextField<String>(
           formControlName: 'name',
-          decoration: const InputDecoration(
-            labelText: 'Name',
+          decoration: InputDecoration(
+            labelText: S.of(context).screenRoasterEditNameOfRoaster,
           ),
           validationMessages: {
-            ValidationMessage.required: (_) => 'Name must not be empty',
+            ValidationMessage.required: (_) => S.of(context).validatorNotBeEmpty,
           },
         ),
         ReactiveTextField<String>(
           formControlName: 'description',
-          decoration: const InputDecoration(
-            labelText: 'Description',
+          decoration: InputDecoration(
+            labelText: S.of(context).screenRoasterEditDescription,
           ),
         ),
         ReactiveTextField<String>(
           formControlName: 'address',
-          decoration: const InputDecoration(
-            labelText: 'Address',
+          decoration: InputDecoration(
+            labelText: S.of(context).screenRoasterEditAddress,
           ),
         ),
         ReactiveTextField<String>(
           formControlName: 'homepage',
-          decoration: const InputDecoration(
-            labelText: 'Homepage',
+          decoration: InputDecoration(
+            labelText: S.of(context).screenRoasterEditHomepage,
           ),
         ),
         // ReactiveFormConsumer(
