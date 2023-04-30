@@ -1,6 +1,10 @@
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
+import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:despresso/ui/theme.dart' as theme;
@@ -41,6 +45,12 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
+  List<KeyValueWidget> _steps = [];
+
+  int _selectedStepIndex = 0;
+
+  De1ShotFrameClass _selectedStep = De1ShotFrameClass();
+
   AdvancedProfilesEditScreenState(this._profile);
 
   @override
@@ -48,6 +58,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     super.initState();
 
     log.info('Init State ${_profile.shotHeader.title}');
+    _selectedStep = _profile.shotFrames[_selectedStepIndex];
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
 
@@ -86,7 +97,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         _tabController = TabController(length: 3 * 4 + 2, vsync: this, initialIndex: 0);
         break;
       default:
-        _tabController = TabController(length: 1, vsync: this, initialIndex: 0);
+        _tabController = TabController(length: 6, vsync: this, initialIndex: 0);
     }
   }
 
@@ -134,44 +145,48 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         body: Column(
           children: [
             Expanded(
+              flex: 1,
               child: IntrinsicHeight(
                 child: ProfileGraphWidget(selectedProfile: _profile),
               ),
             ),
-            if (_profile.shotHeader.type != "advanced") SizedBox(height: 195, child: createTabBar()),
-            if (_profile.shotHeader.type != "advanced")
-              Expanded(
+            Expanded(
+                flex: 2,
                 child: IntrinsicHeight(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      ...handleChanges(preInfusion!),
-                      ...handleChanges(riseAndHold!),
-                      ...handleChanges(decline!),
-                      changeValue(
-                          unit: "ml",
-                          title: "Max. Volume",
-                          min: 0,
-                          max: 100,
-                          De1ShotFrameClass(),
-                          _profile.shotHeader.targetVolume, (value) {
-                        var v = (value * 10).round() / 10;
-                        setState(() => _profile.shotHeader.targetVolume = v);
-                      }),
-                      changeValue(
-                          unit: "g",
-                          title: "Max. Weight",
-                          min: 0,
-                          max: 100,
-                          De1ShotFrameClass(),
-                          _profile.shotHeader.targetWeight, (value) {
-                        var v = (value * 10).round() / 10;
-                        setState(() => _profile.shotHeader.targetWeight = v);
-                      }),
-                    ],
-                  ),
-                ),
-              ),
+                    child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: SelectableSteps(
+                        profile: _profile,
+                        selected: _selectedStepIndex,
+                        onSelected: (p0) {
+                          _selectedStepIndex = p0;
+                          _selectedStep = _profile.shotFrames[p0];
+                          log.info("New Step $p0");
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 105, child: createTabBar()),
+                          Expanded(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                // Text("Hallo")
+                                ...handleChanges(_selectedStep),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ))),
           ],
         ),
       ),
@@ -181,65 +196,66 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
   createTabBar() {
     var tb = Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              flex: 4,
-              child: ColoredBox(
-                color: phaseColors[0],
-                child: const SizedBox(
-                  height: 20,
-                  width: 100,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: ColoredBox(
-                color: phaseColors[1],
-                child: const SizedBox(
-                  height: 20,
-                  width: 100,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 4,
-              child: ColoredBox(
-                color: phaseColors[2],
-                child: const SizedBox(
-                  height: 20,
-                  width: 100,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: ColoredBox(
-                color: phaseColors[3],
-                child: const SizedBox(
-                  height: 20,
-                  width: 100,
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 50,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                  flex: 4, child: Center(child: Text("Preinfusion", style: Theme.of(context).textTheme.bodyLarge))),
-              Expanded(
-                  flex: 4, child: Center(child: Text("Rise and hold", style: Theme.of(context).textTheme.bodyLarge))),
-              Expanded(flex: 4, child: Center(child: Text("Decline", style: Theme.of(context).textTheme.bodyLarge))),
-              Expanded(flex: 2, child: Center(child: Text("Stop", style: Theme.of(context).textTheme.bodyLarge))),
-            ],
-          ),
-        ),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       flex: 4,
+        //       child: ColoredBox(
+        //         color: phaseColors[0],
+        //         child: const SizedBox(
+        //           height: 20,
+        //           width: 100,
+        //         ),
+        //       ),
+        //     ),
+        //     Expanded(
+        //       flex: 4,
+        //       child: ColoredBox(
+        //         color: phaseColors[1],
+        //         child: const SizedBox(
+        //           height: 20,
+        //           width: 100,
+        //         ),
+        //       ),
+        //     ),
+        //     Expanded(
+        //       flex: 4,
+        //       child: ColoredBox(
+        //         color: phaseColors[2],
+        //         child: const SizedBox(
+        //           height: 20,
+        //           width: 100,
+        //         ),
+        //       ),
+        //     ),
+        //     Expanded(
+        //       flex: 2,
+        //       child: ColoredBox(
+        //         color: phaseColors[3],
+        //         child: const SizedBox(
+        //           height: 20,
+        //           width: 100,
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        // SizedBox(
+        //   height: 10,
+        //   child: Row(
+        //     crossAxisAlignment: CrossAxisAlignment.center,
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: [
+        //       Expanded(
+        //           flex: 4,
+        //           child: Center(child: Text(_selectedStep.name, style: Theme.of(context).textTheme.bodyLarge))),
+        //       // Expanded(
+        //       //     flex: 4, child: Center(child: Text("Rise and hold", style: Theme.of(context).textTheme.bodyLarge))),
+        //       // Expanded(flex: 4, child: Center(child: Text("Decline", style: Theme.of(context).textTheme.bodyLarge))),
+        //       // Expanded(flex: 2, child: Center(child: Text("Stop", style: Theme.of(context).textTheme.bodyLarge))),
+        //     ],
+        //   ),
+        // ),
         TabBar(
           controller: _tabController,
 
@@ -247,19 +263,17 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           // indicator:
           //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
           tabs: <Widget>[
-            ...createTabs(preInfusion, color: phaseColors[0]),
-            ...createTabs(riseAndHold, color: phaseColors[1]),
-            ...createTabs(decline, color: phaseColors[2]),
+            ...createTabs(_selectedStep, color: phaseColors[0]),
             Tab(
               height: 95,
               child: Column(
                 children: [
                   SizedBox(
                     height: 30,
-                    child: Text("Vol",
+                    child: Text("max. Vol",
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
                   ),
-                  Text("${_profile.shotHeader.targetVolume}",
+                  Text("${_selectedStep.maxVol}",
                       style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
                   Text(
                     "ml",
@@ -634,53 +648,349 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     log.info('Profile updated');
   }
 
-  handleChanges(De1ShotFrameClass frame) {
+  List<Widget> handleChanges(De1ShotFrameClass frame) {
     return [
       changeValue(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
         setState(() => frame.frameLen = value);
         log.info("Changed");
       }),
-      changeValue(
+      changePressure(
           unit: "bar",
           title: "Pressure",
           min: 0,
           max: 16,
           interval: 1,
           frame,
-          frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value) {
+          frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value, isFast) {
         var v = (value * 10).round() / 10;
         if (frame.pump == "pressure") {
           frame.setVal = v;
         } else {
           frame.triggerVal = v;
         }
+        frame.transition = isFast ? "fast" : "smooth";
+        var mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
+        if (isFast) {
+          frame.flag &= mask;
+        } else {
+          frame.flag |= De1ShotFrameClass.Interpolate;
+        }
         setState(() {});
         log.info("Changed");
       }),
-      changeValue(
+      changeFlow(
           unit: "ml/s",
           title: "Flow",
           min: 0,
           max: 16,
           interval: 1,
           frame,
-          frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
+          frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value, isFast) {
         var v = (value * 10).round() / 10;
         if (frame.pump == "flow") {
           frame.setVal = v;
         } else {
           frame.triggerVal = v;
         }
+        frame.transition = isFast ? "fast" : "smooth";
+        var mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
+        if (isFast) {
+          frame.flag &= mask;
+        } else {
+          frame.flag |= De1ShotFrameClass.Interpolate;
+        }
         setState(() {});
         log.info("Changed");
       }),
-      changeValue(unit: "°C", title: "Temperature", min: 80, max: 100, interval: 1, frame, frame.temp, (value) {
-        frame.temp = (value * 10).round() / 10;
+      changeTemp(unit: "°C", title: "Temperature", min: 80, max: 100, interval: 1, frame, frame.temp, (temp, isMixer) {
+        frame.temp = (temp * 10).round() / 10;
+        // int mask = (De1ShotFrameClass.TMixTemp);
+        var mask = frame.flag & (255 - De1ShotFrameClass.TMixTemp);
+
+        log.info("Changed $frame");
+
+        if (!isMixer) {
+          frame.flag &= mask;
+        } else {
+          frame.flag |= De1ShotFrameClass.TMixTemp;
+        }
 
         setState(() {});
-        log.info("Changed");
-      })
+        log.info("Changed $frame");
+      }),
+      changeValue(unit: "ml", title: "Max. Volume", min: 0, max: 100, De1ShotFrameClass(), frame.maxVol, (value) {
+        var v = (value * 10).round() / 10;
+        setState(() => frame.maxVol = v);
+      }),
+      // changeValue(
+      //     unit: "g",
+      //     title: "Max. Weight",
+      //     min: 0,
+      //     max: 100,
+      //     De1ShotFrameClass(),
+      //     _profile.shotHeader.targetWeight, (value) {
+      //   var v = (value * 10).round() / 10;
+      //   setState(() => _profile.shotHeader.targetWeight = v);
+      // }),
     ];
+  }
+
+  changePressure(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
+      {required String unit, required double max, required double min, double? interval, String? title}) {
+    bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
+                  SizedBox(
+                    width: 240,
+                    height: 50,
+                    child: SpinBox(
+                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                      textInputAction: TextInputAction.done,
+                      onChanged: (value) {
+                        valueChanged(value, isFast);
+                      },
+                      min: min,
+                      max: max,
+                      value: value,
+                      decimals: 1,
+                      step: 0.1,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                        suffix: Text(unit),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: SfSlider(
+                      min: min,
+                      max: max,
+                      value: value,
+                      interval: interval ?? max / 10,
+                      showTicks: false,
+                      showLabels: true,
+                      enableTooltip: true,
+                      stepSize: 0.1,
+                      minorTicksPerInterval: 1,
+                      onChanged: (dynamic value) {
+                        valueChanged(value, isFast);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        IntrinsicHeight(
+          child: Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: Row(
+              children: [
+                Text("Transition:", style: Theme.of(context).textTheme.labelMedium),
+                ToggleButtons(
+                  children: [const Text("Fast"), const Text("Smooth")],
+                  isSelected: [isFast, !isFast],
+                  onPressed: (index) {
+                    valueChanged(value, index == 0 ? true : false);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  changeFlow(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
+      {required String unit, required double max, required double min, double? interval, String? title}) {
+    bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
+                  SizedBox(
+                    width: 240,
+                    height: 50,
+                    child: SpinBox(
+                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                      textInputAction: TextInputAction.done,
+                      onChanged: (value) {
+                        valueChanged(value, isFast);
+                      },
+                      min: min,
+                      max: max,
+                      value: value,
+                      decimals: 1,
+                      step: 0.1,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                        suffix: Text(unit),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: SfSlider(
+                      min: min,
+                      max: max,
+                      value: value,
+                      interval: interval ?? max / 10,
+                      showTicks: false,
+                      showLabels: true,
+                      enableTooltip: true,
+                      stepSize: 0.1,
+                      minorTicksPerInterval: 1,
+                      onChanged: (dynamic value) {
+                        valueChanged(value, isFast);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Text("Transition:", style: Theme.of(context).textTheme.labelMedium),
+                  ToggleButtons(
+                    children: [Text("Fast"), Text("Smooth")],
+                    isSelected: [isFast, !isFast],
+                    onPressed: (index) {
+                      valueChanged(value, index == 0 ? true : false);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  changeTemp(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
+      {required String unit, required double max, required double min, double? interval, String? title}) {
+    bool isMix = ((frame.flag & De1ShotFrameClass.TMixTemp) > 0);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
+                  SizedBox(
+                    width: 240,
+                    height: 50,
+                    child: SpinBox(
+                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                      textInputAction: TextInputAction.done,
+                      onChanged: (value) {
+                        valueChanged(value, isMix);
+                      },
+                      min: min,
+                      max: max,
+                      value: value,
+                      decimals: 1,
+                      step: 0.1,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                        suffix: Text(unit),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: SfSlider(
+                      min: min,
+                      max: max,
+                      value: value,
+                      interval: interval ?? max / 10,
+                      showTicks: false,
+                      showLabels: true,
+                      enableTooltip: true,
+                      stepSize: 0.1,
+                      minorTicksPerInterval: 1,
+                      onChanged: (dynamic value) {
+                        valueChanged(value, isMix);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Text("Sensor:", style: Theme.of(context).textTheme.labelMedium),
+                  ToggleButtons(
+                    children: [Text("Coffee"), Text("Water")],
+                    isSelected: [!isMix, isMix],
+                    onPressed: (index) {
+                      valueChanged(value, index == 0 ? false : true);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   changeValue(De1ShotFrameClass frame, double value, Function(double value) valueChanged,
@@ -732,6 +1042,61 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           ],
         ),
       ),
+    );
+  }
+}
+
+class SelectableSteps extends StatelessWidget {
+  final log = Logger("SelectableStep");
+  SelectableSteps({super.key, required De1ShotProfile profile, required this.selected, required this.onSelected})
+      : _profile = profile;
+
+  final De1ShotProfile _profile;
+  final Function(int) onSelected;
+  final int selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: false,
+      itemCount: _profile.shotFrames.length,
+      itemBuilder: (context, index) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(32),
+            bottomLeft: Radius.circular(32),
+          ),
+          child: ListTile(
+            title: Text(_profile.shotFrames[index].name),
+            subtitle: getSubtitle(_profile.shotFrames[index]),
+            selected: index == selected,
+            onTap: () => onSelected(index),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget getSubtitle(De1ShotFrameClass frame) {
+    bool isMix = ((frame.flag & De1ShotFrameClass.TMixTemp) > 0);
+    bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
+    bool isCompared = (frame.flag & De1ShotFrameClass.DoCompare) > 0;
+    String vol = "${frame.maxVol > 0 ? " or ${frame.maxVol} ml" : ""}";
+    log.info("RenderFrame Test: $frame");
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Set ${isMix ? "water" : "coffee"} temperature to ${frame.temp.toStringAsFixed(0)} °C"),
+        if (frame.pump != "pressure")
+          Text("pour ${frame.transition} at rate of ${frame.setVal.toStringAsFixed(1)} ml/s"),
+        if (frame.pump == "pressure") Text("Pressurize ${frame.transition} to ${frame.setVal.toStringAsFixed(1)} bar"),
+        Text("For a maximum of ${frame.frameLen.toStringAsFixed(0)} seconds $vol"),
+        if (isCompared)
+          Text(
+              "Move on if ${isFlow ? "flow" : "pressure"} is ${isGt ? "over" : "below"} ${frame.triggerVal.toStringAsFixed(1)} bar"),
+      ],
     );
   }
 }
