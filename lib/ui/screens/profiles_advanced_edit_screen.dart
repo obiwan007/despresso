@@ -91,14 +91,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
       log.severe("Preparing edit failed: $e");
     }
 
-    switch (_profile.shotHeader.type) {
-      case "pressure":
-      case "flow":
-        _tabController = TabController(length: 3 * 4 + 2, vsync: this, initialIndex: 0);
-        break;
-      default:
-        _tabController = TabController(length: 6, vsync: this, initialIndex: 0);
-    }
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -204,42 +197,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
           tabs: <Widget>[
             ...createTabs(_selectedStep, color: phaseColors[0]),
-            Tab(
-              height: 95,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("max. Vol",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
-                  ),
-                  Text("${_selectedStep.maxVol}",
-                      style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
-                  Text(
-                    "ml",
-                    style: TextStyle(color: phaseColors[3]),
-                  ),
-                ],
-              ),
-            ),
-            Tab(
-              height: 95,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("Weight",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
-                  ),
-                  Text("${_profile.shotHeader.targetWeight}",
-                      style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 20)),
-                  Text(
-                    "g",
-                    style: TextStyle(color: phaseColors[3]),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ],
@@ -247,42 +204,16 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     return tb;
   }
 
-  createTabs(De1ShotFrameClass? frame, {required MaterialColor color}) {
+  createTabs(De1ShotFrameClass frame, {required MaterialColor color}) {
     var h = 30.0;
     var hTab = 95.0;
     var fontsize = 20.0;
     var style1 = TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: fontsize);
     var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
     var style3 = TextStyle(color: color);
-
-    if (frame == null) {
-      return [
-        Tab(
-          height: hTab,
-          child: Column(
-            children: [
-              SizedBox(
-                height: h,
-                child: FittedBox(
-                  child: Text(
-                    "Error",
-                    style: style1,
-                  ),
-                ),
-              ),
-              Text(
-                "no frame",
-                style: style1,
-              ),
-              Text(
-                "",
-                style: style3,
-              ),
-            ],
-          ),
-        ),
-      ];
-    }
+    bool isComparing = ((frame!.flag & De1ShotFrameClass.DoCompare) > 0);
+    bool isGt = (frame!.flag & De1ShotFrameClass.DC_GT) > 0;
+    bool isFlow = (frame!.flag & De1ShotFrameClass.DC_CompF) > 0;
 
     return [
       Tab(
@@ -375,6 +306,61 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     ),
                     Text(
                       "s",
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                if (frame.maxVol > 0)
+                  Column(
+                    children: [
+                      Text(
+                        "${(frame.maxVol.toStringAsFixed(1) ?? 0)}",
+                        style: style2,
+                      ),
+                      Text(
+                        "ml",
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      Tab(
+        height: hTab,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: h,
+              child: FittedBox(
+                child: Text(
+                  "Move on if...",
+                  // style: style1,
+                ),
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      isComparing
+                          ? ((isFlow ? "f " : "p ") +
+                              (isGt ? "> " : "< ") +
+                              "${(frame?.triggerVal.toStringAsFixed(1) ?? 0)}")
+                          : "goal reached",
+                      style: style2,
+                    ),
+                    Text(
+                      isComparing ? (isFlow ? "ml/s" : "bar") : "",
                     ),
                   ],
                 ),
@@ -670,7 +656,10 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         setState(() => frame.frameLen = value);
         log.info("Changed");
       }),
-
+      changeMoveOnIf(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
+        setState(() {});
+        log.info("Changed");
+      }),
       // changeFlow(
       //     unit: "ml/s",
       //     title: "Flow",
@@ -695,10 +684,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
       //   setState(() {});
       //   log.info("Changed");
       // }),
-      changeValue(unit: "ml", title: "Max. Volume", min: 0, max: 100, De1ShotFrameClass(), frame.maxVol, (value) {
-        var v = (value * 10).round() / 10;
-        setState(() => frame.maxVol = v);
-      }),
       // changeValue(
       //     unit: "g",
       //     title: "Max. Weight",
@@ -1130,7 +1115,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text("Sensor:", style: Theme.of(context).textTheme.labelMedium),
+                  SizedBox(width: 80, child: Text("Sensor:", style: Theme.of(context).textTheme.labelMedium)),
                   ToggleButtons(
                     children: [Text("Coffee"), Text("Water")],
                     isSelected: [!isMix, isMix],
@@ -1140,6 +1125,113 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  changeMoveOnIf(De1ShotFrameClass frame, double value, Function(De1ShotFrameClass value) valueChanged,
+      {required String unit, required double max, required double min, double? interval, String? title}) {
+    bool isComparing = ((frame.flag & De1ShotFrameClass.DoCompare) > 0);
+    bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(width: 55, child: Text("Do\ncompare:", style: Theme.of(context).textTheme.labelMedium)),
+                      Switch(
+                        value: isComparing,
+                        onChanged: (value) {
+                          var mask = frame.flag & (255 - De1ShotFrameClass.DoCompare);
+                          if (!value) {
+                            frame.flag &= mask;
+                          } else {
+                            frame.flag |= De1ShotFrameClass.DoCompare;
+                          }
+
+                          valueChanged(frame);
+                        },
+                      ),
+                    ],
+                  ),
+                  if (isComparing)
+                    Row(
+                      children: [
+                        SizedBox(width: 55, child: Text("If:", style: Theme.of(context).textTheme.labelMedium)),
+                        ToggleButtons(
+                          children: [Text("Pressure"), Text("Flow")],
+                          isSelected: [!isFlow, isFlow],
+                          onPressed: (index) {
+                            var mask = frame.flag & (255 - De1ShotFrameClass.DC_CompF);
+                            if (index == 0) {
+                              frame.flag &= mask;
+                            } else {
+                              frame.flag |= De1ShotFrameClass.DC_CompF;
+                            }
+
+                            valueChanged(frame);
+                          },
+                        ),
+                      ],
+                    ),
+                  if (isComparing)
+                    Row(
+                      children: [
+                        SizedBox(width: 55, child: Text("is:", style: Theme.of(context).textTheme.labelMedium)),
+                        ToggleButtons(
+                          children: [Text(" over "), Text(" below ")],
+                          isSelected: [isGt, !isGt],
+                          onPressed: (index) {
+                            // DC_GT
+                            var mask = frame.flag & (255 - De1ShotFrameClass.DC_GT);
+                            if (index == 1) {
+                              frame.flag &= mask;
+                            } else {
+                              frame.flag |= De1ShotFrameClass.DC_GT;
+                            }
+
+                            valueChanged(frame);
+                          },
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: SizedBox(
+              height: 160,
+              child: !isComparing
+                  ? null
+                  : changeValueRow(
+                      unit: isFlow ? "ml/s" : "bar",
+                      title: isFlow ? "${isGt ? ">" : "<"} Flow" : "${isGt ? ">" : "<"} Pressure",
+                      min: 0,
+                      max: 16,
+                      interval: 1,
+                      frame,
+                      frame.triggerVal, (value) {
+                      frame.triggerVal = value;
+
+                      setState(() {});
+                      log.info("Changed");
+                    }),
             ),
           ),
         ),
@@ -1209,17 +1301,17 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           child: Column(
             children: [
               SizedBox(
-                width: 300,
-                height: 80,
+                width: 350,
+                height: 30,
                 child: Expanded(
                   child: Row(
                     children: [
                       if (title != null)
-                        SizedBox(width: 110, child: Text(title, style: Theme.of(context).textTheme.headlineMedium)),
+                        SizedBox(width: 150, child: Text(title, style: Theme.of(context).textTheme.headlineSmall)),
                       Expanded(
                         child: SizedBox(
                           height: 50,
-                          width: 300,
+                          width: 350,
                           child: SpinBox(
                             keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                             textInputAction: TextInputAction.done,
