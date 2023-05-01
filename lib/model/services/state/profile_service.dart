@@ -93,14 +93,13 @@ class ProfileService extends ChangeNotifier {
       // dirs.forEach((element) => {
       //   loadUserProfile(element.path);
       // });
-
-      for (var prof in defaultProfiles) {
-        if (profiles.where((element) => element.id == prof.id).isEmpty) {
-          profiles.add(prof);
-        }
-      }
     } catch (ex) {
       log.info("List files $ex");
+    }
+    for (var prof in defaultProfiles) {
+      if (profiles.where((element) => element.id == prof.id).isEmpty) {
+        profiles.add(prof);
+      }
     }
   }
 

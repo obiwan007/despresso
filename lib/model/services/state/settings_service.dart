@@ -235,7 +235,7 @@ class SettingsService extends ChangeNotifier {
   String get locale => Settings.getValue<String>(SettingKeys.locale.name) ?? "auto";
   set locale(String value) => Settings.setValue<String>(SettingKeys.locale.name, value);
 
-  String get profileFilter => Settings.getValue<String>(SettingKeys.profileFilter.name) ?? "Default";
+  String get profileFilter => Settings.getValue<String>(SettingKeys.profileFilter.name) ?? "Mine,Default";
   set profileFilter(String value) => Settings.setValue<String>(SettingKeys.profileFilter.name, value);
 
   List<String> get profileFilterList => profileFilter.split(',');

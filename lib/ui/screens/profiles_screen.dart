@@ -151,7 +151,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         ),
         title: const Text('Profiles'),
         actions: <Widget>[
-          if (_selectedProfile!.isDefault == false)
+          if (_selectedProfile?.isDefault == false)
             TextButton.icon(
               icon: const Icon(Icons.delete),
               label: const Text("Delete"),

@@ -647,95 +647,70 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   List<Widget> handleChanges(De1ShotFrameClass frame) {
     return [
-      changeTemp(unit: "°C", title: "Temperature", min: 70, max: 100, interval: 5, frame, frame.temp, (temp, isMixer) {
-        frame.temp = (temp * 10).round() / 10;
-        // int mask = (De1ShotFrameClass.TMixTemp);
-        var mask = frame.flag & (255 - De1ShotFrameClass.TMixTemp);
+      SingleChildScrollView(
+        child: changeTemp(unit: "°C", title: "Temperature", min: 70, max: 100, interval: 5, frame, frame.temp,
+            (temp, isMixer) {
+          frame.temp = (temp * 10).round() / 10;
+          // int mask = (De1ShotFrameClass.TMixTemp);
+          var mask = frame.flag & (255 - De1ShotFrameClass.TMixTemp);
 
-        log.info("Changed $frame");
+          log.info("Changed $frame");
 
-        if (!isMixer) {
-          frame.flag &= mask;
-        } else {
-          frame.flag |= De1ShotFrameClass.TMixTemp;
-        }
+          if (!isMixer) {
+            frame.flag &= mask;
+          } else {
+            frame.flag |= De1ShotFrameClass.TMixTemp;
+          }
 
-        setState(() {});
-        log.info("Changed $frame");
-      }),
-      changeGoal(
-          unit: "bar",
-          title: "Pressure",
-          min: 0,
-          max: 16,
-          interval: 1,
-          frame,
-          frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value, isFast, isPressure) {
-        frame.transition = isFast ? "fast" : "smooth";
+          setState(() {});
+          log.info("Changed $frame");
+        }),
+      ),
+      SingleChildScrollView(
+        child: changeGoal(
+            unit: "bar",
+            title: "Pressure",
+            min: 0,
+            max: 16,
+            interval: 1,
+            frame,
+            frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value, isFast, isPressure) {
+          frame.transition = isFast ? "fast" : "smooth";
 
-        var mask = frame.flag & (255 - De1ShotFrameClass.CtrlF);
-        if (isPressure) {
-          frame.flag &= mask;
-        } else {
-          frame.flag |= De1ShotFrameClass.CtrlF;
-        }
-        frame.pump = (frame.flag & De1ShotFrameClass.CtrlF) == 0 ? "pressure" : "flow";
+          var mask = frame.flag & (255 - De1ShotFrameClass.CtrlF);
+          if (isPressure) {
+            frame.flag &= mask;
+          } else {
+            frame.flag |= De1ShotFrameClass.CtrlF;
+          }
+          frame.pump = (frame.flag & De1ShotFrameClass.CtrlF) == 0 ? "pressure" : "flow";
 
-        mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
-        if (isFast) {
-          frame.flag &= mask;
-        } else {
-          frame.flag |= De1ShotFrameClass.Interpolate;
-        }
-        setState(() {});
-        log.info("Changed");
-      }),
-      changeMax(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value, a, b) {
-        setState(() => frame.frameLen = value);
-        log.info("Changed");
-      }),
-      changeMoveOnIf(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
-        setState(() {});
-        log.info("Changed");
-      }),
-      // changeFlow(
-      //     unit: "ml/s",
-      //     title: "Flow",
-      //     min: 0,
-      //     max: 16,
-      //     interval: 1,
-      //     frame,
-      //     frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value, isFast) {
-      //   var v = (value * 10).round() / 10;
-      //   if (frame.pump == "flow") {
-      //     frame.setVal = v;
-      //   } else {
-      //     frame.triggerVal = v;
-      //   }
-      //   frame.transition = isFast ? "fast" : "smooth";
-      //   var mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
-      //   if (isFast) {
-      //     frame.flag &= mask;
-      //   } else {
-      //     frame.flag |= De1ShotFrameClass.Interpolate;
-      //   }
-      //   setState(() {});
-      //   log.info("Changed");
-      // }),
-      // changeValue(
-      //     unit: "g",
-      //     title: "Max. Weight",
-      //     min: 0,
-      //     max: 100,
-      //     De1ShotFrameClass(),
-      //     _profile.shotHeader.targetWeight, (value) {
-      //   var v = (value * 10).round() / 10;
-      //   setState(() => _profile.shotHeader.targetWeight = v);
-      // }),
+          mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
+          if (isFast) {
+            frame.flag &= mask;
+          } else {
+            frame.flag |= De1ShotFrameClass.Interpolate;
+          }
+          setState(() {});
+          log.info("Changed");
+        }),
+      ),
+      SingleChildScrollView(
+        child: changeMax(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value, a, b) {
+          setState(() => frame.frameLen = value);
+          log.info("Changed");
+        }),
+      ),
+      SingleChildScrollView(
+        child: changeMoveOnIf(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
+          setState(() {});
+          log.info("Changed");
+        }),
+      ),
     ];
   }
 
-  changePressure(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
+  Widget changePressure(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
     bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
     return Row(
@@ -836,7 +811,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 160,
+                  height: 155,
                   child: changeValueRow(
                       unit: "bar",
                       title: frame.pump == "pressure" ? "Pressure" : "limit Press.",
@@ -864,21 +839,23 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 ),
                 SizedBox(
                   height: 160,
-                  child: changeValueRow(
-                      unit: "ml/s",
-                      title: frame.pump == "pressure" ? "limit Flow" : "Flow",
-                      min: 0,
-                      max: 16,
-                      interval: 1,
-                      frame,
-                      frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
-                    if (frame.pump == "flow")
-                      frame.setVal = value;
-                    else
-                      frame.triggerVal = value;
-                    setState(() {});
-                    log.info("Changed");
-                  }),
+                  child: true
+                      ? changeValueRow(
+                          unit: "ml/s",
+                          title: frame.pump == "pressure" ? "limit Flow" : "Flow",
+                          min: 0,
+                          max: 16,
+                          interval: 1,
+                          frame,
+                          frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
+                          if (frame.pump == "flow")
+                            frame.setVal = value;
+                          else
+                            frame.triggerVal = value;
+                          setState(() {});
+                          log.info("Changed");
+                        })
+                      : null,
                 ),
               ],
             ),
@@ -939,7 +916,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 160,
+                  height: 155,
                   child: changeValueRow(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
                     setState(() => frame.frameLen = value);
                     log.info("Changed");
@@ -996,7 +973,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     );
   }
 
-  changeFlow(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
+  Widget changeFlow(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
     bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
     return Row(
@@ -1083,7 +1060,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     );
   }
 
-  changeTemp(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
+  Widget changeTemp(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
     bool isMix = ((frame.flag & De1ShotFrameClass.TMixTemp) > 0);
     return Row(
@@ -1099,34 +1076,35 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (title != null) Text(title, style: Theme.of(context).textTheme.headlineLarge),
-                  SizedBox(
-                    width: 240,
-                    height: 50,
-                    child: SpinBox(
-                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                      textInputAction: TextInputAction.done,
-                      onChanged: (value) {
-                        valueChanged(value, isMix);
-                      },
-                      min: min,
-                      max: max,
-                      value: value,
-                      decimals: 1,
-                      step: 0.1,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                        suffix: Text(unit),
+                  if (title != null) Text(title, style: Theme.of(context).textTheme.headlineSmall),
+                  Expanded(
+                    child: SizedBox(
+                      width: 240,
+                      // height: 100,
+                      child: SpinBox(
+                        keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                        textInputAction: TextInputAction.done,
+                        onChanged: (value) {
+                          valueChanged(value, isMix);
+                        },
+                        min: min,
+                        max: max,
+                        value: value,
+                        decimals: 1,
+                        step: 0.1,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                          suffix: Text(unit),
+                        ),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 100,
+                  Expanded(
                     child: SfSlider(
                       min: min,
                       max: max,
@@ -1170,7 +1148,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     );
   }
 
-  changeMoveOnIf(De1ShotFrameClass frame, double value, Function(De1ShotFrameClass value) valueChanged,
+  Widget changeMoveOnIf(De1ShotFrameClass frame, double value, Function(De1ShotFrameClass value) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
     bool isComparing = ((frame.flag & De1ShotFrameClass.DoCompare) > 0);
     bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
@@ -1284,7 +1262,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            if (title != null) Text(title, style: Theme.of(context).textTheme.headlineMedium),
+            if (title != null) Text(title, style: Theme.of(context).textTheme.labelLarge),
             SizedBox(
               width: 240,
               height: 80,
@@ -1335,64 +1313,54 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Expanded(
-          child: Column(
-            children: [
-              SizedBox(
-                width: 350,
-                height: 30,
-                child: Expanded(
-                  child: Row(
-                    children: [
-                      if (title != null)
-                        SizedBox(width: 150, child: Text(title, style: Theme.of(context).textTheme.headlineSmall)),
-                      Expanded(
-                        child: SizedBox(
-                          height: 50,
-                          width: 350,
-                          child: SpinBox(
-                            keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                            textInputAction: TextInputAction.done,
-                            onChanged: (value) {
-                              valueChanged(value);
-                            },
-                            min: min,
-                            max: max,
-                            value: value,
-                            decimals: 1,
-                            step: 0.1,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                              suffix: Text(unit),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+        child: Column(
+          children: [
+            Row(
+              children: [
+                if (title != null)
+                  SizedBox(width: 120, child: Text(title, style: Theme.of(context).textTheme.headlineSmall)),
+                SizedBox(
+                  // height: 50,
+                  width: 200,
+                  child: SpinBox(
+                    keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                    textInputAction: TextInputAction.done,
+                    onChanged: (value) {
+                      valueChanged(value);
+                    },
+                    min: min,
+                    max: max,
+                    value: value,
+                    decimals: 1,
+                    step: 0.1,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                      suffix: Text(unit),
+                    ),
                   ),
                 ),
-              ),
-              SfSlider(
-                min: min,
-                max: max,
-                value: value,
-                interval: interval ?? max / 10,
-                showTicks: false,
-                showLabels: true,
-                enableTooltip: true,
-                stepSize: 0.1,
-                minorTicksPerInterval: 10,
-                onChanged: (dynamic value) {
-                  valueChanged(value);
-                },
-              ),
-            ],
-          ),
+              ],
+            ),
+            SfSlider(
+              min: min,
+              max: max,
+              value: value,
+              interval: interval ?? max / 10,
+              showTicks: false,
+              showLabels: true,
+              enableTooltip: true,
+              stepSize: 0.1,
+              minorTicksPerInterval: 2,
+              onChanged: (dynamic value) {
+                valueChanged(value);
+              },
+            ),
+          ],
         ),
       ),
     );
