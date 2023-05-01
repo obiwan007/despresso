@@ -11,6 +11,7 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/labeled_checkbox.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
+import 'package:despresso/ui/widgets/selectable_steps.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:logging/logging.dart';
@@ -25,6 +26,7 @@ import './profiles_d-flow_edit_screen.dart';
 import './profiles_advanced_edit_screen.dart';
 
 enum FilterModes {
+  Mine,
   Default,
   Hidden,
   Favorites,
@@ -55,6 +57,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   File? pickedFile;
 
   List<String> filterOptions = [
+    FilterModes.Mine.name,
     FilterModes.Default.name,
     FilterModes.Hidden.name,
     FilterModes.Flow.name,
@@ -63,8 +66,11 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   ];
 
   List<String> selectedFilter = [
+    FilterModes.Mine.name,
     FilterModes.Default.name,
   ];
+
+  int _selectedPhase = -1;
 
   @override
   void initState() {
@@ -96,6 +102,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
   Widget build(BuildContext context) {
     var showHidden = selectedFilter.contains(FilterModes.Hidden.name);
     var showDefault = selectedFilter.contains(FilterModes.Default.name);
+    var showOnlyMine = selectedFilter.contains(FilterModes.Mine.name);
     var showFlow = selectedFilter.contains(FilterModes.Flow.name);
     var showPressure = selectedFilter.contains(FilterModes.Pressure.name);
     var showAdvanced = selectedFilter.contains(FilterModes.Advanced.name);
@@ -108,6 +115,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             bool res3 = false;
             bool res4 = false;
             bool res5 = false;
+            bool res0 = true;
 
             if (showDefault) res1 = element.shotHeader.hidden == 0;
             if (showHidden) res2 = element.shotHeader.hidden == 1;
@@ -115,7 +123,9 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             if (showPressure) res4 = element.shotHeader.type == 'pressure';
             if (showAdvanced) res5 = element.shotHeader.type == 'advanced';
 
-            return res1 || res2 || (res3 || res4 || res5);
+            if (showOnlyMine) res0 = element.isDefault == false;
+
+            return res0 || res1 || res2 || (res3 || res4 || res5);
           },
         )
         .map((p) => DropdownMenuItem(
@@ -141,6 +151,27 @@ class ProfilesScreenState extends State<ProfilesScreen> {
         ),
         title: const Text('Profiles'),
         actions: <Widget>[
+          if (_selectedProfile!.isDefault == false)
+            TextButton.icon(
+              icon: const Icon(Icons.delete),
+              label: Text("Delete"),
+              onPressed: () async {
+                try {
+                  await profileService.delete(_selectedProfile!);
+                } catch (e) {
+                  var snackBar = SnackBar(
+                      content: Text("Error deleting profile: $e"),
+                      action: SnackBarAction(
+                        label: '',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  log.severe("Error deleting profile $e");
+                }
+              },
+            ),
           // Use Builder to get the widget context
           Builder(
             builder: (BuildContext context) {
@@ -214,7 +245,6 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                     MaterialPageRoute(builder: (context) => ProfilesEditScreen(_selectedProfile!.clone())),
                   );
                 }
-
               });
             },
           ),
@@ -305,7 +335,11 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                           Expanded(
                             flex: 4,
                             child: _selectedProfile != null
-                                ? ProfileGraphWidget(key: UniqueKey(), selectedProfile: _selectedProfile!)
+                                ? ProfileGraphWidget(
+                                    key: UniqueKey(),
+                                    selectedProfile: _selectedProfile!,
+                                    selectedPhase: _selectedPhase,
+                                  )
                                 : Text("nothing selected"),
                           ),
                           Expanded(
@@ -316,12 +350,17 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                 children: [
                                   Expanded(
                                     flex: 8,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        ...createSteps(),
-                                      ],
-                                    ),
+                                    child: _selectedProfile != null
+                                        ? SelectableSteps(
+                                            profile: _selectedProfile!,
+                                            selected: _selectedPhase,
+                                            isEditable: false,
+                                            onSelected: (p0) {
+                                              _selectedPhase = p0;
+                                              setState(() {});
+                                            },
+                                          )
+                                        : Text(""),
                                   ),
                                   Expanded(
                                     flex: 2,
