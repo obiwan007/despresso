@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:despresso/model/services/state/profile_service.dart';
@@ -170,6 +171,30 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                           _selectedStepIndex = p0;
                           _selectedStep = _profile.shotFrames[p0];
                           log.info("New Step $p0");
+                          setState(() {});
+                        },
+                        onDeleted: (index) {
+                          _profile.shotFrames.removeAt(index);
+                          _selectedStepIndex = min(_profile.shotFrames.length - 1, index);
+                          _selectedStep = _profile.shotFrames[_selectedStepIndex];
+                          log.info("New Step $_selectedStepIndex");
+                          setState(() {});
+                        },
+                        onCopied: (index) {
+                          var clone = _profile.shotFrames[index].clone();
+                          _profile.shotFrames.insert(index, clone);
+                          _selectedStepIndex = min(_profile.shotFrames.length - 1, index + 1);
+                          _selectedStep = _profile.shotFrames[_selectedStepIndex];
+                          log.info("New Step $_selectedStepIndex");
+                          setState(() {});
+                        },
+                        onReordered: (index, direction) {
+                          var clone = _profile.shotFrames[index];
+                          _profile.shotFrames.removeAt(index);
+                          _profile.shotFrames.insert(index + direction, clone);
+                          _selectedStepIndex = min(_profile.shotFrames.length - 1, index + direction);
+                          _selectedStep = _profile.shotFrames[_selectedStepIndex];
+                          log.info("New Step $_selectedStepIndex");
                           setState(() {});
                         },
                       ),

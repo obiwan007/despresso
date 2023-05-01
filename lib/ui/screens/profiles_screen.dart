@@ -154,7 +154,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           if (_selectedProfile!.isDefault == false)
             TextButton.icon(
               icon: const Icon(Icons.delete),
-              label: Text("Delete"),
+              label: const Text("Delete"),
               onPressed: () async {
                 try {
                   await profileService.delete(_selectedProfile!);
@@ -176,7 +176,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           Builder(
             builder: (BuildContext context) {
               return TextButton.icon(
-                label: Text("Share"),
+                label: const Text("Share"),
                 onPressed: () => _onShare(context),
                 icon: const Icon(Icons.ios_share),
               );
@@ -184,7 +184,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           ),
           TextButton.icon(
             icon: const Icon(Icons.cloud_download),
-            label: Text("visualizer code"),
+            label: const Text("visualizer code"),
             onPressed: () async {
               final shortCode = await _openShortCodeDialog();
               if (shortCode == null || shortCode.isEmpty) return;
@@ -216,14 +216,14 @@ class ProfilesScreenState extends State<ProfilesScreen> {
           ),
 
           TextButton.icon(
-            label: Text("Import json"),
+            label: const Text("Import json"),
             icon: const Icon(Icons.file_download),
             onPressed: () {
               getProfileFromFolder(context);
             },
           ),
           TextButton.icon(
-            label: Text("Edit"),
+            label: const Text("Edit"),
             icon: const Icon(Icons.edit),
             onPressed: () {
               setState(() {
@@ -340,7 +340,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                     selectedProfile: _selectedProfile!,
                                     selectedPhase: _selectedPhase,
                                   )
-                                : Text("nothing selected"),
+                                : const Text("nothing selected"),
                           ),
                           Expanded(
                             flex: 6,
@@ -360,7 +360,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                               setState(() {});
                                             },
                                           )
-                                        : Text(""),
+                                        : const Text(""),
                                   ),
                                   Expanded(
                                     flex: 2,

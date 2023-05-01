@@ -191,7 +191,7 @@ class RecipeEditState extends State<RecipeEdit> {
           ),
         ),
 
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -209,7 +209,7 @@ class RecipeEditState extends State<RecipeEdit> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   SizedBox(
@@ -226,7 +226,7 @@ class RecipeEditState extends State<RecipeEdit> {
             ],
           ),
         )),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -239,7 +239,7 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 100,
                     child: ReactiveTextField<double>(
                       formControlName: 'ratio1',
-                      keyboardType: TextInputType.numberWithOptions(),
+                      keyboardType: const TextInputType.numberWithOptions(),
                       decoration: InputDecoration(
                         labelText: S.of(context).screenRecipeEditRatio,
                       ),
@@ -262,7 +262,7 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 100,
                     child: ReactiveTextField<double>(
                       formControlName: 'ratio2',
-                      keyboardType: TextInputType.numberWithOptions(),
+                      keyboardType: const TextInputType.numberWithOptions(),
                       decoration: InputDecoration(
                         labelText: S.of(context).screenRecipeEditRatioTo,
                       ),
@@ -285,7 +285,7 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 200,
                     child: ReactiveTextField<double>(
                       formControlName: 'grinderDoseWeight',
-                      keyboardType: TextInputType.numberWithOptions(),
+                      keyboardType: const TextInputType.numberWithOptions(),
                       decoration: InputDecoration(
                         labelText: S.of(context).screenRecipeEditDoseWeightin,
                       ),
@@ -308,7 +308,7 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 200,
                     child: ReactiveTextField<double>(
                       formControlName: 'adjustedWeight',
-                      keyboardType: TextInputType.numberWithOptions(),
+                      keyboardType: const TextInputType.numberWithOptions(),
                       decoration: InputDecoration(
                         labelText: S.of(context).screenRecipeEditWeightOut,
                       ),
@@ -326,7 +326,7 @@ class RecipeEditState extends State<RecipeEdit> {
           ),
         )),
 
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -366,7 +366,7 @@ class RecipeEditState extends State<RecipeEdit> {
           ),
         )),
 
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
 
         Card(
             child: Padding(
@@ -391,7 +391,7 @@ class RecipeEditState extends State<RecipeEdit> {
                   width: 200,
                   child: ReactiveTextField<double>(
                     formControlName: 'weightMilk',
-                    keyboardType: TextInputType.numberWithOptions(),
+                    keyboardType: const TextInputType.numberWithOptions(),
                     decoration: InputDecoration(
                       labelText: S.of(context).screenRecipeEditMilkWeight,
                     ),
@@ -412,7 +412,7 @@ class RecipeEditState extends State<RecipeEdit> {
                   width: 200,
                   child: ReactiveTextField<double>(
                     formControlName: 'weightWater',
-                    keyboardType: TextInputType.numberWithOptions(),
+                    keyboardType: const TextInputType.numberWithOptions(),
                     showErrors: (control) => control.invalid,
                     validationMessages: {
                       ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
