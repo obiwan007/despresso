@@ -49,25 +49,43 @@ class ProfileService extends ChangeNotifier {
 
     var profileId = settings.currentProfile;
 
+    await _prepareProfiles();
+
+// Add defaultprofile if not already modified;
+
+    currentProfile = profiles.first;
+    if (profileId.isNotEmpty) {
+      try {
+        currentProfile = profiles.where((element) => element.id == profileId).first;
+      } catch (_) {}
+      log.info("Profile ${currentProfile!.shotHeader.title} loaded");
+    }
+    notifyListeners();
+  }
+
+  Future<void> _prepareProfiles() async {
+    profiles = [];
+    defaultProfiles = [];
     await loadAllDefaultProfiles();
     log.info('Profiles loaded');
 
     try {
-      var dirs = await getSavedProfileFiles();
+      var savedProfilesList = await getSavedProfileFiles();
 
-      for (var element in dirs) {
-        log.info(element.path);
-        var i = element.path.lastIndexOf('/');
-        var file = element.path.substring(i);
+      for (var savedProfile in savedProfilesList) {
+        log.info(savedProfile.path);
+        var i = savedProfile.path.lastIndexOf('/');
+        var file = savedProfile.path.substring(i);
         try {
           var loaded = await loadProfileFromDocuments(file);
           log.info("Saved profile loaded $loaded");
-          var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
-          if (defaultProfile.isEmpty) {
-            profiles.add(loaded);
-          } else {
-            profiles.add(defaultProfile.first);
-          }
+          profiles.add(loaded);
+          // var defaultProfile = defaultProfiles.where((element) => element.id == loaded.id);
+          // if (defaultProfile.isEmpty) {
+          //   profiles.add(loaded);
+          // } else {
+          //   profiles.add(defaultProfile.first);
+          // }
         } catch (ex) {
           log.info("Error loading profile $ex");
         }
@@ -78,22 +96,11 @@ class ProfileService extends ChangeNotifier {
     } catch (ex) {
       log.info("List files $ex");
     }
-
-// Add defaultprofile if not already modified;
     for (var prof in defaultProfiles) {
       if (profiles.where((element) => element.id == prof.id).isEmpty) {
         profiles.add(prof);
       }
     }
-
-    currentProfile = profiles.first;
-    if (profileId.isNotEmpty) {
-      try {
-        currentProfile = profiles.where((element) => element.id == profileId).first;
-      } catch (_) {}
-      log.info("Profile ${currentProfile!.shotHeader.title} loaded");
-    }
-    notifyListeners();
   }
 
   void notify() {
@@ -123,22 +130,51 @@ class ProfileService extends ChangeNotifier {
   saveAsNew(De1ShotProfile profile) {
     log.info("Saving as a new profile");
     profile.isDefault = false;
-    profile.id = const Uuid().toString();
+    profile.id = const Uuid().v1().toString();
     save(profile);
   }
 
   save(De1ShotProfile profile) async {
     log.info("Saving as a existing profile to documents region");
     profile.isDefault = false;
-    await saveProfileToDocuments(profile, profile.id);
-    currentProfile = profile;
-    if (profiles.firstWhereOrNull((element) => element.id == profile.id) == null) {
-      log.info("New profile saved");
-      profiles.add(profile);
-    } else {
-      var index = profiles.indexWhere((element) => element.id == profile.id);
-      profiles[index] = profile;
+    try {
+      await saveProfileToDocuments(profile, profile.id);
+      currentProfile = profile;
+      if (profiles.firstWhereOrNull((element) => element.id == profile.id) == null) {
+        log.info("New profile saved");
+        profiles.add(profile);
+      } else {
+        var index = profiles.indexWhere((element) => element.id == profile.id);
+        profiles[index] = profile;
+      }
+      log.info("Saving profile done");
+    } catch (e) {
+      log.severe("Error saving profile $e");
     }
+
+    notify();
+  }
+
+  delete(De1ShotProfile profile) async {
+    log.info("Delete as a existing profile to documents region");
+    profile.isDefault = false;
+    currentProfile = profile;
+    var toBeDeleted = profiles.firstWhereOrNull((element) => element.id == profile.id);
+
+    if (toBeDeleted != null) {
+      var i = profiles.indexOf(toBeDeleted);
+
+      await deleteProfileFromDocuments(profile, profile.id);
+      await _prepareProfiles();
+
+      if (i < profiles.length) {
+        currentProfile = profiles[i];
+      } else {
+        currentProfile = profiles[0];
+      }
+      log.info("New profile saved");
+    }
+
     notify();
   }
 
@@ -181,6 +217,25 @@ class ProfileService extends ChangeNotifier {
       Future.error("Error loading filename $ex");
       rethrow;
     }
+  }
+
+  Future deleteProfileFromDocuments(De1ShotProfile profile, String filename) async {
+    log.info("Storing shot: ${profile.id}");
+
+    final directory = await getApplicationDocumentsDirectory();
+    log.info("Storing to path:${directory.path}");
+    final Directory appDocDirFolder = Directory('${directory.path}/profiles/');
+
+    if (!appDocDirFolder.existsSync()) {
+      appDocDirFolder.create(recursive: true);
+    }
+
+    var file = File('${directory.path}/profiles/$filename');
+    if (await file.exists()) {
+      file.deleteSync();
+      log.info("File $filename deleted");
+    }
+    return Future(() => null);
   }
 
   Future<File> saveProfileToDocuments(De1ShotProfile profile, String filename) async {

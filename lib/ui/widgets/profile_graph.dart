@@ -8,9 +8,11 @@ import 'package:despresso/ui/theme.dart' as theme;
 
 class ProfileGraphWidget extends StatefulWidget {
   final De1ShotProfile selectedProfile;
-  const ProfileGraphWidget({
+  int selectedPhase = -1;
+  ProfileGraphWidget({
     Key? key,
     required this.selectedProfile,
+    this.selectedPhase = -1,
   }) : super(key: key);
 
   @override
@@ -146,7 +148,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
     ShotState shotState = ShotState(
         time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
-    shotList.entries.add(shotState);
+    // shotList.entries.add(shotState);
     double lastVal = 0;
     var dt = settingsService.targetTempCorrection;
     for (var frame in _selectedProfile!.shotFrames) {
@@ -292,6 +294,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
 
     int i = 0;
     var maxSampleTime = shotList.entries.last.sampleTimeCorrected;
+
     return stateChanges.map((from) {
       var toSampleTime = maxSampleTime;
       // og(from.subState);
@@ -300,7 +303,9 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
         toSampleTime = stateChanges[i].sampleTimeCorrected;
       }
 
-      var col = theme.ThemeColors.statesColors[from.subState];
+      var col = i == widget.selectedPhase + 1
+          ? Theme.of(context).colorScheme.onPrimary
+          : theme.ThemeColors.backgroundColor; // theme.ThemeColors.statesColors[from.subState];
       var col2 = charts.ColorUtil.fromDartColor(col ?? theme.ThemeColors.backgroundColor);
       // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
       return charts.RangeAnnotationSegment(

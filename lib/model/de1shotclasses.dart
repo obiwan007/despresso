@@ -245,6 +245,20 @@ class De1ShotFrameClass // proc spec_shotframe
 
   De1ShotFrameClass();
 
+  static int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
+  // ignore: constant_identifier_names
+  static int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+  // ignore: constant_identifier_names
+  static int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+  // ignore: constant_identifier_names
+  static int DC_CompF = 0x08; // Compare Pressure or Flow?
+  // ignore: constant_identifier_names
+  static int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+  // ignore: constant_identifier_names
+  static int Interpolate = 0x20; // Hard jump to target value, or ramp?
+  // ignore: constant_identifier_names
+  static int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+
   factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) => _$De1ShotFrameClassFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
@@ -357,19 +371,19 @@ class De1ShotFrameClass // proc spec_shotframe
   @override
   String toString() {
     // ignore: constant_identifier_names
-    const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
-    // ignore: constant_identifier_names
-    const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
-    // ignore: constant_identifier_names
-    const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
-    // ignore: constant_identifier_names
-    const int DC_CompF = 0x08; // Compare Pressure or Flow?
-    // ignore: constant_identifier_names
-    const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
-    // ignore: constant_identifier_names
-// Hard jump to target value, or ramp?
-    // ignore: constant_identifier_names
-    const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+//     const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
+//     // ignore: constant_identifier_names
+//     const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+//     // ignore: constant_identifier_names
+//     const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+//     // ignore: constant_identifier_names
+//     const int DC_CompF = 0x08; // Compare Pressure or Flow?
+//     // ignore: constant_identifier_names
+//     const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+//     // ignore: constant_identifier_names
+// // Hard jump to target value, or ramp?
+//     // ignore: constant_identifier_names
+//     const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
     var flagStr = "";
     if ((flag & CtrlF) > 0) flagStr += "CtrlF";

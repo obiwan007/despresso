@@ -396,8 +396,13 @@ class DE1 extends ChangeNotifier implements IDe1 {
 
   @override
   Future<void> requestState(De1StateEnum state) {
-    log.info("RequestState $state");
-    return _write(Endpoint.requestedState, Uint8List.fromList([state.index]));
+    try {
+      log.info("RequestState $state");
+      return _write(Endpoint.requestedState, Uint8List.fromList([state.index]));
+    } catch (e) {
+      log.severe("State could not be set $state");
+      return Future.error("State set error $e");
+    }
   }
 
   Future<List<int>> _read(Endpoint e) {
@@ -410,10 +415,15 @@ class DE1 extends ChangeNotifier implements IDe1 {
   }
 
   Future<void> _write(Endpoint e, Uint8List data) {
-    if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
-    final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
-    return connection.writeCharacteristicWithResponse(characteristic, value: data);
+    try {
+      if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
+      final characteristic =
+          QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+      return connection.writeCharacteristicWithResponse(characteristic, value: data);
+    } catch (e) {
+      log.severe("Failing BLE write $e");
+      rethrow;
+    }
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
