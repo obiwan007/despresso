@@ -16,8 +16,10 @@ import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:despresso/ui/widgets/screen_saver.dart';
+import 'package:despresso/ui/widgets/start_stop_button.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,6 +27,14 @@ import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
 import 'screens/flush_screen.dart';
 import 'package:despresso/generated/l10n.dart';
+
+class IncrementIntent extends Intent {
+  const IncrementIntent();
+}
+
+class DecrementIntent extends Intent {
+  const DecrementIntent();
+}
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key, required this.title}) : super(key: key);
@@ -56,6 +66,15 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   BuildContext? _saverContext;
 
   late SettingsService _settings;
+
+  final incrementKeySet = LogicalKeySet(
+    LogicalKeyboardKey.shift, // Replace with control on Windows
+    LogicalKeyboardKey.arrowUp,
+  );
+  final decrementKeySet = LogicalKeySet(
+    LogicalKeyboardKey.shift, // Replace with control on Windows
+    LogicalKeyboardKey.arrowDown,
+  );
 
   @override
   void initState() {
@@ -104,14 +123,37 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            _screensaver.handleTap();
-          },
-          child: scaffoldNewLayout(context)),
+    return Shortcuts(
+      shortcuts: {
+        decrementKeySet: DecrementIntent(),
+        incrementKeySet: IncrementIntent(),
+      },
+      // shortcuts: const <ShortcutActivator, Intent>{
+      //   SingleActivator(LogicalKeyboardKey.keyB): IncrementIntent(),
+      //   SingleActivator(LogicalKeyboardKey.keyA): DecrementIntent(),
+      // },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          IncrementIntent: CallbackAction<IncrementIntent>(
+            onInvoke: (IncrementIntent intent) => setState(() {}),
+          ),
+          DecrementIntent: CallbackAction<DecrementIntent>(
+            onInvoke: (DecrementIntent intent) {
+              log.info("Decrement");
+              setState(() {});
+            },
+          ),
+        },
+        child: DefaultTabController(
+          length: 4,
+          child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                _screensaver.handleTap();
+              },
+              child: scaffoldNewLayout(context)),
+        ),
+      ),
     );
   }
 
