@@ -246,7 +246,10 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     var h = 30.0;
     var hTab = 95.0;
     var fontsize = 20.0;
-    var style1 = TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: fontsize);
+    var ts = Theme.of(context).textTheme.headlineSmall;
+    var style1 = TextStyle(
+        fontWeight: ts!.fontWeight,
+        fontSize: ts.fontSize); // TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
     var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
     var style3 = TextStyle(color: color);
     bool isComparing = ((frame!.flag & De1ShotFrameClass.DoCompare) > 0);
@@ -260,11 +263,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           children: [
             SizedBox(
               height: h,
-              child: FittedBox(
-                child: Text(
-                  "Temp",
-                  style: style2,
-                ),
+              child: Text(
+                "Temp",
+                style: style1,
               ),
             ),
             Text((frame.temp.toStringAsFixed(1)), style: style2),
@@ -280,10 +281,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           children: [
             SizedBox(
               height: h,
-              child: FittedBox(
-                child: Text(
-                  "Goal",
-                ),
+              child: Text(
+                "Goal",
+                style: style1,
               ),
             ),
             Row(
@@ -322,13 +322,10 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(
-              height: h,
-              child: FittedBox(
-                child: Text(
-                  "Maximum",
-                  // style: style1,
-                ),
+            FittedBox(
+              child: Text(
+                "Maximum",
+                style: style1,
               ),
             ),
             Row(
@@ -373,14 +370,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(
-              height: h,
-              child: FittedBox(
-                child: Text(
-                  "Move on if...",
-                  // style: style1,
-                ),
-              ),
+            Text(
+              "Move on if...",
+              style: style1,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -868,7 +860,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               children: [
                 Row(
                   children: [
-                    SizedBox(width: 80, child: Text("Limiting:", style: Theme.of(context).textTheme.labelMedium)),
+                    SizedBox(width: 90, child: Text("Limiting:", style: Theme.of(context).textTheme.labelMedium)),
                     ToggleButtons(
                       children: [const Text("Pressure"), const Text("Flow")],
                       isSelected: [isPressure, !isPressure],
@@ -881,7 +873,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    SizedBox(width: 80, child: Text("Transition:", style: Theme.of(context).textTheme.labelMedium)),
+                    SizedBox(width: 90, child: Text("Transition:", style: Theme.of(context).textTheme.labelMedium)),
                     ToggleButtons(
                       children: [const Text("Fast"), const Text("Smooth")],
                       isSelected: [isFast, !isFast],
@@ -1165,7 +1157,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 children: [
                   Row(
                     children: [
-                      SizedBox(width: 55, child: Text("Do\ncompare:", style: Theme.of(context).textTheme.labelMedium)),
+                      SizedBox(width: 75, child: Text("Do\ncompare:", style: Theme.of(context).textTheme.labelMedium)),
                       Switch(
                         value: isComparing,
                         onChanged: (value) {
@@ -1318,7 +1310,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
             Row(
               children: [
                 if (title != null)
-                  SizedBox(width: 120, child: Text(title, style: Theme.of(context).textTheme.headlineSmall)),
+                  SizedBox(width: 120, child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
                 SizedBox(
                   // height: 50,
                   width: 200,
