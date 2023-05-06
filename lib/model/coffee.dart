@@ -10,23 +10,21 @@ class Coffee {
   String type = "";
   String taste = "";
   final roaster = ToOne<Roaster>();
-
   String imageURL = "";
-
   double grinderSettings = 0;
-
   double grinderDoseWeight = 35;
-
   double acidRating = 3;
   double intensityRating = 3;
   double roastLevel = 3;
-
-  String origin = "";
-
   @Property(type: PropertyType.date)
   DateTime roastDate = DateTime.now();
-
   String price = "";
+  String origin = "";
+  String region = "";
+  String farm = "";
+  @Property(type: PropertyType.date)
+  DateTime cropyear = DateTime.now();
+  String process = "";
 }
 
 @Entity()

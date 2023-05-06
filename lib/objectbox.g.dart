@@ -185,7 +185,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(5, 6166132089796684361),
       name: 'Coffee',
-      lastPropertyId: const IdUid(17, 3180181574963034735),
+      lastPropertyId: const IdUid(21, 6055219836272863790),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -264,6 +264,26 @@ final _entities = <ModelEntity>[
             id: const IdUid(17, 3180181574963034735),
             name: 'roastDate',
             type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 6938000416295761114),
+            name: 'region',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 9026359374085873224),
+            name: 'farm',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 5729031423788409720),
+            name: 'cropyear',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(21, 6055219836272863790),
+            name: 'process',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -810,7 +830,10 @@ ModelDefinition getObjectBoxModel() {
           final priceOffset = fbb.writeString(object.price);
           final typeOffset = fbb.writeString(object.type);
           final tasteOffset = fbb.writeString(object.taste);
-          fbb.startTable(18);
+          final regionOffset = fbb.writeString(object.region);
+          final farmOffset = fbb.writeString(object.farm);
+          final processOffset = fbb.writeString(object.process);
+          fbb.startTable(22);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addInt64(2, object.roaster.targetId);
@@ -826,6 +849,10 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(14, tasteOffset);
           fbb.addFloat64(15, object.grinderDoseWeight);
           fbb.addInt64(16, object.roastDate.millisecondsSinceEpoch);
+          fbb.addOffset(17, regionOffset);
+          fbb.addOffset(18, farmOffset);
+          fbb.addInt64(19, object.cropyear.millisecondsSinceEpoch);
+          fbb.addOffset(20, processOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -860,7 +887,15 @@ ModelDefinition getObjectBoxModel() {
             ..grinderDoseWeight =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0)
             ..roastDate = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0));
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0))
+            ..region = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 38, '')
+            ..farm = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 40, '')
+            ..cropyear = DateTime.fromMillisecondsSinceEpoch(
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 42, 0))
+            ..process = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 44, '');
           object.roaster.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.roaster.attach(store);
@@ -1318,6 +1353,21 @@ class Coffee_ {
   /// see [Coffee.roastDate]
   static final roastDate =
       QueryIntegerProperty<Coffee>(_entities[1].properties[14]);
+
+  /// see [Coffee.region]
+  static final region =
+      QueryStringProperty<Coffee>(_entities[1].properties[15]);
+
+  /// see [Coffee.farm]
+  static final farm = QueryStringProperty<Coffee>(_entities[1].properties[16]);
+
+  /// see [Coffee.cropyear]
+  static final cropyear =
+      QueryIntegerProperty<Coffee>(_entities[1].properties[17]);
+
+  /// see [Coffee.process]
+  static final process =
+      QueryStringProperty<Coffee>(_entities[1].properties[18]);
 }
 
 /// [Roaster] entity fields to define ObjectBox queries.

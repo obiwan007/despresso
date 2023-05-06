@@ -82,6 +82,10 @@ class CoffeeEditState extends State<CoffeeEdit> {
       'acidRating': [_editedCoffee.acidRating],
       'roastLevel': [_editedCoffee.roastLevel],
       'roastDate': [DateTime.now()],
+      "region": [_editedCoffee.region],
+      "farm": [_editedCoffee.farm],
+      "cropyear": [_editedCoffee.cropyear],
+      "process": [_editedCoffee.process],
     });
   }
 
@@ -135,157 +139,210 @@ class CoffeeEditState extends State<CoffeeEdit> {
   }
 
   coffeeForm(FormGroup form) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        KeyValueWidget(label: "Roaster", value: ""),
-        DropdownButton(
-          isExpanded: true,
-          alignment: Alignment.centerLeft,
-          value: _selectedRoasterId,
-          items: roasters,
-          onChanged: (value) async {
-            _selectedRoasterId = value!;
-            coffeeService.setSelectedRoaster(_selectedRoasterId);
-          },
-        ),
+    return Focus(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          KeyValueWidget(label: "Roaster", value: ""),
+          DropdownButton(
+            isExpanded: true,
+            alignment: Alignment.centerLeft,
+            value: _selectedRoasterId,
+            items: roasters,
+            onChanged: (value) async {
+              _selectedRoasterId = value!;
+              coffeeService.setSelectedRoaster(_selectedRoasterId);
+            },
+          ),
 
-        ReactiveTextField<String>(
-          formControlName: 'name',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Name of bean',
-          ),
-          validationMessages: {
-            ValidationMessage.required: (_) => 'Name must not be empty',
-          },
-        ),
-        ReactiveTextField<String>(
-          keyboardType: TextInputType.text,
-          formControlName: 'description',
-          decoration: const InputDecoration(
-            labelText: 'Description',
-          ),
-        ),
-        ReactiveTextField<String>(
-          formControlName: 'taste',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Taste of Beans',
-          ),
-        ),
-        ReactiveTextField<String>(
-          formControlName: 'type',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Type of Beans',
-          ),
-        ),
-        ReactiveTextField<String>(
-          formControlName: 'origin',
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Origin',
-          ),
-        ),
-        SizedBox(
-          width: 250,
-          child: ReactiveTextField<String>(
-            formControlName: 'price',
-            keyboardType: TextInputType.number,
+          ReactiveTextField<String>(
+            formControlName: 'name',
+            autofocus: true,
+            keyboardType: TextInputType.text,
             decoration: const InputDecoration(
-              labelText: 'Price/package',
+              labelText: 'Name of bean',
+            ),
+            validationMessages: {
+              ValidationMessage.required: (_) => 'Name must not be empty',
+            },
+          ),
+          ReactiveTextField<String>(
+            keyboardType: TextInputType.text,
+            formControlName: 'description',
+            decoration: const InputDecoration(
+              labelText: 'Description',
             ),
           ),
-        ),
-        SizedBox(
-          width: 300,
-          child: Row(
-            children: [
-              Expanded(
-                child: ReactiveTextField<DateTime>(
-                  formControlName: 'roastDate',
-                  keyboardType: TextInputType.datetime,
-                  decoration: const InputDecoration(
-                    labelText: 'Roasting date',
+          ReactiveTextField<String>(
+            formControlName: 'taste',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Taste of Beans',
+            ),
+          ),
+          SizedBox(
+            width: 300,
+            child: Row(
+              children: [
+                Expanded(
+                  child: ReactiveTextField<DateTime>(
+                    formControlName: 'roastDate',
+                    keyboardType: TextInputType.datetime,
+                    decoration: const InputDecoration(
+                      labelText: 'Roasting date',
+                    ),
                   ),
                 ),
+                ReactiveDatePicker(
+                  formControlName: 'roastDate',
+                  lastDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                  builder: (context, picker, child) {
+                    return IconButton(
+                      onPressed: picker.showPicker,
+                      icon: const Icon(Icons.date_range),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          ReactiveTextField<String>(
+            formControlName: 'type',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Type of Beans',
+            ),
+          ),
+          ReactiveTextField<String>(
+            formControlName: 'origin',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Origin',
+            ),
+          ),
+          ReactiveTextField<String>(
+            formControlName: 'region',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Region',
+            ),
+          ),
+          ReactiveTextField<String>(
+            formControlName: 'farm',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Farm',
+            ),
+          ),
+          SizedBox(
+            width: 300,
+            child: Row(
+              children: [
+                Expanded(
+                  child: ReactiveTextField<DateTime>(
+                    formControlName: 'cropyear',
+                    keyboardType: TextInputType.datetime,
+                    decoration: const InputDecoration(
+                      labelText: 'Crop date',
+                    ),
+                  ),
+                ),
+                ReactiveDatePicker(
+                  formControlName: 'cropyear',
+                  initialDatePickerMode: DatePickerMode.year,
+                  lastDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(const Duration(days: 20 * 365)),
+                  builder: (context, picker, child) {
+                    return IconButton(
+                      onPressed: picker.showPicker,
+                      icon: const Icon(Icons.date_range),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          ReactiveTextField<String>(
+            formControlName: 'process',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Process',
+            ),
+          ),
+          SizedBox(
+            width: 250,
+            child: ReactiveTextField<String>(
+              formControlName: 'price',
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Price/package',
               ),
-              ReactiveDatePicker(
-                formControlName: 'roastDate',
-                lastDate: DateTime.now(),
-                firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                builder: (context, picker, child) {
-                  return IconButton(
-                    onPressed: picker.showPicker,
-                    icon: const Icon(Icons.date_range),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        ),
 
-        HeightWidget(height: 20),
-        KeyValueWidget(label: "Acidity", value: ""),
-        ReactiveRatingBarBuilder<double>(
-          formControlName: 'acidRating',
-          minRating: 1,
-          direction: Axis.horizontal,
-          allowHalfRating: true,
-          itemCount: 5,
-          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          itemBuilder: (context, _) => const Icon(
-            Icons.star,
-            color: Colors.amber,
+          HeightWidget(height: 20),
+          KeyValueWidget(label: "Acidity", value: ""),
+          ReactiveRatingBarBuilder<double>(
+            formControlName: 'acidRating',
+            minRating: 1,
+            direction: Axis.horizontal,
+            allowHalfRating: true,
+            itemCount: 5,
+            itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => const Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
           ),
-        ),
-        HeightWidget(height: 20),
+          HeightWidget(height: 20),
 
-        KeyValueWidget(label: "Intensity", value: ""),
-        ReactiveRatingBarBuilder<double>(
-          formControlName: 'intensityRating',
-          minRating: 1,
-          direction: Axis.horizontal,
-          allowHalfRating: true,
-          itemCount: 5,
-          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          itemBuilder: (context, _) => const Icon(
-            Icons.star,
-            color: Colors.amber,
+          KeyValueWidget(label: "Intensity", value: ""),
+          ReactiveRatingBarBuilder<double>(
+            formControlName: 'intensityRating',
+            minRating: 1,
+            direction: Axis.horizontal,
+            allowHalfRating: true,
+            itemCount: 5,
+            itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => const Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
           ),
-        ),
-        HeightWidget(height: 20),
-        KeyValueWidget(label: "Roast Level", value: ""),
+          HeightWidget(height: 20),
+          KeyValueWidget(label: "Roast Level", value: ""),
 
-        ReactiveRatingBarBuilder<double>(
-          formControlName: 'roastLevel',
-          minRating: 1,
-          direction: Axis.horizontal,
-          allowHalfRating: true,
-          itemCount: 5,
-          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          itemBuilder: (context, _) => const Icon(
-            Icons.star,
-            color: Colors.amber,
+          ReactiveRatingBarBuilder<double>(
+            formControlName: 'roastLevel',
+            minRating: 1,
+            direction: Axis.horizontal,
+            allowHalfRating: true,
+            itemCount: 5,
+            itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+            itemBuilder: (context, _) => const Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
           ),
-        ),
-        // ReactiveFormConsumer(
-        //   builder: (context, form, child) {
-        //     return ElevatedButton(
-        //       onPressed: form.valid
-        //           ? () {
-        //               log.info("${form.value}");
-        //               saveFormData(form);
-        //               Navigator.pop(context);
-        //             }
-        //           : null,
-        //       child: const Text('SAVE'),
-        //     );
-        //   },
-        // ),
-      ],
+          // ReactiveFormConsumer(
+          //   builder: (context, form, child) {
+          //     return ElevatedButton(
+          //       onPressed: form.valid
+          //           ? () {
+          //               log.info("${form.value}");
+          //               saveFormData(form);
+          //               Navigator.pop(context);
+          //             }
+          //           : null,
+          //       child: const Text('SAVE'),
+          //     );
+          //   },
+          // ),
+        ],
+      ),
     );
   }
 
@@ -309,12 +366,14 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.price = form.value["price"] as String;
     _editedCoffee.taste = form.value["taste"] as String;
     _editedCoffee.origin = form.value["origin"] as String;
+    _editedCoffee.region = form.value["region"] as String;
+    _editedCoffee.farm = form.value["farm"] as String;
+    _editedCoffee.cropyear = form.value["cropyear"] as DateTime? ?? DateTime.now();
+    _editedCoffee.process = form.value["process"] as String;
     _editedCoffee.roastDate = form.value["roastDate"] as DateTime? ?? DateTime.now();
     _editedCoffee.description = form.value["description"] as String;
-
     _editedCoffee.intensityRating = form.value["intensityRating"] as double;
     _editedCoffee.acidRating = form.value["acidRating"] as double;
-
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
     _editedCoffee.roaster.targetId = _selectedRoasterId;
     coffeeService.addCoffee(_editedCoffee);
