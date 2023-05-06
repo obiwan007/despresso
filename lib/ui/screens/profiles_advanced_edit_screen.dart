@@ -247,11 +247,16 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     var hTab = 95.0;
     var fontsize = 20.0;
     var ts = Theme.of(context).textTheme.headlineSmall;
-    var style1 = TextStyle(
-        fontWeight: ts!.fontWeight,
-        fontSize: ts.fontSize); // TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
-    var style2 = TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
-    var style3 = TextStyle(color: color);
+    var ts2 = Theme.of(context).textTheme.bodyLarge;
+    var ts3 = Theme.of(context).textTheme.bodyLarge;
+
+    var style1 = TextStyle(fontWeight: ts!.fontWeight, fontSize: ts.fontSize);
+
+    var style2 = TextStyle(
+        fontWeight: ts2!.fontWeight,
+        fontSize: ts2.fontSize); // TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
+    // var style2 = TextStyle();
+    var style3 = TextStyle(fontWeight: ts3!.fontWeight, fontSize: ts3.fontSize);
     bool isComparing = ((frame!.flag & De1ShotFrameClass.DoCompare) > 0);
     bool isGt = (frame!.flag & De1ShotFrameClass.DC_GT) > 0;
     bool isFlow = (frame!.flag & De1ShotFrameClass.DC_CompF) > 0;
@@ -269,7 +274,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               ),
             ),
             Text((frame.temp.toStringAsFixed(1)), style: style2),
-            const Text("°C"),
+            Text("°C", style: style3),
           ],
         ),
       ),
@@ -294,9 +299,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   children: [
                     Text(
                       "${(frame?.pump != "pressure" ? frame.setVal.toStringAsFixed(1) : "<" + frame.triggerVal.toStringAsFixed(1))}",
-                      style: style2,
+                      style: style3,
                     ),
-                    const Text("ml/s"),
+                    Text("ml/s", style: style3),
                   ],
                 ),
                 const SizedBox(
@@ -306,9 +311,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   children: [
                     Text(
                       "${(frame?.pump == "pressure" ? frame.setVal.toStringAsFixed(1) : "<" + frame.triggerVal.toStringAsFixed(1))}",
-                      style: style2,
+                      style: style3,
                     ),
-                    const Text("bar"),
+                    Text("bar", style: style3),
                   ],
                 ),
               ],
@@ -337,11 +342,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   children: [
                     Text(
                       "${(frame?.frameLen.toStringAsFixed(1) ?? 0)}",
-                      style: style2,
+                      style: style3,
                     ),
-                    Text(
-                      "s",
-                    ),
+                    Text("s", style: style3),
                   ],
                 ),
                 SizedBox(
@@ -352,11 +355,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     children: [
                       Text(
                         "${(frame.maxVol.toStringAsFixed(1) ?? 0)}",
-                        style: style2,
+                        style: style3,
                       ),
-                      Text(
-                        "ml",
-                      ),
+                      Text("ml", style: style3),
                     ],
                   ),
               ],
@@ -387,11 +388,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                               (isGt ? "> " : "< ") +
                               "${(frame?.triggerVal.toStringAsFixed(1) ?? 0)}")
                           : "goal reached",
-                      style: style2,
+                      style: style3,
                     ),
-                    Text(
-                      isComparing ? (isFlow ? "ml/s" : "bar") : "",
-                    ),
+                    Text(isComparing ? (isFlow ? "ml/s" : "bar") : "", style: style3),
                   ],
                 ),
                 SizedBox(
@@ -402,11 +401,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     children: [
                       Text(
                         "${(frame.maxVol.toStringAsFixed(1) ?? 0)}",
-                        style: style2,
+                        style: style3,
                       ),
-                      Text(
-                        "ml",
-                      ),
+                      Text("ml", style: style3),
                     ],
                   ),
               ],
