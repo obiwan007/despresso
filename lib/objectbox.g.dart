@@ -185,7 +185,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(5, 6166132089796684361),
       name: 'Coffee',
-      lastPropertyId: const IdUid(21, 6055219836272863790),
+      lastPropertyId: const IdUid(22, 6473077172521626198),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -284,6 +284,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(21, 6055219836272863790),
             name: 'process',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 6473077172521626198),
+            name: 'elevation',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -833,7 +838,7 @@ ModelDefinition getObjectBoxModel() {
           final regionOffset = fbb.writeString(object.region);
           final farmOffset = fbb.writeString(object.farm);
           final processOffset = fbb.writeString(object.process);
-          fbb.startTable(22);
+          fbb.startTable(23);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addInt64(2, object.roaster.targetId);
@@ -853,6 +858,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(18, farmOffset);
           fbb.addInt64(19, object.cropyear.millisecondsSinceEpoch);
           fbb.addOffset(20, processOffset);
+          fbb.addInt64(21, object.elevation);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -895,7 +901,9 @@ ModelDefinition getObjectBoxModel() {
             ..cropyear = DateTime.fromMillisecondsSinceEpoch(
                 const fb.Int64Reader().vTableGet(buffer, rootOffset, 42, 0))
             ..process = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 44, '');
+                .vTableGet(buffer, rootOffset, 44, '')
+            ..elevation =
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 46, 0);
           object.roaster.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.roaster.attach(store);
@@ -1368,6 +1376,10 @@ class Coffee_ {
   /// see [Coffee.process]
   static final process =
       QueryStringProperty<Coffee>(_entities[1].properties[18]);
+
+  /// see [Coffee.elevation]
+  static final elevation =
+      QueryIntegerProperty<Coffee>(_entities[1].properties[19]);
 }
 
 /// [Roaster] entity fields to define ObjectBox queries.

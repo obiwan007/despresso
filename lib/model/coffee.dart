@@ -18,6 +18,7 @@ class Coffee {
   double roastLevel = 3;
   @Property(type: PropertyType.date)
   DateTime roastDate = DateTime.now();
+  int elevation = 0;
   String price = "";
   String origin = "";
   String region = "";

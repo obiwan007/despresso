@@ -86,6 +86,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
       "farm": [_editedCoffee.farm],
       "cropyear": [_editedCoffee.cropyear],
       "process": [_editedCoffee.process],
+      "elevation": [_editedCoffee.elevation, Validators.number],
     });
   }
 
@@ -237,6 +238,13 @@ class CoffeeEditState extends State<CoffeeEdit> {
               labelText: 'Farm',
             ),
           ),
+          ReactiveTextField<int>(
+            formControlName: 'elevation',
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+              labelText: 'Elevation (m or ft)',
+            ),
+          ),
           SizedBox(
             width: 300,
             child: Row(
@@ -375,6 +383,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
     _editedCoffee.intensityRating = form.value["intensityRating"] as double;
     _editedCoffee.acidRating = form.value["acidRating"] as double;
     _editedCoffee.roastLevel = form.value["roastLevel"] as double;
+    _editedCoffee.elevation = form.value["elevation"] as int? ?? 0;
     _editedCoffee.roaster.targetId = _selectedRoasterId;
     coffeeService.addCoffee(_editedCoffee);
     selectedCoffeeId = _editedCoffee.id;
