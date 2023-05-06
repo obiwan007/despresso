@@ -307,10 +307,12 @@ class EspressoScreenState extends State<EspressoScreen> {
         (!hasPressure) ? 0 : data["pressure"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
     double maxY2 =
         (!hasFlow) ? 0 : data["flowSet"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
+
+    double maxY4 = (!hasFlow) ? 0 : data["flow"]!.map((e) => e.y).reduce((value, element) => max(value, element)) + 0.5;
     var flowChart1 = LineChart(
       LineChartData(
         minY: 0,
-        maxY: max(maxY3, max(maxY1, maxY2)),
+        maxY: max(max(maxY3, maxY4), max(maxY1, maxY2)),
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
