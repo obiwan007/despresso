@@ -51,7 +51,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   bool available = false;
   int currentPageIndex = 1;
 
-  late CoffeeService coffeeSelection;
+  late CoffeeService coffeeService;
   late ProfileService profileService;
   late EspressoMachineService machineService;
 
@@ -84,7 +84,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     // if (_settings.showFlushScreen) l++;
     _tabController = TabController(length: calcTabs(), vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
-    coffeeSelection = getIt<CoffeeService>();
+    coffeeService = getIt<CoffeeService>();
 
     machineService.addListener(updatedMachine);
 
@@ -97,6 +97,8 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     _screensaver.addListener(screenSaverEvent);
 
     _settings.addListener(updatedSettings);
+
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
     //   log.info("Print after 5 seconds");
     //   selectedPage++;
@@ -119,41 +121,19 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     profileService.removeListener(updatedProfile);
     _screensaver.removeListener(screenSaverEvent);
     _settings.removeListener(updatedSettings);
+    ServicesBinding.instance.keyboard.removeHandler(_onKey);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Shortcuts(
-      shortcuts: {
-        decrementKeySet: DecrementIntent(),
-        incrementKeySet: IncrementIntent(),
-      },
-      // shortcuts: const <ShortcutActivator, Intent>{
-      //   SingleActivator(LogicalKeyboardKey.keyB): IncrementIntent(),
-      //   SingleActivator(LogicalKeyboardKey.keyA): DecrementIntent(),
-      // },
-      child: Actions(
-        actions: <Type, Action<Intent>>{
-          IncrementIntent: CallbackAction<IncrementIntent>(
-            onInvoke: (IncrementIntent intent) => setState(() {}),
-          ),
-          DecrementIntent: CallbackAction<DecrementIntent>(
-            onInvoke: (DecrementIntent intent) {
-              log.info("Decrement");
-              setState(() {});
-            },
-          ),
-        },
-        child: DefaultTabController(
-          length: 4,
-          child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                _screensaver.handleTap();
-              },
-              child: scaffoldNewLayout(context)),
-        ),
-      ),
+    return DefaultTabController(
+      length: 4,
+      child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            _screensaver.handleTap();
+          },
+          child: scaffoldNewLayout(context)),
     );
   }
 
@@ -566,5 +546,51 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         );
       },
     );
+  }
+
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey.keyLabel;
+    final keys = RawKeyboard.instance.keysPressed;
+    if (event is KeyDownEvent && keys.contains(LogicalKeyboardKey.controlLeft)) {
+      if (event.logicalKey == LogicalKeyboardKey.keyB) {
+        log.info("Brewing");
+        machineService.setState(EspressoMachineState.espresso);
+      } else if (event.logicalKey == LogicalKeyboardKey.keyW) {
+        log.info("Water");
+        machineService.setState(EspressoMachineState.water);
+      } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
+        log.info("Steam");
+        machineService.setState(EspressoMachineState.steam);
+      } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+        log.info("Flush");
+        machineService.setState(EspressoMachineState.flush);
+      } else if (event.logicalKey == LogicalKeyboardKey.space) {
+        machineService.setState(EspressoMachineState.idle);
+        log.info("stop");
+      } else {
+        final digits = [
+          LogicalKeyboardKey.digit1,
+          LogicalKeyboardKey.digit2,
+          LogicalKeyboardKey.digit3,
+          LogicalKeyboardKey.digit4,
+          LogicalKeyboardKey.digit5,
+          LogicalKeyboardKey.digit6,
+          LogicalKeyboardKey.digit7,
+          LogicalKeyboardKey.digit8,
+          LogicalKeyboardKey.digit9,
+        ];
+        var i = digits.indexOf(event.logicalKey);
+        if (i > -1) {
+          log.info("Recipe $i");
+          var recipes = coffeeService.getRecipes();
+          if (i < recipes.length) {
+            coffeeService.setSelectedRecipe(recipes[i].id);
+            // setState(() {});
+          }
+        }
+      }
+    }
+
+    return false;
   }
 }
