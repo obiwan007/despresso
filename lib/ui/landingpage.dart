@@ -16,8 +16,10 @@ import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:despresso/ui/widgets/screen_saver.dart';
+import 'package:despresso/ui/widgets/start_stop_button.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,6 +27,14 @@ import '../model/services/ble/ble_service.dart';
 import '../model/services/ble/machine_service.dart';
 import 'screens/flush_screen.dart';
 import 'package:despresso/generated/l10n.dart';
+
+class IncrementIntent extends Intent {
+  const IncrementIntent();
+}
+
+class DecrementIntent extends Intent {
+  const DecrementIntent();
+}
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key, required this.title}) : super(key: key);
@@ -41,7 +51,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   bool available = false;
   int currentPageIndex = 1;
 
-  late CoffeeService coffeeSelection;
+  late CoffeeService coffeeService;
   late ProfileService profileService;
   late EspressoMachineService machineService;
 
@@ -57,6 +67,15 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
 
   late SettingsService _settings;
 
+  final incrementKeySet = LogicalKeySet(
+    LogicalKeyboardKey.shift, // Replace with control on Windows
+    LogicalKeyboardKey.arrowUp,
+  );
+  final decrementKeySet = LogicalKeySet(
+    LogicalKeyboardKey.shift, // Replace with control on Windows
+    LogicalKeyboardKey.arrowDown,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -65,7 +84,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     // if (_settings.showFlushScreen) l++;
     _tabController = TabController(length: calcTabs(), vsync: this, initialIndex: 1);
     machineService = getIt<EspressoMachineService>();
-    coffeeSelection = getIt<CoffeeService>();
+    coffeeService = getIt<CoffeeService>();
 
     machineService.addListener(updatedMachine);
 
@@ -78,6 +97,8 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     _screensaver.addListener(screenSaverEvent);
 
     _settings.addListener(updatedSettings);
+
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
     // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
     //   log.info("Print after 5 seconds");
     //   selectedPage++;
@@ -100,6 +121,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     profileService.removeListener(updatedProfile);
     _screensaver.removeListener(screenSaverEvent);
     _settings.removeListener(updatedSettings);
+    ServicesBinding.instance.keyboard.removeHandler(_onKey);
   }
 
   @override
@@ -524,5 +546,51 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         );
       },
     );
+  }
+
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey.keyLabel;
+    final keys = RawKeyboard.instance.keysPressed;
+    if (event is KeyDownEvent && keys.contains(LogicalKeyboardKey.controlLeft)) {
+      if (event.logicalKey == LogicalKeyboardKey.keyB) {
+        log.info("Brewing");
+        machineService.setState(EspressoMachineState.espresso);
+      } else if (event.logicalKey == LogicalKeyboardKey.keyW) {
+        log.info("Water");
+        machineService.setState(EspressoMachineState.water);
+      } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
+        log.info("Steam");
+        machineService.setState(EspressoMachineState.steam);
+      } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+        log.info("Flush");
+        machineService.setState(EspressoMachineState.flush);
+      } else if (event.logicalKey == LogicalKeyboardKey.space) {
+        machineService.setState(EspressoMachineState.idle);
+        log.info("stop");
+      } else {
+        final digits = [
+          LogicalKeyboardKey.digit1,
+          LogicalKeyboardKey.digit2,
+          LogicalKeyboardKey.digit3,
+          LogicalKeyboardKey.digit4,
+          LogicalKeyboardKey.digit5,
+          LogicalKeyboardKey.digit6,
+          LogicalKeyboardKey.digit7,
+          LogicalKeyboardKey.digit8,
+          LogicalKeyboardKey.digit9,
+        ];
+        var i = digits.indexOf(event.logicalKey);
+        if (i > -1) {
+          log.info("Recipe $i");
+          var recipes = coffeeService.getRecipes();
+          if (i < recipes.length) {
+            coffeeService.setSelectedRecipe(recipes[i].id);
+            // setState(() {});
+          }
+        }
+      }
+    }
+
+    return false;
   }
 }
