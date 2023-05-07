@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:intl/intl.dart';
@@ -47,7 +48,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     newRoaster.name = "<new roaster>";
     newRoaster.id = 0;
     _selectedRoasterId = 0;
-    newCoffee.name = "<new Coffee>";
+    newCoffee.name = "<new Beans>";
     newCoffee.id = 0;
     _selectedCoffeeId = 0;
   }
@@ -73,7 +74,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Coffee'),
+        title: Text(S.of(context).screenBeanSelectTitle),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -98,7 +99,9 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                     children: [
                       Row(
                         children: [
-                          const SizedBox(width: 150, child: Text("Select Roaster", style: theme.TextStyles.h2)),
+                          SizedBox(
+                              width: 150,
+                              child: Text(S.of(context).screenBeanSelectSelectRoaster, style: theme.TextStyles.h2)),
                           Expanded(
                             flex: 8,
                             child: DropdownButton(
@@ -136,7 +139,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                                     );
                                   });
                                 },
-                                child: const Text('EDIT'),
+                                child: Text(S.of(context).edit),
                               ),
                             ),
                         ],
@@ -153,7 +156,9 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                     children: [
                       Row(
                         children: [
-                          const SizedBox(width: 150, child: Text("Select Coffee", style: theme.TextStyles.h2)),
+                          SizedBox(
+                              width: 150,
+                              child: Text(S.of(context).screenBeanSelectSelectBeans, style: theme.TextStyles.h2)),
                           Expanded(
                             flex: 8,
                             child: DropdownButton(
@@ -192,7 +197,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                                     // form.value = _editedCoffee.toJson();
                                   });
                                 },
-                                child: const Text('EDIT'),
+                                child: Text(S.of(context).edit),
                               ),
                             ),
                         ],
@@ -257,10 +262,13 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        KeyValueWidget(label: "Name", value: roaster.name),
-        if (roaster.description.isNotEmpty) KeyValueWidget(label: "Description", value: roaster.description),
-        if (roaster.homepage.isNotEmpty) KeyValueWidget(label: "Homepage", value: roaster.homepage),
-        if (roaster.address.isNotEmpty) KeyValueWidget(label: "Address", value: roaster.address),
+        KeyValueWidget(label: S.of(context).screenBeanSelectNameOfRoaster, value: roaster.name),
+        if (roaster.description.isNotEmpty)
+          KeyValueWidget(label: S.of(context).screenBeanSelectDescriptionOfRoaster, value: roaster.description),
+        if (roaster.homepage.isNotEmpty)
+          KeyValueWidget(label: S.of(context).screenBeanSelectHomepageOfRoaster, value: roaster.homepage),
+        if (roaster.address.isNotEmpty)
+          KeyValueWidget(label: S.of(context).screenBeanSelectAddressOfRoaster, value: roaster.address),
       ],
     );
   }
@@ -274,17 +282,19 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        KeyValueWidget(label: "Name", value: coffee.name),
-        if (coffee.description.isNotEmpty) KeyValueWidget(label: "Description", value: coffee.description),
+        KeyValueWidget(label: S.of(context).screenBeanSelectNameOfBean, value: coffee.name),
+        if (coffee.description.isNotEmpty)
+          KeyValueWidget(label: S.of(context).screenBeanSelectDescriptionOfBean, value: coffee.description),
         const SizedBox(height: 10),
-        KeyValueWidget(label: "Tasting", value: coffee.taste),
-        KeyValueWidget(label: "Type of Beans", value: coffee.type),
+        KeyValueWidget(label: S.of(context).screenBeanSelectTasting, value: coffee.taste),
+        KeyValueWidget(label: S.of(context).screenBeanSelectTypeOfBeans, value: coffee.type),
         KeyValueWidget(
-            label: "Roasting date",
-            value: "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} days ago"),
+            label: S.of(context).screenBeanSelectRoastingDate,
+            value: "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} " +
+                S.of(context).screenBeanSelectDaysAgo),
         const SizedBox(height: 10),
         KeyValueWidget(
-          label: "Acidity",
+          label: S.of(context).screenBeanSelectAcidity,
           value: "",
           widget: RatingBarIndicator(
             rating: coffee.acidRating,
@@ -299,7 +309,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         ),
         const SizedBox(height: 10),
         KeyValueWidget(
-          label: "Intensity",
+          label: S.of(context).screenBeanSelectIntensity,
           value: "",
           widget: RatingBarIndicator(
             rating: coffee.intensityRating,
@@ -314,7 +324,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         ),
         const SizedBox(height: 10),
         KeyValueWidget(
-          label: "Roast Level",
+          label: S.of(context).screenBeanSelectRoastLevel,
           value: "",
           widget: RatingBarIndicator(
             rating: coffee.roastLevel,
@@ -352,7 +362,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         _selectedRoasterId = coffeeService.selectedRoasterId;
         roasters = loadRoasters();
         coffees = loadCoffees();
-        log.info("Loaded ROasters $roasters");
+        log.info("Loaded Roasters $roasters");
         if (coffees.firstWhereOrNull((element) => element.value == _selectedCoffeeId) == null) {
           _selectedCoffeeId = 0;
         }

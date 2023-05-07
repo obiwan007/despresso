@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 
+import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -16,20 +17,20 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('Skale2Scale');
 
   static Uuid ServiceUUID =
-      Platform.isAndroid ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
+      useLongCharacteristics() ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
   static Uuid WeightCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
+      useLongCharacteristics() ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
 
   static Uuid BatteryServiceUUID =
-      Platform.isAndroid ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
+      useLongCharacteristics() ? Uuid.parse('0000180f-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   // Platform.isAndroid ? Uuid.parse('0000180F-0000-1000-8000-00805f9b34fb') : Uuid.parse('180f');
   static Uuid BatteryCharacteristicUUID =
-      Platform.isAndroid ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
+      useLongCharacteristics() ? Uuid.parse('00002a19-0000-1000-8000-00805f9b34fb') : Uuid.parse('2a19');
   static Uuid CommandUUID =
-      Platform.isAndroid ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
+      useLongCharacteristics() ? Uuid.parse('0000EF80-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF80');
 
   static Uuid ButtonNotifyUUID =
-      Platform.isAndroid ? Uuid.parse('0000ef82-0000-1000-8000-00805F9B34FB') : Uuid.parse('ef82');
+      useLongCharacteristics() ? Uuid.parse('0000ef82-0000-1000-8000-00805F9B34FB') : Uuid.parse('ef82');
 
   late ScaleService scaleService;
 
@@ -43,18 +44,17 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
-  final flutterReactiveBle = FlutterReactiveBle();
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   StreamSubscription<List<int>>? _characteristicsSubscription;
 
   StreamSubscription<List<int>>? _characteristicsButtonSubscription;
-
-  Skale2Scale(this.device) {
+  DeviceCommunication connection;
+  Skale2Scale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     scaleService.setScaleInstance(this);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -107,8 +107,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Skale2");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CommandUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic,
-        value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -127,7 +126,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID, characteristicId: WeightCharacteristicUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
           _notificationCallback(data);
         }, onError: (dynamic error) {
@@ -137,8 +136,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
         final characteristicButton =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: ButtonNotifyUUID, deviceId: device.id);
 
-        _characteristicsButtonSubscription =
-            flutterReactiveBle.subscribeToCharacteristic(characteristicButton).listen((data) {
+        _characteristicsButtonSubscription = connection.subscribeToCharacteristic(characteristicButton).listen((data) {
           // code to handle incoming data
           _notificationButtonsCallback(data);
         }, onError: (dynamic error) {
@@ -149,7 +147,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
           log.info("Service Id ${device.serviceUuids}");
           final batteryCharacteristic = QualifiedCharacteristic(
               characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
-          final batteryLevel = await flutterReactiveBle.readCharacteristic(batteryCharacteristic);
+          final batteryLevel = await connection.readCharacteristic(batteryCharacteristic);
           scaleService.setBattery(batteryLevel[0]);
         } catch (e) {
           log.severe("Error reading battery $e");

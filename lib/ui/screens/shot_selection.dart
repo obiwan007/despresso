@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
+import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/model/shot.dart';
@@ -70,7 +71,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shot Database'),
+        title: Text(S.of(context).mainMenuEspressoDiary),
         actions: [
           Builder(
             builder: (BuildContext context) {
@@ -88,7 +89,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
               onPressed: () async {
                 if (selectedShots.isEmpty) {
                   var snackBar = SnackBar(
-                      content: const Text("No shots to upload selected"),
+                      content: Text(S.of(context).screenDiaryNoShotsToUploadSelected),
                       action: SnackBarAction(
                         label: 'Ok',
                         onPressed: () {
@@ -113,7 +114,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                   }
                   var snackBar = SnackBar(
                       backgroundColor: Colors.greenAccent,
-                      content: const Text("Success uploading your shots"),
+                      content: Text(S.of(context).screenDiarySuccessUploadingYourShots),
                       action: SnackBarAction(
                         label: 'Ok',
                         onPressed: () {
@@ -124,7 +125,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                 } catch (e) {
                   var snackBar = SnackBar(
                       backgroundColor: const Color.fromARGB(255, 250, 141, 141),
-                      content: Text("Error uploading shots: $e"),
+                      content: Text(S.of(context).screenDiaryErrorUploadingShots + e.toString()),
                       action: SnackBarAction(
                         label: 'Ok',
                         onPressed: () {
@@ -163,12 +164,12 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
             ),
             Expanded(
               child: selectedShots.isEmpty
-                  ? const Text("Nothing selected")
+                  ? Text(S.of(context).screenDiaryNothingSelected)
                   : Column(
                       children: [
                         Row(
                           children: [
-                            const Text("Overlaymode:"),
+                            Text(S.of(context).screenDiaryOverlaymode),
                             Switch(
                               value: _overlay,
                               onChanged: (value) {
@@ -206,7 +207,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                         LegendsListWidget(
                           legends: [
                             Legend(
-                              'Pressure',
+                              S.of(context).pressure,
                               theme.ThemeColors.pressureColor,
                               value: showPressure,
                               onChanged: (p0) {
@@ -216,7 +217,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                               },
                             ),
                             Legend(
-                              'Flow',
+                              S.of(context).flow,
                               theme.ThemeColors.flowColor,
                               value: showFlow,
                               onChanged: (p0) {
@@ -226,7 +227,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                               },
                             ),
                             Legend(
-                              'Weight',
+                              S.of(context).weight,
                               theme.ThemeColors.weightColor,
                               value: showWeight,
                               onChanged: (p0) {
@@ -236,7 +237,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                               },
                             ),
                             Legend(
-                              'Temp',
+                              S.of(context).temp,
                               theme.ThemeColors.tempColor,
                               value: showTemp,
                               onChanged: (p0) {

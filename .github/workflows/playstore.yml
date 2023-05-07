@@ -2,10 +2,7 @@ name: PlayStore
 
 on:
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true  
+  workflow_call:    
 
 jobs:
   buildall:
@@ -77,6 +74,7 @@ jobs:
             API_KEY: ${{ secrets.API_KEY }}
             API_KEY_ID: ${{ secrets.API_KEY_ID }}
             ISSUER_ID: ${{ secrets.ISSUER_ID }}
+            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         with:
           lane: 'beta'
           subdirectory: 'android'

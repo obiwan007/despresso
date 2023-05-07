@@ -96,13 +96,7 @@ class ScreensaverService extends ChangeNotifier {
         if (_paused == true) return;
         _screenSaverTimer += 5;
         // log.fine("Tick  $_screenSaverTimer ${_settings.screenBrightnessTimer * 60} on: $screenSaverOn");
-        if (_settings.screenBrightnessTimer > 0 &&
-            _screenSaverTimer > _settings.screenBrightnessTimer * 60 &&
-            screenSaverOn == false) {
-          await ScreenBrightness().setScreenBrightness(_settings.screenBrightnessValue);
-          screenSaverOn = true;
-          notifyListeners();
-        }
+        await checkAndActivateSaver();
         if (_screenSaverTimer > _settings.screenLockTimer * 60 && !allwaysWakeLock()) {
           try {
             if (await Wakelock.enabled) {
@@ -115,6 +109,21 @@ class ScreensaverService extends ChangeNotifier {
         }
       },
     );
+  }
+
+  Future<void> checkAndActivateSaver() async {
+    if (_settings.screenBrightnessTimer > 0 &&
+        _screenSaverTimer > _settings.screenBrightnessTimer * 60 &&
+        screenSaverOn == false) {
+      await ScreenBrightness().setScreenBrightness(_settings.screenBrightnessValue);
+      screenSaverOn = true;
+      notifyListeners();
+    }
+  }
+
+  activateScreenSaver() {
+    _screenSaverTimer = (_settings.screenBrightnessTimer * 60 + 1).toInt();
+    checkAndActivateSaver();
   }
 
   Future<void> handleTap() async {
