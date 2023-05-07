@@ -144,12 +144,14 @@ class _ShotGraphState extends State<ShotGraph> {
       "flowSet$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setGroupFlow)).toList(),
       "temp$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.headTemp)).toList(),
       "tempSet$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setHeadTemp)).toList(),
+      "tempMix$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.mixTemp)).toList(),
+      "tempMixSet$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.setMixTemp)).toList(),
       "weight$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.weight)).toList(),
       "flowG$id": shotstates.map((e) => FlSpot(e.sampleTimeCorrected, e.flowWeight)).toList(),
     };
   }
 
-  LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col) {
+  LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col, List<int>? dash) {
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
@@ -158,37 +160,49 @@ class _ShotGraphState extends State<ShotGraph> {
       barWidth: barWidth,
       isCurved: false,
       color: col,
+      dashArray: dash,
     );
   }
 
   Widget _buildGraphSingleFlCharts(Map<String, List<FlSpot>> data, Iterable<VerticalRangeAnnotation> ranges) {
     List<LineChartBarData> lineBarsDataFlows = [];
     List<LineChartBarData> lineBarsDataTempWeight = [];
+    List<LineChartBarData> lineBarsDataTemp = [];
     double i = 0;
     for (var id in overlayIds!) {
       if (widget.showPressure) {
-        lineBarsDataFlows
-            .add(createChartLineDatapoints(data["pressure$id"]!, 4, calcColor(theme.ThemeColors.pressureColor, i)));
-        lineBarsDataFlows
-            .add(createChartLineDatapoints(data["pressureSet$id"]!, 2, calcColor(theme.ThemeColors.pressureColor, i)));
+        lineBarsDataFlows.add(
+            createChartLineDatapoints(data["pressure$id"]!, 4, calcColor(theme.ThemeColors.pressureColor, i), null));
+        lineBarsDataFlows.add(createChartLineDatapoints(
+            data["pressureSet$id"]!,
+            2,
+            calcColor(
+              theme.ThemeColors.pressureColor,
+              i,
+            ),
+            [5, 5]));
       }
       if (widget.showFlow) {
         lineBarsDataFlows
-            .add(createChartLineDatapoints(data["flow$id"]!, 4, calcColor(theme.ThemeColors.flowColor, i)));
+            .add(createChartLineDatapoints(data["flow$id"]!, 4, calcColor(theme.ThemeColors.flowColor, i), null));
         lineBarsDataFlows
-            .add(createChartLineDatapoints(data["flowSet$id"]!, 2, calcColor(theme.ThemeColors.flowColor, i)));
+            .add(createChartLineDatapoints(data["flowSet$id"]!, 2, calcColor(theme.ThemeColors.flowColor, i), [5, 5]));
         lineBarsDataFlows
-            .add(createChartLineDatapoints(data["flowG$id"]!, 2, calcColor(theme.ThemeColors.weightColor, i)));
+            .add(createChartLineDatapoints(data["flowG$id"]!, 2, calcColor(theme.ThemeColors.weightColor, i), null));
       }
       if (widget.showWeight) {
         lineBarsDataTempWeight
-            .add(createChartLineDatapoints(data["weight$id"]!, 2, calcColor(theme.ThemeColors.weightColor, i)));
+            .add(createChartLineDatapoints(data["weight$id"]!, 2, calcColor(theme.ThemeColors.weightColor, i), null));
       }
       if (widget.showTemp) {
-        lineBarsDataTempWeight
-            .add(createChartLineDatapoints(data["temp$id"]!, 4, calcColor(theme.ThemeColors.tempColor, i)));
-        lineBarsDataTempWeight
-            .add(createChartLineDatapoints(data["tempSet$id"]!, 2, calcColor(theme.ThemeColors.tempColor, i)));
+        lineBarsDataTemp
+            .add(createChartLineDatapoints(data["temp$id"]!, 4, calcColor(theme.ThemeColors.tempColor, i), null));
+        lineBarsDataTemp
+            .add(createChartLineDatapoints(data["tempSet$id"]!, 2, calcColor(theme.ThemeColors.tempColor, i), [5, 5]));
+        lineBarsDataTemp
+            .add(createChartLineDatapoints(data["tempMix$id"]!, 4, calcColor(theme.ThemeColors.tempColor2, i), null));
+        lineBarsDataTemp.add(
+            createChartLineDatapoints(data["tempMixSet$id"]!, 2, calcColor(theme.ThemeColors.tempColor2, i), [5, 5]));
       }
       i += 0.25;
     }
@@ -225,9 +239,33 @@ class _ShotGraphState extends State<ShotGraph> {
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+          // bottomTitles: AxisTitles(
+          //   sideTitles: SideTitles(showTitles: false),
+          // ),
+          bottomTitles: !widget.showTemp && !widget.showWeight
+              ? AxisTitles(
+                  axisNameSize: 25,
+                  axisNameWidget: Text(
+                    S.of(context).graphTime,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    // style: TextStyle(
+                    //     // fontSize: 15,
+                    //     ),
+                  ),
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                )
+              : AxisTitles(
+                  axisNameSize: 25,
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                ),
           // bottomTitles: AxisTitles(
           //   axisNameWidget: const Text(
           //     'Time/s',
@@ -279,6 +317,67 @@ class _ShotGraphState extends State<ShotGraph> {
           rightTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
+          bottomTitles: !widget.showTemp
+              ? AxisTitles(
+                  axisNameSize: 25,
+                  axisNameWidget: Text(
+                    S.of(context).graphTime,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    // style: TextStyle(
+                    //     // fontSize: 15,
+                    //     ),
+                  ),
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                )
+              : AxisTitles(
+                  axisNameSize: 25,
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: bottomTitleWidgets,
+                    reservedSize: 26,
+                  ),
+                ),
+          show: true,
+          leftTitles: AxisTitles(
+            axisNameSize: 25,
+            axisNameWidget: Text(
+              S.of(context).screenEspressoWeightG,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: leftTitleWidgets,
+              reservedSize: 56,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    var flowChart3 = LineChart(
+      LineChartData(
+        // minY: 0,
+        // maxY: 15,
+        // minX: data["pressure${overlayIds!.first}"]!.first.x,
+        // maxX: maxTime,
+        lineTouchData: LineTouchData(enabled: false),
+        clipData: FlClipData.all(),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+        ),
+        lineBarsData: lineBarsDataTemp,
+        titlesData: FlTitlesData(
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
@@ -298,7 +397,7 @@ class _ShotGraphState extends State<ShotGraph> {
           leftTitles: AxisTitles(
             axisNameSize: 25,
             axisNameWidget: Text(
-              S.of(context).screenEspressoWeightG,
+              "Temp",
               style: Theme.of(context).textTheme.labelSmall,
             ),
             sideTitles: SideTitles(
@@ -310,6 +409,8 @@ class _ShotGraphState extends State<ShotGraph> {
         ),
       ),
     );
+
+    var height = 300 + 120 + 120;
 
     return Padding(
       padding: const EdgeInsets.all(18.0),
@@ -328,9 +429,18 @@ class _ShotGraphState extends State<ShotGraph> {
           //     ],
           //   ),
           // ),
-          SizedBox(height: 400, child: flowChart1),
-          const SizedBox(height: 20),
-          SizedBox(height: 100, child: flowChart2),
+          if (widget.showFlow || widget.showPressure)
+            SizedBox(height: height - (widget.showTemp ? 120 : 0) - (widget.showWeight ? 120 : 0), child: flowChart1),
+          if (widget.showWeight) const SizedBox(height: 20),
+          if (widget.showWeight)
+            SizedBox(
+                height: height - (widget.showFlow || widget.showPressure ? 300 : 0) - (widget.showTemp ? 120 : 0),
+                child: flowChart2),
+          if (widget.showTemp) const SizedBox(height: 20),
+          if (widget.showTemp)
+            SizedBox(
+                height: height - (widget.showFlow || widget.showPressure ? 300 : 0) - (widget.showWeight ? 120 : 0),
+                child: flowChart3),
         ],
       ),
     );
