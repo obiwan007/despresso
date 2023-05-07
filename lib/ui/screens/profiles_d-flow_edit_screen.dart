@@ -1,17 +1,11 @@
-import 'dart:ffi';
-
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
-import 'package:flutter_spinbox/material.dart';
 import 'package:logging/logging.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../model/services/ble/machine_service.dart';
-import '../../service_locator.dart';
 
 class DFlowEditScreen extends StatefulWidget {
   De1ShotProfile profile;
@@ -194,7 +188,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("dose");
                     },
@@ -212,10 +206,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'g'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'g'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -225,7 +219,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("infuseTemp");
                     },
@@ -243,10 +237,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: '°C'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: '°C'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -256,7 +250,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("infusePressure");
                     },
@@ -274,10 +268,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'bar'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'bar'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -287,7 +281,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("infuseStop");
                     },
@@ -305,10 +299,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 's'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 's'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -318,7 +312,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("infuseStop");
                     },
@@ -336,10 +330,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'ml'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'ml'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -349,7 +343,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("infuseStop");
                     },
@@ -367,10 +361,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'g'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'g'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -380,7 +374,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("pourTemp");
                     },
@@ -398,10 +392,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: '°C'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: '°C'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -411,7 +405,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("pourLimits");
                     },
@@ -429,10 +423,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'ml/s'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'ml/s'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -442,7 +436,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("pourLimits");
                     },
@@ -460,10 +454,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'bar'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'bar'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -473,7 +467,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("pourStop");
                     },
@@ -491,10 +485,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'ml'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'ml'),
                     onChanged: (value) => print(value),
                   ),
                 ],
@@ -504,7 +498,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("pourStop");
                     },
@@ -522,10 +516,10 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     step: 0.1,
                     spacing: 10,
                     direction: Axis.vertical,
-                    textStyle: TextStyle(fontSize: 15),
-                    incrementIcon: Icon(Icons.keyboard_arrow_up, size: 20),
-                    decrementIcon: Icon(Icons.keyboard_arrow_down, size: 20),
-                    decoration: InputDecoration(labelText: 'g'),
+                    textStyle: const TextStyle(fontSize: 15),
+                    incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
+                    decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
+                    decoration: const InputDecoration(labelText: 'g'),
                     onChanged: (value) => print(value),
                   ),
                 ],
