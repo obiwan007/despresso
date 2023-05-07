@@ -41,7 +41,22 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
 
   late TabController _tabController;
   late TextEditingController helpDialogController;
-  List<String> helpTexts = [];
+  static Map helpTexts = {
+    "dose":
+        "Dose - means the weight of the beans or the weight of the coffee puck. \n \n The dose weight is used in calcultating the extraction ratio.\nSee pour stop setting for information of extraction ratio \n \n Being consistant with your grind, dose and puck prep will greatly help you repeatedly extract great espresso.",
+    "infuseTemp":
+        "Infuse temperature allows you to emulate various machine where the group temperature may start cooler than the water being added. \n See pour temperature for information on how temperature effects extraction and taste.",
+    "infusePressure":
+        "A higher infusion pressure will increase puck resistance \n \n The default is 3 bar, the same as used by LRv2, LRv3 profiles and others, it is tyipcally the upper level used by machines that use preinfusion. \n\n Some manual lever machines like a LA Pavoni have a boiler pressure of 0.8 to 1 bar, infusing is done by raising, fill the group with water at boiler pressure. to emulater this you would set a 1 bar infuse pressure.\n \n Some machines use pressures anywhere in between.\n \n Other machines may not hold an infusion presure at all, like a common E61 pump machines where it apply water straight to extraction pressure, typically 8 or 9 bar.",
+    "infuseStop":
+        "Infuse will move on to the pour stage when any one of these settings are reached. \n For best consistancy I recommend using weight. In cases where a scale is not available, you could use volume, however for those situations and where you you may want to end infuse before first drops in the cup, using time is likely the better option.\n \nA longer infusion increases body, but it also reduces puck resistance during the pour. \n Which means we would need to grind finer to maintain the same pour pressure/flow rates.\nFiner grinds also reduce body and can increase bitterness, so the aim is to find a ballence for your prefered taste. \n A longer infusion also means we have a higher pecentage of the shot being at 3 bar. \n 0.2g to 4g is a good starting range to experiment with.",
+    "pourTemp":
+        "Higher temperature helps extract the soluble compounds, however it also increases harsher tasts that may exist too. \n \n Higher temperatures usually results in lower body with more pronounced acidity, wine, fruity, vegetal flavours. Lower temperatures often work better with slower extraction rates.",
+    "pourLimits":
+        "D-Flow uses flow with pressure limits, allows for a greater grind range, giving better control and resulting in less wasted shots. \n \n Increasing pressure will shift taste from wine like to a more syrupy texture, it also shifts tastes from clear delicate flavours to more muddled flavours. \n \n Faster flows can increase clarity in ligher roasts and may help reduce channeling. Slower flow can help increase intensity and body in darker than light roasts.",
+    "pourStop":
+        "The extraction ratio   (Dose : Extraction)   is shown above the setting dial. \n Increasing the extraction ratio will shift the taste from \n Sour  >  Sweet  >  Bitter \n The ideal extraction ratio can vary between beans, water alkalinity, puck prep methods and how evenly the pack is extracted. \n You should adjusted this setting for your taste.",
+  };
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
@@ -179,10 +194,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("weight",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("dose");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("weight",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 10.0,
@@ -205,10 +225,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("temperature",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("infuseTemp");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("temperature",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 80,
@@ -231,10 +256,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("pressure",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("infusePressure");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("pressure",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 0.1,
@@ -257,10 +287,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("time",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("infuseStop");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("time",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 0,
@@ -283,10 +318,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("volume",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("infuseStop");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("volume",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 1,
@@ -309,10 +349,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("weight",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("infuseStop");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("weight",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 1,
@@ -335,10 +380,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("temperature",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("pourTemp");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("temperature",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 80,
@@ -361,10 +411,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("flow",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("pourLimits");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("flow",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 0.1,
@@ -389,7 +444,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                 children: [
                   new GestureDetector(
                     onTap: () {
-                      showHelp("pour_stop");
+                      showHelp("pourLimits");
                     },
                     child: SizedBox(
                       height: 30,
@@ -418,10 +473,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("volume",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("pourStop");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("volume",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 1,
@@ -444,10 +504,15 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    child: Text("weight",
-                        style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                  new GestureDetector(
+                    onTap: () {
+                      showHelp("pourStop");
+                    },
+                    child: SizedBox(
+                      height: 30,
+                      child: Text("weight",
+                          style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
+                    ),
                   ),
                   SpinBox(
                     min: 1,
@@ -480,13 +545,12 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Information'),
-          content: Text(
-              "The extraction ratio   (Dose : Extraction)   is shown above the setting dial. \n Increasing the extraction ratio will shift the taste from \n Sour  >  Sweet  >  Bitter \n The ideal extraction ratio can vary between beans, water alkalinity, puck prep methods and how evenly the pack is extracted. \n You should adjusted this setting for your taste."),
+          content: Text(helpTexts[inputName]),
           actions: <Widget>[
             TextButton(
               child: const Text('Close'),
               onPressed: () {
-                // Navigator.of(context).pop(helpDialogController.text);
+                Navigator.of(context).pop();
                 helpDialogController.clear();
               },
             ),
