@@ -67,6 +67,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) {
+    double grinderDoseWeight = 18;
     return Scaffold(
       appBar: AppBar(
         title: IconEditableText(
@@ -103,30 +104,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                   controller: _tabController,
                   children: [
                     SizedBox(height: 195, child: createTabBar()),
-                    // ...handleChanges (preInfusion)
-                    // ...handleChanges(preInfusion!),
-                    // ...handleChanges(riseAndHold!),
-                    // ...handleChanges(decline!),
-                    // changeValue(
-                    //     unit: "ml",
-                    //     title: "Max. Volume",
-                    //     min: 0,
-                    //     max: 100,
-                    //     De1ShotFrameClass(),
-                    //     _profile.shotHeader.targetVolume, (value) {
-                    //   var v = (value * 10).round() / 10;
-                    //   setState(() => _profile.shotHeader.targetVolume = v);
-                    // }),
-                    // changeValue(
-                    //     unit: "g",
-                    //     title: "Max. Weight",
-                    //     min: 0,
-                    //     max: 100,
-                    //     De1ShotFrameClass(),
-                    //     _profile.shotHeader.targetWeight, (value) {
-                    //   var v = (value * 10).round() / 10;
-                    //   setState(() => _profile.shotHeader.targetWeight = v);
-                    // }),
                   ],
                 ),
               ),
@@ -138,6 +115,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
   }
 
   createTabBar() {
+    double grinderDoseWeight = 18.0;
     var tb = Column(
       children: [
         Row(
@@ -183,7 +161,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                   child: Expanded(
                     flex: 5,
                     child: Center(
-                      child: Text("Pour \t 1:2"), // update ratio if input or output is changed
+                      child: Text("Pour \t 1:2"),
                     ),
                   ),
                 ),
@@ -207,9 +185,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    min: 10.0,
+                    max: 30.0,
+                    value: grinderDoseWeight,
                     decimals: 1,
                     step: 0.1,
                     spacing: 10,
@@ -233,11 +211,11 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
-                    decimals: 1,
-                    step: 0.5,
+                    min: 80,
+                    max: 100,
+                    value: _profile.shotFrames[0].temp,
+                    decimals: 0,
+                    step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
                     textStyle: TextStyle(fontSize: 15),
@@ -259,9 +237,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    min: 0.1,
+                    max: 10,
+                    value: 0,
                     decimals: 1,
                     step: 0.1,
                     spacing: 10,
@@ -285,9 +263,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    min: 0,
+                    max: 60,
+                    value: _profile.shotFrames[1].frameLen,
                     decimals: 0,
                     step: 1,
                     spacing: 10,
@@ -313,9 +291,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                   SpinBox(
                     min: 1,
                     max: 200,
-                    value: _profile.shotHeader.targetWeight,
-                    decimals: 1,
-                    step: 0.1,
+                    value: _profile.shotFrames[0].maxVol,
+                    decimals: 0,
+                    step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
                     textStyle: TextStyle(fontSize: 15),
@@ -339,7 +317,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                   SpinBox(
                     min: 1,
                     max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    value: 0,
                     decimals: 1,
                     step: 0.1,
                     spacing: 10,
@@ -363,11 +341,11 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
-                    decimals: 1,
-                    step: 0.5,
+                    min: 80,
+                    max: 100,
+                    value: _profile.shotFrames[2].temp,
+                    decimals: 0,
+                    step: 1,
                     spacing: 10,
                     direction: Axis.vertical,
                     textStyle: TextStyle(fontSize: 15),
@@ -389,9 +367,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                         style: TextStyle(color: phaseColors[3], fontWeight: FontWeight.normal, fontSize: 12)),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    min: 0.1,
+                    max: 10,
+                    value: 0,
                     decimals: 1,
                     step: 0.1,
                     spacing: 10,
@@ -420,9 +398,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     ),
                   ),
                   SpinBox(
-                    min: 1,
-                    max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    min: 0,
+                    max: 12,
+                    value: _profile.shotFrames[1].setVal,
                     decimals: 1,
                     step: 0.1,
                     spacing: 10,
@@ -448,7 +426,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                   SpinBox(
                     min: 1,
                     max: 200,
-                    value: _profile.shotHeader.targetWeight,
+                    value: 0,
                     decimals: 1,
                     step: 0.1,
                     spacing: 10,
@@ -519,4 +497,8 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
   }
 
   loadDefaultProfile() {}
+
+  calculateRatio(grinderWeight, weightGoal) {
+    return "1 : " + weightGoal / grinderWeight;
+  }
 }
