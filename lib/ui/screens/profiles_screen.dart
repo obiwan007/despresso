@@ -228,7 +228,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
             onPressed: () {
               setState(() {
                 if (_selectedProfile!.shotHeader.type == "advanced") {
-                  if (_selectedProfile!.title.startsWith("D-Flow")) {
+                  if (_selectedProfile!.title.startsWith("!D-Flow")) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => DFlowEditScreen(_selectedProfile!.clone())),
