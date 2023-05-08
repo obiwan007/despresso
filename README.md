@@ -31,8 +31,6 @@ For a normal build it should just work.
 - Android: Galaxy Tab A8, decent Teclast
 - iOS: iPad, iPad Air 5
 
-## Donation
+## Credits
 
-Currently there is a donation campain running. Feel free to support the development of this app.
-Here you go: https://www.gofundme.com/f/ios-support-fur-decent-de1?qid=3fb9c70066e362adc5323d442c6489b3
-
+Please check our credits page here (https://github.com/obiwan007/despresso/blob/main/CREDITS.md)
