@@ -34,9 +34,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(temp) => "درجات حرارة البخار ${temp} ° C";
 
-  static String m7(t) => "الموقت {ر} ث";
+  static String m7(t) => "الموقت ${t} ث";
 
-  static String m8(w) => "الوزن {ث} ز";
+  static String m8(w) => "الوزن ${w} ز";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
