@@ -221,10 +221,11 @@ class CoffeeService extends ChangeNotifier {
     settings.useSteam = recipe.useSteam;
     settings.useWater = recipe.useWater;
     settings.shotStopOnWeight = !recipe.disableStopOnWeight;
-
+    settings.steamHeaterOff = !recipe.useSteam;
     profileService.setProfileFromId(recipe.profileId);
     try {
       await machineService.uploadProfile(profileService.currentProfile!);
+      await machineService.updateSettings();
     } catch (e) {
       log.severe("Profile could not be sent: $e");
     }

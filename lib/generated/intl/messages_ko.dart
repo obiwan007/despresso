@@ -268,6 +268,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsGerman": MessageLookupByLibrary.simpleMessage("독일어"),
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage("시간 초과가 발생한 경우 레시피 화면으로 돌아가기"),
+        "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot":
+            MessageLookupByLibrary.simpleMessage(
+                "Graph data during heating and preinfusion are saved into shot history."),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
                 "MQTT 및 Visualizer와 같은 다른 외부 시스템에 대한 연결 처리."),
@@ -315,6 +318,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsRestore": MessageLookupByLibrary.simpleMessage("복원"),
         "screenSettingsRestoredBackup":
             MessageLookupByLibrary.simpleMessage("백업 복원"),
+        "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
+            MessageLookupByLibrary.simpleMessage(
+                "Save shot graph data even for pre pouring states"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("저장된 백업"),
         "screenSettingsScaleSupport":
@@ -388,6 +394,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "중요한 설정을 변경했습니다. 설정을 활성화하려면 앱을 다시 시작해야 합니다."),
+        "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion":
+            MessageLookupByLibrary.simpleMessage(
+                "If switched off you do not see heating and preinfusion in shot graph."),
         "screenShotEditBarrista": MessageLookupByLibrary.simpleMessage("바리스타"),
         "screenShotEditDescribeYourExperience":
             MessageLookupByLibrary.simpleMessage("느낌을 설명하세요"),
@@ -413,6 +422,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenShotEditTitle": m3,
         "screenShotEditTotalDissolvedSolidssTds":
             MessageLookupByLibrary.simpleMessage("총 용존성 고형물질(TDS)"),
+        "screenShowGraphDataBeforePouringPhaseStarts":
+            MessageLookupByLibrary.simpleMessage(
+                "Show graph data before pouring phase starts."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("주변"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":

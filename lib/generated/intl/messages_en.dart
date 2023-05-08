@@ -294,6 +294,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage(
                 "Go back to Recipe screen if timeout occured"),
+        "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot":
+            MessageLookupByLibrary.simpleMessage(
+                "Graph data during heating and preinfusion are saved into shot history."),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
                 "Handling of connections to other external systems like MQTT and Visualizer."),
@@ -350,6 +353,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Restore"),
         "screenSettingsRestoredBackup":
             MessageLookupByLibrary.simpleMessage("Restored backup"),
+        "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
+            MessageLookupByLibrary.simpleMessage(
+                "Save shot graph data even for pre pouring states"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("Saved backup"),
         "screenSettingsScaleSupport":
@@ -431,6 +437,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "You changed critical settings. You need to restart the app to make the settings active."),
+        "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion":
+            MessageLookupByLibrary.simpleMessage(
+                "If switched off you do not see heating and preinfusion in shot graph."),
         "screenShotEditBarrista":
             MessageLookupByLibrary.simpleMessage("Barrista"),
         "screenShotEditDescribeYourExperience":
@@ -461,6 +470,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenShotEditTotalDissolvedSolidssTds":
             MessageLookupByLibrary.simpleMessage(
                 "Total Dissolved Solidss (TDS)"),
+        "screenShowGraphDataBeforePouringPhaseStarts":
+            MessageLookupByLibrary.simpleMessage(
+                "Show graph data before pouring phase starts."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambient"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":

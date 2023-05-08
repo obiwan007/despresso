@@ -240,6 +240,28 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     leading: const Icon(Icons.timer),
                     onChange: (value) {},
                   ),
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.recordPrePouring.name,
+                    defaultValue: settingsService.recordPrePouring,
+                    title: S.of(context).screenShowGraphDataBeforePouringPhaseStarts,
+                    subtitle: S.of(context).screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion,
+                    enabledLabel: S.of(context).show,
+                    disabledLabel: S.of(context).hide,
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.savePrePouring.name,
+                    defaultValue: settingsService.savePrePouring,
+                    title: S.of(context).screenSettingsSaveShotGraphDataEvenForPrePouringStates,
+                    subtitle: S.of(context).screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot,
+                    enabledLabel: S.of(context).show,
+                    disabledLabel: S.of(context).hide,
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
                 ],
               ),
             ),

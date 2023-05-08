@@ -74,6 +74,8 @@ enum SettingKeys {
   chUrl,
   useCafeHub,
   useLongUUID,
+  recordPrePouring,
+  savePrePouring,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -241,9 +243,11 @@ class SettingsService extends ChangeNotifier {
   List<String> get profileFilterList => profileFilter.split(',');
   set profileFilterList(List<String> value) => profileFilter = value.join(',');
 
+  /// Parameter to show the steam tab or not.
   bool get useSteam => Settings.getValue<bool>(SettingKeys.useSteam.name) ?? true;
   set useSteam(bool value) => Settings.setValue<bool>(SettingKeys.useSteam.name, value);
 
+  /// Parameter to show the water tab or not.
   bool get useWater => Settings.getValue<bool>(SettingKeys.useWater.name) ?? true;
   set useWater(bool value) => Settings.setValue<bool>(SettingKeys.useWater.name, value);
 
@@ -267,6 +271,14 @@ class SettingsService extends ChangeNotifier {
 
   bool get useLongUUID => Settings.getValue<bool>(SettingKeys.useLongUUID.name) ?? true;
   set useLongUUID(bool value) => Settings.setValue<bool>(SettingKeys.useLongUUID.name, value);
+
+  /// show the shot data in graph during espresso including pre pouring states.
+  bool get recordPrePouring => Settings.getValue<bool>(SettingKeys.recordPrePouring.name) ?? true;
+  set recordPrePouring(bool value) => Settings.setValue<bool>(SettingKeys.recordPrePouring.name, value);
+
+  /// save the shot including pre pouring states.
+  bool get savePrePouring => Settings.getValue<bool>(SettingKeys.savePrePouring.name) ?? true;
+  set savePrePouring(bool value) => Settings.setValue<bool>(SettingKeys.savePrePouring.name, value);
 
   void notifyDelayed() {
     Future.delayed(

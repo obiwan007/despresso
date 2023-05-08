@@ -492,8 +492,17 @@ class EspressoMachineService extends ChangeNotifier {
         lastSubstate != state.subState &&
         lastSubstate == "heat_water_heater") {
       log.info('Heating phase over');
-      shotList.clear();
+
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      if (!settingsService.savePrePouring) {
+        shotList.clear();
+      } else {
+        /// time correct the prePouring data. Let time be 0 with the start of the pour.
+        var tAdjust = shotList.entries.last.sampleTimeCorrected;
+        for (var element in shotList.entries) {
+          element.sampleTimeCorrected -= tAdjust;
+        }
+      }
       log.info("new basetime $baseTime");
       lastPourTime = 0;
     }
@@ -746,12 +755,17 @@ class EspressoMachineService extends ChangeNotifier {
             notifyListeners();
           }
         } else {
-          // make a single value for the first few seconds to show some action ongoing
-          shotList.lastTouched++;
-          if (shotList.entries.isEmpty) {
+          if (settingsService.recordPrePouring) {
+            shotList.lastTouched++;
             shotList.entries.add(shot);
-          } else if (shotList.entries.length == 1) {
-            shotList.entries[0] = shot;
+          } else {
+            // make a single value for the first few seconds to show some action ongoing
+            shotList.lastTouched++;
+            if (shotList.entries.isEmpty) {
+              shotList.entries.add(shot);
+            } else if (shotList.entries.length == 1) {
+              shotList.entries[0] = shot;
+            }
           }
           notifyListeners();
         }
@@ -775,9 +789,9 @@ class EspressoMachineService extends ChangeNotifier {
       var cs = Shot();
       cs.coffee.targetId = coffeeService.selectedCoffeeId;
       cs.recipe.targetId = coffeeService.selectedRecipeId;
-
-      cs.shotstates
-          .addAll(shotList.entries.where((element) => element.isPouring == true && element.isInterpolated == false));
+      var save = settingsService.savePrePouring;
+      cs.shotstates.addAll(
+          shotList.entries.where((element) => (element.isPouring == true || save) && element.isInterpolated == false));
 
       cs.pourTime = lastPourTime;
       cs.profileId = profileService.currentProfile?.id ?? "";
@@ -831,33 +845,6 @@ class EspressoMachineService extends ChangeNotifier {
     // }
     notifyListeners();
   }
-
-  // Uint8List encodeDe1OtherSetn() {
-  //   Uint8List data = Uint8List(9);
-
-  //   int index = 0;
-  //   data[index] = settingsService.steamSettings;
-  //   index++;
-  //   data[index] = settingsService.steamHeaterOff ? 0 : settingsService.targetSteamTemp;
-  //   index++;
-  //   data[index] = settingsService.targetSteamLength;
-  //   index++;
-  //   data[index] = settingsService.targetHotWaterTemp;
-  //   index++;
-  //   data[index] = settingsService.targetHotWaterVol;
-  //   index++;
-  //   data[index] = settingsService.targetHotWaterLength;
-  //   index++;
-  //   data[index] = settingsService.targetEspressoVol;
-  //   index++;
-
-  //   data[index] = settingsService.targetGroupTemp.toInt();
-  //   index++;
-  //   data[index] = ((settingsService.targetGroupTemp - settingsService.targetGroupTemp.floor()) * 256.0).toInt();
-  //   index++;
-
-  //   return data;
-  // }
 
   void handleTemperature() {
     tempService.stream.listen((event) {

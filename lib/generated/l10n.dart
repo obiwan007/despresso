@@ -2553,6 +2553,48 @@ class S {
       args: [],
     );
   }
+
+  /// `Show graph data before pouring phase starts.`
+  String get screenShowGraphDataBeforePouringPhaseStarts {
+    return Intl.message(
+      'Show graph data before pouring phase starts.',
+      name: 'screenShowGraphDataBeforePouringPhaseStarts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If switched off you do not see heating and preinfusion in shot graph.`
+  String get screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion {
+    return Intl.message(
+      'If switched off you do not see heating and preinfusion in shot graph.',
+      name: 'screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save shot graph data even for pre pouring states`
+  String get screenSettingsSaveShotGraphDataEvenForPrePouringStates {
+    return Intl.message(
+      'Save shot graph data even for pre pouring states',
+      name: 'screenSettingsSaveShotGraphDataEvenForPrePouringStates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Graph data during heating and preinfusion are saved into shot history.`
+  String
+      get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot {
+    return Intl.message(
+      'Graph data during heating and preinfusion are saved into shot history.',
+      name:
+          'screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

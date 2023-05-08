@@ -499,5 +499,9 @@
   "wait": "Wait",
   "@wait": {},
   "weight": "Weight",
-  "@weight": {}
+  "@weight": {},
+  "screenShowGraphDataBeforePouringPhaseStarts": "Show graph data before pouring phase starts.",
+  "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion": "If switched off you do not see heating and preinfusion in shot graph.",
+  "screenSettingsSaveShotGraphDataEvenForPrePouringStates": "Save shot graph data even for pre pouring states",
+  "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot": "Graph data during heating and preinfusion are saved into shot history."
 }
