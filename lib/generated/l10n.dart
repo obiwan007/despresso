@@ -1222,6 +1222,16 @@ class S {
     );
   }
 
+  /// `Arabic`
+  String get screenSettingsArabic {
+    return Intl.message(
+      'Arabic',
+      name: 'screenSettingsArabic',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Auto Tare`
   String get screenSettingsAutoTare {
     return Intl.message(
@@ -1502,6 +1512,18 @@ class S {
     );
   }
 
+  /// `Graph data during heating and preinfusion are saved into shot history.`
+  String
+      get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot {
+    return Intl.message(
+      'Graph data during heating and preinfusion are saved into shot history.',
+      name:
+          'screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Handling of connections to other external systems like MQTT and Visualizer.`
   String
       get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd {
@@ -1519,6 +1541,16 @@ class S {
     return Intl.message(
       'If a shot is starting, auto-tare the scale',
       name: 'screenSettingsIfAShotIsStartingAutotareTheScale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If switched off you do not see heating and preinfusion in shot graph.`
+  String get screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion {
+    return Intl.message(
+      'If switched off you do not see heating and preinfusion in shot graph.',
+      name: 'screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion',
       desc: '',
       args: [],
     );
@@ -1749,6 +1781,16 @@ class S {
     return Intl.message(
       'Saved backup',
       name: 'screenSettingsSavedBackup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save shot graph data even for pre pouring states`
+  String get screenSettingsSaveShotGraphDataEvenForPrePouringStates {
+    return Intl.message(
+      'Save shot graph data even for pre pouring states',
+      name: 'screenSettingsSaveShotGraphDataEvenForPrePouringStates',
       desc: '',
       args: [],
     );
@@ -2224,6 +2266,16 @@ class S {
     );
   }
 
+  /// `Show graph data before pouring phase starts.`
+  String get screenShowGraphDataBeforePouringPhaseStarts {
+    return Intl.message(
+      'Show graph data before pouring phase starts.',
+      name: 'screenShowGraphDataBeforePouringPhaseStarts',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Ambient`
   String get screenSteamAmbient {
     return Intl.message(
@@ -2553,48 +2605,6 @@ class S {
       args: [],
     );
   }
-
-  /// `Show graph data before pouring phase starts.`
-  String get screenShowGraphDataBeforePouringPhaseStarts {
-    return Intl.message(
-      'Show graph data before pouring phase starts.',
-      name: 'screenShowGraphDataBeforePouringPhaseStarts',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `If switched off you do not see heating and preinfusion in shot graph.`
-  String get screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion {
-    return Intl.message(
-      'If switched off you do not see heating and preinfusion in shot graph.',
-      name: 'screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Save shot graph data even for pre pouring states`
-  String get screenSettingsSaveShotGraphDataEvenForPrePouringStates {
-    return Intl.message(
-      'Save shot graph data even for pre pouring states',
-      name: 'screenSettingsSaveShotGraphDataEvenForPrePouringStates',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Graph data during heating and preinfusion are saved into shot history.`
-  String
-      get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot {
-    return Intl.message(
-      'Graph data during heating and preinfusion are saved into shot history.',
-      name:
-          'screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot',
-      desc: '',
-      args: [],
-    );
-  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -2603,6 +2613,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'ar'),
       Locale.fromSubtags(languageCode: 'de'),
       Locale.fromSubtags(languageCode: 'es'),
       Locale.fromSubtags(languageCode: 'ko'),

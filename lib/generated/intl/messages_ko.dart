@@ -153,7 +153,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeEditDoseWeightin":
             MessageLookupByLibrary.simpleMessage("복용량 가중치"),
         "screenRecipeEditDosingAndWeights":
-            MessageLookupByLibrary.simpleMessage("투약 및 무게"),
+            MessageLookupByLibrary.simpleMessage("도징 및 무게"),
         "screenRecipeEditGrinderModel":
             MessageLookupByLibrary.simpleMessage("모델"),
         "screenRecipeEditGrinderSettings":
@@ -215,6 +215,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
                 "DE1 및 저울 스캔(Lunar, Skale2, Eureka, Decent)"),
+        "screenSettingsArabic": MessageLookupByLibrary.simpleMessage("아라비아 말"),
         "screenSettingsAutoTare": MessageLookupByLibrary.simpleMessage("자동 영점"),
         "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("백업업"),
         "screenSettingsBackupAndMaintenance":
@@ -270,7 +271,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("시간 초과가 발생한 경우 레시피 화면으로 돌아가기"),
         "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot":
             MessageLookupByLibrary.simpleMessage(
-                "Graph data during heating and preinfusion are saved into shot history."),
+                "가열 및 프리인퓨전 동안의 그래프 데이터는 샷 히스토리에 저장됩니다."),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
                 "MQTT 및 Visualizer와 같은 다른 외부 시스템에 대한 연결 처리."),
@@ -319,8 +320,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsRestoredBackup":
             MessageLookupByLibrary.simpleMessage("백업 복원"),
         "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
-            MessageLookupByLibrary.simpleMessage(
-                "Save shot graph data even for pre pouring states"),
+            MessageLookupByLibrary.simpleMessage("사전 주입 상태에 대한 샷 그래프 데이터 저장"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("저장된 백업"),
         "screenSettingsScaleSupport":
@@ -396,7 +396,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "중요한 설정을 변경했습니다. 설정을 활성화하려면 앱을 다시 시작해야 합니다."),
         "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion":
             MessageLookupByLibrary.simpleMessage(
-                "If switched off you do not see heating and preinfusion in shot graph."),
+                "스위치를 끄면 샷 그래프에 가열 및 프리인퓨전이 표시되지 않습니다."),
         "screenShotEditBarrista": MessageLookupByLibrary.simpleMessage("바리스타"),
         "screenShotEditDescribeYourExperience":
             MessageLookupByLibrary.simpleMessage("느낌을 설명하세요"),
@@ -424,7 +424,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("총 용존성 고형물질(TDS)"),
         "screenShowGraphDataBeforePouringPhaseStarts":
             MessageLookupByLibrary.simpleMessage(
-                "Show graph data before pouring phase starts."),
+                "주입 단계가 시작되기 전에 그래프 데이터를 표시합니다."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("주변"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":
@@ -444,13 +444,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "show": MessageLookupByLibrary.simpleMessage("보여주다"),
         "start": MessageLookupByLibrary.simpleMessage("시작"),
         "stateDisconnected": MessageLookupByLibrary.simpleMessage("연결이 끊긴"),
-        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("가열 하다"),
+        "stateIdleHeated": MessageLookupByLibrary.simpleMessage("가열 중"),
         "statePour": MessageLookupByLibrary.simpleMessage("붓다"),
         "state_Disconnected": MessageLookupByLibrary.simpleMessage("연결이 끊긴"),
         "steamScreenTempC": MessageLookupByLibrary.simpleMessage("온도 [°C]"),
-        "stop": MessageLookupByLibrary.simpleMessage("멈추다"),
-        "subStateHeatWaterHeater": MessageLookupByLibrary.simpleMessage("난방수"),
-        "subStateHeatWaterTank": MessageLookupByLibrary.simpleMessage("가열 탱크"),
+        "stop": MessageLookupByLibrary.simpleMessage("중지"),
+        "subStateHeatWaterHeater": MessageLookupByLibrary.simpleMessage("가열 중"),
+        "subStateHeatWaterTank": MessageLookupByLibrary.simpleMessage("가열 중"),
         "switchOn": MessageLookupByLibrary.simpleMessage("시작"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("에스프레소"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("플러시"),
@@ -460,7 +460,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "temp": MessageLookupByLibrary.simpleMessage("온도"),
         "validatorNotBeEmpty":
             MessageLookupByLibrary.simpleMessage("비어 있으면 안 됩니다."),
-        "wait": MessageLookupByLibrary.simpleMessage("기다리다"),
+        "wait": MessageLookupByLibrary.simpleMessage("준비"),
         "weight": MessageLookupByLibrary.simpleMessage("무게")
       };
 }

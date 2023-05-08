@@ -231,6 +231,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
                 "Scan for DE1 and scales (Lunar, Skale2, Eureka, Decent)"),
+        "screenSettingsArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
         "screenSettingsAutoTare":
             MessageLookupByLibrary.simpleMessage("Auto Tare"),
         "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("Backup"),

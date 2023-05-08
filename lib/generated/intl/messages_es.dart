@@ -235,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
                 "Busque DE1 y escalas (Lunar, Skale2, Eureka, Decent)"),
+        "screenSettingsArabic": MessageLookupByLibrary.simpleMessage("Arábica"),
         "screenSettingsAutoTare":
             MessageLookupByLibrary.simpleMessage("Tara automática"),
         "screenSettingsBackup":
@@ -303,7 +304,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Volver a la pantalla Receta si se agotó el tiempo de espera"),
         "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot":
             MessageLookupByLibrary.simpleMessage(
-                "Graph data during heating and preinfusion are saved into shot history."),
+                "Los datos gráficos durante el calentamiento y la preinfusión se guardan en el historial de disparos."),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
                 "Manejo de conexiones a otros sistemas externos como MQTT y Visualizer."),
@@ -363,7 +364,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Copia de seguridad restaurada"),
         "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
             MessageLookupByLibrary.simpleMessage(
-                "Save shot graph data even for pre pouring states"),
+                "Guarde los datos del gráfico de tiro incluso para los estados previos al vertido"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("Copia de seguridad guardada"),
         "screenSettingsScaleSupport":
@@ -450,7 +451,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Cambió la configuración crítica. Debe reiniciar la aplicación para activar la configuración."),
         "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion":
             MessageLookupByLibrary.simpleMessage(
-                "If switched off you do not see heating and preinfusion in shot graph."),
+                "Si está apagado, no verá el calentamiento ni la preinfusión en el gráfico de disparos."),
         "screenShotEditBarrista":
             MessageLookupByLibrary.simpleMessage("barrista"),
         "screenShotEditDescribeYourExperience":
@@ -483,7 +484,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Sólidos Disueltos Totales (TDS)"),
         "screenShowGraphDataBeforePouringPhaseStarts":
             MessageLookupByLibrary.simpleMessage(
-                "Show graph data before pouring phase starts."),
+                "Muestra los datos del gráfico antes de que comience la fase de vertido."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambiente"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":
