@@ -9,6 +9,7 @@ First of all I want to thank Mimoja/flupresso (https://github.com/Mimoja/flupres
 
 As this project is already gone a bit off from the initial ideas - a few code fragments you will probably still find. Especially alot of work was done from Momoja for making the Acaia scales work in open source projects. I guess alot of projects now profit from this research.
 
+Another great project (https://github.com/AndyZap/De1Win10) was the base for actually understanding the parsing/decoding of profiles and basic communication with the de1 machine.
 ### Concepts
 We used a olot of concepts invented by other people so we just want to thank and name them here:
 
