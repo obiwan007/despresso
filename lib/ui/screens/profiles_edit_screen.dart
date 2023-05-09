@@ -623,23 +623,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     );
   }
 
-  Column createKeyValue(String key, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(key, style: theme.TextStyles.tabHeading),
-        Text(value, style: theme.TextStyles.tabPrimary),
-      ],
-    );
-  }
-
-  createSteps() {
-    return _profile.shotFrames
-        .map((p) => createKeyValue(p.name, "Duration: ${p.frameLen} s    Pressure: ${p.setVal} bar"))
-        .toList();
-  }
-
   void profileListener() {
     log.info('Profile updated');
   }

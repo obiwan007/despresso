@@ -3,6 +3,7 @@ import 'package:despresso/helper/message.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
@@ -357,16 +358,37 @@ class ScaleFooter extends StatelessWidget {
                                                   : Text(""),
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 90,
-                                        child: Text(
-                                          textAlign: TextAlign.right,
-                                          machineService.scaleService.state == ScaleState.connected
-                                              ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
-                                              : "",
-                                          style: Theme.of(context).textTheme.bodyMedium,
-                                        ),
-                                      ),
+                                      machineService.state.coffeeState == EspressoMachineState.idle ||
+                                              machineService.state.coffeeState == EspressoMachineState.disconnected
+                                          ? SizedBox(
+                                              width: 90,
+                                              child: OutlinedButton(
+                                                onPressed: () {
+                                                  Feedback.forTap(context);
+                                                  var coffeeService = getIt<CoffeeService>();
+                                                  var settingsService = getIt<SettingsService>();
+                                                  var r = coffeeService.currentRecipe;
+                                                  if (r != null) {
+                                                    r.grinderDoseWeight = machineService.scaleService.weight;
+                                                    r.adjustedWeight =
+                                                        machineService.scaleService.weight * (r.ratio2 / r.ratio1);
+                                                    coffeeService.updateRecipe(r);
+                                                    settingsService.targetEspressoWeight = r.adjustedWeight;
+                                                  }
+                                                },
+                                                child: Text("set-in"),
+                                              ),
+                                            )
+                                          : SizedBox(
+                                              width: 90,
+                                              child: Text(
+                                                textAlign: TextAlign.right,
+                                                machineService.scaleService.state == ScaleState.connected
+                                                    ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
+                                                    : "",
+                                                style: Theme.of(context).textTheme.bodyMedium,
+                                              ),
+                                            ),
                                     ],
                                   ),
                                 ),

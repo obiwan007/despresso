@@ -235,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
                 "Busque DE1 y escalas (Lunar, Skale2, Eureka, Decent)"),
+        "screenSettingsArabic": MessageLookupByLibrary.simpleMessage("Arábica"),
         "screenSettingsAutoTare":
             MessageLookupByLibrary.simpleMessage("Tara automática"),
         "screenSettingsBackup":
@@ -301,6 +302,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage(
                 "Volver a la pantalla Receta si se agotó el tiempo de espera"),
+        "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot":
+            MessageLookupByLibrary.simpleMessage(
+                "Los datos gráficos durante el calentamiento y la preinfusión se guardan en el historial de disparos."),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
                 "Manejo de conexiones a otros sistemas externos como MQTT y Visualizer."),
@@ -358,6 +362,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Restaurar"),
         "screenSettingsRestoredBackup": MessageLookupByLibrary.simpleMessage(
             "Copia de seguridad restaurada"),
+        "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
+            MessageLookupByLibrary.simpleMessage(
+                "Guarde los datos del gráfico de tiro incluso para los estados previos al vertido"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("Copia de seguridad guardada"),
         "screenSettingsScaleSupport":
@@ -390,6 +397,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Se restauran los ajustes. Cierra la aplicación y reinicia."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("Ajustes de tiro"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("Mostrar al ras"),
         "screenSettingsSmartCharging":
@@ -442,6 +452,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "Cambió la configuración crítica. Debe reiniciar la aplicación para activar la configuración."),
+        "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion":
+            MessageLookupByLibrary.simpleMessage(
+                "Si está apagado, no verá el calentamiento ni la preinfusión en el gráfico de disparos."),
         "screenShotEditBarrista":
             MessageLookupByLibrary.simpleMessage("barrista"),
         "screenShotEditDescribeYourExperience":
@@ -472,6 +485,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenShotEditTotalDissolvedSolidssTds":
             MessageLookupByLibrary.simpleMessage(
                 "Sólidos Disueltos Totales (TDS)"),
+        "screenShowGraphDataBeforePouringPhaseStarts":
+            MessageLookupByLibrary.simpleMessage(
+                "Muestra los datos del gráfico antes de que comience la fase de vertido."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Ambiente"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":

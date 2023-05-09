@@ -175,7 +175,7 @@ class SteamScreenState extends State<SteamScreen> {
                         child: Column(
                           children: [
                             Text(S.of(context).screenSteamTimerS(settings.targetSteamLength.toInt()),
-                                style: theme.TextStyles.tabHeading),
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetSteamLength.toDouble(),
                               max: 200,

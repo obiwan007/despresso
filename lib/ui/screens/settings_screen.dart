@@ -240,6 +240,28 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     leading: const Icon(Icons.timer),
                     onChange: (value) {},
                   ),
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.recordPrePouring.name,
+                    defaultValue: settingsService.recordPrePouring,
+                    title: S.of(context).screenShowGraphDataBeforePouringPhaseStarts,
+                    subtitle: S.of(context).screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion,
+                    enabledLabel: S.of(context).show,
+                    disabledLabel: S.of(context).hide,
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.savePrePouring.name,
+                    defaultValue: settingsService.savePrePouring,
+                    title: S.of(context).screenSettingsSaveShotGraphDataEvenForPrePouringStates,
+                    subtitle: S.of(context).screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot,
+                    enabledLabel: S.of(context).show,
+                    disabledLabel: S.of(context).hide,
+                    onChange: (value) {
+                      settingsService.notifyDelayed();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -293,6 +315,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                               "de": S.of(context).screenSettingsGerman,
                               "es": S.of(context).screenSettingsSpanish,
                               "ko": S.of(context).screenSettingsKorean,
+                              "ar": S.of(context).screenSettingsArabic,
                             },
                             onChange: (value) {
                               settingsService.notifyDelayed();
@@ -344,6 +367,13 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       log.severe('Failed to set brightness');
                     }
                   },
+                ),
+                SwitchSettingsTile(
+                  title: S.of(context).screenSettingsShowClockDuringScreensaver,
+                  settingKey: SettingKeys.screensaverShowClock.name,
+                  defaultValue: settingsService.screensaverShowClock,
+                  leading: const Icon(Icons.watch),
+                  onChange: (value) async {},
                 ),
                 SettingsContainer(
                   leftPadding: 16,

@@ -231,6 +231,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
                 "Scanne nach DE1 und Waagen (Lunar, Skale2, Eureka, Decent)"),
+        "screenSettingsArabic":
+            MessageLookupByLibrary.simpleMessage("Arabisch"),
         "screenSettingsAutoTare":
             MessageLookupByLibrary.simpleMessage("Auto Tara"),
         "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("Backup"),
@@ -294,6 +296,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsGoBackToRecipeScreenIfTimeoutOccured":
             MessageLookupByLibrary.simpleMessage(
                 "Nach einem Timeout automatisch zum Rezept Bildschirm zurückwechseln"),
+        "screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot":
+            MessageLookupByLibrary.simpleMessage(
+                "Speichere Diagramm Daten die während des Aufheizens und der Preinfusion gesammelt werden in die Shot Historie."),
         "screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd":
             MessageLookupByLibrary.simpleMessage(
                 "Einstellungen für Verbindungen zu anderen Systemen wie MQTT und Visualizer."),
@@ -352,6 +357,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Restore"),
         "screenSettingsRestoredBackup": MessageLookupByLibrary.simpleMessage(
             "Backup wurde wiederhergestellt"),
+        "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
+            MessageLookupByLibrary.simpleMessage(
+                "Speichere Shot Daten auch vor der eigentliche Pouring Phase "),
         "screenSettingsSavedBackup": MessageLookupByLibrary.simpleMessage(
             "Die Sicherung wurde angelegt"),
         "screenSettingsScaleSupport":
@@ -383,6 +391,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Einstellungen wurden wiederhergestellt. Bitte die App komplett beenden und neu Starten (Task Manager)."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("Shot Einstellungen"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("Spülen Anzeigen"),
         "screenSettingsSmartCharging":
@@ -434,6 +445,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "Es wurden kritische Einstellungen geändert. Es wird ein Neustart der App benötigt."),
+        "screenSettingsifSwitchedOffYouDoNotSeeHeatingAndPreinfusion":
+            MessageLookupByLibrary.simpleMessage(
+                "Wenn ausgeschaltet, wird kein Aufheizen oder Preinfusion in den Diagrammen angezeigt."),
         "screenShotEditBarrista":
             MessageLookupByLibrary.simpleMessage("Barrista"),
         "screenShotEditDescribeYourExperience":
@@ -463,6 +477,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenShotEditTotalDissolvedSolidssTds":
             MessageLookupByLibrary.simpleMessage(
                 "Total Dissolved Solidss (TDS)"),
+        "screenShowGraphDataBeforePouringPhaseStarts":
+            MessageLookupByLibrary.simpleMessage(
+                "Zeige Diagramm Daten bevor die Pouring Phase anfängt."),
         "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("Umgebung"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":

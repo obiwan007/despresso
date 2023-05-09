@@ -88,6 +88,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   web_socket_channel: ^2.4.0
+  flutter_keyboard_visibility: ^5.4.1
 
 dev_dependencies:
   flutter_test:
