@@ -20,6 +20,7 @@ import 'package:despresso/ui/widgets/start_stop_button.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -76,6 +77,8 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     LogicalKeyboardKey.arrowDown,
   );
 
+  late StreamSubscription<bool> _keyboardSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -99,23 +102,29 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     _settings.addListener(updatedSettings);
 
     ServicesBinding.instance.keyboard.addHandler(_onKey);
-    // Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-    //   log.info("Print after 5 seconds");
-    //   selectedPage++;
-    //   if (selectedPage > 2) selectedPage = 0;
-    //   _tabController.index = selectedPage;
-    // });
+
     Future.delayed(
       const Duration(seconds: 1),
       () {
         _settings.startCounter = _settings.startCounter + 1;
       },
     );
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+    _keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+      if (visible == false) {
+        Future.delayed(const Duration(milliseconds: 1100), () {
+          log.info("Restore UIOverlays");
+          return SystemChrome.restoreSystemUIOverlays();
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
+    _keyboardSubscription.cancel();
     _tabController.dispose();
     machineService.removeListener(updatedMachine);
     profileService.removeListener(updatedProfile);
