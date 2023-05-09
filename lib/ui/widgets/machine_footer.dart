@@ -364,6 +364,7 @@ class ScaleFooter extends StatelessWidget {
                                               width: 90,
                                               child: OutlinedButton(
                                                 onPressed: () {
+                                                  Feedback.forTap(context);
                                                   var coffeeService = getIt<CoffeeService>();
                                                   var settingsService = getIt<SettingsService>();
                                                   var r = coffeeService.currentRecipe;
