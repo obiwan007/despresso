@@ -68,7 +68,8 @@ class FlushScreenState extends State<FlushScreen> {
                         flex: 1,
                         child: Column(
                           children: [
-                            Text("Timer ${settings.targetFlushTime.toInt()} s", style: theme.TextStyles.tabHeading),
+                            Text("Timer ${settings.targetFlushTime.toInt()} s",
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetFlushTime.toDouble(),
                               max: 60,
@@ -83,7 +84,7 @@ class FlushScreenState extends State<FlushScreen> {
                               },
                             ),
                             Text("Second Timer ${settings.targetFlushTime2.toInt()} s",
-                                style: theme.TextStyles.tabHeading),
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetFlushTime2.toDouble(),
                               max: 60,

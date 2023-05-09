@@ -397,6 +397,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Se restauran los ajustes. Cierra la aplicación y reinicia."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("Ajustes de tiro"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("Mostrar al ras"),
         "screenSettingsSmartCharging":

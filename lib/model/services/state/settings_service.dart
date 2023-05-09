@@ -76,6 +76,7 @@ enum SettingKeys {
   useLongUUID,
   recordPrePouring,
   savePrePouring,
+  screensaverShowClock,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -233,6 +234,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get screensaverOnIfIdle => Settings.getValue<bool>(SettingKeys.screensaverOnIfIdle.name) ?? true;
   set screensaverOnIfIdle(bool value) => Settings.setValue<bool>(SettingKeys.screensaverOnIfIdle.name, value);
+
+  bool get screensaverShowClock => Settings.getValue<bool>(SettingKeys.screensaverShowClock.name) ?? true;
+  set screensaverShowClock(bool value) => Settings.setValue<bool>(SettingKeys.screensaverShowClock.name, value);
 
   String get locale => Settings.getValue<String>(SettingKeys.locale.name) ?? "auto";
   set locale(String value) => Settings.setValue<String>(SettingKeys.locale.name, value);

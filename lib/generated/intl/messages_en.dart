@@ -388,6 +388,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Settings are restored. Please close app and restart."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("Shot Settings"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("Show Flush"),
         "screenSettingsSmartCharging":

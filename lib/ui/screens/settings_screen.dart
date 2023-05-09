@@ -368,6 +368,13 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     }
                   },
                 ),
+                SwitchSettingsTile(
+                  title: S.of(context).screenSettingsShowClockDuringScreensaver,
+                  settingKey: SettingKeys.screensaverShowClock.name,
+                  defaultValue: settingsService.screensaverShowClock,
+                  leading: const Icon(Icons.watch),
+                  onChange: (value) async {},
+                ),
                 SettingsContainer(
                   leftPadding: 16,
                   children: [

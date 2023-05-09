@@ -2605,6 +2605,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Show clock during screensaver`
+  String get screenSettingsShowClockDuringScreensaver {
+    return Intl.message(
+      'Show clock during screensaver',
+      name: 'screenSettingsShowClockDuringScreensaver',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

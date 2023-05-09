@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../service_locator.dart';
 
 class ScreenSaver extends StatefulWidget {
   const ScreenSaver({super.key});
@@ -40,10 +43,13 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
 
   Timer? _timer;
 
+  late SettingsService _ssttings;
+
   @override
   initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    _ssttings = getIt<SettingsService>();
     _getListOfImages();
   }
 
@@ -78,24 +84,25 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
         top: 0,
         child: _currentImage == null ? const Text("") : _currentImage!,
       ),
-      Positioned(
-          left: x,
-          top: y,
-          child: Opacity(
-            opacity: 0.9,
-            child: Column(
-              children: [
-                Text(
-                  "${fmtT.toString()}",
-                  style: TextStyle(fontSize: 100, color: Theme.of(context).colorScheme.primary),
-                ),
-                Text(
-                  "${fmtD.toString()}",
-                  style: TextStyle(fontSize: 30, color: Colors.white),
-                ),
-              ],
-            ),
-          )),
+      if (_ssttings.screensaverShowClock)
+        Positioned(
+            left: x,
+            top: y,
+            child: Opacity(
+              opacity: 0.9,
+              child: Column(
+                children: [
+                  Text(
+                    "${fmtT.toString()}",
+                    style: TextStyle(fontSize: 100, color: Theme.of(context).colorScheme.primary),
+                  ),
+                  Text(
+                    "${fmtD.toString()}",
+                    style: TextStyle(fontSize: 30, color: Colors.white),
+                  ),
+                ],
+              ),
+            )),
     ]);
   }
 

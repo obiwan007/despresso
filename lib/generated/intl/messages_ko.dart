@@ -349,6 +349,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "설정이 복원됩니다. 앱을 닫고 다시 시작해 주세요."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("샷 설정"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("플러시 표시"),
         "screenSettingsSmartCharging":

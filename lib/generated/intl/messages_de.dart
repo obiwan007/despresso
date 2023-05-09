@@ -391,6 +391,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Einstellungen wurden wiederhergestellt. Bitte die App komplett beenden und neu Starten (Task Manager)."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("Shot Einstellungen"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("Spülen Anzeigen"),
         "screenSettingsSmartCharging":

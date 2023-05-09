@@ -65,7 +65,7 @@ class WaterScreenState extends State<WaterScreen> {
                       child: Column(
                         children: [
                           Text(S.of(context).screenSteamTemperaturs(settings.targetHotWaterTemp),
-                              style: theme.TextStyles.tabHeading),
+                              style: Theme.of(context).textTheme.labelLarge),
                           Slider(
                             value: settings.targetHotWaterTemp.toDouble(),
                             max: 100,
@@ -120,7 +120,7 @@ class WaterScreenState extends State<WaterScreen> {
                         child: Column(
                           children: [
                             Text(S.of(context).screenSteamTimerS(settings.targetHotWaterLength),
-                                style: theme.TextStyles.tabHeading),
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetHotWaterLength.toDouble(),
                               max: 100,
@@ -178,7 +178,7 @@ class WaterScreenState extends State<WaterScreen> {
                         child: Column(
                           children: [
                             Text(S.of(context).screenWaterWeightG(settings.targetHotWaterWeight),
-                                style: theme.TextStyles.tabHeading),
+                                style: Theme.of(context).textTheme.labelLarge),
                             Slider(
                               value: settings.targetHotWaterWeight.toDouble(),
                               max: 200,

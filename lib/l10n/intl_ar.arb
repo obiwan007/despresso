@@ -509,5 +509,6 @@
   "wait": "انتظر",
   "@wait": {},
   "weight": "وزن",
-  "@weight": {}
+  "@weight": {},
+  "screenSettingsShowClockDuringScreensaver": "Show clock during screensaver"
 }

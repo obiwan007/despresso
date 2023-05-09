@@ -382,6 +382,9 @@ class MessageLookup extends MessageLookupByLibrary {
                 "تمت استعادة الإعدادات. الرجاء إغلاق التطبيق وإعادة التشغيل."),
         "screenSettingsShotSettings":
             MessageLookupByLibrary.simpleMessage("إعدادات اللقطة"),
+        "screenSettingsShowClockDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Show clock during screensaver"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("عرض Flush"),
         "screenSettingsSmartCharging":
