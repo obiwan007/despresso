@@ -23,6 +23,7 @@ import 'package:despresso/devices/decent_de1.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' as ble;
 
 import '../../../devices/abstract_comm.dart';
+import '../../../devices/smartchef_scale.dart';
 
 class BLEService extends ChangeNotifier implements DeviceCommunication {
   final log = Logger('BLEService');
@@ -177,6 +178,10 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
         } else if (device.name.startsWith('HIROIA')) {
           log.info('Hiroia Scale');
           HiroiaScale(device, this).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        } else if (device.name.startsWith('smartchef')) {
+          log.info('Smartchef Scale');
+          SmartchefScale(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         } else {
           _devicesIgnoreList.add(device);
