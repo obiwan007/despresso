@@ -28,6 +28,79 @@ import '../../shotstate.dart';
 import '../state/profile_service.dart';
 import 'scale_service.dart';
 
+// Map to find volume from height of mm probe.
+// spreadsheet to calculate this calculated from CAD, from Mark Kelly, from decent de1app
+const waterMap = [
+  0,
+  16,
+  43,
+  70,
+  97,
+  124,
+  151,
+  179,
+  206,
+  233,
+  261,
+  288,
+  316,
+  343,
+  371,
+  398,
+  426,
+  453,
+  481,
+  509,
+  537,
+  564,
+  592,
+  620,
+  648,
+  676,
+  704,
+  732,
+  760,
+  788,
+  816,
+  844,
+  872,
+  900,
+  929,
+  957,
+  985,
+  1013,
+  1042,
+  1070,
+  1104,
+  1138,
+  1172,
+  1207,
+  1242,
+  1277,
+  1312,
+  1347,
+  1382,
+  1417,
+  1453,
+  1488,
+  1523,
+  1559,
+  1594,
+  1630,
+  1665,
+  1701,
+  1736,
+  1772,
+  1808,
+  1843,
+  1879,
+  1915,
+  1951,
+  1986,
+  2022,
+  2058,
+];
+
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
 
@@ -39,9 +112,20 @@ class WaterLevel {
     return l * 100 ~/ 8300;
   }
 
+  int getLevelMM() {
+    var l = waterLevel;
+    return (l / 256).round();
+  }
+
   int getLevelML() {
-    var l = waterLevel - waterLimit;
-    return (l / 10.0).round();
+    // Offset because probe starts above water.
+    var l = getLevelMM() - 6;
+    return l > 0 && l < waterMap.length ? waterMap[l] : 0;
+  }
+
+  int getLevelRefill() {
+    var l = (waterLimit / 256).round();
+    return l > 0 && l < waterMap.length ? waterMap[l] : 0;
   }
 }
 
