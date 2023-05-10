@@ -69,52 +69,51 @@ class SteamScreenState extends State<SteamScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(S.of(context).screenSteamTwotapMode,
-                                style: Theme.of(context).textTheme.labelLarge),
-                          ),
-                          Switch(
-                            value: machineService.de1?.steamPurgeMode == 1,
-                            onChanged: (value) {
-                              if (machineService.state.coffeeState != EspressoMachineState.steam) {
-                                machineService.de1?.setSteamPurgeMode(value == true ? 1 : 0);
-                                setState(() {});
-                                machineService.notifyListeners();
-                              }
-                            },
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              machineService.de1?.steamPurgeMode == 1
-                                  ? S.of(context).screenSteamOnSlowPurgeOn1stStop
-                                  : S.of(context).screenSteamOffNormalPurgeAfterStop,
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Column(
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
+                      Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(S.of(context).screenSteamTwotapMode,
+                                  style: Theme.of(context).textTheme.labelLarge),
+                            ),
+                            Switch(
+                              value: machineService.de1?.steamPurgeMode == 1,
+                              onChanged: (value) {
+                                if (machineService.state.coffeeState != EspressoMachineState.steam) {
+                                  machineService.de1?.setSteamPurgeMode(value == true ? 1 : 0);
+                                  setState(() {});
+                                  machineService.notifyListeners();
+                                }
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                machineService.de1?.steamPurgeMode == 1
+                                    ? S.of(context).screenSteamOnSlowPurgeOn1stStop
+                                    : S.of(context).screenSteamOffNormalPurgeAfterStop,
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Column(
                           children: [
                             Text(S.of(context).screenSteamTemperaturs(settings.targetSteamTemp),
                                 style: Theme.of(context).textTheme.labelLarge),
@@ -133,95 +132,92 @@ class SteamScreenState extends State<SteamScreen> {
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: <Widget>[
-                            if (machineService.state.coffeeState == EspressoMachineState.steam) ...[
-                              Center(
-                                child: SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 15,
-                                    value: machineService.state.coffeeState == EspressoMachineState.steam
-                                        ? (machineService.state.shot?.steamTemp ?? 1) / settings.targetSteamTemp
-                                        : 0,
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Stack(
+                            children: <Widget>[
+                              if (machineService.state.coffeeState == EspressoMachineState.steam) ...[
+                                Center(
+                                  child: SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 15,
+                                      value: machineService.state.coffeeState == EspressoMachineState.steam
+                                          ? (machineService.state.shot?.steamTemp ?? 1) / settings.targetSteamTemp
+                                          : 0,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Center(child: Text("${machineService.state.shot?.steamTemp}°C")),
-                            ]
-                          ],
+                                Center(child: Text("${machineService.state.shot?.steamTemp}°C")),
+                              ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 5,
-                  indent: 20,
-                  endIndent: 0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Text(S.of(context).screenSteamTimerS(settings.targetSteamLength.toInt()),
-                                style: Theme.of(context).textTheme.labelLarge),
-                            Slider(
-                              value: settings.targetSteamLength.toDouble(),
-                              max: 200,
-                              min: 1,
-                              divisions: 200,
-                              label: "${settings.targetSteamLength} s",
-                              onChanged: (double value) {
-                                setState(() {
-                                  settings.targetSteamLength = value.toInt();
-                                  machineService.updateSettings();
-                                });
-                              },
-                            ),
-                          ],
+                  const Divider(
+                    height: 20,
+                    thickness: 5,
+                    indent: 20,
+                    endIndent: 0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Text(S.of(context).screenSteamTimerS(settings.targetSteamLength.toInt()),
+                                  style: Theme.of(context).textTheme.labelLarge),
+                              Slider(
+                                value: settings.targetSteamLength.toDouble(),
+                                max: 200,
+                                min: 1,
+                                divisions: 200,
+                                label: "${settings.targetSteamLength} s",
+                                onChanged: (double value) {
+                                  setState(() {
+                                    settings.targetSteamLength = value.toInt();
+                                    machineService.updateSettings();
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: <Widget>[
-                            if (machineService.state.coffeeState == EspressoMachineState.steam) ...[
-                              Center(
-                                child: SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 15,
-                                    value: machineService.state.coffeeState == EspressoMachineState.steam
-                                        ? machineService.timer.inSeconds / settings.targetSteamLength
-                                        : 0,
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Stack(
+                            children: <Widget>[
+                              if (machineService.state.coffeeState == EspressoMachineState.steam) ...[
+                                Center(
+                                  child: SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 15,
+                                      value: machineService.state.coffeeState == EspressoMachineState.steam
+                                          ? machineService.timer.inSeconds / settings.targetSteamLength
+                                          : 0,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)}s")),
-                            ]
-                          ],
+                                Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)}s")),
+                              ]
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                if (tempService.state == TempState.connected)
-                  Expanded(
-                    flex: 1,
-                    child: Column(
+                  if (tempService.state == TempState.connected)
+                    Column(
                       children: [
                         Text(S.of(context).screenSteamStopAtTemperatur(settings.targetMilkTemperature),
                             style: Theme.of(context).textTheme.labelLarge),
@@ -240,45 +236,45 @@ class SteamScreenState extends State<SteamScreen> {
                         ),
                       ],
                     ),
+                  const Divider(
+                    height: 20,
+                    thickness: 5,
+                    indent: 20,
+                    endIndent: 0,
                   ),
-                const Divider(
-                  height: 20,
-                  thickness: 5,
-                  indent: 20,
-                  endIndent: 0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Text(
-                                S
-                                    .of(context)
-                                    .screenSteamFlowrate(machineService.de1?.steamFlow.toStringAsFixed(1) ?? '?'),
-                                style: Theme.of(context).textTheme.labelLarge),
-                            Slider(
-                              value: machineService.de1?.steamFlow ?? 2.5,
-                              max: 4.5,
-                              min: 0.5,
-                              divisions: 60,
-                              label: "${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
-                              onChanged: (double value) {
-                                setState(() {
-                                  machineService.de1?.setSteamFlow(value);
-                                });
-                              },
-                            ),
-                          ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Text(
+                                  S
+                                      .of(context)
+                                      .screenSteamFlowrate(machineService.de1?.steamFlow.toStringAsFixed(1) ?? '?'),
+                                  style: Theme.of(context).textTheme.labelLarge),
+                              Slider(
+                                value: machineService.de1?.steamFlow ?? 2.5,
+                                max: 4.5,
+                                min: 0.5,
+                                divisions: 1,
+                                label: "${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
+                                onChanged: (double value) {
+                                  setState(() {
+                                    machineService.de1?.setSteamFlow(value);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
