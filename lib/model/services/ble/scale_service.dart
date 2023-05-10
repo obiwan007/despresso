@@ -86,6 +86,16 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
+  Future<void> timer(bool start) async {
+    if (_state == ScaleState.connected) {
+      try {
+        await scale?.timer(start);
+      } catch (e) {
+        log.info("Timer not implemented $e");
+      }
+    }
+  }
+
   void setTara() {
     log.info("Tara done");
     averaging.clear();

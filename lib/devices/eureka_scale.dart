@@ -131,4 +131,10 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         return;
     }
   }
+
+  @override
+  Future<void> timer(bool start) {
+    // TODO: implement timer
+    throw UnimplementedError();
+  }
 }

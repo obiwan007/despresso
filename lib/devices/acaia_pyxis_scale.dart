@@ -21,6 +21,8 @@ int instances = 0;
 ///PEARLS
 class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   var log = l.Logger('AcaiaPyxisScale');
+
+  int _sequence = 1;
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID = useLongCharacteristics()
       ? Uuid.parse('49535343-FE7D-4AE5-8FA9-9FAFD205E455')
@@ -125,6 +127,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     buffer.add(header1);
     buffer.add(header2);
     buffer.add(msgType);
+    // buffer.add(_sequence++);
+    if (_sequence > 254) _sequence = 0;
 
     payload.asMap().forEach((index, value) => {
           if (index % 2 == 0) {cksum1 += value} else {cksum2 += value},
@@ -400,5 +404,27 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
       // code to handle errors
       log.severe("Subscribe to $characteristic failed: $error");
     });
+  }
+
+  @override
+  Future<void> timer(bool start) async {
+    final characteristic = QualifiedCharacteristic(
+        serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
+    try {
+      if (start) {
+        // await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0d, [1]));
+        await connection.writeCharacteristicWithoutResponse(characteristic,
+            value: encode(0x0d, [(_sequence++ & 0xff), 1]));
+        await connection.writeCharacteristicWithoutResponse(characteristic,
+            value: encode(0x0d, [(_sequence++ & 0xff), 0]));
+      } else {
+        await connection.writeCharacteristicWithoutResponse(characteristic,
+            value: encode(0x0d, [(_sequence++ & 0xff), 2]));
+      }
+      // await _sendConfig();
+      log.info("timer send Ok $start");
+    } catch (e) {
+      log.severe("timer failed $e");
+    }
   }
 }
