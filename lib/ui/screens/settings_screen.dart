@@ -314,25 +314,31 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                           leftPadding: 16,
                           children: [
                             if (snapshot.hasData)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text("Weight ${(snapshot.data as WeightMeassurement).weight}"),
-                                  ],
-                                ),
+                              Row(
+                                children: [
+                                  Text("CurrentWeight", style: Theme.of(context).textTheme.labelLarge),
+                                  Text("  ${(snapshot.data as WeightMeassurement).weight} g"),
+                                ],
                               ),
+                            SizedBox(height: 10),
                             Row(
                               children: [
                                 SizedBox(width: w, child: Text("Container 1 (i.E. weight cup):")),
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight1}")),
                                 SizedBox(
                                   width: 100,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        settingsService.tareOnWeight1 = (snapshot.data as WeightMeassurement).weight;
-                                      },
-                                      child: Text("Store")),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.save),
+                                    onPressed: () {
+                                      settingsService.tareOnWeight1 = (snapshot.data as WeightMeassurement).weight;
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    settingsService.tareOnWeight1 = 0.0;
+                                  },
                                 ),
                               ],
                             ),
@@ -342,11 +348,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight2}")),
                                 SizedBox(
                                   width: 100,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        settingsService.tareOnWeight2 = (snapshot.data as WeightMeassurement).weight;
-                                      },
-                                      child: Text("Store")),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.save),
+                                    onPressed: () {
+                                      settingsService.tareOnWeight2 = (snapshot.data as WeightMeassurement).weight;
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    settingsService.tareOnWeight2 = 0.0;
+                                  },
                                 ),
                               ],
                             ),
@@ -356,11 +369,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight3}")),
                                 SizedBox(
                                   width: 100,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        settingsService.tareOnWeight3 = (snapshot.data as WeightMeassurement).weight;
-                                      },
-                                      child: Text("Store")),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.save),
+                                    onPressed: () {
+                                      settingsService.tareOnWeight3 = (snapshot.data as WeightMeassurement).weight;
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    settingsService.tareOnWeight3 = 0.0;
+                                  },
                                 ),
                               ],
                             ),
@@ -370,11 +390,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight4}")),
                                 SizedBox(
                                   width: 100,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        settingsService.tareOnWeight4 = (snapshot.data as WeightMeassurement).weight;
-                                      },
-                                      child: Text("Store")),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.save),
+                                    onPressed: () {
+                                      settingsService.tareOnWeight4 = (snapshot.data as WeightMeassurement).weight;
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    settingsService.tareOnWeight4 = 0.0;
+                                  },
                                 ),
                               ],
                             ),
