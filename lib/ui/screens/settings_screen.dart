@@ -37,6 +37,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late MqttService mqttService;
   late VisualizerService visualizerService;
   late EspressoMachineService machineService;
+  late ScaleService scaleService;
 
   String? ownIpAdress = "<IP-ADRESS-OF-TABLET>";
 
@@ -50,6 +51,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
     super.initState();
     settingsService = getIt<SettingsService>();
     mqttService = getIt<MqttService>();
+    scaleService = getIt<ScaleService>();
     machineService = getIt<EspressoMachineService>();
     bleService = getIt<BLEService>();
     visualizerService = getIt<VisualizerService>();
@@ -282,6 +284,103 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       ),
                     ],
                   ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SettingsGroup(
+          title: "Weighted container",
+          children: [
+            SimpleSettingsTile(
+              title: 'Weight of containers',
+              leading: const Icon(Icons.bluetooth),
+              child: SettingsScreen(
+                title: 'Weight of containers',
+                children: [
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.tareOnDetectedWeight.name,
+                    defaultValue: settingsService.tareOnDetectedWeight,
+                    title: "Tare if weight was detected",
+                    enabledLabel: S.of(context).enabled,
+                    disabledLabel: S.of(context).disabled,
+                    onChange: (value) {},
+                  ),
+                  StreamBuilder<Object>(
+                      stream: scaleService.stream,
+                      builder: (context, snapshot) {
+                        const w = 250.0;
+                        return SettingsContainer(
+                          leftPadding: 16,
+                          children: [
+                            if (snapshot.hasData)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Text("Weight ${(snapshot.data as WeightMeassurement).weight}"),
+                                  ],
+                                ),
+                              ),
+                            Row(
+                              children: [
+                                SizedBox(width: w, child: Text("Container 1 (i.E. weight cup):")),
+                                SizedBox(width: 80, child: Text("${settingsService.tareOnWeight1}")),
+                                SizedBox(
+                                  width: 100,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        settingsService.tareOnWeight1 = (snapshot.data as WeightMeassurement).weight;
+                                      },
+                                      child: Text("Store")),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(width: w, child: Text("Container 2 (i.E. Espresso Cup):")),
+                                SizedBox(width: 80, child: Text("${settingsService.tareOnWeight2}")),
+                                SizedBox(
+                                  width: 100,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        settingsService.tareOnWeight2 = (snapshot.data as WeightMeassurement).weight;
+                                      },
+                                      child: Text("Store")),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(width: w, child: Text("Container 3 (i.E. Steam Mug):")),
+                                SizedBox(width: 80, child: Text("${settingsService.tareOnWeight3}")),
+                                SizedBox(
+                                  width: 100,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        settingsService.tareOnWeight3 = (snapshot.data as WeightMeassurement).weight;
+                                      },
+                                      child: Text("Store")),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(width: w, child: Text("Container 4 (i.E. Steam Mug):")),
+                                SizedBox(width: 80, child: Text("${settingsService.tareOnWeight4}")),
+                                SizedBox(
+                                  width: 100,
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        settingsService.tareOnWeight4 = (snapshot.data as WeightMeassurement).weight;
+                                      },
+                                      child: Text("Store")),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }),
                 ],
               ),
             ),

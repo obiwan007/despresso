@@ -78,6 +78,11 @@ enum SettingKeys {
   savePrePouring,
   screensaverShowClock,
   scaleStartTimer,
+  tareOnWeight1,
+  tareOnDetectedWeight,
+  tareOnWeight2,
+  tareOnWeight3,
+  tareOnWeight4,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -287,6 +292,21 @@ class SettingsService extends ChangeNotifier {
 
   bool get scaleStartTimer => Settings.getValue<bool>(SettingKeys.scaleStartTimer.name) ?? true;
   set scaleStartTimer(bool value) => Settings.setValue<bool>(SettingKeys.scaleStartTimer.name, value);
+
+  double get tareOnWeight1 => Settings.getValue<double>(SettingKeys.tareOnWeight1.name) ?? 0;
+  set tareOnWeight1(value) => Settings.setValue<double>(SettingKeys.tareOnWeight1.name, value);
+
+  double get tareOnWeight2 => Settings.getValue<double>(SettingKeys.tareOnWeight2.name) ?? 0;
+  set tareOnWeight2(value) => Settings.setValue<double>(SettingKeys.tareOnWeight2.name, value);
+
+  double get tareOnWeight3 => Settings.getValue<double>(SettingKeys.tareOnWeight3.name) ?? 0;
+  set tareOnWeight3(value) => Settings.setValue<double>(SettingKeys.tareOnWeight3.name, value);
+
+  double get tareOnWeight4 => Settings.getValue<double>(SettingKeys.tareOnWeight4.name) ?? 0;
+  set tareOnWeight4(value) => Settings.setValue<double>(SettingKeys.tareOnWeight4.name, value);
+
+  bool get tareOnDetectedWeight => Settings.getValue<bool>(SettingKeys.tareOnDetectedWeight.name) ?? true;
+  set tareOnDetectedWeight(bool value) => Settings.setValue<bool>(SettingKeys.tareOnDetectedWeight.name, value);
 
   void notifyDelayed() {
     Future.delayed(

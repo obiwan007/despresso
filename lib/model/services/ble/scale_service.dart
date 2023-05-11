@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'dart:math' as math;
 import 'package:collection/collection.dart';
+import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/cafehub/ch_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,10 @@ class ScaleService extends ChangeNotifier {
   var _count = 0;
 
   DateTime t1 = DateTime.now();
+
+  SettingsService? _settingsService;
+
+  EspressoMachineService? _machineService;
 
   Stream<WeightMeassurement> get stream => _stream;
   Stream<int> get streamBattery => _streamBattery;
@@ -163,10 +168,30 @@ class ScaleService extends ChangeNotifier {
       if (_count & 50 == 0) log.info("Weight Hz: $ms $hz");
       t1 = t;
     }
+
+    if (_settingsService != null &&
+        _machineService != null &&
+        _settingsService!.tareOnDetectedWeight &&
+        (_machineService?.state.coffeeState == EspressoMachineState.idle ||
+            _machineService?.state.coffeeState == EspressoMachineState.sleep)) {
+      var wl = [
+        _settingsService?.tareOnWeight1,
+        _settingsService?.tareOnWeight2,
+        _settingsService?.tareOnWeight3,
+        _settingsService?.tareOnWeight4
+      ];
+      for (var w in wl) {
+        if (_weight + 0.1 > w! && _weight - 0.1 < w && w > 1) {
+          tare();
+        }
+      }
+    }
   }
 
   void setScaleInstance(AbstractScale abstractScale) {
     scale = abstractScale;
+    _settingsService = getIt<SettingsService>();
+    _machineService = getIt<EspressoMachineService>();
   }
 
   void setState(ScaleState state) {
