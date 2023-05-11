@@ -42,6 +42,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   static const _heartbeatTime = Duration(seconds: 1);
   static const List<int> _heartbeatPayload = [0x02, 0x00];
+
   static const List<int> _identPayload = [
     0x2D,
     0x2D,
@@ -60,6 +61,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     0x2D,
   ];
 
+// 0001 0102 0205 0304
   static const List<int> _configPayload = [
     9, // length
     0, // weight
@@ -138,13 +140,14 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     buffer.add(cksum1 & 0xFF);
     buffer.add(cksum2 & 0xFF);
     var l = Uint8List.fromList(buffer);
-    log.info("Sending: ${l.length} ${Helper.toHex(l)}");
+    log.info("encode Sending: ${l.length} ${Helper.toHex(l)}");
 
     return l;
   }
 
   void parsePayload(int type, List<int> payload) {
     // scaleService.setWeight((i++).toDouble());
+
     if (type != 12) log.info('Acaia: $type');
     switch (type) {
       case 12:
@@ -159,12 +162,18 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             _lastResponse = DateTime.now();
             break;
           case 8: // Tara done
+
             scaleService.setTara();
+            if (payload[0] == 0 && payload[1] == 5) {
+              var weight = decodeWeight(payload.sublist(2));
+              log.info("Tare received $weight ${Helper.toHex(Uint8List.fromList(payload))}");
+            }
+
             break;
           case 7:
-            // double time = decodeTime(payload.sublist(2));
+            double time = decodeTime(payload.sublist(2));
 
-            // log.fine("time: $time");
+            log.info("time: $time");
             break;
           case 11: // Heartbeat
             var weight = 0.0;
@@ -181,6 +190,10 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             log.fine('Acaia: 12 Subtype $subType');
             break;
         }
+
+        break;
+      case 7:
+        log.info("Tare 7 received: ${Helper.toHex(Uint8List.fromList(payload))}");
 
         break;
       // General Status including battery
@@ -217,7 +230,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   void _notificationCallback(List<int> data) {
     var notification = data;
     commandBuffer.addAll(notification);
-
+    // log.info("received: ${Helper.toHex(Uint8List.fromList(commandBuffer))}");
     // remove broken half commands
     if (commandBuffer.length > 2 && (commandBuffer[0] != header1 || commandBuffer[1] != header2)) {
       commandBuffer.clear();
@@ -230,7 +243,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     }
   }
 
-  Future<void> _sendHeatbeat() async {
+  Future<void> _sendHeartbeat() async {
     if (_heartBeatTimer == null) return;
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
@@ -244,21 +257,23 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
     var now = DateTime.now().difference(_lastResponse).inMilliseconds;
 
-    if (now > 400) {
+    if (now > 1400) {
       log.info('Last Heartbeat $now');
       log.severe('Init disconnection');
       _onStateChange(DeviceConnectionState.disconnected);
       // _characteristicsSubscription!.cancel();
       // registerForNotifications();
       // _sendConfig();
+      return;
     }
-    return;
-    try {
-      log.info("Heartbeat");
-      await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x00, _heartbeatPayload));
-    } catch (e) {
-      log.severe("Heartbeat failure $e");
-    }
+
+    // try {
+    //   log.info("Heartbeat");
+    //   // await _sendIdent();
+    //   await connection.writeCharacteristicWithResponse(characteristic, value: encode(0x00, _heartbeatPayload));
+    // } catch (e) {
+    //   log.severe("Heartbeat failure $e");
+    // }
   }
 
   Future<void> _sendIdent() async {
@@ -299,7 +314,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     try {
       await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
 
-      await _sendConfig();
+      // await _sendConfig();
       log.info("tara send Ok");
     } catch (e) {
       log.severe("tara failed $e");
@@ -327,34 +342,49 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
         log.info('Connected');
         _lastResponse = DateTime.now();
         scaleService.setState(ScaleState.connected);
-        registerForNotifications();
-        await Future.delayed(
-          const Duration(milliseconds: 1000),
-          () async {
-            try {
-              if (_state == DeviceConnectionState.connected) await _sendIdent();
-            } catch (e) {
-              log.severe("Error in config scale $e");
-            }
-          },
-        );
 
-        await Future.delayed(
-          const Duration(seconds: 1),
-          () async {
-            try {
-              if (_state == DeviceConnectionState.connected) await _sendConfig();
-            } catch (e) {
-              log.severe("Error in config scale $e");
-            }
-          },
-        );
-        await Future.delayed(
-          const Duration(seconds: 10),
+        await _sendIdent();
+        await _sendConfig();
+        registerForNotifications();
+        // Future.delayed(
+        //   const Duration(milliseconds: 10),
+        //   () async {
+        //     try {
+        //       if (_state == DeviceConnectionState.connected) {
+        //         await _sendIdent();
+        //       }
+        //     } catch (e) {
+        //       log.severe("Error in config scale $e");
+        //     }
+        //   },
+        // );
+
+        // Future.delayed(
+        //   const Duration(milliseconds: 50),
+        //   () async {
+        //     try {
+        //       if (_state == DeviceConnectionState.connected) await _sendConfig();
+        //     } catch (e) {
+        //       log.severe("Error in config scale $e");
+        //     }
+        //   },
+        // );
+        // Future.delayed(
+        //   const Duration(milliseconds: 1),
+        //   () async {
+        //     try {
+        //       registerForNotifications();
+        //     } catch (e) {
+        //       log.severe("Error in config scale $e");
+        //     }
+        //   },
+        // );
+        Future.delayed(
+          const Duration(seconds: 2),
           () {
             log.info("Heartbeat watchdog started");
             if (_state == DeviceConnectionState.connected)
-              _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+              _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeartbeat());
             //
           },
         );
