@@ -16,7 +16,7 @@ class SmartchefScale extends ChangeNotifier implements AbstractScale {
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      useLongCharacteristics() ? Uuid.parse('0000ffb0-0000-1000-8000-00805f9b34fb') : Uuid.parse('ffb0');
+      useLongCharacteristics() ? Uuid.parse('0000fff0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
   // ignore: non_constant_identifier_names
   static Uuid DataUUID =
       useLongCharacteristics() ? Uuid.parse('0000fff1-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
