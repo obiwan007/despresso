@@ -122,4 +122,42 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
         return;
     }
   }
+
+  @override
+  Future<void> timer(TimerMode start) async {
+    try {
+      switch (start) {
+        case TimerMode.reset:
+          await resetTimer();
+          break;
+        case TimerMode.start:
+          await resetTimer();
+          await startTimer();
+          break;
+        case TimerMode.stop:
+          await stopTimer();
+          break;
+      }
+    } catch (e) {
+      log.severe("timer failed $e");
+    }
+  }
+
+  @override
+  Future<void> beep() {
+    // TODO: implement beep
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> display(DisplayMode start) {
+    // TODO: implement display
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> power(PowerMode start) {
+    // TODO: implement power
+    throw UnimplementedError();
+  }
 }

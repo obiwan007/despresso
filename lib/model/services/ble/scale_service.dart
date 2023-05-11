@@ -86,6 +86,46 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
+  Future<void> timer(TimerMode startMode) async {
+    if (_state == ScaleState.connected) {
+      try {
+        await scale?.timer(startMode);
+      } catch (e) {
+        log.info("Timer not implemented $e");
+      }
+    }
+  }
+
+  Future<void> display(DisplayMode mode) async {
+    if (_state == ScaleState.connected) {
+      try {
+        await scale?.display(mode);
+      } catch (e) {
+        log.info("Display not implemented $e");
+      }
+    }
+  }
+
+  Future<void> power(PowerMode mode) async {
+    if (_state == ScaleState.connected) {
+      try {
+        await scale?.power(mode);
+      } catch (e) {
+        log.info("Power not implemented $e");
+      }
+    }
+  }
+
+  Future<void> beep() async {
+    if (_state == ScaleState.connected) {
+      try {
+        await scale?.beep();
+      } catch (e) {
+        log.info("Beep not implemented $e");
+      }
+    }
+  }
+
   void setTara() {
     log.info("Tara done");
     averaging.clear();

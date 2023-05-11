@@ -77,6 +77,7 @@ enum SettingKeys {
   recordPrePouring,
   savePrePouring,
   screensaverShowClock,
+  scaleStartTimer,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -283,6 +284,9 @@ class SettingsService extends ChangeNotifier {
   /// save the shot including pre pouring states.
   bool get savePrePouring => Settings.getValue<bool>(SettingKeys.savePrePouring.name) ?? true;
   set savePrePouring(bool value) => Settings.setValue<bool>(SettingKeys.savePrePouring.name, value);
+
+  bool get scaleStartTimer => Settings.getValue<bool>(SettingKeys.scaleStartTimer.name) ?? true;
+  set scaleStartTimer(bool value) => Settings.setValue<bool>(SettingKeys.scaleStartTimer.name, value);
 
   void notifyDelayed() {
     Future.delayed(

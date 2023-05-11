@@ -74,7 +74,7 @@ dependencies:
   sentry_flutter: ^7.4.0
   feedback_sentry: ^2.4.0
   package_info_plus: ^3.0.3
-  intl: ^0.17.0
+  intl: ^0.18.0
   csv: ^5.0.1
   dropdown_button2: ^1.9.3
   flutter_spinbox: ^0.12.0

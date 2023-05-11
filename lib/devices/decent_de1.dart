@@ -478,8 +478,8 @@ class DE1 extends ChangeNotifier implements IDe1 {
 
   void _waterLevelNotification(ByteData value) {
     try {
-      var waterlevel = value.getUint16(0);
-      var waterThreshold = value.getUint16(2);
+      var waterlevel = value.getUint16(0, Endian.big);
+      var waterThreshold = value.getUint16(2, Endian.big);
       service.setWaterLevel(WaterLevel(waterlevel, waterThreshold));
     } catch (e) {
       log.severe("waternotify: $e");

@@ -72,6 +72,9 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   StreamSubscription<List<int>>? _characteristicsSubscription;
   DeviceCommunication connection;
+
+  int _sequence = 0;
+
   AcaiaScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
@@ -311,5 +314,52 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       default:
         return;
     }
+  }
+
+  @override
+  Future<void> timer(TimerMode start) async {
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+    try {
+      switch (start) {
+        case TimerMode.reset:
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 1]));
+          break;
+        case TimerMode.start:
+          // await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0d, [1]));
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 1]));
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 0]));
+          break;
+        case TimerMode.stop:
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 2]));
+          break;
+      }
+      // await _sendConfig();
+      log.info("timer send Ok $start");
+    } catch (e) {
+      log.severe("timer failed $e");
+    }
+  }
+
+  @override
+  Future<void> beep() {
+    // TODO: implement beep
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> display(DisplayMode start) {
+    // TODO: implement display
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> power(PowerMode start) {
+    // TODO: implement power
+    throw UnimplementedError();
   }
 }

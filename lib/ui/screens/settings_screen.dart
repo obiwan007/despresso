@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/logger_util.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
@@ -141,16 +143,142 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     title: S.of(context).screenSettingsSpecialBluetoothDevices,
                     children: [
                       SwitchSettingsTile(
-                        leading: const Icon(Icons.settings_remote),
+                        leading: const Icon(Icons.monitor_weight),
                         settingKey: SettingKeys.hasScale.name,
                         defaultValue: settingsService.hasScale,
                         title: S.of(context).screenSettingsScaleSupport,
                       ),
                       SwitchSettingsTile(
-                        leading: const Icon(Icons.settings_remote),
+                        leading: const Icon(Icons.thermostat),
                         settingKey: SettingKeys.hasSteamThermometer.name,
                         defaultValue: settingsService.hasSteamThermometer,
                         title: S.of(context).screenSettingsMilkSteamingThermometerSupport,
+                      ),
+                    ],
+                  ),
+                  SettingsGroup(
+                    title: "Scales",
+                    children: [
+                      ExpandableSettingsTile(
+                        title: "Testing",
+                        subtitle: "Testing features of scales",
+                        expanded: false,
+                        children: [
+                          SettingsContainer(
+                            leftPadding: 16,
+                            children: [
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 150, child: Text("Timer")),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.timer(TimerMode.start);
+                                              },
+                                              child: Text("Start")),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.timer(TimerMode.stop);
+                                              },
+                                              child: Text("Stop")),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.timer(TimerMode.reset);
+                                              },
+                                              child: Text("Reset")),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 150, child: Text("Displaymode")),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.display(DisplayMode.on);
+                                              },
+                                              child: Text("On")),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.display(DisplayMode.off);
+                                              },
+                                              child: Text("Off")),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 150, child: Text("Powermode")),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.power(PowerMode.on);
+                                              },
+                                              child: Text("On")),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.power(PowerMode.off);
+                                              },
+                                              child: Text("Off")),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.power(PowerMode.sleep);
+                                              },
+                                              child: Text("Sleep")),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 150, child: Text("Tare")),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.tare();
+                                              },
+                                              child: Text("Tare")),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 150, child: Text("Beep")),
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                var scaleService = getIt<ScaleService>();
+                                                scaleService.beep();
+                                              },
+                                              child: Text("Beep")),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -197,6 +325,12 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     enabledLabel: S.of(context).enabled,
                     disabledLabel: S.of(context).disabled,
                     onChange: (value) {},
+                  ),
+                  SwitchSettingsTile(
+                    leading: const Icon(Icons.timer),
+                    settingKey: SettingKeys.scaleStartTimer.name,
+                    defaultValue: settingsService.scaleStartTimer,
+                    title: "Autostart timer on scale during puring",
                   ),
                   SwitchSettingsTile(
                     settingKey: SettingKeys.steamHeaterOff.name,

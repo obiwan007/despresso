@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_decent_de1.dart';
+import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
@@ -28,6 +29,299 @@ import '../../shotstate.dart';
 import '../state/profile_service.dart';
 import 'scale_service.dart';
 
+// Map to find volume from height of mm probe.
+// spreadsheet to calculate this calculated from CAD, from Mark Kelly, from decent de1app
+const waterMap = [
+  0,
+  16,
+  43,
+  70,
+  97,
+  124,
+  151,
+  179,
+  206,
+  233,
+  261,
+  288,
+  316,
+  343,
+  371,
+  398,
+  426,
+  453,
+  481,
+  509,
+  537,
+  564,
+  592,
+  620,
+  648,
+  676,
+  704,
+  732,
+  760,
+  788,
+  816,
+  844,
+  872,
+  900,
+  929,
+  957,
+  985,
+  1013,
+  1042,
+  1070,
+  1104,
+  1138,
+  1172,
+  1207,
+  1242,
+  1277,
+  1312,
+  1347,
+  1382,
+  1417,
+  1453,
+  1488,
+  1523,
+  1559,
+  1594,
+  1630,
+  1665,
+  1701,
+  1736,
+  1772,
+  1808,
+  1843,
+  1879,
+  1915,
+  1951,
+  1986,
+  2022,
+  2058,
+];
+
+// import 'package:spline/spline.dart';
+
+// void main() {
+//   final x = [
+//     0,
+//     1,
+//     2,
+//     3,
+//     4,
+//     5,
+//     6,
+//     7,
+//     8,
+//     9,
+//     10,
+//     11,
+//     12,
+//     13,
+//     14,
+//     15,
+//     16,
+//     17,
+//     18,
+//     19,
+//     20,
+//     21,
+//     22,
+//     23,
+//     24,
+//     25,
+//     26,
+//     27,
+//     28,
+//     29,
+//     30,
+//     31,
+//     32,
+//     33,
+//     34,
+//     35,
+//     36,
+//     37,
+//     38,
+//     39,
+//     40,
+//     41,
+//     42,
+//     43,
+//     44,
+//     45,
+//     46,
+//     47,
+//     48,
+//     49,
+//     50,
+//     51,
+//     52,
+//     53,
+//     54,
+//     55,
+//     56,
+//     57,
+//     58,
+//     59,
+//     60,
+//     61,
+//     62,
+//     63,
+//     64,
+//     65,
+//     66,
+//     67,
+//   ];
+
+//   final y = [
+//     0,
+//     16,
+//     43,
+//     70,
+//     97,
+//     124,
+//     151,
+//     179,
+//     206,
+//     233,
+//     261,
+//     288,
+//     316,
+//     343,
+//     371,
+//     398,
+//     426,
+//     453,
+//     481,
+//     509,
+//     537,
+//     564,
+//     592,
+//     620,
+//     648,
+//     676,
+//     704,
+//     732,
+//     760,
+//     788,
+//     816,
+//     844,
+//     872,
+//     900,
+//     929,
+//     957,
+//     985,
+//     1013,
+//     1042,
+//     1070,
+//     1104,
+//     1138,
+//     1172,
+//     1207,
+//     1242,
+//     1277,
+//     1312,
+//     1347,
+//     1382,
+//     1417,
+//     1453,
+//     1488,
+//     1523,
+//     1559,
+//     1594,
+//     1630,
+//     1665,
+//     1701,
+//     1736,
+//     1772,
+//     1808,
+//     1843,
+//     1879,
+//     1915,
+//     1951,
+//     1986,
+//     2022,
+//     2058,
+//   ];
+
+//   final coefficients = Spline.cubic(x, y);
+//   print(coefficients);
+// }
+
+// x = [
+//   0,
+//   1,
+//   2,
+//   3,
+//   4,
+//   5,
+//   6,
+//   7,
+//   8,
+//   9,
+//   10,
+//   11,
+//   12,
+//   13,
+//   14,
+//   15,
+//   16,
+//   17,
+//   18,
+//   19,
+//   20,
+//   21,
+//   22,
+//   23,
+//   24,
+//   25,
+//   26,
+//   27,
+//   28,
+//   29,
+//   30,
+//   31,
+//   32,
+//   33,
+//   34,
+//   35,
+//   36,
+//   37,
+//   38,
+//   39,
+//   40,
+//   41,
+//   42,
+//   43,
+//   44,
+//   45,
+//   46,
+//   47,
+//   48,
+//   49,
+//   50,
+//   51,
+//   52,
+//   53,
+//   54,
+//   55,
+//   56,
+//   57,
+//   58,
+//   59,
+//   60,
+//   61,
+//   62,
+//   63,
+//   64,
+//   65,
+//   66,
+//   67,
+// ];
+
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
 
@@ -39,9 +333,20 @@ class WaterLevel {
     return l * 100 ~/ 8300;
   }
 
+  int getLevelMM() {
+    var l = waterLevel;
+    return (l / 256).round();
+  }
+
   int getLevelML() {
-    var l = waterLevel - waterLimit;
-    return (l / 10.0).round();
+    // Offset because probe starts above water.
+    var l = getLevelMM() - 6;
+    return l > 0 && l < waterMap.length ? waterMap[l] : 0;
+  }
+
+  int getLevelRefill() {
+    var l = (waterLimit / 256).round();
+    return l > 0 && l < waterMap.length ? waterMap[l] : 0;
   }
 }
 
@@ -341,6 +646,9 @@ class EspressoMachineService extends ChangeNotifier {
       if (settingsService.shotAutoTare) {
         scaleService.tare();
       }
+      if (settingsService.scaleStartTimer) {
+        scaleService.timer(TimerMode.reset);
+      }
     }
     if (state == EspressoMachineState.idle &&
         scaleService.state == ScaleState.disconnected &&
@@ -514,6 +822,10 @@ class EspressoMachineService extends ChangeNotifier {
       isPouring = true;
       _previousShot = null;
       _newestShot = null;
+
+      if (settingsService.scaleStartTimer) {
+        scaleService.timer(TimerMode.start);
+      }
     } else if (state.coffeeState == EspressoMachineState.espresso &&
         lastSubstate != state.subState &&
         state.subState != "pour") {
@@ -776,6 +1088,9 @@ class EspressoMachineService extends ChangeNotifier {
   void triggerEndOfShot() {
     log.info("Idle mode initiated because of goal reached");
 
+    if (settingsService.scaleStartTimer) {
+      scaleService.timer(TimerMode.stop);
+    }
     de1?.requestState(De1StateEnum.idle);
     // Future.delayed(const Duration(milliseconds: 5000), () {
     // log.info("Idle mode initiated finished", error: {DateTime.now()});
