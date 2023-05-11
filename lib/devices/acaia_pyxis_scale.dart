@@ -407,24 +407,48 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  Future<void> timer(bool start) async {
+  Future<void> timer(TimerMode start) async {
     final characteristic = QualifiedCharacteristic(
         serviceId: ServiceUUID, characteristicId: characteristicCommandUUID, deviceId: device.id);
     try {
-      if (start) {
-        // await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0d, [1]));
-        await connection.writeCharacteristicWithoutResponse(characteristic,
-            value: encode(0x0d, [(_sequence++ & 0xff), 1]));
-        await connection.writeCharacteristicWithoutResponse(characteristic,
-            value: encode(0x0d, [(_sequence++ & 0xff), 0]));
-      } else {
-        await connection.writeCharacteristicWithoutResponse(characteristic,
-            value: encode(0x0d, [(_sequence++ & 0xff), 2]));
+      switch (start) {
+        case TimerMode.reset:
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 1]));
+          break;
+        case TimerMode.start:
+          // await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0d, [1]));
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 1]));
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 0]));
+          break;
+        case TimerMode.stop:
+          await connection.writeCharacteristicWithoutResponse(characteristic,
+              value: encode(0x0d, [(_sequence++ & 0xff), 2]));
+          break;
       }
-      // await _sendConfig();
       log.info("timer send Ok $start");
     } catch (e) {
       log.severe("timer failed $e");
     }
+  }
+
+  @override
+  Future<void> beep() {
+    // TODO: implement beep
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> display(DisplayMode start) {
+    // TODO: implement display
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> power(PowerMode start) {
+    // TODO: implement power
+    throw UnimplementedError();
   }
 }

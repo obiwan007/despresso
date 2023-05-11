@@ -177,8 +177,26 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  Future<void> timer(bool start) {
+  Future<void> timer(TimerMode start) {
     // TODO: implement timer
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> beep() {
+    // TODO: implement beep
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> display(DisplayMode start) {
+    // TODO: implement display
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> power(PowerMode start) {
+    // TODO: implement power
     throw UnimplementedError();
   }
 }

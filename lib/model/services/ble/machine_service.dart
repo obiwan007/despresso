@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_decent_de1.dart';
+import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
@@ -645,6 +646,9 @@ class EspressoMachineService extends ChangeNotifier {
       if (settingsService.shotAutoTare) {
         scaleService.tare();
       }
+      if (settingsService.scaleStartTimer) {
+        scaleService.timer(TimerMode.reset);
+      }
     }
     if (state == EspressoMachineState.idle &&
         scaleService.state == ScaleState.disconnected &&
@@ -818,7 +822,10 @@ class EspressoMachineService extends ChangeNotifier {
       isPouring = true;
       _previousShot = null;
       _newestShot = null;
-      scaleService.timer(true);
+
+      if (settingsService.scaleStartTimer) {
+        scaleService.timer(TimerMode.start);
+      }
     } else if (state.coffeeState == EspressoMachineState.espresso &&
         lastSubstate != state.subState &&
         state.subState != "pour") {
@@ -1080,7 +1087,10 @@ class EspressoMachineService extends ChangeNotifier {
 
   void triggerEndOfShot() {
     log.info("Idle mode initiated because of goal reached");
-    scaleService.timer(false);
+
+    if (settingsService.scaleStartTimer) {
+      scaleService.timer(TimerMode.stop);
+    }
     de1?.requestState(De1StateEnum.idle);
     // Future.delayed(const Duration(milliseconds: 5000), () {
     // log.info("Idle mode initiated finished", error: {DateTime.now()});
