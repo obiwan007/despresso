@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'dart:typed_data';

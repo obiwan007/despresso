@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -6,12 +5,8 @@ import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
-import 'package:flutter_spinbox/material.dart';
 import 'package:logging/logging.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../model/services/ble/machine_service.dart';
-import '../../service_locator.dart';
 
 class DFlowEditScreen extends StatefulWidget {
   De1ShotProfile profile;
@@ -409,7 +404,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
               height: 210,
               child: Column(
                 children: [
-                  new GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       showHelp("pour_stop");
                     },

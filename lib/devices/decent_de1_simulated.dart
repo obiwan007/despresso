@@ -113,10 +113,13 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
 
   int firmware = 0;
 
+  @override
   int usbChargerMode = 0;
 
+  @override
   double steamFlow = 0.5;
 
+  @override
   int steamPurgeMode = 0;
 
   double flowEstimation = 0;
@@ -130,7 +133,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
   bool ghcActive = false;
 
   De1StateEnum _state = De1StateEnum.busy;
-  int _subState = 0;
+  final int _subState = 0;
 
   double _sampleTime = 0;
   double _setMixTemp = 89;
@@ -184,7 +187,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
       } catch (e) {}
     });
     Timer(
-      Duration(seconds: 1),
+      const Duration(seconds: 1),
       () {
         service.scaleService.setWeight(0.1);
         requestState(De1StateEnum.idle);
@@ -256,7 +259,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
   Future<void> setIdleState() async {
     log.info('idleState Requested');
 
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(const Duration(milliseconds: 10));
     requestState(De1StateEnum.idle);
   }
 
@@ -275,7 +278,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
   @override
   Future<void> requestState(De1StateEnum state) async {
     log.info("RequestState $state");
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(const Duration(milliseconds: 10));
     _state = state;
     _stateNotification();
   }
@@ -368,7 +371,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     bytes.setUint32(0, data, Endian.little);
 
     steamFlow = newFlow;
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
@@ -376,14 +379,14 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     ByteData bytes = ByteData(4);
     var data = (newTimeout * 10).toInt();
     bytes.setUint32(0, data, Endian.little);
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
   Future<void> setFanThreshhold(int t) {
     ByteData bytes = ByteData(4);
     bytes.setUint32(0, t, Endian.little);
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
@@ -392,7 +395,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     bytes.setUint32(0, (newFlow * 100).toInt(), Endian.little);
 
     steamFlow = newFlow;
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
@@ -407,7 +410,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     bytes.setUint32(0, t, Endian.little);
 
     usbChargerMode = t;
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
@@ -416,7 +419,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     bytes.setUint32(0, t, Endian.little);
 
     steamPurgeMode = t;
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
@@ -487,6 +490,6 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
     // TODO: implement writeWithResult
     log.info("write");
-    return Future.delayed(Duration(milliseconds: 10));
+    return Future.delayed(const Duration(milliseconds: 10));
   }
 }

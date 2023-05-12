@@ -160,7 +160,7 @@ class _MachineFooterState extends State<MachineFooter> {
                           ),
                         ],
                       )
-                    : Row();
+                    : const Row();
               }),
         ],
       ),
@@ -355,7 +355,7 @@ class ScaleFooter extends StatelessWidget {
                                                         style: Theme.of(context).textTheme.labelSmall,
                                                       ),
                                                     )
-                                                  : Text(""),
+                                                  : const Text(""),
                                         ),
                                       ),
                                       machineService.state.coffeeState == EspressoMachineState.idle ||
@@ -376,7 +376,7 @@ class ScaleFooter extends StatelessWidget {
                                                     settingsService.targetEspressoWeight = r.adjustedWeight;
                                                   }
                                                 },
-                                                child: Text("set-in"),
+                                                child: const Text("set-in"),
                                               ),
                                             )
                                           : SizedBox(

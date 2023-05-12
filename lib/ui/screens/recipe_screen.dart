@@ -11,11 +11,8 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/screens/recipe_edit.dart';
-import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
-import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
@@ -63,7 +60,7 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 
   machineStateListener() {
-    setState(() => {currentState = machineService.state.coffeeState});
+    setState(() => currentState = machineService.state.coffeeState);
     // machineService.de1?.setIdleState();
   }
 
@@ -302,8 +299,8 @@ class RecipeDetails extends StatefulWidget {
 
 class _RecipeDetailsState extends State<RecipeDetails> {
   final log = Logger('RecipeDetails');
-  String _ratio1 = "0";
-  String _ratio2 = "0";
+  final String _ratio1 = "0";
+  final String _ratio2 = "0";
 
   late ScreensaverService _screensaver;
 
@@ -351,7 +348,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 _screensaver.resume();
                 widget.coffeeService.setSelectedRecipe(widget.coffeeService.currentRecipe!.id);
               },
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
             ),
           ],
         ),

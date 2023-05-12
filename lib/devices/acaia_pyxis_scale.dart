@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'dart:math' show pow;
 import 'dart:typed_data';
 
@@ -441,7 +440,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           _characteristicsSubscription?.cancel();
 
           _deviceListener.cancel();
-          Future.delayed(Duration(seconds: 2), () => notifyListeners());
+          Future.delayed(const Duration(seconds: 2), () => notifyListeners());
         } catch (e) {
           log.severe("Error shutting down $e");
         }

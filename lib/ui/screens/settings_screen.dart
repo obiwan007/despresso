@@ -117,10 +117,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                               ),
                             ),
                             if (bleService.isScanning)
-                              Row(
+                              const Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   SizedBox(
                                     width: 30,
                                     height: 30,
@@ -173,7 +173,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      SizedBox(width: 150, child: Text("Timer")),
+                                      const SizedBox(width: 150, child: Text("Timer")),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -181,26 +181,26 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.timer(TimerMode.start);
                                               },
-                                              child: Text("Start")),
+                                              child: const Text("Start")),
                                           ElevatedButton(
                                               onPressed: () {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.timer(TimerMode.stop);
                                               },
-                                              child: Text("Stop")),
+                                              child: const Text("Stop")),
                                           ElevatedButton(
                                               onPressed: () {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.timer(TimerMode.reset);
                                               },
-                                              child: Text("Reset")),
+                                              child: const Text("Reset")),
                                         ],
                                       ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 150, child: Text("Displaymode")),
+                                      const SizedBox(width: 150, child: Text("Displaymode")),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -208,20 +208,20 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.display(DisplayMode.on);
                                               },
-                                              child: Text("On")),
+                                              child: const Text("On")),
                                           ElevatedButton(
                                               onPressed: () {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.display(DisplayMode.off);
                                               },
-                                              child: Text("Off")),
+                                              child: const Text("Off")),
                                         ],
                                       ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 150, child: Text("Powermode")),
+                                      const SizedBox(width: 150, child: Text("Powermode")),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -229,26 +229,26 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.power(PowerMode.on);
                                               },
-                                              child: Text("On")),
+                                              child: const Text("On")),
                                           ElevatedButton(
                                               onPressed: () {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.power(PowerMode.off);
                                               },
-                                              child: Text("Off")),
+                                              child: const Text("Off")),
                                           ElevatedButton(
                                               onPressed: () {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.power(PowerMode.sleep);
                                               },
-                                              child: Text("Sleep")),
+                                              child: const Text("Sleep")),
                                         ],
                                       ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 150, child: Text("Tare")),
+                                      const SizedBox(width: 150, child: Text("Tare")),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -256,14 +256,14 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.tare();
                                               },
-                                              child: Text("Tare")),
+                                              child: const Text("Tare")),
                                         ],
                                       ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 150, child: Text("Beep")),
+                                      const SizedBox(width: 150, child: Text("Beep")),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -271,7 +271,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.beep();
                                               },
-                                              child: Text("Beep")),
+                                              child: const Text("Beep")),
                                         ],
                                       ),
                                     ],
@@ -320,10 +320,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                   Text("  ${(snapshot.data as WeightMeassurement).weight} g"),
                                 ],
                               ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
-                                SizedBox(width: w, child: Text("Container 1 (i.E. weight cup):")),
+                                const SizedBox(width: w, child: Text("Container 1 (i.E. weight cup):")),
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight1}")),
                                 SizedBox(
                                   width: 100,
@@ -344,7 +344,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             ),
                             Row(
                               children: [
-                                SizedBox(width: w, child: Text("Container 2 (i.E. Espresso Cup):")),
+                                const SizedBox(width: w, child: Text("Container 2 (i.E. Espresso Cup):")),
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight2}")),
                                 SizedBox(
                                   width: 100,
@@ -365,7 +365,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             ),
                             Row(
                               children: [
-                                SizedBox(width: w, child: Text("Container 3 (i.E. Steam Mug):")),
+                                const SizedBox(width: w, child: Text("Container 3 (i.E. Steam Mug):")),
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight3}")),
                                 SizedBox(
                                   width: 100,
@@ -386,7 +386,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             ),
                             Row(
                               children: [
-                                SizedBox(width: w, child: Text("Container 4 (i.E. Steam Mug):")),
+                                const SizedBox(width: w, child: Text("Container 4 (i.E. Steam Mug):")),
                                 SizedBox(width: 80, child: Text("${settingsService.tareOnWeight4}")),
                                 SizedBox(
                                   width: 100,
@@ -869,8 +869,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         leading: const Icon(Icons.settings_remote),
                         settingKey: SettingKeys.webServer.name,
                         title: S.of(context).screenSettingsEnableMiniWebsiteWithPort8888,
-                        subtitle: S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen +
-                            "http://$ownIpAdress:8888",
+                        subtitle: "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen}http://$ownIpAdress:8888",
                         onChange: (value) {
                           settingsService.notifyDelayed();
                         },
