@@ -376,7 +376,7 @@ class ScaleFooter extends StatelessWidget {
                                                     settingsService.targetEspressoWeight = r.adjustedWeight;
                                                   }
                                                 },
-                                                child: const Text("set-in"),
+                                                child: const FittedBox(child: Text("set-in")),
                                               ),
                                             )
                                           : SizedBox(
