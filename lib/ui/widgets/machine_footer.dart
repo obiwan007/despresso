@@ -309,8 +309,8 @@ class ScaleFooter extends StatelessWidget {
                               if (machineService.scaleService.state != ScaleState.connecting &&
                                   machineService.scaleService.state == ScaleState.connected)
                                 OutlinedButton(
-                                  onPressed: () {
-                                    machineService.scaleService.tare();
+                                  onPressed: () async {
+                                    await machineService.scaleService.tare();
                                   },
                                   child: Text(S.of(context).footerTare),
                                 ),

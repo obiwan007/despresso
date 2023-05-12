@@ -605,4 +605,10 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   @override
   ble.BleStatus get status => _status;
+
+  @override
+  Future<int> requestMtu({required String deviceId, required int mtu}) {
+    // TODO: implement requestMtu
+    return Future.value(0);
+  }
 }

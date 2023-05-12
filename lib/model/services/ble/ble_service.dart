@@ -89,7 +89,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
       scaleService.setState(ScaleState.connecting);
     }
     _subscription =
-        flutterReactiveBle.scanForDevices(withServices: [], scanMode: ble.ScanMode.lowLatency).listen((device) {
+        flutterReactiveBle.scanForDevices(withServices: [], scanMode: ble.ScanMode.lowLatency).listen((device) async {
       deviceScanListener(device);
     }, onError: (err) {
       // ignore: prefer_interpolation_to_compose_strings
@@ -222,6 +222,11 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
   Future<void> writeCharacteristicWithoutResponse(ble.QualifiedCharacteristic characteristic,
       {required List<int> value}) {
     return flutterReactiveBle.writeCharacteristicWithoutResponse(characteristic, value: value);
+  }
+
+  @override
+  Future<int> requestMtu({required String deviceId, required int mtu}) {
+    return flutterReactiveBle.requestMtu(deviceId: deviceId, mtu: mtu);
   }
 
   @override

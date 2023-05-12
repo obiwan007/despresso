@@ -638,16 +638,16 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
-  void setState(EspressoMachineState state) {
+  Future<void> setState(EspressoMachineState state) async {
     _state.coffeeState = state;
 
     if (lastState != state &&
         (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water)) {
       if (settingsService.shotAutoTare) {
-        scaleService.tare();
+        await scaleService.tare();
       }
       if (settingsService.scaleStartTimer) {
-        scaleService.timer(TimerMode.reset);
+        await scaleService.timer(TimerMode.reset);
       }
     }
     if (state == EspressoMachineState.idle &&
