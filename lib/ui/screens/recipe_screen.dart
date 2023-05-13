@@ -342,12 +342,21 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               onSelected: (SelectedMenu item) async {
                 switch (item) {
                   case SelectedMenu.add:
-                    widget.coffeeService.addRecipe(
+                    var id = widget.coffeeService.addRecipe(
                         name:
                             "${widget.profileService.currentProfile?.title ?? "no profile selected"}/${widget.coffeeService.currentCoffee?.name ?? "No bean selected"}",
                         coffeeId: widget.coffeeService.selectedCoffeeId,
                         profileId: widget.profileService.currentProfile?.id ?? "Default");
-
+                    _screensaver.pause();
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RecipeEdit(
+                                id,
+                                title: "Add Recipe",
+                              )),
+                    );
+                    _screensaver.resume();
                     break;
                   case SelectedMenu.edit:
                     _screensaver.pause();

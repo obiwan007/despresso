@@ -225,8 +225,11 @@ class CoffeeService extends ChangeNotifier {
     selectedRecipeId = id;
     settings.selectedRecipe = id;
     var recipe = recipeBox.get(id);
+    if (recipe == null) {
+      return;
+    }
 
-    setSelectedCoffee(recipe!.coffee.targetId);
+    setSelectedCoffee(recipe.coffee.targetId);
 
     var profileService = getIt<ProfileService>();
     var machineService = getIt<EspressoMachineService>();
@@ -239,7 +242,9 @@ class CoffeeService extends ChangeNotifier {
     settings.steamHeaterOff = !recipe.useSteam;
     profileService.setProfileFromId(recipe.profileId);
     try {
-      await machineService.uploadProfile(profileService.currentProfile!);
+      if (profileService.currentProfile != null) {
+        await machineService.uploadProfile(profileService.currentProfile!);
+      }
       await machineService.updateSettings();
     } catch (e) {
       log.severe("Profile could not be sent: $e");
@@ -288,7 +293,7 @@ class CoffeeService extends ChangeNotifier {
 // code to return members
   }
 
-  void addRecipe({required String name, required int coffeeId, required String profileId}) {
+  int addRecipe({required String name, required int coffeeId, required String profileId}) {
     var recipe = Recipe();
     recipe.name = name;
     recipe.coffee.targetId = coffeeId;
@@ -301,6 +306,7 @@ class CoffeeService extends ChangeNotifier {
     settings.notifyListeners();
     notifyListeners();
     _controllerRecipe.add(getRecipes());
+    return id;
   }
 
   List<Recipe> getRecipes() {
