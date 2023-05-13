@@ -1,5 +1,4 @@
 import 'package:despresso/generated/l10n.dart';
-import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -42,7 +41,7 @@ class RecipeEditState extends State<RecipeEdit> {
 
   late FormGroup theForm;
 
-  RecipeEditState() {}
+  RecipeEditState();
 
   @override
   void initState() {

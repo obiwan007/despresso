@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 
 part 'data_models.g.dart';
 
-final String T_MsgType_REQ = "REQ";
+const String T_MsgType_REQ = "REQ";
 
 @JsonSerializable()
 class T_Request {

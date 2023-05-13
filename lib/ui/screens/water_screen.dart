@@ -4,7 +4,6 @@ import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:despresso/generated/l10n.dart';
 
 import '../../model/shotstate.dart';
@@ -43,7 +42,7 @@ class WaterScreenState extends State<WaterScreen> {
   }
 
   machineStateListener() {
-    setState(() => {currentState = machineService.state.coffeeState});
+    setState(() => currentState = machineService.state.coffeeState);
     // machineService.de1?.setIdleState();
   }
 

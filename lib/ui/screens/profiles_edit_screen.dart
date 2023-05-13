@@ -4,7 +4,6 @@ import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:flutter_spinbox/material.dart';
 import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -355,7 +354,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Text(
-              "${(frame?.frameLen.toStringAsFixed(1) ?? 0)}",
+              "${(frame.frameLen.toStringAsFixed(1) ?? 0)}",
               style: style1,
             ),
             Text(
@@ -374,11 +373,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               child: FittedBox(
                 child: Text(
                   "Pres.",
-                  style: (frame?.pump == "pressure") ? style1 : style2,
+                  style: (frame.pump == "pressure") ? style1 : style2,
                 ),
               ),
             ),
-            Text("${(frame?.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
+            Text("${(frame.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
                 style: (frame.pump == "pressure") ? style1 : style2),
             Text("bar", style: (frame.pump == "pressure") ? style3 : null),
           ],

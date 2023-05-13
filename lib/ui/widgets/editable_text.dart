@@ -50,9 +50,7 @@ class _IconEditableTextState extends State<IconEditableText> {
       IconButton(
         icon: const Icon(Icons.edit),
         onPressed: () {
-          setState(() => {
-                isEditable = true,
-              });
+          setState(() => isEditable = true,);
         },
       )
     ]);

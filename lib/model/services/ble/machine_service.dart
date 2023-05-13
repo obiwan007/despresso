@@ -16,7 +16,6 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -417,7 +416,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   EspressoMachineState lastState = EspressoMachineState.disconnected;
 
-  Battery _battery = Battery();
+  final Battery _battery = Battery();
 
   final List<int> _waterAverager = [];
 
@@ -426,7 +425,7 @@ class EspressoMachineService extends ChangeNotifier {
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
 
-  double _sampleTime = 0;
+  final double _sampleTime = 0;
 
   ShotState? _previousShot;
   ShotState? _newestShot;
@@ -638,16 +637,16 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
-  void setState(EspressoMachineState state) {
+  Future<void> setState(EspressoMachineState state) async {
     _state.coffeeState = state;
 
     if (lastState != state &&
         (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water)) {
       if (settingsService.shotAutoTare) {
-        scaleService.tare();
+        await scaleService.tare();
       }
       if (settingsService.scaleStartTimer) {
-        scaleService.timer(TimerMode.reset);
+        await scaleService.timer(TimerMode.reset);
       }
     }
     if (state == EspressoMachineState.idle &&
@@ -992,7 +991,7 @@ class EspressoMachineService extends ChangeNotifier {
           var c = 5;
           var hz = 4;
           var f = 1 / hz * 1000;
-          int ms = (f / (c + 1)).toInt();
+          int ms = f ~/ (c + 1);
 
           // if (oldShot == -1) {
           if (_newestShot != null) {
@@ -1002,7 +1001,6 @@ class EspressoMachineService extends ChangeNotifier {
           }
 
           _newestShot = ShotState.fromJson(shot.toJson());
-          ;
 
           if (_previousShot != null) {
             if (_floatingShot == null) {
@@ -1013,13 +1011,13 @@ class EspressoMachineService extends ChangeNotifier {
             var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupPressure, _previousShot!.groupPressure);
 
-            var linGP_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
+            var lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
                 _previousShot!.sampleTimeCorrected, _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
 
             var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupFlow, _previousShot!.groupFlow);
 
-            var linGF_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
+            var lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
                 _previousShot!.sampleTimeCorrected, _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
 
             var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
@@ -1043,9 +1041,9 @@ class EspressoMachineService extends ChangeNotifier {
                 // newShot.groupPressure = 1;
                 fs.sampleTimeCorrected += (t) * ms / 1000;
                 fs.groupPressure = linGP.getY(fs.sampleTimeCorrected);
-                fs.setGroupPressure = linGP_S.getY(fs.sampleTimeCorrected);
+                fs.setGroupPressure = lingpS.getY(fs.sampleTimeCorrected);
                 fs.groupFlow = linGF.getY(fs.sampleTimeCorrected);
-                fs.setGroupFlow = linGF_S.getY(fs.sampleTimeCorrected);
+                fs.setGroupFlow = lingfS.getY(fs.sampleTimeCorrected);
                 fs.flowWeight = linWF.getY(fs.sampleTimeCorrected);
                 fs.weight = scaleService.weight; //  linW.getY(fs.sampleTimeCorrected);
                 // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");

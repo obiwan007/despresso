@@ -53,10 +53,10 @@ class SelectableSteps extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     color: Colors.green,
                     alignment: Alignment.centerRight,
-                    child: Row(
+                    child: const Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: const [
+                      children: [
                         Text("Copy"),
                         Icon(
                           Icons.copy_all,
@@ -69,14 +69,14 @@ class SelectableSteps extends StatelessWidget {
                     color: Colors.red,
                     margin: const EdgeInsets.symmetric(horizontal: 15),
                     alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: Row(
                           children: [
-                            const Text("Delete"),
-                            const Icon(
+                            Text("Delete"),
+                            Icon(
                               Icons.delete,
                               color: Colors.white,
                             ),
@@ -161,9 +161,9 @@ class SelectableSteps extends StatelessWidget {
     bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
     bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
     bool isCompared = (frame.flag & De1ShotFrameClass.DoCompare) > 0;
-    String vol = "${frame.maxVol > 0 ? " or ${frame.maxVol} ml" : ""}";
-    String limitFlow = "${frame.triggerVal > 0 ? "with a pressure limit of ${frame.triggerVal} bar" : ""}";
-    String limitPressure = "${frame.triggerVal > 0 ? "with a flow limit of ${frame.triggerVal} ml/s" : ""}";
+    String vol = frame.maxVol > 0 ? " or ${frame.maxVol} ml" : "";
+    String limitFlow = frame.triggerVal > 0 ? "with a pressure limit of ${frame.triggerVal} bar" : "";
+    String limitPressure = frame.triggerVal > 0 ? "with a flow limit of ${frame.triggerVal} ml/s" : "";
     log.info("RenderFrame Test: $frame");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
