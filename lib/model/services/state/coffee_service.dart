@@ -204,6 +204,21 @@ class CoffeeService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<int> copyRecipeFromId(int id) async {
+    if (id == 0) return 0;
+
+    var recipe = recipeBox.get(id);
+    if (recipe == null) return 0;
+
+    recipe.name = recipe.name + " Copy";
+    recipe.id = 0;
+    var idNew = updateRecipe(recipe);
+
+    selectedRecipeId = idNew;
+    settings.selectedRecipe = idNew;
+    return idNew;
+  }
+
   Future<void> setSelectedRecipe(int id) async {
     if (id == 0) return;
 
@@ -315,12 +330,13 @@ class CoffeeService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateRecipe(Recipe recipe) {
-    recipeBox.put(recipe);
+  int updateRecipe(Recipe recipe) {
+    int id = recipeBox.put(recipe);
     settings.targetEspressoWeight = recipe.adjustedWeight;
     settings.targetTempCorrection = recipe.adjustedTemp;
     notifyListeners();
     _controllerRecipe.add(getRecipes());
+    return id;
   }
 
   void removeRecipe(int id) {

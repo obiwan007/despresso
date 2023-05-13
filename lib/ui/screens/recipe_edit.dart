@@ -10,8 +10,9 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class RecipeEdit extends StatefulWidget {
-  RecipeEdit(this.selectedRecipeId, {super.key});
+  RecipeEdit(this.selectedRecipeId, {super.key, this.title});
   int selectedRecipeId;
+  String? title;
 
   @override
   RecipeEditState createState() => RecipeEditState();
@@ -120,7 +121,7 @@ class RecipeEditState extends State<RecipeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).screenRecipeEditTitle),
+        title: widget.title == null ? Text(S.of(context).screenRecipeEditTitle) : Text(widget.title!),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(
