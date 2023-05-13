@@ -2,6 +2,9 @@ import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
+import 'package:despresso/ui/screens/coffee_edit.dart';
+import 'package:despresso/ui/widgets/bean_select.dart';
+import 'package:despresso/ui/widgets/profile_select.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -10,8 +13,9 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class RecipeEdit extends StatefulWidget {
-  RecipeEdit(this.selectedRecipeId, {super.key});
-  int selectedRecipeId;
+  const RecipeEdit(this.selectedRecipeId, {super.key, this.title});
+  final int selectedRecipeId;
+  final String? title;
 
   @override
   RecipeEditState createState() => RecipeEditState();
@@ -120,7 +124,7 @@ class RecipeEditState extends State<RecipeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).screenRecipeEditTitle),
+        title: widget.title == null ? Text(S.of(context).screenRecipeEditTitle) : Text(widget.title!),
         actions: <Widget>[
           ElevatedButton(
             child: const Text(
@@ -189,12 +193,61 @@ class RecipeEditState extends State<RecipeEdit> {
             ),
           ),
         ),
-
+        Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Profile", style: Theme.of(context).textTheme.labelMedium),
+                    ProfileSelect(
+                      onChanged: (p0) {
+                        _editedRecipe.profileId = p0.id;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Beans", style: Theme.of(context).textTheme.labelMedium),
+                    BeanSelect(
+                      onChanged: (coffeeId) {
+                        _editedRecipe.coffee.targetId = coffeeId;
+                        setState(() {
+                          if (coffeeId == 0) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const CoffeeEdit(0)),
+                            );
+                          } else {
+                            coffeeService.setSelectedCoffee(coffeeId);
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )),
         const SizedBox(height: 20),
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Grinder", style: Theme.of(context).textTheme.labelMedium),
               Row(
@@ -230,6 +283,7 @@ class RecipeEditState extends State<RecipeEdit> {
             child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).screenRecipeEditDosingAndWeights, style: Theme.of(context).textTheme.labelMedium),
               Row(
@@ -324,12 +378,12 @@ class RecipeEditState extends State<RecipeEdit> {
             ],
           ),
         )),
-
         const SizedBox(height: 20),
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.of(context).screenRecipeEditAdjustments, style: Theme.of(context).textTheme.labelMedium),
               Row(
@@ -364,18 +418,14 @@ class RecipeEditState extends State<RecipeEdit> {
             ],
           ),
         )),
-
         const SizedBox(height: 20),
-
         Card(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                  child:
-                      Text(S.of(context).screenRecipeEditMilkAndWater, style: Theme.of(context).textTheme.labelMedium)),
+              Text(S.of(context).screenRecipeEditMilkAndWater, style: Theme.of(context).textTheme.labelMedium),
               Row(
                 children: [
                   Text(S.of(context).screenRecipeEditUseSteam),
@@ -425,28 +475,6 @@ class RecipeEditState extends State<RecipeEdit> {
             ],
           ),
         )),
-
-        // ReactiveFormConsumer(
-        //   builder: (context, form, child) {
-        //     return ElevatedButton(
-        //       onPressed: form.valid
-        //           ? () {
-        //               log.info("${form.value}");
-        //               saveFormData(form);
-        //               Navigator.pop(context);
-        //             }
-        //           : null,
-        //       child: const Text('SAVE'),
-        //     );
-        //   },
-        // ),
-        // ElevatedButton(
-        //   onPressed: () {
-        //     form.reset();
-        //     Navigator.pop(context);
-        //   },
-        //   child: const Text('CANCEL'),
-        // ),
       ],
     );
   }

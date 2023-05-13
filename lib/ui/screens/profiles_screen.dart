@@ -3,17 +3,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/ui/widgets/key_value.dart';
-import 'package:despresso/ui/widgets/labeled_checkbox.dart';
+import 'package:despresso/ui/widgets/profile_select.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:despresso/ui/widgets/selectable_steps.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -100,50 +98,50 @@ class ProfilesScreenState extends State<ProfilesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var showHidden = selectedFilter.contains(FilterModes.Hidden.name);
-    var showDefault = selectedFilter.contains(FilterModes.Default.name);
-    var showOnlyMine = selectedFilter.contains(FilterModes.Mine.name);
-    var showFlow = selectedFilter.contains(FilterModes.Flow.name);
-    var showPressure = selectedFilter.contains(FilterModes.Pressure.name);
-    var showAdvanced = selectedFilter.contains(FilterModes.Advanced.name);
+    // // var showHidden = selectedFilter.contains(FilterModes.Hidden.name);
+    // // var showDefault = selectedFilter.contains(FilterModes.Default.name);
+    // // var showOnlyMine = selectedFilter.contains(FilterModes.Mine.name);
+    // // var showFlow = selectedFilter.contains(FilterModes.Flow.name);
+    // // var showPressure = selectedFilter.contains(FilterModes.Pressure.name);
+    // // var showAdvanced = selectedFilter.contains(FilterModes.Advanced.name);
 
-    var items = profileService.profiles
-        .where(
-          (element) {
-            bool res1 = false;
-            bool res2 = false;
-            bool res3 = false;
-            bool res4 = false;
-            bool res5 = false;
-            bool res0 = true;
+    // // var items = profileService.profiles
+    // //     .where(
+    // //       (element) {
+    // //         bool res1 = false;
+    // //         bool res2 = false;
+    // //         bool res3 = false;
+    // //         bool res4 = false;
+    // //         bool res5 = false;
+    // //         bool res0 = true;
 
-            if (showDefault) res1 = element.shotHeader.hidden == 0;
-            if (showHidden) res2 = element.shotHeader.hidden == 1;
-            if (showFlow) res3 = element.shotHeader.type == 'flow';
-            if (showPressure) res4 = element.shotHeader.type == 'pressure';
-            if (showAdvanced) res5 = element.shotHeader.type == 'advanced';
+    // //         if (showDefault) res1 = element.shotHeader.hidden == 0;
+    // //         if (showHidden) res2 = element.shotHeader.hidden == 1;
+    // //         if (showFlow) res3 = element.shotHeader.type == 'flow';
+    // //         if (showPressure) res4 = element.shotHeader.type == 'pressure';
+    // //         if (showAdvanced) res5 = element.shotHeader.type == 'advanced';
 
-            if (showOnlyMine) res0 = element.isDefault == false;
+    // //         if (showOnlyMine) res0 = element.isDefault == false;
 
-            return res0 || res1 || res2 || (res3 || res4 || res5);
-          },
-        )
-        .map((p) => DropdownMenuItem(
-              value: p,
-              child: Text("${p.shotHeader.title} ${p.isDefault ? '' : ' *'}"),
-            ))
-        .toList()
-        .sortedBy((element) => element.value?.title ?? "");
-    // Check if we need to fallback
-    if (_selectedProfile != null &&
-        null ==
-            items.firstWhereOrNull(
-              (element) {
-                return element.value!.id == (_selectedProfile?.id ?? "Default");
-              },
-            )) {
-      if (items.isNotEmpty) _selectedProfile = items[0].value;
-    }
+    // //         return res0 || res1 || res2 || (res3 || res4 || res5);
+    // //       },
+    // //     )
+    // //     .map((p) => DropdownMenuItem(
+    // //           value: p,
+    // //           child: Text("${p.shotHeader.title} ${p.isDefault ? '' : ' *'}"),
+    // //         ))
+    // //     .toList()
+    // //     .sortedBy((element) => element.value?.title ?? "");
+    // // Check if we need to fallback
+    // if (_selectedProfile != null &&
+    //     null ==
+    //         items.firstWhereOrNull(
+    //           (element) {
+    //             return element.value!.id == (_selectedProfile?.id ?? "Default");
+    //           },
+    //         )) {
+    //   if (items.isNotEmpty) _selectedProfile = items[0].value;
+    // }
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(
@@ -263,147 +261,119 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: items.isNotEmpty
-                                ? DropdownButton(
-                                    isExpanded: true,
-                                    alignment: Alignment.centerLeft,
-                                    value: _selectedProfile,
-                                    items: items,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedProfile = value!;
-                                        profileService.setProfile(_selectedProfile!);
-                                        // calcProfileGraph();
-                                        // phases = _createPhases();
-                                      });
-                                    },
-                                    hint: const Text("Select item"))
-                                : const Text("No profiles found for selection"),
-                          ),
-                          Padding(
+                      ProfileSelect(),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: renderFilterDropdown(context, items),
-                          ),
-                        ],
-                      ),
-                      if (items.isNotEmpty)
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: (_selectedProfile != null)
-                                  ? Column(
-                                      children: [
-                                        KeyValueWidget(label: "Notes", value: _selectedProfile?.shotHeader.notes ?? ""),
-                                        KeyValueWidget(
-                                            label: "Beverage", value: _selectedProfile?.shotHeader.beverageType ?? ""),
-                                        KeyValueWidget(label: "Type", value: _selectedProfile?.shotHeader.type ?? ""),
-                                        KeyValueWidget(
-                                            label: "Max Flow",
-                                            value: _selectedProfile?.shotHeader.maximumFlow.toString() ?? ""),
-                                        KeyValueWidget(
-                                            label: "Max Pressure",
-                                            value: _selectedProfile?.shotHeader.minimumPressure.toString() ?? ""),
-                                        KeyValueWidget(
-                                            label: "Target Volume",
-                                            value: _selectedProfile?.shotHeader.targetVolume.toString() ?? ""),
-                                        KeyValueWidget(
-                                            label: "Target Weight",
-                                            value: _selectedProfile?.shotHeader.targetWeight.toString() ?? ""),
-                                      ],
-                                    )
-                                  : const Text("Nothing selected"),
-                            ),
+                            child: (_selectedProfile != null)
+                                ? Column(
+                                    children: [
+                                      KeyValueWidget(label: "Notes", value: _selectedProfile?.shotHeader.notes ?? ""),
+                                      KeyValueWidget(
+                                          label: "Beverage", value: _selectedProfile?.shotHeader.beverageType ?? ""),
+                                      KeyValueWidget(label: "Type", value: _selectedProfile?.shotHeader.type ?? ""),
+                                      KeyValueWidget(
+                                          label: "Max Flow",
+                                          value: _selectedProfile?.shotHeader.maximumFlow.toString() ?? ""),
+                                      KeyValueWidget(
+                                          label: "Max Pressure",
+                                          value: _selectedProfile?.shotHeader.minimumPressure.toString() ?? ""),
+                                      KeyValueWidget(
+                                          label: "Target Volume",
+                                          value: _selectedProfile?.shotHeader.targetVolume.toString() ?? ""),
+                                      KeyValueWidget(
+                                          label: "Target Weight",
+                                          value: _selectedProfile?.shotHeader.targetWeight.toString() ?? ""),
+                                    ],
+                                  )
+                                : const Text("Nothing selected"),
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),
               ),
               Expanded(
                 flex: 6, // takes 30% of available width
-                child: !items.isNotEmpty
-                    ? Container()
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: _selectedProfile != null
-                                ? ProfileGraphWidget(
-                                    key: UniqueKey(),
-                                    selectedProfile: _selectedProfile!,
-                                    selectedPhase: _selectedPhase,
-                                  )
-                                : const Text("nothing selected"),
-                          ),
-                          Expanded(
-                            flex: 6,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: _selectedProfile != null
+                          ? ProfileGraphWidget(
+                              key: UniqueKey(),
+                              selectedProfile: _selectedProfile!,
+                              selectedPhase: _selectedPhase,
+                            )
+                          : const Text("nothing selected"),
+                    ),
+                    Expanded(
+                      flex: 6,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 8,
+                              child: _selectedProfile != null
+                                  ? SelectableSteps(
+                                      profile: _selectedProfile!,
+                                      selected: _selectedPhase,
+                                      isEditable: false,
+                                      onSelected: (p0) {
+                                        _selectedPhase = p0;
+                                        setState(() {});
+                                      },
+                                    )
+                                  : const Text(""),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Expanded(
-                                    flex: 8,
-                                    child: _selectedProfile != null
-                                        ? SelectableSteps(
-                                            profile: _selectedProfile!,
-                                            selected: _selectedPhase,
-                                            isEditable: false,
-                                            onSelected: (p0) {
-                                              _selectedPhase = p0;
-                                              setState(() {});
+                                  ElevatedButton.icon(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () async {
+                                      var messenger = ScaffoldMessenger.of(context);
+                                      Text result;
+                                      try {
+                                        var r = await machineService.uploadProfile(_selectedProfile!);
+                                        result = Text('Profile is selected: $r');
+                                      } catch (e) {
+                                        result = Text('Profile is not selected: $e');
+                                      }
+
+                                      var snackBar = SnackBar(
+                                          content: result,
+                                          action: SnackBarAction(
+                                            label: 'Ok',
+                                            onPressed: () {
+                                              // Some code to undo the change.
                                             },
-                                          )
-                                        : const Text(""),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        ElevatedButton.icon(
-                                          icon: const Icon(Icons.add),
-                                          onPressed: () async {
-                                            var messenger = ScaffoldMessenger.of(context);
-                                            Text result;
-                                            try {
-                                              var r = await machineService.uploadProfile(_selectedProfile!);
-                                              result = Text('Profile is selected: $r');
-                                            } catch (e) {
-                                              result = Text('Profile is not selected: $e');
-                                            }
+                                          ));
 
-                                            var snackBar = SnackBar(
-                                                content: result,
-                                                action: SnackBarAction(
-                                                  label: 'Ok',
-                                                  onPressed: () {
-                                                    // Some code to undo the change.
-                                                  },
-                                                ));
-
-                                            messenger.showSnackBar(snackBar);
-                                          },
-                                          label: const Text(
-                                            "Save to Decent",
-                                          ),
-                                        )
-                                      ],
+                                      messenger.showSnackBar(snackBar);
+                                    },
+                                    label: const Text(
+                                      "Save to Decent",
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -412,81 +382,81 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     );
   }
 
-  DropdownButtonHideUnderline renderFilterDropdown(BuildContext context, List<DropdownMenuItem<De1ShotProfile>> items) {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        isExpanded: false, customButton: const Icon(Icons.filter_alt),
-        dropdownWidth: 160,
+  // DropdownButtonHideUnderline renderFilterDropdown(BuildContext context, List<DropdownMenuItem<De1ShotProfile>> items) {
+  //   return DropdownButtonHideUnderline(
+  //     child: DropdownButton2(
+  //       isExpanded: false, customButton: const Icon(Icons.filter_alt),
+  //       dropdownWidth: 160,
 
-        // hint: Align(
-        //   alignment: AlignmentDirectional.center,
-        //   child: Text(
-        //     '',
-        //     style: TextStyle(
-        //       fontSize: 14,
-        //       color: Theme.of(context).hintColor,
-        //     ),
-        //   ),
-        // ),
-        items: filterOptions.map((item) {
-          return DropdownMenuItem<String>(
-            value: item,
+  //       // hint: Align(
+  //       //   alignment: AlignmentDirectional.center,
+  //       //   child: Text(
+  //       //     '',
+  //       //     style: TextStyle(
+  //       //       fontSize: 14,
+  //       //       color: Theme.of(context).hintColor,
+  //       //     ),
+  //       //   ),
+  //       // ),
+  //       items: filterOptions.map((item) {
+  //         return DropdownMenuItem<String>(
+  //           value: item,
 
-            //disable default onTap to avoid closing menu when selecting an item
-            enabled: false,
-            child: StatefulBuilder(
-              builder: (context, menuSetState) {
-                final isSelected = selectedFilter.contains(item);
-                return Container(
-                  height: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      LabeledCheckbox(
-                        value: isSelected,
-                        label: item,
-                        onChanged: (value) {
-                          !value! ? selectedFilter.remove(item) : selectedFilter.add(item);
-                          settingsService.profileFilterList = selectedFilter;
-                          setState(() {});
-                          menuSetState(() {});
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        }).toList(),
-        //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
-        value: selectedFilter.isEmpty ? null : selectedFilter.last,
-        onChanged: (value) {},
-        buttonHeight: 40,
-        buttonWidth: 140,
-        itemHeight: 40,
-        itemPadding: EdgeInsets.zero,
-        selectedItemBuilder: (context) {
-          return items.map(
-            (item) {
-              return Container(
-                alignment: AlignmentDirectional.center,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  selectedFilter.join(', '),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  maxLines: 1,
-                ),
-              );
-            },
-          ).toList();
-        },
-      ),
-    );
-  }
+  //           //disable default onTap to avoid closing menu when selecting an item
+  //           enabled: false,
+  //           child: StatefulBuilder(
+  //             builder: (context, menuSetState) {
+  //               final isSelected = selectedFilter.contains(item);
+  //               return Container(
+  //                 height: double.infinity,
+  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //                 child: Row(
+  //                   children: [
+  //                     LabeledCheckbox(
+  //                       value: isSelected,
+  //                       label: item,
+  //                       onChanged: (value) {
+  //                         !value! ? selectedFilter.remove(item) : selectedFilter.add(item);
+  //                         settingsService.profileFilterList = selectedFilter;
+  //                         setState(() {});
+  //                         menuSetState(() {});
+  //                       },
+  //                     ),
+  //                   ],
+  //                 ),
+  //               );
+  //             },
+  //           ),
+  //         );
+  //       }).toList(),
+  //       //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
+  //       value: selectedFilter.isEmpty ? null : selectedFilter.last,
+  //       onChanged: (value) {},
+  //       buttonHeight: 40,
+  //       buttonWidth: 140,
+  //       itemHeight: 40,
+  //       itemPadding: EdgeInsets.zero,
+  //       selectedItemBuilder: (context) {
+  //         return items.map(
+  //           (item) {
+  //             return Container(
+  //               alignment: AlignmentDirectional.center,
+  //               padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //               child: Text(
+  //                 selectedFilter.join(', '),
+  //                 style: const TextStyle(
+  //                   fontSize: 14,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //                 maxLines: 1,
+  //               ),
+  //             );
+  //           },
+  //         ).toList();
+  //       },
+  //     ),
+  //   );
+  // }
 
   getProfileFromFolder(context) async {
     filePickerResult = await FilePicker.platform
