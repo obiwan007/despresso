@@ -254,7 +254,7 @@ class ThermprobeFooter extends StatelessWidget {
           ),
           Text(
             S.of(context).footerProbe,
-            style: theme.TextStyles.subHeadingFooter,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
           StreamBuilder<Object>(
               stream: machineService.tempService.streamBattery,
