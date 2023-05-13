@@ -48,18 +48,37 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     if (data.length < 4) return;
     var weight = ((data[2] << 8) + data[3]) / 10;
     if (weight > 3200) {
-      writeTare();
-    } else {
-      scaleService.setWeight(weight);
+      // This gives us also the negative weight - similar implementation as in Beanconqueror
+      weight = ((data[2].toSigned(8) << 8) + data[3].toSigned(8)) / 10;
     }
+    scaleService.setWeight(weight);
+
     if (data[1] == 0xCE) {
-      // scaleService.setWeightStable(true);
-      log.info('weight stable');
+      // log.info('weight stable');
       weightStability = true;
     } else {
-      // scaleService.setWeightStable(false);
-      log.info('weight changing');
+      // log.info('weight changing');
       weightStability = false;
+    }
+    if (data[1] == 0xAA && data[3] == 0x01) {
+      // short button presses - depends on fw and scale version if delivered
+      switch (data[2]) {
+        case 0x01:
+          log.info('button 1 short pressed');
+          break;
+        case 0x02:
+          log.info('button 2 short pressed');
+      }
+    }
+    if (data[1] == 0xAA && data[3] == 0x02) {
+      // button long presses - depends on fw and scale version if delivered
+      switch (data[2]) {
+        case 01:
+          log.info('button 1 long pressed');
+          break;
+        case 02:
+          log.info('button 2 long pressed');
+      }
     }
   }
 
@@ -103,6 +122,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   }
 
   Future<void> powerOff() {
+    // only works with fw 1.2+
     List<int> payload = [0x03, 0x0B, 0x03, 0x00, 0x00, 0x00];
     payload.add(getXOR(payload));
     return writeToDecentScale(payload);
