@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
+import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,6 +40,9 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   static const int cmdGramms = 0x3;
   static const int cmdPound = 0x2;
   static const int cmdTare = 0x10;
+  static const int timerReset = 0xd0;
+  static const int timerStart = 0xd1;
+  static const int timerStop = 0xd2;
 
   final DiscoveredDevice device;
 
@@ -98,15 +102,20 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
     return writeToSkale([cmdDisplayWeight]);
   }
 
+  Future<void> displayOff() async {
+    await writeToSkale([cmdDisplayOff]);
+  }
+
   Future<void> setGramms() async {
     await writeToSkale([cmdGramms]);
   }
 
   Future<void> writeToSkale(List<int> payload) async {
-    log.info("Sending to Skale2");
+    var list = Uint8List.fromList(payload);
+    log.info("Sending to Skale2 ${Helper.toHex(list)}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CommandUUID, deviceId: device.id);
-    return await connection.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithoutResponse(characteristic, value: list);
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -148,6 +157,14 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
               characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
           final batteryLevel = await connection.readCharacteristic(batteryCharacteristic);
           scaleService.setBattery(batteryLevel[0]);
+
+          connection.subscribeToCharacteristic(batteryCharacteristic).listen((data) {
+            log.info(("Battery reported $data"));
+            // code to handle incoming data
+            scaleService.setBattery(data[0]);
+          }, onError: (dynamic error) {
+            log.severe(("Error register battery callback $error"));
+          });
         } catch (e) {
           log.severe("Error reading battery $e");
         }
@@ -176,9 +193,19 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  Future<void> timer(TimerMode start) {
-    // TODO: implement timer
-    throw UnimplementedError();
+  Future<void> timer(TimerMode start) async {
+    log.info("Timer $start");
+    switch (start) {
+      case TimerMode.start:
+        await writeToSkale([timerStart]);
+        break;
+      case TimerMode.stop:
+        await writeToSkale([timerStop]);
+        break;
+      case TimerMode.reset:
+        await writeToSkale([timerReset]);
+        break;
+    }
   }
 
   @override
@@ -188,9 +215,16 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  Future<void> display(DisplayMode start) {
-    // TODO: implement display
-    throw UnimplementedError();
+  Future<void> display(DisplayMode start) async {
+    log.info("Display $start");
+    switch (start) {
+      case DisplayMode.off:
+        await displayOff();
+        break;
+      case DisplayMode.on:
+        await displayOn();
+        break;
+    }
   }
 
   @override
