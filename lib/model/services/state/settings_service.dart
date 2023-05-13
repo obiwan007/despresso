@@ -83,6 +83,7 @@ enum SettingKeys {
   tareOnWeight2,
   tareOnWeight3,
   tareOnWeight4,
+  scaleDisplayOffOnSleep,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -307,6 +308,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get tareOnDetectedWeight => Settings.getValue<bool>(SettingKeys.tareOnDetectedWeight.name) ?? true;
   set tareOnDetectedWeight(bool value) => Settings.setValue<bool>(SettingKeys.tareOnDetectedWeight.name, value);
+
+  bool get scaleDisplayOffOnSleep => Settings.getValue<bool>(SettingKeys.scaleDisplayOffOnSleep.name) ?? true;
+  set scaleDisplayOffOnSleep(bool value) => Settings.setValue<bool>(SettingKeys.scaleDisplayOffOnSleep.name, value);
 
   void notifyDelayed() {
     Future.delayed(

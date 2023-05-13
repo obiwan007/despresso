@@ -275,7 +275,9 @@ class EspressoMachineService extends ChangeNotifier {
         try {
           log.fine("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
           sleepTime += 10;
-
+          if (sleepTime < 30 && settingsService.scaleDisplayOffOnSleep) {
+            scaleService.display(DisplayMode.off);
+          }
           // if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
           //   try {
           //     if (await Wakelock.enabled) {
@@ -305,6 +307,11 @@ class EspressoMachineService extends ChangeNotifier {
 
       if (state.coffeeState == EspressoMachineState.idle) {
         isPouring = false;
+
+        if (idleTime == 0 && settingsService.scaleDisplayOffOnSleep) {
+          scaleService.display(DisplayMode.on);
+        }
+
         try {
           log.fine("Machine is still idle $idleTime < ${settingsService.sleepTimer * 60}");
           idleTime += 10;

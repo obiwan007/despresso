@@ -719,6 +719,13 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   leading: const Icon(Icons.coffee),
                   onChange: (value) async {},
                 ),
+                SwitchSettingsTile(
+                  title: "When machine is in sleep, switch off scale display if possible",
+                  settingKey: SettingKeys.scaleDisplayOffOnSleep.name,
+                  defaultValue: settingsService.scaleDisplayOffOnSleep,
+                  leading: const Icon(Icons.watch),
+                  onChange: (value) async {},
+                ),
               ]),
             ),
             SimpleSettingsTile(
@@ -869,7 +876,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         leading: const Icon(Icons.settings_remote),
                         settingKey: SettingKeys.webServer.name,
                         title: S.of(context).screenSettingsEnableMiniWebsiteWithPort8888,
-                        subtitle: "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen}http://$ownIpAdress:8888",
+                        subtitle:
+                            "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen}http://$ownIpAdress:8888",
                         onChange: (value) {
                           settingsService.notifyDelayed();
                         },
