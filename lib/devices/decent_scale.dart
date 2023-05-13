@@ -80,6 +80,9 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
           log.info('button 2 long pressed');
       }
     }
+    if (data[5] == 0xFE) {
+      log.info('successful cmd');
+    }
   }
 
   int getXOR(payload) {
@@ -99,6 +102,12 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   Future<void> ledOff() {
     List<int> payload = [0x03, 0x0A, 0x00, 0x00, 0x00, 0x00];
+    payload.add(getXOR(payload));
+    return writeToDecentScale(payload);
+  }
+
+  Future<void> ledOn() {
+    List<int> payload = [0x03, 0x0A, 0x01, 0x01, 0x00, 0x00];
     payload.add(getXOR(payload));
     return writeToDecentScale(payload);
   }
@@ -149,7 +158,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
       case DeviceConnectionState.connected:
         log.info('Connected');
         scaleService.setState(ScaleState.connected);
-        ledOff(); // make the scale report weight by sending an inital write cmd
+        ledOn(); // make the scale report weight by sending an inital write cmd
 
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
