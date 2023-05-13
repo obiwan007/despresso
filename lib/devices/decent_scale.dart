@@ -211,9 +211,19 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  Future<void> display(DisplayMode start) {
-    // TODO: implement display
-    throw UnimplementedError();
+  Future<void> display(DisplayMode start) async {
+    try {
+      switch (start) {
+        case DisplayMode.on:
+          ledOn();
+          break;
+        case DisplayMode.off:
+          ledOff();
+          break;
+      }
+    } catch (e) {
+      log.severe("display failed $e");
+    }
   }
 
   @override
