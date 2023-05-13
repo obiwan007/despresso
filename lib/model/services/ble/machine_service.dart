@@ -425,8 +425,6 @@ class EspressoMachineService extends ChangeNotifier {
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
 
-  final double _sampleTime = 0;
-
   ShotState? _previousShot;
   ShotState? _newestShot;
 
@@ -1011,14 +1009,14 @@ class EspressoMachineService extends ChangeNotifier {
             var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupPressure, _previousShot!.groupPressure);
 
-            var lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
-                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
+            var lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
 
             var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupFlow, _previousShot!.groupFlow);
 
-            var lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
-                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
+            var lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
 
             var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.flowWeight, _previousShot!.flowWeight);

@@ -119,18 +119,18 @@ class RecipeScreenState extends State<RecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          coffeeService.addRecipe(
-              name:
-                  "${profileService.currentProfile?.title ?? "no profile selected"}/${coffeeService.currentCoffee?.name ?? "No bean selected"}",
-              coffeeId: coffeeService.selectedCoffeeId,
-              profileId: profileService.currentProfile?.id ?? "Default");
-        },
-        // backgroundColor: Colors.green,
-        label: Text(S.of(context).screenRecipeAddRecipe),
-        icon: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     coffeeService.addRecipe(
+      //         name:
+      //             "${profileService.currentProfile?.title ?? "no profile selected"}/${coffeeService.currentCoffee?.name ?? "No bean selected"}",
+      //         coffeeId: coffeeService.selectedCoffeeId,
+      //         profileId: profileService.currentProfile?.id ?? "Default");
+      //   },
+      //   // backgroundColor: Colors.green,
+      //   label: Text(S.of(context).screenRecipeAddRecipe),
+      //   icon: const Icon(Icons.add),
+      // ),
       body: Container(
         child: _buildControls(context),
       ),
@@ -281,7 +281,7 @@ class RecipeDescription extends StatelessWidget {
   }
 }
 
-enum SelectedMenu { edit, copy }
+enum SelectedMenu { edit, copy, add }
 
 class RecipeDetails extends StatefulWidget {
   const RecipeDetails({
@@ -341,6 +341,14 @@ class _RecipeDetailsState extends State<RecipeDetails> {
               // Callback that sets the selected popup menu item.
               onSelected: (SelectedMenu item) async {
                 switch (item) {
+                  case SelectedMenu.add:
+                    widget.coffeeService.addRecipe(
+                        name:
+                            "${widget.profileService.currentProfile?.title ?? "no profile selected"}/${widget.coffeeService.currentCoffee?.name ?? "No bean selected"}",
+                        coffeeId: widget.coffeeService.selectedCoffeeId,
+                        profileId: widget.profileService.currentProfile?.id ?? "Default");
+
+                    break;
                   case SelectedMenu.edit:
                     _screensaver.pause();
                     await Navigator.push(
@@ -383,6 +391,10 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 const PopupMenuItem<SelectedMenu>(
                   value: SelectedMenu.copy,
                   child: Text('Copy'),
+                ),
+                const PopupMenuItem<SelectedMenu>(
+                  value: SelectedMenu.add,
+                  child: Text('Add'),
                 ),
               ],
             ),

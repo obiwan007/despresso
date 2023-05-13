@@ -283,7 +283,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     _stateNotification();
   }
 
-  void _tempatureNotification(ByteData value) {}
+  void _temperatureNotification(ByteData value) {}
   void _stateNotification() {
     var state = _state;
     var subState = _subState;
