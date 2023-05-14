@@ -86,7 +86,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
     log.info('startScan');
     ScaleService scaleService = getIt<ScaleService>();
     if (scaleService.state != ScaleState.connected) {
-      scaleService.setState(ScaleState.connecting);
+      scaleService.setState(ScaleState.connecting, -1);
     }
     _subscription =
         flutterReactiveBle.scanForDevices(withServices: [], scanMode: ble.ScanMode.lowLatency).listen((device) async {
@@ -104,7 +104,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
       _subscription = null;
       isScanning = false;
       if (scaleService.state == ScaleState.connecting) {
-        scaleService.setState(ScaleState.disconnected);
+        scaleService.setState(ScaleState.disconnected, -1);
       }
       notifyListeners();
     });

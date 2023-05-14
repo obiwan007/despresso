@@ -30,15 +30,23 @@ class WeightMeassurement {
   double flow;
   double weight;
   ScaleState state;
-  WeightMeassurement(this.weight, this.flow, this.state);
+  int index;
+  WeightMeassurement(this.weight, this.flow, this.state, this.index);
+}
+
+class BatteryLevel {
+  int level = 0;
+  int index = 0;
+  BatteryLevel(this.level, this.index);
 }
 
 class ScaleService extends ChangeNotifier {
   final log = Logger('ScaleService');
 
-  double _weight = 0.0;
-  double _flow = 0.0;
-  int _battery = 0;
+  List<double> _weight = [0.0, 0.0];
+  List<double> _flow = [0.0, 0.0];
+
+  final List<int> _battery = [0, 0];
   DateTime last = DateTime.now();
 
   ScaleState _state = ScaleState.disconnected;
@@ -52,79 +60,82 @@ class ScaleService extends ChangeNotifier {
 
   EspressoMachineService? _machineService;
 
-  Stream<WeightMeassurement> get stream => _stream;
-  Stream<int> get streamBattery => _streamBattery;
+  bool hasSecondaryScale = false;
+  bool hasPrimaryScale = false;
 
-  double get weight => _weight;
-  double get flow => _flow;
-  int get battery => _battery;
+  Stream<WeightMeassurement> get stream => _stream;
+  Stream<BatteryLevel> get streamBattery => _streamBattery;
+
+  List<double> get weight => _weight;
+  List<double> get flow => _flow;
+  List<int> get battery => _battery;
 
   ScaleState get state => _state;
 
   late StreamController<WeightMeassurement> _controller;
   late Stream<WeightMeassurement> _stream;
 
-  AbstractScale? scale;
+  final List<AbstractScale?> _scale = [null, null];
 
-  late StreamController<int> _controllerBattery;
-  late Stream<int> _streamBattery;
+  late StreamController<BatteryLevel> _controllerBattery;
+  late Stream<BatteryLevel> _streamBattery;
 
-  List<double> averaging = [];
+  List<List<double>> averaging = [[], []];
 
   ScaleService() {
     _controller = StreamController<WeightMeassurement>();
     _stream = _controller.stream.asBroadcastStream();
 
-    _controllerBattery = StreamController<int>();
+    _controllerBattery = StreamController<BatteryLevel>();
     _streamBattery = _controllerBattery.stream.asBroadcastStream();
   }
 
-  Future<void> tare() async {
+  Future<void> tare({int index = 0}) async {
     if (_state == ScaleState.connected) {
-      setWeight(0);
+      setWeight(0, index);
       tareInProgress = true;
-      await scale?.writeTare();
+      await _scale[index]?.writeTare();
       Future.delayed(const Duration(milliseconds: 500), () {
         tareInProgress = false;
-        setWeight(0);
+        setWeight(0, index);
       });
     }
   }
 
-  Future<void> timer(TimerMode startMode) async {
+  Future<void> timer(TimerMode startMode, {int index = 0}) async {
     if (_state == ScaleState.connected) {
       try {
-        await scale?.timer(startMode);
+        await _scale[index]?.timer(startMode);
       } catch (e) {
         log.info("Timer not implemented $e");
       }
     }
   }
 
-  Future<void> display(DisplayMode mode) async {
+  Future<void> display(DisplayMode mode, {int index = 0}) async {
     if (_state == ScaleState.connected) {
       try {
-        await scale?.display(mode);
+        await _scale[index]?.display(mode);
       } catch (e) {
         log.info("Display not implemented $e");
       }
     }
   }
 
-  Future<void> power(PowerMode mode) async {
+  Future<void> power(PowerMode mode, {int index = 0}) async {
     if (_state == ScaleState.connected) {
       try {
-        await scale?.power(mode);
+        await _scale[index]?.power(mode);
       } catch (e) {
         log.info("Power not implemented $e");
       }
     }
   }
 
-  Future<void> beep() async {
+  Future<void> beep({int index = 0}) async {
     if (_state == ScaleState.connected) {
       try {
-        await scale?.beep();
+        await _scale[index]?.beep();
       } catch (e) {
         log.info("Beep not implemented $e");
       }
@@ -136,7 +147,7 @@ class ScaleService extends ChangeNotifier {
     averaging.clear();
   }
 
-  void setWeight(double weight) {
+  void setWeight(double weight, index) {
     if (tareInProgress) return;
 
     var now = DateTime.now();
@@ -145,19 +156,19 @@ class ScaleService extends ChangeNotifier {
 
     // calc flow, cap on 10g/s
     if (timeDiff == 0) return;
-    var n = math.min(10.0, (weight - _weight).abs() / (timeDiff / 1000));
+    var n = math.min(10.0, (weight - _weight[index]).abs() / (timeDiff / 1000));
 
-    averaging.add(n);
+    averaging[index].add(n);
 
-    flow = averaging.average;
+    flow = averaging[index].average;
 
     if (averaging.length > 10) {
       averaging.removeAt(0);
     }
-    _weight = weight;
-    _flow = flow;
+    _weight[index] = weight;
+    _flow[index] = flow;
     last = now;
-    _controller.add(WeightMeassurement(weight, flow, _state));
+    _controller.add(WeightMeassurement(weight, flow, _state, index));
     notifyListeners();
 
     _count++;
@@ -181,26 +192,38 @@ class ScaleService extends ChangeNotifier {
         _settingsService?.tareOnWeight4
       ];
       for (var w in wl) {
-        if (_weight + 0.1 > w! && _weight - 0.1 < w && w > 1) {
+        if (_weight[index] + 0.1 > w! && _weight[index] - 0.1 < w && w > 1) {
           tare();
         }
       }
     }
   }
 
-  void setScaleInstance(AbstractScale abstractScale) {
-    scale = abstractScale;
+  void setScaleInstance(AbstractScale abstractScale, int index) {
+    if (_scale[index] == null) {
+      _scale[index] = abstractScale;
+      log.info("Set instance $index");
+      if (index == 0) {
+        hasPrimaryScale = true;
+      }
+      if (index == 1) {
+        hasSecondaryScale = true;
+      }
+    }
     _settingsService = getIt<SettingsService>();
     _machineService = getIt<EspressoMachineService>();
   }
 
-  void setState(ScaleState state) {
+  void setState(ScaleState state, int index) {
     _state = state;
+    if (index == -1) return;
     if (state == ScaleState.disconnected) {
-      // scale = null;
+      _scale[index] = null;
+      if (index == 0) hasPrimaryScale = false;
+      if (index == 1) hasSecondaryScale = false;
     }
     log.info('Scale State: $_state');
-    _controller.add(WeightMeassurement(_weight, _flow, _state));
+    _controller.add(WeightMeassurement(_weight[index], _flow[index], _state, index));
   }
 
   void connect() {
@@ -214,9 +237,9 @@ class ScaleService extends ChangeNotifier {
     }
   }
 
-  void setBattery(int batteryLevel) {
-    if (batteryLevel == _battery) return;
-    _battery = batteryLevel;
-    _controllerBattery.add(_battery);
+  void setBattery(int batteryLevel, int index) {
+    if (batteryLevel == _battery[index]) return;
+    _battery[index] = batteryLevel;
+    _controllerBattery.add(BatteryLevel(batteryLevel, index));
   }
 }

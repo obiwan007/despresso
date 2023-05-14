@@ -109,7 +109,9 @@ class _MachineFooterState extends State<MachineFooter> {
                 );
               }),
           const Spacer(),
-          if (settingsService.hasScale) ScaleFooter(machineService: machineService),
+          if (settingsService.hasScale) ScaleFooter(machineService: machineService, index: 0),
+          if (settingsService.hasScale && machineService.scaleService.hasSecondaryScale)
+            ScaleFooter(machineService: machineService, index: 1),
           if (settingsService.hasSteamThermometer) ThermprobeFooter(machineService: machineService),
           const Spacer(),
           StreamBuilder<ShotState>(
@@ -277,9 +279,11 @@ class ScaleFooter extends StatelessWidget {
   const ScaleFooter({
     Key? key,
     required this.machineService,
+    required this.index,
   }) : super(key: key);
 
   final EspressoMachineService machineService;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -369,9 +373,9 @@ class ScaleFooter extends StatelessWidget {
                                                   var settingsService = getIt<SettingsService>();
                                                   var r = coffeeService.currentRecipe;
                                                   if (r != null) {
-                                                    r.grinderDoseWeight = machineService.scaleService.weight;
-                                                    r.adjustedWeight =
-                                                        machineService.scaleService.weight * (r.ratio2 / r.ratio1);
+                                                    r.grinderDoseWeight = machineService.scaleService.weight[index];
+                                                    r.adjustedWeight = machineService.scaleService.weight[index] *
+                                                        (r.ratio2 / r.ratio1);
                                                     coffeeService.updateRecipe(r);
                                                     settingsService.targetEspressoWeight = r.adjustedWeight;
                                                   }

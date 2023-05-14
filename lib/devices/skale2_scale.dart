@@ -54,9 +54,12 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   StreamSubscription<List<int>>? _characteristicsButtonSubscription;
   DeviceCommunication connection;
+
+  int index = 0;
   Skale2Scale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
-    scaleService.setScaleInstance(this);
+    index = getScaleIndex(device.id);
+    scaleService.setScaleInstance(this, index);
     _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
@@ -66,7 +69,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   void _notificationCallback(List<int> data) {
     var weight = getInt(data);
-    scaleService.setWeight((weight / 10 / 256).toDouble());
+    scaleService.setWeight((weight / 10 / 256).toDouble(), index);
   }
 
   void _notificationButtonsCallback(List<int> data) {
@@ -124,12 +127,12 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
     switch (state) {
       case DeviceConnectionState.connecting:
         log.info('Connecting');
-        scaleService.setState(ScaleState.connecting);
+        scaleService.setState(ScaleState.connecting, index);
         break;
 
       case DeviceConnectionState.connected:
         log.info('Connected');
-        scaleService.setState(ScaleState.connected);
+        scaleService.setState(ScaleState.connected, index);
 
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID, characteristicId: WeightCharacteristicUUID, deviceId: device.id);
@@ -156,12 +159,12 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
           final batteryCharacteristic = QualifiedCharacteristic(
               characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
           final batteryLevel = await connection.readCharacteristic(batteryCharacteristic);
-          scaleService.setBattery(batteryLevel[0]);
+          scaleService.setBattery(batteryLevel[0], index);
 
           connection.subscribeToCharacteristic(batteryCharacteristic).listen((data) {
             log.info(("Battery reported $data"));
             // code to handle incoming data
-            scaleService.setBattery(data[0]);
+            scaleService.setBattery(data[0], index);
           }, onError: (dynamic error) {
             log.severe(("Error register battery callback $error"));
           });
@@ -177,9 +180,9 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
         return;
       case DeviceConnectionState.disconnected:
-        scaleService.setState(ScaleState.disconnected);
+        scaleService.setState(ScaleState.disconnected, index);
         log.info('Skale2 disconnected. Destroying');
-        scaleService.setBattery(0);
+        scaleService.setBattery(0, index);
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription?.cancel();
         _characteristicsButtonSubscription?.cancel();

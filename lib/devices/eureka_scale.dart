@@ -46,9 +46,12 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
   DeviceCommunication connection;
+
+  int index = 0;
   EurekaScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
-    scaleService.setScaleInstance(this);
+    index = getScaleIndex(device.id);
+    scaleService.setScaleInstance(this, index);
     _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
@@ -61,7 +64,7 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
     var weight = (data[7] + (data[8] << 8));
 
     weight = isNeg ? weight * -1 : weight;
-    scaleService.setWeight((weight / 10).toDouble());
+    scaleService.setWeight((weight / 10).toDouble(), index);
   }
 
   @override
@@ -94,12 +97,12 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
     switch (state) {
       case DeviceConnectionState.connecting:
         log.info('Connecting');
-        scaleService.setState(ScaleState.connecting);
+        scaleService.setState(ScaleState.connecting, index);
         break;
 
       case DeviceConnectionState.connected:
         log.info('Connected');
-        scaleService.setState(ScaleState.connected);
+        scaleService.setState(ScaleState.connected, index);
         // await device.discoverAllServicesAndCharacteristics();
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharateristicUUID, deviceId: device.id);
@@ -114,11 +117,11 @@ class EurekaScale extends ChangeNotifier implements AbstractScale {
         final batteryCharacteristic = QualifiedCharacteristic(
             characteristicId: BatteryCharacteristicUUID, serviceId: BatteryServiceUUID, deviceId: device.id);
         final batteryLevel = await connection.readCharacteristic(batteryCharacteristic);
-        scaleService.setBattery(batteryLevel[0]);
+        scaleService.setBattery(batteryLevel[0], index);
 
         return;
       case DeviceConnectionState.disconnected:
-        scaleService.setState(ScaleState.disconnected);
+        scaleService.setState(ScaleState.disconnected, index);
         log.info('Eureka Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();

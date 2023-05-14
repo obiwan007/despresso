@@ -88,7 +88,8 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   int _id = 1;
 
   final CallbackHandler _store = CallbackHandler();
-  final StreamController<ble.ConnectionStateUpdate> _controllerConnection = StreamController<ble.ConnectionStateUpdate>();
+  final StreamController<ble.ConnectionStateUpdate> _controllerConnection =
+      StreamController<ble.ConnectionStateUpdate>();
 
   final StreamController<GATTNotify> _gattNotificationController = StreamController<GATTNotify>();
   late Stream<ble.ConnectionStateUpdate> _controllerConnectionStream;
@@ -252,7 +253,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
     ScaleService scaleService = getIt<ScaleService>();
     if (scaleService.state != ScaleState.connected) {
-      scaleService.setState(ScaleState.connecting);
+      scaleService.setState(ScaleState.connecting, -1);
     }
 
     _scanStart = DateTime.now();
@@ -308,7 +309,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
       isScanning = false;
       if (scaleService.state == ScaleState.connecting) {
-        scaleService.setState(ScaleState.disconnected);
+        scaleService.setState(ScaleState.disconnected, -1);
       }
       notifyListeners();
       _scanTimer = null;

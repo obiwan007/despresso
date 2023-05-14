@@ -652,8 +652,8 @@ class EspressoMachineService extends ChangeNotifier {
         shot.subState = lastSubstate;
       }
 
-      shot.weight = scaleService.weight;
-      shot.flowWeight = scaleService.flow;
+      shot.weight = scaleService.weight[0];
+      shot.flowWeight = scaleService.flow[0];
       shot.sampleTimeCorrected = shot.sampleTime - baseTime;
       if (isPouring) {
         shot.pourTime = shot.sampleTime - pourTimeStart;
@@ -704,7 +704,7 @@ class EspressoMachineService extends ChangeNotifier {
           if (scaleService.state == ScaleState.connected) {
             if (state.subState == "pour" &&
                 settingsService.targetHotWaterWeight > 1 &&
-                scaleService.weight + 1 > settingsService.targetHotWaterWeight) {
+                scaleService.weight[0] + 1 > settingsService.targetHotWaterWeight) {
               log.info("Water Weight reached ${shot.weight} > ${settingsService.targetHotWaterWeight}");
 
               if (settingsService.shotStopOnWeight) {
@@ -830,7 +830,7 @@ class EspressoMachineService extends ChangeNotifier {
                 fs.groupFlow = linGF.getY(fs.sampleTimeCorrected);
                 fs.setGroupFlow = lingfS.getY(fs.sampleTimeCorrected);
                 fs.flowWeight = linWF.getY(fs.sampleTimeCorrected);
-                fs.weight = scaleService.weight; //  linW.getY(fs.sampleTimeCorrected);
+                fs.weight = scaleService.weight[0]; //  linW.getY(fs.sampleTimeCorrected);
                 // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");
                 // shotList.lastTouched = (newShot.sampleTimeCorrected * 100).toInt();
 
