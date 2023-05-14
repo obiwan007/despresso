@@ -68,7 +68,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     1, // battery
     2, // battery argument
     2, // timer
-    1, // timer argument
+    5, // timer argument
     3, // key
     4 // settingg
   ];
@@ -147,14 +147,14 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   }
 
   void parsePayload(int type, List<int> payload) {
-    // scaleService.setWeight((i++).toDouble());
-
     if (type != 12) log.info('Acaia: $type');
     switch (type) {
       case 12:
         var subType = payload[0];
-        // log.info('Acaia: $type $subType');
-        if (subType != 5) {}
+
+        if (subType != 5) {
+          // log.info('Acaia: $type Sub: $subType');
+        }
         switch (subType) {
           case 12: // weight
           case 5: // weight
@@ -177,14 +177,14 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             log.info("time: $time");
             break;
           case 11: // Heartbeat
-            var weight = 0.0;
-            var time = 0.0;
 
-            // if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
-            if (payload[3] == 7) time = decodeTime(payload.sublist(3));
-            // scaleService.setWeight(weight);
-            scaleService.setWeight(weight);
-            log.info("Heartbeat Response: Weight: PL3: ${payload[3]} $weight Time: $time ${payload.sublist(3)}");
+            if (payload[3] == 5) {
+              var w = decodeWeight(payload.sublist(3));
+              if (w != null) scaleService.setWeight(w);
+            }
+            // if (payload[3] == 7) time = decodeTime(payload.sublist(3));
+
+            log.fine("Heartbeat Response: PL3: ${payload[3]} ${payload.sublist(3)}");
 
             break;
           default:
