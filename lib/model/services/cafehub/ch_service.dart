@@ -17,14 +17,11 @@ import 'package:despresso/model/services/cafehub/data_models.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:despresso/devices/eureka_scale.dart';
 import 'package:despresso/devices/hiroia_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
-import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
@@ -90,10 +87,10 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   int _id = 1;
 
-  CallbackHandler _store = CallbackHandler();
-  StreamController<ble.ConnectionStateUpdate> _controllerConnection = StreamController<ble.ConnectionStateUpdate>();
+  final CallbackHandler _store = CallbackHandler();
+  final StreamController<ble.ConnectionStateUpdate> _controllerConnection = StreamController<ble.ConnectionStateUpdate>();
 
-  StreamController<GATTNotify> _gattNotificationController = StreamController<GATTNotify>();
+  final StreamController<GATTNotify> _gattNotificationController = StreamController<GATTNotify>();
   late Stream<ble.ConnectionStateUpdate> _controllerConnectionStream;
 
   ble.BleStatus _status = ble.BleStatus.unknown;
@@ -101,7 +98,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   late Stream<GATTNotify> _gattNotificationStream;
 
   bool _useCafeHub = false;
-  int _scanTime = 10;
+  final int _scanTime = 10;
   DateTime _scanStart = DateTime.now();
 
   Timer? _scanTimer;
@@ -183,19 +180,19 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
             _scanTimer = null;
             isScanning = false;
             notifyListeners();
-            Future.delayed(Duration(seconds: 10), () => init());
+            Future.delayed(const Duration(seconds: 10), () => init());
           },
           onError: (e) {
             _status = ble.BleStatus.unknown;
             log.info("CafeHub Listening ERROR: $e");
             _channel = null;
             notifyListeners();
-            Future.delayed(Duration(seconds: 10), () => init());
+            Future.delayed(const Duration(seconds: 10), () => init());
           });
     } catch (e) {
       _status = ble.BleStatus.unknown;
       log.severe("Could not connect to CafeHub $e");
-      Future.delayed(Duration(seconds: 10), () => init());
+      Future.delayed(const Duration(seconds: 10), () => init());
       _channel = null;
       notifyListeners();
     }
@@ -233,7 +230,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   }
 
   _sendAsJSON(T_Request thing) {
-    var e = JsonEncoder();
+    var e = const JsonEncoder();
     var json = thing.toJson();
     String jsonS = e.convert(json);
     log.info("Sending Request $jsonS");
@@ -282,7 +279,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
               name: sr.Name,
               manufacturerData: Uint8List(0),
               rssi: 0,
-              serviceData: {},
+              serviceData: const {},
               serviceUuids: uuids.toList(),
             ),
           );
@@ -605,4 +602,10 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   @override
   ble.BleStatus get status => _status;
+
+  @override
+  Future<int> requestMtu({required String deviceId, required int mtu}) {
+    // TODO: implement requestMtu
+    return Future.value(0);
+  }
 }

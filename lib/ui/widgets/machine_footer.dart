@@ -160,7 +160,7 @@ class _MachineFooterState extends State<MachineFooter> {
                           ),
                         ],
                       )
-                    : Row();
+                    : const Row();
               }),
         ],
       ),
@@ -254,7 +254,7 @@ class ThermprobeFooter extends StatelessWidget {
           ),
           Text(
             S.of(context).footerProbe,
-            style: theme.TextStyles.subHeadingFooter,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
           StreamBuilder<Object>(
               stream: machineService.tempService.streamBattery,
@@ -309,8 +309,8 @@ class ScaleFooter extends StatelessWidget {
                               if (machineService.scaleService.state != ScaleState.connecting &&
                                   machineService.scaleService.state == ScaleState.connected)
                                 OutlinedButton(
-                                  onPressed: () {
-                                    machineService.scaleService.tare();
+                                  onPressed: () async {
+                                    await machineService.scaleService.tare();
                                   },
                                   child: Text(S.of(context).footerTare),
                                 ),
@@ -355,7 +355,7 @@ class ScaleFooter extends StatelessWidget {
                                                         style: Theme.of(context).textTheme.labelSmall,
                                                       ),
                                                     )
-                                                  : Text(""),
+                                                  : const Text(""),
                                         ),
                                       ),
                                       machineService.state.coffeeState == EspressoMachineState.idle ||
@@ -376,7 +376,7 @@ class ScaleFooter extends StatelessWidget {
                                                     settingsService.targetEspressoWeight = r.adjustedWeight;
                                                   }
                                                 },
-                                                child: Text("set-in"),
+                                                child: const FittedBox(child: Text("Set-in")),
                                               ),
                                             )
                                           : SizedBox(

@@ -1,11 +1,8 @@
 import 'dart:math';
 
-import 'package:despresso/helper/linear_regress.ion.dart';
-import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
-import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
 
@@ -57,7 +54,7 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   double maxTime = 30;
 
-  GlobalKey<State<StatefulWidget>> _mywidgetkey = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _mywidgetkey = GlobalKey();
 
   Iterable<VerticalRangeAnnotation> ranges = [];
 
@@ -287,7 +284,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     );
 
     _count++;
-    final nr = 10;
+    const nr = 10;
     if (_count % nr == 0) {
       var t = DateTime.now();
       var ms = t.difference(_lastCount).inMilliseconds;
@@ -475,10 +472,10 @@ class EspressoScreenState extends State<EspressoScreen> {
     );
     maxY1 = 0;
     double minY1 = 100;
-    ["mixTempSet", "mixTemp", "temp", "tempSet"].forEach((s) {
+    for (var s in ["mixTempSet", "mixTemp", "temp", "tempSet"]) {
       maxY1 = max(maxY1, data[s]!.map((e) => e.y).reduce((value, element) => max(value, element))) + 0.5;
       minY1 = min(minY1, data[s]!.map((e) => e.y).reduce((value, element) => min(value, element))) - 1;
-    });
+    }
 
     var flowChart3 = LineChart(
       LineChartData(

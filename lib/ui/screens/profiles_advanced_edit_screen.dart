@@ -1,6 +1,4 @@
-import 'dart:ffi';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
@@ -9,7 +7,6 @@ import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:despresso/ui/widgets/selectable_steps.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:flutter_spinbox/material.dart';
 import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -47,7 +44,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
-  List<KeyValueWidget> _steps = [];
+  final List<KeyValueWidget> _steps = [];
 
   int _selectedStepIndex = 0;
 
@@ -116,7 +113,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     return Scaffold(
       appBar: AppBar(
         title: IconEditableText(
-          initialValue: "${_profile.shotHeader.title}",
+          initialValue: _profile.shotHeader.title,
           onChanged: (value) {
             setState(() {
               _profile.shotHeader.title = value;
@@ -257,9 +254,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         fontSize: ts2.fontSize); // TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
     // var style2 = TextStyle();
     var style3 = TextStyle(fontWeight: ts3!.fontWeight, fontSize: ts3.fontSize);
-    bool isComparing = ((frame!.flag & De1ShotFrameClass.DoCompare) > 0);
-    bool isGt = (frame!.flag & De1ShotFrameClass.DC_GT) > 0;
-    bool isFlow = (frame!.flag & De1ShotFrameClass.DC_CompF) > 0;
+    bool isComparing = ((frame.flag & De1ShotFrameClass.DoCompare) > 0);
+    bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
 
     return [
       Tab(
@@ -298,7 +295,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 Column(
                   children: [
                     Text(
-                      "${(frame?.pump != "pressure" ? frame.setVal.toStringAsFixed(1) : "<" + frame.triggerVal.toStringAsFixed(1))}",
+                      (frame.pump != "pressure" ? frame.setVal.toStringAsFixed(1) : "<${frame.triggerVal.toStringAsFixed(1)}"),
                       style: style3,
                     ),
                     Text("ml/s", style: style3),
@@ -310,7 +307,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 Column(
                   children: [
                     Text(
-                      "${(frame?.pump == "pressure" ? frame.setVal.toStringAsFixed(1) : "<" + frame.triggerVal.toStringAsFixed(1))}",
+                      (frame.pump == "pressure" ? frame.setVal.toStringAsFixed(1) : "<${frame.triggerVal.toStringAsFixed(1)}"),
                       style: style3,
                     ),
                     Text("bar", style: style3),
@@ -341,13 +338,13 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "${(frame?.frameLen.toStringAsFixed(1) ?? 0)}",
+                      "${(frame.frameLen.toStringAsFixed(1) ?? 0)}",
                       style: style3,
                     ),
                     Text("s", style: style3),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 if (frame.maxVol > 0)
@@ -384,16 +381,14 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   children: [
                     Text(
                       isComparing
-                          ? ((isFlow ? "f " : "p ") +
-                              (isGt ? "> " : "< ") +
-                              "${(frame?.triggerVal.toStringAsFixed(1) ?? 0)}")
+                          ? ("${isFlow ? "f " : "p "}${isGt ? "> " : "< "}${(frame.triggerVal.toStringAsFixed(1) ?? 0)}")
                           : "goal reached",
                       style: style3,
                     ),
                     Text(isComparing ? (isFlow ? "ml/s" : "bar") : "", style: style3),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 if (frame.maxVol > 0)
@@ -752,11 +747,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               children: [
                 Text("Transition:", style: Theme.of(context).textTheme.labelMedium),
                 ToggleButtons(
-                  children: [const Text("Fast"), const Text("Smooth")],
                   isSelected: [isFast, !isFast],
                   onPressed: (index) {
                     valueChanged(value, index == 0 ? true : false);
                   },
+                  children: const [Text("Fast"), Text("Smooth")],
                 ),
               ],
             ),
@@ -820,10 +815,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                           interval: 1,
                           frame,
                           frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
-                          if (frame.pump == "flow")
+                          if (frame.pump == "flow") {
                             frame.setVal = value;
-                          else
+                          } else {
                             frame.triggerVal = value;
+                          }
                           setState(() {});
                           log.info("Changed");
                         })
@@ -842,24 +838,24 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   children: [
                     SizedBox(width: 90, child: Text("Limiting:", style: Theme.of(context).textTheme.labelMedium)),
                     ToggleButtons(
-                      children: [const Text("Pressure"), const Text("Flow")],
                       isSelected: [isPressure, !isPressure],
                       onPressed: (index) {
                         valueChanged(value, isFast, index == 0 ? true : false);
                       },
+                      children: const [Text("Pressure"), Text("Flow")],
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     SizedBox(width: 90, child: Text("Transition:", style: Theme.of(context).textTheme.labelMedium)),
                     ToggleButtons(
-                      children: [const Text("Fast"), const Text("Smooth")],
                       isSelected: [isFast, !isFast],
                       onPressed: (index) {
                         valueChanged(value, index == 0 ? true : false, isPressure);
                       },
+                      children: const [Text("Fast"), Text("Smooth")],
                     ),
                   ],
                 ),
@@ -916,24 +912,24 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     children: [
                       SizedBox(width: 80, child: Text("Limiting:", style: Theme.of(context).textTheme.labelMedium)),
                       ToggleButtons(
-                        children: [const Text("Pressure"), const Text("Flow")],
                         isSelected: [isPressure, !isPressure],
                         onPressed: (index) {
                           valueChanged(value, isFast, index == 0 ? true : false);
                         },
+                        children: const [Text("Pressure"), Text("Flow")],
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
                       SizedBox(width: 80, child: Text("Transition:", style: Theme.of(context).textTheme.labelMedium)),
                       ToggleButtons(
-                        children: [const Text("Fast"), const Text("Smooth")],
                         isSelected: [isFast, !isFast],
                         onPressed: (index) {
                           valueChanged(value, index == 0 ? true : false, isPressure);
                         },
+                        children: const [Text("Fast"), Text("Smooth")],
                       ),
                     ],
                   ),
@@ -1017,11 +1013,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 children: [
                   Text("Transition:", style: Theme.of(context).textTheme.labelMedium),
                   ToggleButtons(
-                    children: [Text("Fast"), Text("Smooth")],
                     isSelected: [isFast, !isFast],
                     onPressed: (index) {
                       valueChanged(value, index == 0 ? true : false);
                     },
+                    children: const [Text("Fast"), Text("Smooth")],
                   ),
                 ],
               ),
@@ -1105,11 +1101,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 children: [
                   SizedBox(width: 80, child: Text("Sensor:", style: Theme.of(context).textTheme.labelMedium)),
                   ToggleButtons(
-                    children: [Text("Coffee"), Text("Water")],
                     isSelected: [!isMix, isMix],
                     onPressed: (index) {
                       valueChanged(value, index == 0 ? false : true);
                     },
+                    children: const [Text("Coffee"), Text("Water")],
                   ),
                 ],
               ),
@@ -1158,7 +1154,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                       children: [
                         SizedBox(width: 55, child: Text("If:", style: Theme.of(context).textTheme.labelMedium)),
                         ToggleButtons(
-                          children: [Text("Pressure"), Text("Flow")],
                           isSelected: [!isFlow, isFlow],
                           onPressed: (index) {
                             var mask = frame.flag & (255 - De1ShotFrameClass.DC_CompF);
@@ -1170,6 +1165,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
                             valueChanged(frame);
                           },
+                          children: const [Text("Pressure"), Text("Flow")],
                         ),
                       ],
                     ),
@@ -1178,7 +1174,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                       children: [
                         SizedBox(width: 55, child: Text("is:", style: Theme.of(context).textTheme.labelMedium)),
                         ToggleButtons(
-                          children: [Text(" over "), Text(" below ")],
                           isSelected: [isGt, !isGt],
                           onPressed: (index) {
                             // DC_GT
@@ -1191,6 +1186,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
                             valueChanged(frame);
                           },
+                          children: const [Text(" over "), Text(" below ")],
                         ),
                       ],
                     ),

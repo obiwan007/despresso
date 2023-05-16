@@ -182,9 +182,11 @@ class UtcLogRecordFormatter extends LogRecordFormatter {
   @override
   StringBuffer formatToStringBuffer(LogRecord rec, StringBuffer sb) {
     var split = ls.convert(rec.message);
-    if (split.length > 0) {
-      split.forEach((line) => sb.write('${rec.time.toUtc()} ${rec.level.name} '
-          '${rec.loggerName} - ${line}'));
+    if (split.isNotEmpty) {
+      for (var line in split) {
+        sb.write('${rec.time.toUtc()} ${rec.level.name} '
+          '${rec.loggerName} - $line');
+      }
     } else {
       sb.write('${rec.time.toUtc()} ${rec.level.name} '
           '${rec.loggerName} - ${rec.message}');
@@ -213,11 +215,11 @@ class MultilineColorFormatter extends ColorFormatter {
   @override
   StringBuffer formatToStringBuffer(LogRecord rec, StringBuffer sb) {
     var split = ls.convert(rec.message);
-    split.forEach((element) {
+    for (var element in split) {
       super.formatToStringBuffer(
           LogRecord(rec.level, element, rec.loggerName, rec.error, rec.stackTrace, rec.zone, rec.object), sb);
       sb.writeln();
-    });
+    }
 
     return sb;
   }

@@ -269,7 +269,7 @@ class ShotEditState extends State<ShotEdit> {
                       onTap: () => launchUrl(Uri.parse('https://visualizer.coffee/shots/${_editedShot.visualizerId}')),
                       child: Text(
                         S.of(context).screenShotEditOpenInVisualizercoffee,
-                        style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                        style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                       ),
                     ),
                   ),

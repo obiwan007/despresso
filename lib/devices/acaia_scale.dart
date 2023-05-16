@@ -1,24 +1,17 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'dart:math' show pow;
 import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
-import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:logging/logging.dart' as l;
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-/// Implementation for Acaia Scales
-/// Lunar pre 2021
-/// PROCH
-///
 class AcaiaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('AcaiaScale');
-  // ignore: non_constant_identifier_names
 
   static Uuid ServiceUUID =
       useLongCharacteristics() ? Uuid.parse('00001820-0000-1000-8000-00805f9b34fb') : Uuid.parse('1820');

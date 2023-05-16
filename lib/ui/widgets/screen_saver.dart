@@ -93,12 +93,12 @@ class _ScreenSaverState extends State<ScreenSaver> with SingleTickerProviderStat
               child: Column(
                 children: [
                   Text(
-                    "${fmtT.toString()}",
+                    fmtT.toString(),
                     style: TextStyle(fontSize: 100, color: Theme.of(context).colorScheme.primary),
                   ),
                   Text(
-                    "${fmtD.toString()}",
-                    style: TextStyle(fontSize: 30, color: Colors.white),
+                    fmtD.toString(),
+                    style: const TextStyle(fontSize: 30, color: Colors.white),
                   ),
                 ],
               ),

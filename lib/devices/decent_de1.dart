@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:despresso/devices/abstract_comm.dart';
@@ -317,10 +316,13 @@ class DE1 extends ChangeNotifier implements IDe1 {
 
   int firmware = 0;
 
+  @override
   int usbChargerMode = 0;
 
+  @override
   double steamFlow = 0.5;
 
+  @override
   int steamPurgeMode = 0;
 
   double flowEstimation = 0;
@@ -428,6 +430,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
   }
 
+  @override
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
     if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
     final characteristic =
