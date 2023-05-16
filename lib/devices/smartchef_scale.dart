@@ -28,7 +28,8 @@ class SmartchefScale extends ChangeNotifier implements AbstractScale {
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
-  double initialWeight = 0.00; // this is a workaround for the missing taring function
+  double weightAtTare = 0.00; // this is a workaround for the missing taring function
+  double weightFromScale = 0.00;
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
@@ -45,15 +46,16 @@ class SmartchefScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
-    var weight = (data[5] * 256 + data[6]) / 10;
-    // weight = weight - initialWeight; -> set on shot start
-    // set weight negative on condition?
-
-    scaleService.setWeight(weight);
+    weightFromScale = ((data[5] << 8) + data[6]) / 10;
+    if (data[3] > 10) {
+      weightFromScale = weightFromScale * -1;
+    }
+    scaleService.setWeight(weightFromScale - weightAtTare);
   }
 
   @override
   writeTare() {
+    weightAtTare = weightFromScale;
     // return writeToSmartchef([cmdTare]);
     return Future(() => null); // the smartchef scale doesn't seem to support ble taring
   }
