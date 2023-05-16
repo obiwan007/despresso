@@ -290,8 +290,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         KeyValueWidget(label: S.of(context).screenBeanSelectTypeOfBeans, value: coffee.type),
         KeyValueWidget(
             label: S.of(context).screenBeanSelectRoastingDate,
-            value: "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} " +
-                S.of(context).screenBeanSelectDaysAgo),
+            value: "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} ${S.of(context).screenBeanSelectDaysAgo}"),
         const SizedBox(height: 10),
         KeyValueWidget(
           label: S.of(context).screenBeanSelectAcidity,

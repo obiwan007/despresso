@@ -16,7 +16,6 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,226 +101,6 @@ const waterMap = [
   2058,
 ];
 
-// import 'package:spline/spline.dart';
-
-// void main() {
-//   final x = [
-//     0,
-//     1,
-//     2,
-//     3,
-//     4,
-//     5,
-//     6,
-//     7,
-//     8,
-//     9,
-//     10,
-//     11,
-//     12,
-//     13,
-//     14,
-//     15,
-//     16,
-//     17,
-//     18,
-//     19,
-//     20,
-//     21,
-//     22,
-//     23,
-//     24,
-//     25,
-//     26,
-//     27,
-//     28,
-//     29,
-//     30,
-//     31,
-//     32,
-//     33,
-//     34,
-//     35,
-//     36,
-//     37,
-//     38,
-//     39,
-//     40,
-//     41,
-//     42,
-//     43,
-//     44,
-//     45,
-//     46,
-//     47,
-//     48,
-//     49,
-//     50,
-//     51,
-//     52,
-//     53,
-//     54,
-//     55,
-//     56,
-//     57,
-//     58,
-//     59,
-//     60,
-//     61,
-//     62,
-//     63,
-//     64,
-//     65,
-//     66,
-//     67,
-//   ];
-
-//   final y = [
-//     0,
-//     16,
-//     43,
-//     70,
-//     97,
-//     124,
-//     151,
-//     179,
-//     206,
-//     233,
-//     261,
-//     288,
-//     316,
-//     343,
-//     371,
-//     398,
-//     426,
-//     453,
-//     481,
-//     509,
-//     537,
-//     564,
-//     592,
-//     620,
-//     648,
-//     676,
-//     704,
-//     732,
-//     760,
-//     788,
-//     816,
-//     844,
-//     872,
-//     900,
-//     929,
-//     957,
-//     985,
-//     1013,
-//     1042,
-//     1070,
-//     1104,
-//     1138,
-//     1172,
-//     1207,
-//     1242,
-//     1277,
-//     1312,
-//     1347,
-//     1382,
-//     1417,
-//     1453,
-//     1488,
-//     1523,
-//     1559,
-//     1594,
-//     1630,
-//     1665,
-//     1701,
-//     1736,
-//     1772,
-//     1808,
-//     1843,
-//     1879,
-//     1915,
-//     1951,
-//     1986,
-//     2022,
-//     2058,
-//   ];
-
-//   final coefficients = Spline.cubic(x, y);
-//   print(coefficients);
-// }
-
-// x = [
-//   0,
-//   1,
-//   2,
-//   3,
-//   4,
-//   5,
-//   6,
-//   7,
-//   8,
-//   9,
-//   10,
-//   11,
-//   12,
-//   13,
-//   14,
-//   15,
-//   16,
-//   17,
-//   18,
-//   19,
-//   20,
-//   21,
-//   22,
-//   23,
-//   24,
-//   25,
-//   26,
-//   27,
-//   28,
-//   29,
-//   30,
-//   31,
-//   32,
-//   33,
-//   34,
-//   35,
-//   36,
-//   37,
-//   38,
-//   39,
-//   40,
-//   41,
-//   42,
-//   43,
-//   44,
-//   45,
-//   46,
-//   47,
-//   48,
-//   49,
-//   50,
-//   51,
-//   52,
-//   53,
-//   54,
-//   55,
-//   56,
-//   57,
-//   58,
-//   59,
-//   60,
-//   61,
-//   62,
-//   63,
-//   64,
-//   65,
-//   66,
-//   67,
-// ];
-
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
 
@@ -340,7 +119,7 @@ class WaterLevel {
 
   int getLevelML() {
     // Offset because probe starts above water.
-    var l = getLevelMM() - 6;
+    var l = getLevelMM() + 5;
     return l > 0 && l < waterMap.length ? waterMap[l] : 0;
   }
 
@@ -417,7 +196,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   EspressoMachineState lastState = EspressoMachineState.disconnected;
 
-  Battery _battery = Battery();
+  final Battery _battery = Battery();
 
   final List<int> _waterAverager = [];
 
@@ -425,8 +204,6 @@ class EspressoMachineService extends ChangeNotifier {
 
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
-
-  double _sampleTime = 0;
 
   ShotState? _previousShot;
   ShotState? _newestShot;
@@ -498,7 +275,9 @@ class EspressoMachineService extends ChangeNotifier {
         try {
           log.fine("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
           sleepTime += 10;
-
+          if (sleepTime < 30 && settingsService.scaleDisplayOffOnSleep) {
+            scaleService.display(DisplayMode.off);
+          }
           // if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
           //   try {
           //     if (await Wakelock.enabled) {
@@ -528,6 +307,11 @@ class EspressoMachineService extends ChangeNotifier {
 
       if (state.coffeeState == EspressoMachineState.idle) {
         isPouring = false;
+
+        if (idleTime == 0 && settingsService.scaleDisplayOffOnSleep) {
+          scaleService.display(DisplayMode.on);
+        }
+
         try {
           log.fine("Machine is still idle $idleTime < ${settingsService.sleepTimer * 60}");
           idleTime += 10;
@@ -638,16 +422,16 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
-  void setState(EspressoMachineState state) {
+  Future<void> setState(EspressoMachineState state) async {
     _state.coffeeState = state;
 
     if (lastState != state &&
         (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water)) {
       if (settingsService.shotAutoTare) {
-        scaleService.tare();
+        await scaleService.tare();
       }
       if (settingsService.scaleStartTimer) {
-        scaleService.timer(TimerMode.reset);
+        await scaleService.timer(TimerMode.reset);
       }
     }
     if (state == EspressoMachineState.idle &&
@@ -992,7 +776,7 @@ class EspressoMachineService extends ChangeNotifier {
           var c = 5;
           var hz = 4;
           var f = 1 / hz * 1000;
-          int ms = (f / (c + 1)).toInt();
+          int ms = f ~/ (c + 1);
 
           // if (oldShot == -1) {
           if (_newestShot != null) {
@@ -1002,7 +786,6 @@ class EspressoMachineService extends ChangeNotifier {
           }
 
           _newestShot = ShotState.fromJson(shot.toJson());
-          ;
 
           if (_previousShot != null) {
             if (_floatingShot == null) {
@@ -1013,14 +796,14 @@ class EspressoMachineService extends ChangeNotifier {
             var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupPressure, _previousShot!.groupPressure);
 
-            var linGP_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
-                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
+            var lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
 
             var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.groupFlow, _previousShot!.groupFlow);
 
-            var linGF_S = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected,
-                _previousShot!.sampleTimeCorrected, _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
+            var lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
 
             var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
                 _newestShot!.flowWeight, _previousShot!.flowWeight);
@@ -1043,9 +826,9 @@ class EspressoMachineService extends ChangeNotifier {
                 // newShot.groupPressure = 1;
                 fs.sampleTimeCorrected += (t) * ms / 1000;
                 fs.groupPressure = linGP.getY(fs.sampleTimeCorrected);
-                fs.setGroupPressure = linGP_S.getY(fs.sampleTimeCorrected);
+                fs.setGroupPressure = lingpS.getY(fs.sampleTimeCorrected);
                 fs.groupFlow = linGF.getY(fs.sampleTimeCorrected);
-                fs.setGroupFlow = linGF_S.getY(fs.sampleTimeCorrected);
+                fs.setGroupFlow = lingfS.getY(fs.sampleTimeCorrected);
                 fs.flowWeight = linWF.getY(fs.sampleTimeCorrected);
                 fs.weight = scaleService.weight; //  linW.getY(fs.sampleTimeCorrected);
                 // log.info("Shot: $t ${newShot.isInterpolated} ${newShot.sampleTimeCorrected}");

@@ -204,14 +204,32 @@ class CoffeeService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<int> copyRecipeFromId(int id) async {
+    if (id == 0) return 0;
+
+    var recipe = recipeBox.get(id);
+    if (recipe == null) return 0;
+
+    recipe.name = recipe.name + " Copy";
+    recipe.id = 0;
+    var idNew = updateRecipe(recipe);
+
+    selectedRecipeId = idNew;
+    settings.selectedRecipe = idNew;
+    return idNew;
+  }
+
   Future<void> setSelectedRecipe(int id) async {
     if (id == 0) return;
 
     selectedRecipeId = id;
     settings.selectedRecipe = id;
     var recipe = recipeBox.get(id);
+    if (recipe == null) {
+      return;
+    }
 
-    setSelectedCoffee(recipe!.coffee.targetId);
+    setSelectedCoffee(recipe.coffee.targetId);
 
     var profileService = getIt<ProfileService>();
     var machineService = getIt<EspressoMachineService>();
@@ -224,7 +242,9 @@ class CoffeeService extends ChangeNotifier {
     settings.steamHeaterOff = !recipe.useSteam;
     profileService.setProfileFromId(recipe.profileId);
     try {
-      await machineService.uploadProfile(profileService.currentProfile!);
+      if (profileService.currentProfile != null) {
+        await machineService.uploadProfile(profileService.currentProfile!);
+      }
       await machineService.updateSettings();
     } catch (e) {
       log.severe("Profile could not be sent: $e");
@@ -273,7 +293,7 @@ class CoffeeService extends ChangeNotifier {
 // code to return members
   }
 
-  void addRecipe({required String name, required int coffeeId, required String profileId}) {
+  int addRecipe({required String name, required int coffeeId, required String profileId}) {
     var recipe = Recipe();
     recipe.name = name;
     recipe.coffee.targetId = coffeeId;
@@ -286,6 +306,7 @@ class CoffeeService extends ChangeNotifier {
     settings.notifyListeners();
     notifyListeners();
     _controllerRecipe.add(getRecipes());
+    return id;
   }
 
   List<Recipe> getRecipes() {
@@ -315,12 +336,13 @@ class CoffeeService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateRecipe(Recipe recipe) {
-    recipeBox.put(recipe);
+  int updateRecipe(Recipe recipe) {
+    int id = recipeBox.put(recipe);
     settings.targetEspressoWeight = recipe.adjustedWeight;
     settings.targetTempCorrection = recipe.adjustedTemp;
     notifyListeners();
     _controllerRecipe.add(getRecipes());
+    return id;
   }
 
   void removeRecipe(int id) {

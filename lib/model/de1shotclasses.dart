@@ -478,7 +478,7 @@ class Helper {
   static String toHex(Uint8List data) {
     var sb = "";
     for (var b in data) {
-      sb += "${b.toRadixString(16)}-";
+      sb += " ${b.toRadixString(16).padLeft(2, "0")}";
     }
     return sb;
   }

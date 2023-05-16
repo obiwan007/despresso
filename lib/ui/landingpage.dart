@@ -16,7 +16,6 @@ import 'package:despresso/ui/screens/steam_screen.dart';
 import 'package:despresso/ui/screens/water_screen.dart';
 import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:despresso/ui/widgets/screen_saver.dart';
-import 'package:despresso/ui/widgets/start_stop_button.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -540,12 +539,12 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 _saverContext = null;
                 _screensaver.handleTap();
               },
-              child: Column(
+              child: const Column(
                 children: [
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
+                      children: [
                         Expanded(child: ScreenSaver()),
                       ],
                     ),

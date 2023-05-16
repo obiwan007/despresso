@@ -51,7 +51,7 @@ class SteamScreenState extends State<SteamScreen> {
   }
 
   machineStateListener() {
-    setState(() => {currentState = machineService.state.coffeeState});
+    setState(() => currentState = machineService.state.coffeeState);
     // machineService.de1?.setIdleState();
   }
 

@@ -107,10 +107,10 @@ class VisualizerService extends ChangeNotifier {
     var buffer = StringBuffer();
     // buffer.writeln("local_time {${shot.date.toIso8601String()}}");
 
-    buffer.writeln("clock ${(shot.date.millisecondsSinceEpoch / 1000).toInt()}");
+    buffer.writeln("clock ${shot.date.millisecondsSinceEpoch ~/ 1000}");
     // buffer.writeln("app_version {1.39.0}");
     // buffer.writeln("local_time {Thu Jun 23 16:57:46 CST 2022}");
-    buffer.writeln("espresso_elapsed {${times}}");
+    buffer.writeln("espresso_elapsed {$times}");
     buffer.writeln("espresso_pressure {${shot.shotstates.map((e) => e.groupPressure.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln(
         "espresso_pressure_goal {${shot.shotstates.map((e) => e.setGroupPressure.toStringAsFixed(4)).join(" ")}}");

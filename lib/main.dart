@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:despresso/devices/decent_de1_simulated.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:sentry_logging/sentry_logging.dart';
@@ -93,12 +91,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
   late SettingsService _settings;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _settings = getIt<SettingsService>();
     _settings.addListener(() {

@@ -11,11 +11,8 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/screens/profiles_screen.dart';
 import 'package:despresso/ui/screens/recipe_edit.dart';
-import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
-import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
@@ -63,7 +60,7 @@ class RecipeScreenState extends State<RecipeScreen> {
   }
 
   machineStateListener() {
-    setState(() => {currentState = machineService.state.coffeeState});
+    setState(() => currentState = machineService.state.coffeeState);
     // machineService.de1?.setIdleState();
   }
 
@@ -122,18 +119,18 @@ class RecipeScreenState extends State<RecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          coffeeService.addRecipe(
-              name:
-                  "${profileService.currentProfile?.title ?? "no profile selected"}/${coffeeService.currentCoffee?.name ?? "No bean selected"}",
-              coffeeId: coffeeService.selectedCoffeeId,
-              profileId: profileService.currentProfile?.id ?? "Default");
-        },
-        // backgroundColor: Colors.green,
-        label: Text(S.of(context).screenRecipeAddRecipe),
-        icon: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     coffeeService.addRecipe(
+      //         name:
+      //             "${profileService.currentProfile?.title ?? "no profile selected"}/${coffeeService.currentCoffee?.name ?? "No bean selected"}",
+      //         coffeeId: coffeeService.selectedCoffeeId,
+      //         profileId: profileService.currentProfile?.id ?? "Default");
+      //   },
+      //   // backgroundColor: Colors.green,
+      //   label: Text(S.of(context).screenRecipeAddRecipe),
+      //   icon: const Icon(Icons.add),
+      // ),
       body: Container(
         child: _buildControls(context),
       ),
@@ -284,6 +281,8 @@ class RecipeDescription extends StatelessWidget {
   }
 }
 
+enum SelectedMenu { edit, copy, add }
+
 class RecipeDetails extends StatefulWidget {
   const RecipeDetails({
     Key? key,
@@ -302,8 +301,8 @@ class RecipeDetails extends StatefulWidget {
 
 class _RecipeDetailsState extends State<RecipeDetails> {
   final log = Logger('RecipeDetails');
-  String _ratio1 = "0";
-  String _ratio2 = "0";
+  final String _ratio1 = "0";
+  final String _ratio2 = "0";
 
   late ScreensaverService _screensaver;
 
@@ -337,22 +336,93 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                 textAlign: TextAlign.center,
               ),
             ),
-            IconButton(
-              key: Key(nameOfRecipe),
-              onPressed: () async {
-                _screensaver.pause();
-                var result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RecipeEdit(
-                            widget.coffeeService.currentRecipe?.id ?? 0,
-                          )),
-                );
-                _screensaver.resume();
-                widget.coffeeService.setSelectedRecipe(widget.coffeeService.currentRecipe!.id);
+            PopupMenuButton<SelectedMenu>(
+              initialValue: null,
+              // Callback that sets the selected popup menu item.
+              onSelected: (SelectedMenu item) async {
+                switch (item) {
+                  case SelectedMenu.add:
+                    var id = widget.coffeeService.addRecipe(
+                        name:
+                            "${widget.profileService.currentProfile?.title ?? "no profile selected"}/${widget.coffeeService.currentCoffee?.name ?? "No bean selected"}",
+                        coffeeId: widget.coffeeService.selectedCoffeeId,
+                        profileId: widget.profileService.currentProfile?.id ?? "Default");
+                    _screensaver.pause();
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RecipeEdit(
+                                id,
+                                title: "Add Recipe",
+                              )),
+                    );
+                    _screensaver.resume();
+                    break;
+                  case SelectedMenu.edit:
+                    _screensaver.pause();
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RecipeEdit(
+                                widget.coffeeService.currentRecipe?.id ?? 0,
+                              )),
+                    );
+                    _screensaver.resume();
+                    widget.coffeeService.setSelectedRecipe(widget.coffeeService.currentRecipe!.id);
+
+                    break;
+                  case SelectedMenu.copy:
+                    var id = await widget.coffeeService.copyRecipeFromId(widget.coffeeService.currentRecipe!.id);
+                    if (id > 0) {
+                      _screensaver.pause();
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RecipeEdit(
+                                  id ?? 0,
+                                  title: "Copy Recipe",
+                                )),
+                      );
+                      _screensaver.resume();
+                      widget.coffeeService.setSelectedRecipe(id);
+                    }
+                    break;
+                }
+                // setState(() {
+                //   selectedMenu = item;
+                // });
               },
-              icon: Icon(Icons.edit),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<SelectedMenu>>[
+                const PopupMenuItem<SelectedMenu>(
+                  value: SelectedMenu.edit,
+                  child: Text('Edit'),
+                ),
+                const PopupMenuItem<SelectedMenu>(
+                  value: SelectedMenu.copy,
+                  child: Text('Copy'),
+                ),
+                const PopupMenuItem<SelectedMenu>(
+                  value: SelectedMenu.add,
+                  child: Text('Add'),
+                ),
+              ],
             ),
+            // IconButton(
+            //   key: Key(nameOfRecipe),
+            //   onPressed: () async {
+            //     _screensaver.pause();
+            //     var result = await Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => RecipeEdit(
+            //                 widget.coffeeService.currentRecipe?.id ?? 0,
+            //               )),
+            //     );
+            //     _screensaver.resume();
+            //     widget.coffeeService.setSelectedRecipe(widget.coffeeService.currentRecipe!.id);
+            //   },
+            //   icon: const Icon(Icons.edit),
+            // ),
           ],
         ),
         Column(
