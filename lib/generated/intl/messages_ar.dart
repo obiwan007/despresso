@@ -38,6 +38,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(w) => "الوزن ${w} ز";
 
+  static String m9(temp) => "درجة حرارة الماء ${temp} ° C";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "beans": MessageLookupByLibrary.simpleMessage("فول"),
@@ -486,6 +488,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("وضع البخار بنقرتين:"),
         "screenWaterWeightG": m8,
+        "screenHotWaterTemperaturs": m9,
         "settings": MessageLookupByLibrary.simpleMessage("إعدادات"),
         "show": MessageLookupByLibrary.simpleMessage("يعرض"),
         "start": MessageLookupByLibrary.simpleMessage("يبدأ"),

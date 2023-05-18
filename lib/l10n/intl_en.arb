@@ -468,6 +468,8 @@
   "@screenSteamTwotapMode": {},
   "screenWaterWeightG": "Weight {w} g",
   "@screenWaterWeightG": {},
+  "screenHotWaterTemperaturs": "Water Temperature {temp} °C",
+  "@screenHotWaterTemperaturs": {},
   "settings": "Settings",
   "@settings": {},
   "show": "Show",

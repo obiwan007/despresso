@@ -38,6 +38,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(w) => "Gewicht ${w} g";
 
+  static String m9(temp) => "Wasser Temperatur ${temp} °C";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "beans": MessageLookupByLibrary.simpleMessage("Bohnen"),
@@ -496,6 +498,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("Dampf two-tap mode:"),
         "screenWaterWeightG": m8,
+        "screenHotWaterTemperaturs": m9,
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
         "show": MessageLookupByLibrary.simpleMessage("Anzeigen"),
         "start": MessageLookupByLibrary.simpleMessage("Start"),

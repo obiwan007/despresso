@@ -38,6 +38,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m8(w) => "무게 ${w}g";
 
+  static String m9(temp) => "수온 ${temp} °C";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "beans": MessageLookupByLibrary.simpleMessage("원두"),
@@ -443,6 +445,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("Steam 투탭 모드:"),
         "screenWaterWeightG": m8,
+        "screenHotWaterTemperaturs": m9,
         "settings": MessageLookupByLibrary.simpleMessage("설정"),
         "show": MessageLookupByLibrary.simpleMessage("보여주다"),
         "start": MessageLookupByLibrary.simpleMessage("시작"),

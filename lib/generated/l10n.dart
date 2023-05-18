@@ -2345,6 +2345,15 @@ class S {
       args: [temp],
     );
   }
+  /// `Water Temperaturs {temp} °C`
+  String screenHotWaterTemperaturs(Object temp) {
+    return Intl.message(
+      'Water Temperaturs $temp °C',
+      name: 'screenHotWaterTemperaturs',
+      desc: '',
+      args: [temp],
+    );
+  }
 
   /// `Temp Tip`
   String get screenSteamTempTip {

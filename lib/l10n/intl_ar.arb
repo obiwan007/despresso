@@ -468,6 +468,8 @@
   "@screenSteamTwotapMode": {},
   "screenWaterWeightG": "الوزن {w} ز",
   "@screenWaterWeightG": {},
+  "screenHotWaterTemperaturs": "درجة حرارة الماء {temp} °C",
+  "@screenHotWaterTemperaturs": {},
   "settings": "إعدادات",
   "@settings": {},
   "show": "يعرض",

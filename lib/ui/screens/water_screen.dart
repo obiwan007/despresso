@@ -63,7 +63,7 @@ class WaterScreenState extends State<WaterScreen> {
                       flex: 1,
                       child: Column(
                         children: [
-                          Text(S.of(context).screenSteamTemperaturs(settings.targetHotWaterTemp),
+                          Text(S.of(context).screenHotWaterTemperaturs(settings.targetHotWaterTemp),
                               style: Theme.of(context).textTheme.labelLarge),
                           Slider(
                             value: settings.targetHotWaterTemp.toDouble(),

@@ -468,6 +468,8 @@
   "@screenSteamTwotapMode": {},
   "screenWaterWeightG": "무게 {w}g",
   "@screenWaterWeightG": {},
+  "screenHotWaterTemperaturs": "수온 {temp} °C",
+  "@screenHotWaterTemperaturs": {},
   "settings": "설정",
   "@settings": {},
   "show": "보여주다",
