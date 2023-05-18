@@ -32,7 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(temp) => "Stop at Temperature ${temp} °C";
 
-  static String m6(temp) => "Steam Temperaturs ${temp} °C";
+  static String m6(temp) => "Steam Temperature ${temp} °C";
 
   static String m7(t) => "Timer ${t} s";
 
