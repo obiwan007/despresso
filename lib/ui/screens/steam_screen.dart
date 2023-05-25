@@ -250,13 +250,13 @@ class SteamScreenState extends State<SteamScreen> {
                           flex: 1,
                           child: Column(
                             children: [
-                              Text(S.of(context).screenSteamFlowrate(settings.targetSteamFlow),
+                              Text(S.of(context).screenSteamFlowrate(settings.targetSteamFlow.toStringAsFixed(1)),
                                   style: Theme.of(context).textTheme.labelLarge),
                               Slider(
                                 value: settings.targetSteamFlow,
                                 max: 4.5,
                                 min: 0.5,
-                                divisions: 50,
+                                divisions: 40,
                                 label: "${settings.targetSteamFlow.toStringAsFixed(1)} ml/s",
                                 onChanged: (double value) {
                                   setState(() {
