@@ -250,19 +250,17 @@ class SteamScreenState extends State<SteamScreen> {
                           flex: 1,
                           child: Column(
                             children: [
-                              Text(
-                                  S
-                                      .of(context)
-                                      .screenSteamFlowrate(machineService.de1?.steamFlow.toStringAsFixed(1) ?? '?'),
+                              Text(S.of(context).screenSteamFlowrate(settings.targetSteamFlow),
                                   style: Theme.of(context).textTheme.labelLarge),
                               Slider(
-                                value: machineService.de1?.steamFlow ?? 2.5,
+                                value: settings.targetSteamFlow,
                                 max: 4.5,
                                 min: 0.5,
-                                divisions: 1,
-                                label: "${machineService.de1?.steamFlow.toStringAsFixed(1)} ml/s",
+                                divisions: 50,
+                                label: "${settings.targetSteamFlow.toStringAsFixed(1)} ml/s",
                                 onChanged: (double value) {
                                   setState(() {
+                                    settings.targetSteamFlow = value;
                                     machineService.de1?.setSteamFlow(value);
                                   });
                                 },

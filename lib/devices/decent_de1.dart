@@ -847,6 +847,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
           var fan = await getFanThreshhold();
           if (fan < 50) setFanThreshhold(50);
 
+          await setSteamFlow(_settings.targetSteamFlow);
           steamFlow = await getSteamFlow();
 
           steamPurgeMode = await getSteamPurgeMode();
