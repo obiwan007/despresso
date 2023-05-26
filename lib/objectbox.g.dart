@@ -586,44 +586,44 @@ final _entities = <ModelEntity>[
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
   ModelEntity(
-      id: const IdUid(11, 2746153146489174759),
+      id: const IdUid(12, 430177863539321784),
       name: 'SettingsEntry',
-      lastPropertyId: const IdUid(7, 649428367441394162),
+      lastPropertyId: const IdUid(7, 3739120804087862609),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
-            id: const IdUid(1, 5338240427175828934),
+            id: const IdUid(1, 8024998193052221054),
             name: 'id',
             type: 6,
             flags: 1),
         ModelProperty(
-            id: const IdUid(2, 8227203168176223394),
+            id: const IdUid(2, 8236437453027958750),
             name: 'doubleVal',
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(3, 4672631448573261939),
+            id: const IdUid(3, 4874403153133594317),
             name: 'intVal',
             type: 6,
             flags: 0),
         ModelProperty(
-            id: const IdUid(4, 6775070129254440298),
+            id: const IdUid(4, 2432581477506405598),
             name: 'stringVal',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(5, 6064803487869840239),
+            id: const IdUid(5, 4540194705568142650),
             name: 'boolVal',
             type: 1,
             flags: 0),
         ModelProperty(
-            id: const IdUid(6, 7666011173201483948),
+            id: const IdUid(6, 207802755342155028),
             name: 'key',
             type: 9,
             flags: 2048,
-            indexId: const IdUid(8, 899743464370898125)),
+            indexId: const IdUid(9, 5134143269328124101)),
         ModelProperty(
-            id: const IdUid(7, 649428367441394162),
+            id: const IdUid(7, 3739120804087862609),
             name: 'type',
             type: 9,
             flags: 0)
@@ -652,15 +652,16 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(11, 2746153146489174759),
-      lastIndexId: const IdUid(8, 899743464370898125),
+      lastEntityId: const IdUid(12, 430177863539321784),
+      lastIndexId: const IdUid(9, 5134143269328124101),
       lastRelationId: const IdUid(1, 2516218059471133212),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
         2372411160892302204,
         5004946134676291479,
         6316057013526616538,
-        4429298076511472570
+        4429298076511472570,
+        2746153146489174759
       ],
       retiredIndexUids: const [],
       retiredPropertyUids: const [
@@ -697,7 +698,14 @@ ModelDefinition getObjectBoxModel() {
         1973948115627604173,
         7066844979841951108,
         1831677913184358060,
-        9066171640428561255
+        9066171640428561255,
+        5338240427175828934,
+        8227203168176223394,
+        4672631448573261939,
+        6775070129254440298,
+        6064803487869840239,
+        7666011173201483948,
+        649428367441394162
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
