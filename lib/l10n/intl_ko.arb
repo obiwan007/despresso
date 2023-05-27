@@ -372,6 +372,8 @@
   "@screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart": {},
   "screenSettingsShotSettings": "샷 설정",
   "@screenSettingsShotSettings": {},
+  "screenSettingsShowClockDuringScreensaver": "화면 보호기 동안 시계 표시",
+  "@screenSettingsShowClockDuringScreensaver": {},
   "screenSettingsShowFlush": "플러시 표시",
   "@screenSettingsShowFlush": {},
   "screenSettingsSmartCharging": "스마트 충전",
@@ -466,8 +468,14 @@
   "@screenSteamTimeS": {},
   "screenSteamTwotapMode": "Steam 투탭 모드:",
   "@screenSteamTwotapMode": {},
+  "screenWaterTemp": "수온",
+  "@screenWaterTemp": {},
+  "screenWaterTemperatureWatertemp": "수온 {watertemp}°C",
+  "@screenWaterTemperatureWatertemp": {},
   "screenWaterWeightG": "무게 {w}g",
   "@screenWaterWeightG": {},
+  "screenWaterWeightVolume": "물 무게/부피 {volume} g 또는 ml",
+  "@screenWaterWeightVolume": {},
   "settings": "설정",
   "@settings": {},
   "show": "보여주다",
@@ -509,6 +517,5 @@
   "wait": "준비",
   "@wait": {},
   "weight": "무게",
-  "@weight": {},
-  "screenSettingsShowClockDuringScreensaver": "Show clock during screensaver"
+  "@weight": {}
 }

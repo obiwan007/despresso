@@ -20,35 +20,39 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
-  static String m0(sec) => "صب: ${sec} s";
+  static String m0(sec) => "صب: ${sec}";
 
-  static String m1(sec) => "الإجمالي: ${sec} s";
+  static String m1(sec) => "الإجمالي: ${sec}";
 
   static String m2(sec) => "TTW: ${sec} s";
 
   static String m3(desc) => "صِف تجربتك مع لقطة من ${desc}";
 
-  static String m4(flow) => "معدل تدفق البخار ${flow} ml / s";
+  static String m4(flow) => "معدل تدفق البخار ${flow} مل/ثانية";
 
-  static String m5(temp) => "توقف عند درجة حرارة ${temp} ° C";
+  static String m5(temp) => "توقف عند درجة حرارة ${temp}";
 
-  static String m6(temp) => "درجات حرارة البخار ${temp} ° C";
+  static String m6(temp) => "درجة حرارة البخار ${temp}";
 
-  static String m7(t) => "الموقت ${t} ث";
+  static String m7(t) => "الموقت ${t} بالثانية";
 
-  static String m8(w) => "الوزن ${w} ز";
+  static String m8(watertemp) => "درجة حرارة الماء ${watertemp}";
+
+  static String m9(w) => "الوزن ${w} جرام";
+
+  static String m10(volume) => "وزن / حجم الماء ${volume} جم أو مل";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "beans": MessageLookupByLibrary.simpleMessage("فول"),
+        "beans": MessageLookupByLibrary.simpleMessage("حبوب البُن"),
         "blue": MessageLookupByLibrary.simpleMessage("أزرق"),
-        "disabled": MessageLookupByLibrary.simpleMessage("عاجز"),
+        "disabled": MessageLookupByLibrary.simpleMessage("تعطيل"),
         "disconnected": MessageLookupByLibrary.simpleMessage("انقطع الاتصال"),
-        "edit": MessageLookupByLibrary.simpleMessage("يحرر"),
-        "enabled": MessageLookupByLibrary.simpleMessage("ممكن"),
+        "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
+        "enabled": MessageLookupByLibrary.simpleMessage("تمكين"),
         "error": MessageLookupByLibrary.simpleMessage("خطأ"),
-        "exit": MessageLookupByLibrary.simpleMessage("مخرج"),
-        "flow": MessageLookupByLibrary.simpleMessage("تدفق"),
+        "exit": MessageLookupByLibrary.simpleMessage("خروج"),
+        "flow": MessageLookupByLibrary.simpleMessage("التدفق"),
         "footerBattery": MessageLookupByLibrary.simpleMessage("بطارية"),
         "footerConnect": MessageLookupByLibrary.simpleMessage("يتصل"),
         "footerGroup": MessageLookupByLibrary.simpleMessage("مجموعة"),
@@ -62,25 +66,25 @@ class MessageLookup extends MessageLookupByLibrary {
             "التدفق [ml / s] / الضغط [bar]"),
         "graphTime": MessageLookupByLibrary.simpleMessage("الوقت / ثانية"),
         "green": MessageLookupByLibrary.simpleMessage("أخضر"),
-        "hide": MessageLookupByLibrary.simpleMessage("يخفي"),
+        "hide": MessageLookupByLibrary.simpleMessage("إخفاء"),
         "mainMenuDespressoFeedback":
             MessageLookupByLibrary.simpleMessage("ملاحظات ديسبريسو"),
         "mainMenuEspressoDiary":
             MessageLookupByLibrary.simpleMessage("يوميات اسبريسو"),
         "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("تعليق"),
         "no": MessageLookupByLibrary.simpleMessage("لا"),
-        "off": MessageLookupByLibrary.simpleMessage("عن"),
+        "off": MessageLookupByLibrary.simpleMessage("إغلاق"),
         "ok": MessageLookupByLibrary.simpleMessage("نعم"),
-        "on": MessageLookupByLibrary.simpleMessage("على"),
-        "orange": MessageLookupByLibrary.simpleMessage("البرتقالي"),
-        "pressure": MessageLookupByLibrary.simpleMessage("ضغط"),
-        "privacy": MessageLookupByLibrary.simpleMessage("خصوصية"),
+        "on": MessageLookupByLibrary.simpleMessage("تشغيل"),
+        "orange": MessageLookupByLibrary.simpleMessage("برتقالي"),
+        "pressure": MessageLookupByLibrary.simpleMessage("الضغط"),
+        "privacy": MessageLookupByLibrary.simpleMessage("الخصوصية"),
         "profile": MessageLookupByLibrary.simpleMessage("حساب تعريفي"),
-        "profiles": MessageLookupByLibrary.simpleMessage("مظهر"),
+        "profiles": MessageLookupByLibrary.simpleMessage("ملفات التعريف"),
         "recipe": MessageLookupByLibrary.simpleMessage("وصفة"),
-        "reconnect": MessageLookupByLibrary.simpleMessage("أعد الاتصال"),
+        "reconnect": MessageLookupByLibrary.simpleMessage("إعادة الاتصال"),
         "red": MessageLookupByLibrary.simpleMessage("أحمر"),
-        "save": MessageLookupByLibrary.simpleMessage("يحفظ"),
+        "save": MessageLookupByLibrary.simpleMessage("حفظ"),
         "screenBeanSelectAcidity":
             MessageLookupByLibrary.simpleMessage("حموضة"),
         "screenBeanSelectAddressOfRoaster":
@@ -104,14 +108,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenBeanSelectRoastingDate":
             MessageLookupByLibrary.simpleMessage("تاريخ التحميص"),
         "screenBeanSelectSelectBeans":
-            MessageLookupByLibrary.simpleMessage("حدد الفاصوليا"),
+            MessageLookupByLibrary.simpleMessage("اختيار البُن"),
         "screenBeanSelectSelectRoaster":
-            MessageLookupByLibrary.simpleMessage("حدد المحمصة"),
+            MessageLookupByLibrary.simpleMessage("اختيار الحمص"),
         "screenBeanSelectTasting": MessageLookupByLibrary.simpleMessage("تذوق"),
         "screenBeanSelectTitle":
-            MessageLookupByLibrary.simpleMessage("الفول والمحامص"),
+            MessageLookupByLibrary.simpleMessage("البُن والتحميص"),
         "screenBeanSelectTypeOfBeans":
-            MessageLookupByLibrary.simpleMessage("نوع الفول"),
+            MessageLookupByLibrary.simpleMessage("نوع البُن"),
         "screenDiaryErrorUploadingShots":
             MessageLookupByLibrary.simpleMessage("خطأ في تحميل اللقطات"),
         "screenDiaryNoShotsToUploadSelected":
@@ -125,35 +129,35 @@ class MessageLookup extends MessageLookupByLibrary {
                 "تم بنجاح تحميل اللقطات الخاصة بك"),
         "screenEspressoBean": MessageLookupByLibrary.simpleMessage("قهوة"),
         "screenEspressoDiary":
-            MessageLookupByLibrary.simpleMessage("يوميات اسبريسو"),
-        "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("تدفق"),
+            MessageLookupByLibrary.simpleMessage("سجل الاسبريسو"),
+        "screenEspressoFlow": MessageLookupByLibrary.simpleMessage("التدفق"),
         "screenEspressoFlowMlsPressureBar":
             MessageLookupByLibrary.simpleMessage(
-                "التدفق [ml / s] / الضغط [bar]"),
+                "التدفق [مل/ثانية] / الضغط [بار]"),
         "screenEspressoPour": m0,
-        "screenEspressoPressure": MessageLookupByLibrary.simpleMessage("ضغط"),
+        "screenEspressoPressure": MessageLookupByLibrary.simpleMessage("الضغط"),
         "screenEspressoProfile":
-            MessageLookupByLibrary.simpleMessage("حساب تعريفي"),
+            MessageLookupByLibrary.simpleMessage("ملف إعداد القهوة"),
         "screenEspressoRecipe": MessageLookupByLibrary.simpleMessage("وصفة"),
         "screenEspressoRefillTheWaterTank":
             MessageLookupByLibrary.simpleMessage("أعد ملء خزان المياه"),
         "screenEspressoTarget": MessageLookupByLibrary.simpleMessage("هدف"),
         "screenEspressoTemp":
-            MessageLookupByLibrary.simpleMessage("درجة حرارة"),
-        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("الموقت"),
+            MessageLookupByLibrary.simpleMessage("درجة الحرارة"),
+        "screenEspressoTimer": MessageLookupByLibrary.simpleMessage("المؤقت"),
         "screenEspressoTimes":
             MessageLookupByLibrary.simpleMessage("الوقت / ثانية"),
         "screenEspressoTotal": m1,
         "screenEspressoTtw": m2,
-        "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("وزن"),
+        "screenEspressoWeight": MessageLookupByLibrary.simpleMessage("الوزن"),
         "screenEspressoWeightG":
-            MessageLookupByLibrary.simpleMessage("الوزن (جرام]"),
+            MessageLookupByLibrary.simpleMessage("الوزن (جرام)"),
         "screenRecipeAddRecipe":
             MessageLookupByLibrary.simpleMessage("أضف الوصفة"),
-        "screenRecipeAdjustTempC":
-            MessageLookupByLibrary.simpleMessage("ضبط درجة الحرارة [° C]"),
+        "screenRecipeAdjustTempC": MessageLookupByLibrary.simpleMessage(
+            "ضبط درجة الحرارة [درجة مئوية]"),
         "screenRecipeCoffeeNotes":
-            MessageLookupByLibrary.simpleMessage("ملاحظات القهوة"),
+            MessageLookupByLibrary.simpleMessage("إيحاءات القهوة"),
         "screenRecipeEditAdjustments":
             MessageLookupByLibrary.simpleMessage("التعديلات"),
         "screenRecipeEditDescription":
@@ -197,21 +201,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeRecipeDetails":
             MessageLookupByLibrary.simpleMessage("تفاصيل الوصفة"),
         "screenRecipeSelectedBean":
-            MessageLookupByLibrary.simpleMessage("فاصوليا مختارة"),
+            MessageLookupByLibrary.simpleMessage("حبوب البُن المحددة"),
         "screenRecipeSelectedProfile":
-            MessageLookupByLibrary.simpleMessage("الملف الشخصي المحدد"),
+            MessageLookupByLibrary.simpleMessage("ملف إعداد القهوة المحدد"),
         "screenRecipeSetRatio":
             MessageLookupByLibrary.simpleMessage("تعيين النسبة"),
         "screenRecipeStopOnWeight":
             MessageLookupByLibrary.simpleMessage("وقف الوزن:"),
         "screenRecipeStopOnWeightG":
-            MessageLookupByLibrary.simpleMessage("وقف الوزن [ز]"),
+            MessageLookupByLibrary.simpleMessage("وقف الوزن [جرام]"),
         "screenRecipeWeightinBeansG":
-            MessageLookupByLibrary.simpleMessage("حبوب الوزن بالوزن [جم]"),
+            MessageLookupByLibrary.simpleMessage("حبوب البُن بالوزن [جم]"),
         "screenRecipehotWater":
             MessageLookupByLibrary.simpleMessage("الماء الساخن:"),
         "screenRecipesteamMilk":
-            MessageLookupByLibrary.simpleMessage("حليب البخار:"),
+            MessageLookupByLibrary.simpleMessage("تبخير الحليب"),
         "screenRoasterEditAddress":
             MessageLookupByLibrary.simpleMessage("عنوان"),
         "screenRoasterEditDescription":
@@ -384,7 +388,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("إعدادات اللقطة"),
         "screenSettingsShowClockDuringScreensaver":
             MessageLookupByLibrary.simpleMessage(
-                "Show clock during screensaver"),
+                "عرض الساعة أثناء شاشة التوقف"),
         "screenSettingsShowFlush":
             MessageLookupByLibrary.simpleMessage("عرض Flush"),
         "screenSettingsSmartCharging":
@@ -475,7 +479,7 @@ class MessageLookup extends MessageLookupByLibrary {
                 "متوقف (التطهير العادي بعد التوقف)"),
         "screenSteamOnSlowPurgeOn1stStop": MessageLookupByLibrary.simpleMessage(
             "قيد التشغيل (التنظيف البطيء عند التوقف الأول)"),
-        "screenSteamReset": MessageLookupByLibrary.simpleMessage("إعادة ضبط"),
+        "screenSteamReset": MessageLookupByLibrary.simpleMessage("إعادة الضبط"),
         "screenSteamStopAtTemperatur": m5,
         "screenSteamTempTip":
             MessageLookupByLibrary.simpleMessage("نصيحة درجة الحرارة"),
@@ -485,14 +489,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSteamTimerS": m7,
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("وضع البخار بنقرتين:"),
-        "screenWaterWeightG": m8,
-        "settings": MessageLookupByLibrary.simpleMessage("إعدادات"),
-        "show": MessageLookupByLibrary.simpleMessage("يعرض"),
-        "start": MessageLookupByLibrary.simpleMessage("يبدأ"),
+        "screenWaterTemp":
+            MessageLookupByLibrary.simpleMessage("درجة حرارة الماء"),
+        "screenWaterTemperatureWatertemp": m8,
+        "screenWaterWeightG": m9,
+        "screenWaterWeightVolume": m10,
+        "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
+        "show": MessageLookupByLibrary.simpleMessage("عرض"),
+        "start": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "stateDisconnected":
             MessageLookupByLibrary.simpleMessage("انقطع الاتصال"),
         "stateIdleHeated": MessageLookupByLibrary.simpleMessage("تسخين"),
-        "statePour": MessageLookupByLibrary.simpleMessage("يصب"),
+        "statePour": MessageLookupByLibrary.simpleMessage("صبّ"),
         "state_Disconnected":
             MessageLookupByLibrary.simpleMessage("انقطع الاتصال"),
         "steamScreenTempC":
@@ -502,16 +510,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تسخين المياه"),
         "subStateHeatWaterTank":
             MessageLookupByLibrary.simpleMessage("خزان تدفئة"),
-        "switchOn": MessageLookupByLibrary.simpleMessage("شغل"),
+        "switchOn": MessageLookupByLibrary.simpleMessage("مفتاح التشغيل"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("إسبرسو"),
-        "tabHomeFlush": MessageLookupByLibrary.simpleMessage("دافق"),
+        "tabHomeFlush": MessageLookupByLibrary.simpleMessage("تنظيف"),
         "tabHomeRecipe": MessageLookupByLibrary.simpleMessage("وصفة"),
-        "tabHomeSteam": MessageLookupByLibrary.simpleMessage("بخار"),
+        "tabHomeSteam": MessageLookupByLibrary.simpleMessage("تبخير"),
         "tabHomeWater": MessageLookupByLibrary.simpleMessage("ماء"),
-        "temp": MessageLookupByLibrary.simpleMessage("درجة حرارة"),
+        "temp": MessageLookupByLibrary.simpleMessage("درجة الحرارة"),
         "validatorNotBeEmpty":
             MessageLookupByLibrary.simpleMessage("يجب ألا يكون فارغًا"),
         "wait": MessageLookupByLibrary.simpleMessage("انتظر"),
-        "weight": MessageLookupByLibrary.simpleMessage("وزن")
+        "weight": MessageLookupByLibrary.simpleMessage("الوزن")
       };
 }
