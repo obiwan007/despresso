@@ -36,7 +36,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m7(t) => "타이머 ${t}초";
 
-  static String m8(w) => "무게 ${w}g";
+  static String m8(watertemp) => "Water Temperature ${watertemp}";
+
+  static String m9(w) => "무게 ${w}g";
+
+  static String m10(volume) => "Water Weight/Volume ${volume} g or ml";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -442,7 +446,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSteamTimerS": m7,
         "screenSteamTwotapMode":
             MessageLookupByLibrary.simpleMessage("Steam 투탭 모드:"),
-        "screenWaterWeightG": m8,
+        "screenWaterTemp":
+            MessageLookupByLibrary.simpleMessage("Water Temperature"),
+        "screenWaterTemperatureWatertemp": m8,
+        "screenWaterWeightG": m9,
+        "screenWaterWeightVolume": m10,
         "settings": MessageLookupByLibrary.simpleMessage("설정"),
         "show": MessageLookupByLibrary.simpleMessage("보여주다"),
         "start": MessageLookupByLibrary.simpleMessage("시작"),

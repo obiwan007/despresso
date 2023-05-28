@@ -1,669 +1,669 @@
 {
-  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
-  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
-  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
-  "entities": [
-    {
-      "id": "3:5050282589413394899",
-      "lastPropertyId": "29:7092783304172893944",
-      "name": "Shot",
-      "properties": [
+    "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+    "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+    "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+    "entities": [
         {
-          "id": "1:3409921168948181785",
-          "name": "id",
-          "type": 6,
-          "flags": 1
+            "id": "3:5050282589413394899",
+            "lastPropertyId": "29:7092783304172893944",
+            "name": "Shot",
+            "properties": [
+                {
+                    "id": "1:3409921168948181785",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:2023678536313964966",
+                    "name": "date",
+                    "type": 10
+                },
+                {
+                    "id": "3:8622027867479492178",
+                    "name": "coffeeId",
+                    "type": 11,
+                    "flags": 520,
+                    "indexId": "3:6812967169057673456",
+                    "relationTarget": "Coffee"
+                },
+                {
+                    "id": "4:8755594923067759447",
+                    "name": "profileId",
+                    "type": 9
+                },
+                {
+                    "id": "5:5926041023112911997",
+                    "name": "pourTime",
+                    "type": 8
+                },
+                {
+                    "id": "6:3371539309151542209",
+                    "name": "pourWeight",
+                    "type": 8
+                },
+                {
+                    "id": "7:2364668778724218869",
+                    "name": "targetEspressoWeight",
+                    "type": 8
+                },
+                {
+                    "id": "8:3676925190157138581",
+                    "name": "targetTempCorrection",
+                    "type": 8
+                },
+                {
+                    "id": "9:111349150896732313",
+                    "name": "recipeId",
+                    "type": 11,
+                    "flags": 520,
+                    "indexId": "6:446388852719725051",
+                    "relationTarget": "Recipe"
+                },
+                {
+                    "id": "10:7125372405899859202",
+                    "name": "doseWeight",
+                    "type": 8
+                },
+                {
+                    "id": "11:3218706867177652460",
+                    "name": "drinkWeight",
+                    "type": 8
+                },
+                {
+                    "id": "12:843222103065987409",
+                    "name": "grinderSettings",
+                    "type": 8
+                },
+                {
+                    "id": "13:3391691028545881063",
+                    "name": "description",
+                    "type": 9
+                },
+                {
+                    "id": "14:7115326853722345534",
+                    "name": "grinderName",
+                    "type": 9
+                },
+                {
+                    "id": "15:1080541265960096120",
+                    "name": "roastingDate",
+                    "type": 10
+                },
+                {
+                    "id": "17:8073143111153977311",
+                    "name": "extractionYield",
+                    "type": 8
+                },
+                {
+                    "id": "18:6900766595761360168",
+                    "name": "enjoyment",
+                    "type": 8
+                },
+                {
+                    "id": "19:1657747884825847241",
+                    "name": "barrista",
+                    "type": 9
+                },
+                {
+                    "id": "20:1949502433090459020",
+                    "name": "drinker",
+                    "type": 9
+                },
+                {
+                    "id": "21:3188265368046958522",
+                    "name": "totalDissolvedSolids",
+                    "type": 8
+                },
+                {
+                    "id": "22:7608631056957421432",
+                    "name": "visualizerId",
+                    "type": 9
+                },
+                {
+                    "id": "23:2565185120432732135",
+                    "name": "estimatedWeightReachedTime",
+                    "type": 8
+                },
+                {
+                    "id": "24:7385542231737088542",
+                    "name": "estimatedWeight_m",
+                    "type": 8
+                },
+                {
+                    "id": "25:1614129143662966902",
+                    "name": "estimatedWeight_b",
+                    "type": 8
+                },
+                {
+                    "id": "26:3360550099619244198",
+                    "name": "estimatedWeight_tEnd",
+                    "type": 8
+                },
+                {
+                    "id": "27:7751808523866622917",
+                    "name": "estimatedWeight_tStart",
+                    "type": 8
+                },
+                {
+                    "id": "28:7560094062746893331",
+                    "name": "ratio1",
+                    "type": 8
+                },
+                {
+                    "id": "29:7092783304172893944",
+                    "name": "ratio2",
+                    "type": 8
+                }
+            ],
+            "relations": [
+                {
+                    "id": "1:2516218059471133212",
+                    "name": "shotstates",
+                    "targetId": "7:7915358336460233027"
+                }
+            ]
         },
         {
-          "id": "2:2023678536313964966",
-          "name": "date",
-          "type": 10
+            "id": "5:6166132089796684361",
+            "lastPropertyId": "22:6473077172521626198",
+            "name": "Coffee",
+            "properties": [
+                {
+                    "id": "1:5615950171516587099",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:8472885439572250925",
+                    "name": "name",
+                    "type": 9
+                },
+                {
+                    "id": "3:5110044840806149074",
+                    "name": "roasterId",
+                    "type": 11,
+                    "flags": 520,
+                    "indexId": "2:3069173701919379915",
+                    "relationTarget": "Roaster"
+                },
+                {
+                    "id": "4:5457947097987531063",
+                    "name": "imageURL",
+                    "type": 9
+                },
+                {
+                    "id": "5:4303540774085095790",
+                    "name": "grinderSettings",
+                    "type": 8
+                },
+                {
+                    "id": "6:225021759355650432",
+                    "name": "acidRating",
+                    "type": 8
+                },
+                {
+                    "id": "7:6130861246586256372",
+                    "name": "intensityRating",
+                    "type": 8
+                },
+                {
+                    "id": "8:1334308936684528664",
+                    "name": "roastLevel",
+                    "type": 8
+                },
+                {
+                    "id": "11:5546651948055766963",
+                    "name": "description",
+                    "type": 9
+                },
+                {
+                    "id": "12:1497565644929136769",
+                    "name": "origin",
+                    "type": 9
+                },
+                {
+                    "id": "13:8572628874963105062",
+                    "name": "price",
+                    "type": 9
+                },
+                {
+                    "id": "14:7230184989598744286",
+                    "name": "type",
+                    "type": 9
+                },
+                {
+                    "id": "15:6441439649929911062",
+                    "name": "taste",
+                    "type": 9
+                },
+                {
+                    "id": "16:3584125557140279811",
+                    "name": "grinderDoseWeight",
+                    "type": 8
+                },
+                {
+                    "id": "17:3180181574963034735",
+                    "name": "roastDate",
+                    "type": 10
+                },
+                {
+                    "id": "18:6938000416295761114",
+                    "name": "region",
+                    "type": 9
+                },
+                {
+                    "id": "19:9026359374085873224",
+                    "name": "farm",
+                    "type": 9
+                },
+                {
+                    "id": "20:5729031423788409720",
+                    "name": "cropyear",
+                    "type": 10
+                },
+                {
+                    "id": "21:6055219836272863790",
+                    "name": "process",
+                    "type": 9
+                },
+                {
+                    "id": "22:6473077172521626198",
+                    "name": "elevation",
+                    "type": 6
+                }
+            ],
+            "relations": []
         },
         {
-          "id": "3:8622027867479492178",
-          "name": "coffeeId",
-          "type": 11,
-          "flags": 520,
-          "indexId": "3:6812967169057673456",
-          "relationTarget": "Coffee"
+            "id": "6:8881644376576832429",
+            "lastPropertyId": "6:970876983252056704",
+            "name": "Roaster",
+            "properties": [
+                {
+                    "id": "1:5991058579053841031",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:2492045522554162963",
+                    "name": "name",
+                    "type": 9
+                },
+                {
+                    "id": "3:109766545405737050",
+                    "name": "imageURL",
+                    "type": 9
+                },
+                {
+                    "id": "4:9028335971533423619",
+                    "name": "description",
+                    "type": 9
+                },
+                {
+                    "id": "5:5316187485168323519",
+                    "name": "address",
+                    "type": 9
+                },
+                {
+                    "id": "6:970876983252056704",
+                    "name": "homepage",
+                    "type": 9
+                }
+            ],
+            "relations": []
         },
         {
-          "id": "4:8755594923067759447",
-          "name": "profileId",
-          "type": 9
+            "id": "7:7915358336460233027",
+            "lastPropertyId": "17:6151090906092388458",
+            "name": "ShotState",
+            "properties": [
+                {
+                    "id": "1:5911801733392743346",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:873810899844548098",
+                    "name": "subState",
+                    "type": 9
+                },
+                {
+                    "id": "3:5430882212744780164",
+                    "name": "weight",
+                    "type": 8
+                },
+                {
+                    "id": "4:7057243266656013589",
+                    "name": "sampleTime",
+                    "type": 8
+                },
+                {
+                    "id": "5:7139045219632015353",
+                    "name": "sampleTimeCorrected",
+                    "type": 8
+                },
+                {
+                    "id": "6:8336035996648567372",
+                    "name": "pourTime",
+                    "type": 8
+                },
+                {
+                    "id": "7:3728387464400538728",
+                    "name": "groupPressure",
+                    "type": 8
+                },
+                {
+                    "id": "8:7163267269115276469",
+                    "name": "groupFlow",
+                    "type": 8
+                },
+                {
+                    "id": "9:3024067366106544243",
+                    "name": "mixTemp",
+                    "type": 8
+                },
+                {
+                    "id": "10:6481804704343187952",
+                    "name": "headTemp",
+                    "type": 8
+                },
+                {
+                    "id": "11:4452444150576753969",
+                    "name": "setMixTemp",
+                    "type": 8
+                },
+                {
+                    "id": "12:5828096454211460982",
+                    "name": "setHeadTemp",
+                    "type": 8
+                },
+                {
+                    "id": "13:6404583577823963796",
+                    "name": "setGroupPressure",
+                    "type": 8
+                },
+                {
+                    "id": "14:953787600600014188",
+                    "name": "setGroupFlow",
+                    "type": 8
+                },
+                {
+                    "id": "15:4614454596637650047",
+                    "name": "flowWeight",
+                    "type": 8
+                },
+                {
+                    "id": "16:8625810897882043509",
+                    "name": "frameNumber",
+                    "type": 6
+                },
+                {
+                    "id": "17:6151090906092388458",
+                    "name": "steamTemp",
+                    "type": 6
+                }
+            ],
+            "relations": []
         },
         {
-          "id": "5:5926041023112911997",
-          "name": "pourTime",
-          "type": 8
+            "id": "8:1087044828506445333",
+            "lastPropertyId": "2:6993582572867488081",
+            "name": "Favorite",
+            "properties": [
+                {
+                    "id": "1:9118758589013466597",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:6993582572867488081",
+                    "name": "recipeId",
+                    "type": 11,
+                    "flags": 520,
+                    "indexId": "4:2795591998313105007",
+                    "relationTarget": "Recipe"
+                }
+            ],
+            "relations": []
         },
         {
-          "id": "6:3371539309151542209",
-          "name": "pourWeight",
-          "type": 8
+            "id": "9:7693652674048295668",
+            "lastPropertyId": "27:5975506820285440095",
+            "name": "Recipe",
+            "properties": [
+                {
+                    "id": "1:4913052187613295020",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:7810214585185210043",
+                    "name": "coffeeId",
+                    "type": 11,
+                    "flags": 520,
+                    "indexId": "5:7106111853969068341",
+                    "relationTarget": "Coffee"
+                },
+                {
+                    "id": "3:1845236010514477562",
+                    "name": "adjustedWeight",
+                    "type": 8
+                },
+                {
+                    "id": "4:8386295331633147748",
+                    "name": "adjustedPressure",
+                    "type": 8
+                },
+                {
+                    "id": "5:4533756232448450794",
+                    "name": "adjustedTemp",
+                    "type": 8
+                },
+                {
+                    "id": "6:3891072045656880456",
+                    "name": "name",
+                    "type": 9
+                },
+                {
+                    "id": "7:647131839827812853",
+                    "name": "profileId",
+                    "type": 9
+                },
+                {
+                    "id": "8:3008075691008235314",
+                    "name": "grinderDoseWeight",
+                    "type": 8
+                },
+                {
+                    "id": "9:3336924770577751042",
+                    "name": "grinderSettings",
+                    "type": 8
+                },
+                {
+                    "id": "10:3868213321838280891",
+                    "name": "isDeleted",
+                    "type": 1
+                },
+                {
+                    "id": "11:4204171820753323126",
+                    "name": "isFavorite",
+                    "type": 1
+                },
+                {
+                    "id": "12:3155549701286458303",
+                    "name": "ratio1",
+                    "type": 8
+                },
+                {
+                    "id": "13:1901110978839052278",
+                    "name": "ratio2",
+                    "type": 8
+                },
+                {
+                    "id": "15:7025254451475299925",
+                    "name": "weightWater",
+                    "type": 8
+                },
+                {
+                    "id": "16:15425906396748186",
+                    "name": "useWater",
+                    "type": 1
+                },
+                {
+                    "id": "17:9055581799472750245",
+                    "name": "tempWater",
+                    "type": 8
+                },
+                {
+                    "id": "18:4711319393184164790",
+                    "name": "timeWater",
+                    "type": 8
+                },
+                {
+                    "id": "19:1770550326036569594",
+                    "name": "tempSteam",
+                    "type": 8
+                },
+                {
+                    "id": "20:6084341035853340078",
+                    "name": "flowSteam",
+                    "type": 8
+                },
+                {
+                    "id": "21:3919563489562326148",
+                    "name": "timeSteam",
+                    "type": 8
+                },
+                {
+                    "id": "22:2201822893454360106",
+                    "name": "weightMilk",
+                    "type": 8
+                },
+                {
+                    "id": "23:4030549021668168783",
+                    "name": "useSteam",
+                    "type": 1
+                },
+                {
+                    "id": "24:5553698550197971705",
+                    "name": "description",
+                    "type": 9
+                },
+                {
+                    "id": "25:1050422726627456052",
+                    "name": "grinderModel",
+                    "type": 9
+                },
+                {
+                    "id": "27:5975506820285440095",
+                    "name": "disableStopOnWeight",
+                    "type": 1
+                }
+            ],
+            "relations": []
         },
         {
-          "id": "7:2364668778724218869",
-          "name": "targetEspressoWeight",
-          "type": 8
-        },
-        {
-          "id": "8:3676925190157138581",
-          "name": "targetTempCorrection",
-          "type": 8
-        },
-        {
-          "id": "9:111349150896732313",
-          "name": "recipeId",
-          "type": 11,
-          "flags": 520,
-          "indexId": "6:446388852719725051",
-          "relationTarget": "Recipe"
-        },
-        {
-          "id": "10:7125372405899859202",
-          "name": "doseWeight",
-          "type": 8
-        },
-        {
-          "id": "11:3218706867177652460",
-          "name": "drinkWeight",
-          "type": 8
-        },
-        {
-          "id": "12:843222103065987409",
-          "name": "grinderSettings",
-          "type": 8
-        },
-        {
-          "id": "13:3391691028545881063",
-          "name": "description",
-          "type": 9
-        },
-        {
-          "id": "14:7115326853722345534",
-          "name": "grinderName",
-          "type": 9
-        },
-        {
-          "id": "15:1080541265960096120",
-          "name": "roastingDate",
-          "type": 10
-        },
-        {
-          "id": "17:8073143111153977311",
-          "name": "extractionYield",
-          "type": 8
-        },
-        {
-          "id": "18:6900766595761360168",
-          "name": "enjoyment",
-          "type": 8
-        },
-        {
-          "id": "19:1657747884825847241",
-          "name": "barrista",
-          "type": 9
-        },
-        {
-          "id": "20:1949502433090459020",
-          "name": "drinker",
-          "type": 9
-        },
-        {
-          "id": "21:3188265368046958522",
-          "name": "totalDissolvedSolids",
-          "type": 8
-        },
-        {
-          "id": "22:7608631056957421432",
-          "name": "visualizerId",
-          "type": 9
-        },
-        {
-          "id": "23:2565185120432732135",
-          "name": "estimatedWeightReachedTime",
-          "type": 8
-        },
-        {
-          "id": "24:7385542231737088542",
-          "name": "estimatedWeight_m",
-          "type": 8
-        },
-        {
-          "id": "25:1614129143662966902",
-          "name": "estimatedWeight_b",
-          "type": 8
-        },
-        {
-          "id": "26:3360550099619244198",
-          "name": "estimatedWeight_tEnd",
-          "type": 8
-        },
-        {
-          "id": "27:7751808523866622917",
-          "name": "estimatedWeight_tStart",
-          "type": 8
-        },
-        {
-          "id": "28:7560094062746893331",
-          "name": "ratio1",
-          "type": 8
-        },
-        {
-          "id": "29:7092783304172893944",
-          "name": "ratio2",
-          "type": 8
+            "id": "11:2746153146489174759",
+            "lastPropertyId": "7:649428367441394162",
+            "name": "SettingsEntry",
+            "properties": [
+                {
+                    "id": "1:5338240427175828934",
+                    "name": "id",
+                    "type": 6,
+                    "flags": 1
+                },
+                {
+                    "id": "2:8227203168176223394",
+                    "name": "doubleVal",
+                    "type": 8
+                },
+                {
+                    "id": "3:4672631448573261939",
+                    "name": "intVal",
+                    "type": 6
+                },
+                {
+                    "id": "4:6775070129254440298",
+                    "name": "stringVal",
+                    "type": 9
+                },
+                {
+                    "id": "5:6064803487869840239",
+                    "name": "boolVal",
+                    "type": 1
+                },
+                {
+                    "id": "6:7666011173201483948",
+                    "name": "key",
+                    "type": 9,
+                    "flags": 2048,
+                    "indexId": "8:899743464370898125"
+                },
+                {
+                    "id": "7:649428367441394162",
+                    "name": "type",
+                    "type": 9
+                }
+            ],
+            "relations": []
         }
-      ],
-      "relations": [
-        {
-          "id": "1:2516218059471133212",
-          "name": "shotstates",
-          "targetId": "7:7915358336460233027"
-        }
-      ]
-    },
-    {
-      "id": "5:6166132089796684361",
-      "lastPropertyId": "22:6473077172521626198",
-      "name": "Coffee",
-      "properties": [
-        {
-          "id": "1:5615950171516587099",
-          "name": "id",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:8472885439572250925",
-          "name": "name",
-          "type": 9
-        },
-        {
-          "id": "3:5110044840806149074",
-          "name": "roasterId",
-          "type": 11,
-          "flags": 520,
-          "indexId": "2:3069173701919379915",
-          "relationTarget": "Roaster"
-        },
-        {
-          "id": "4:5457947097987531063",
-          "name": "imageURL",
-          "type": 9
-        },
-        {
-          "id": "5:4303540774085095790",
-          "name": "grinderSettings",
-          "type": 8
-        },
-        {
-          "id": "6:225021759355650432",
-          "name": "acidRating",
-          "type": 8
-        },
-        {
-          "id": "7:6130861246586256372",
-          "name": "intensityRating",
-          "type": 8
-        },
-        {
-          "id": "8:1334308936684528664",
-          "name": "roastLevel",
-          "type": 8
-        },
-        {
-          "id": "11:5546651948055766963",
-          "name": "description",
-          "type": 9
-        },
-        {
-          "id": "12:1497565644929136769",
-          "name": "origin",
-          "type": 9
-        },
-        {
-          "id": "13:8572628874963105062",
-          "name": "price",
-          "type": 9
-        },
-        {
-          "id": "14:7230184989598744286",
-          "name": "type",
-          "type": 9
-        },
-        {
-          "id": "15:6441439649929911062",
-          "name": "taste",
-          "type": 9
-        },
-        {
-          "id": "16:3584125557140279811",
-          "name": "grinderDoseWeight",
-          "type": 8
-        },
-        {
-          "id": "17:3180181574963034735",
-          "name": "roastDate",
-          "type": 10
-        },
-        {
-          "id": "18:6938000416295761114",
-          "name": "region",
-          "type": 9
-        },
-        {
-          "id": "19:9026359374085873224",
-          "name": "farm",
-          "type": 9
-        },
-        {
-          "id": "20:5729031423788409720",
-          "name": "cropyear",
-          "type": 10
-        },
-        {
-          "id": "21:6055219836272863790",
-          "name": "process",
-          "type": 9
-        },
-        {
-          "id": "22:6473077172521626198",
-          "name": "elevation",
-          "type": 6
-        }
-      ],
-      "relations": []
-    },
-    {
-      "id": "6:8881644376576832429",
-      "lastPropertyId": "6:970876983252056704",
-      "name": "Roaster",
-      "properties": [
-        {
-          "id": "1:5991058579053841031",
-          "name": "id",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:2492045522554162963",
-          "name": "name",
-          "type": 9
-        },
-        {
-          "id": "3:109766545405737050",
-          "name": "imageURL",
-          "type": 9
-        },
-        {
-          "id": "4:9028335971533423619",
-          "name": "description",
-          "type": 9
-        },
-        {
-          "id": "5:5316187485168323519",
-          "name": "address",
-          "type": 9
-        },
-        {
-          "id": "6:970876983252056704",
-          "name": "homepage",
-          "type": 9
-        }
-      ],
-      "relations": []
-    },
-    {
-      "id": "7:7915358336460233027",
-      "lastPropertyId": "17:6151090906092388458",
-      "name": "ShotState",
-      "properties": [
-        {
-          "id": "1:5911801733392743346",
-          "name": "id",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:873810899844548098",
-          "name": "subState",
-          "type": 9
-        },
-        {
-          "id": "3:5430882212744780164",
-          "name": "weight",
-          "type": 8
-        },
-        {
-          "id": "4:7057243266656013589",
-          "name": "sampleTime",
-          "type": 8
-        },
-        {
-          "id": "5:7139045219632015353",
-          "name": "sampleTimeCorrected",
-          "type": 8
-        },
-        {
-          "id": "6:8336035996648567372",
-          "name": "pourTime",
-          "type": 8
-        },
-        {
-          "id": "7:3728387464400538728",
-          "name": "groupPressure",
-          "type": 8
-        },
-        {
-          "id": "8:7163267269115276469",
-          "name": "groupFlow",
-          "type": 8
-        },
-        {
-          "id": "9:3024067366106544243",
-          "name": "mixTemp",
-          "type": 8
-        },
-        {
-          "id": "10:6481804704343187952",
-          "name": "headTemp",
-          "type": 8
-        },
-        {
-          "id": "11:4452444150576753969",
-          "name": "setMixTemp",
-          "type": 8
-        },
-        {
-          "id": "12:5828096454211460982",
-          "name": "setHeadTemp",
-          "type": 8
-        },
-        {
-          "id": "13:6404583577823963796",
-          "name": "setGroupPressure",
-          "type": 8
-        },
-        {
-          "id": "14:953787600600014188",
-          "name": "setGroupFlow",
-          "type": 8
-        },
-        {
-          "id": "15:4614454596637650047",
-          "name": "flowWeight",
-          "type": 8
-        },
-        {
-          "id": "16:8625810897882043509",
-          "name": "frameNumber",
-          "type": 6
-        },
-        {
-          "id": "17:6151090906092388458",
-          "name": "steamTemp",
-          "type": 6
-        }
-      ],
-      "relations": []
-    },
-    {
-      "id": "8:1087044828506445333",
-      "lastPropertyId": "2:6993582572867488081",
-      "name": "Favorite",
-      "properties": [
-        {
-          "id": "1:9118758589013466597",
-          "name": "id",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:6993582572867488081",
-          "name": "recipeId",
-          "type": 11,
-          "flags": 520,
-          "indexId": "4:2795591998313105007",
-          "relationTarget": "Recipe"
-        }
-      ],
-      "relations": []
-    },
-    {
-      "id": "9:7693652674048295668",
-      "lastPropertyId": "27:5975506820285440095",
-      "name": "Recipe",
-      "properties": [
-        {
-          "id": "1:4913052187613295020",
-          "name": "id",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:7810214585185210043",
-          "name": "coffeeId",
-          "type": 11,
-          "flags": 520,
-          "indexId": "5:7106111853969068341",
-          "relationTarget": "Coffee"
-        },
-        {
-          "id": "3:1845236010514477562",
-          "name": "adjustedWeight",
-          "type": 8
-        },
-        {
-          "id": "4:8386295331633147748",
-          "name": "adjustedPressure",
-          "type": 8
-        },
-        {
-          "id": "5:4533756232448450794",
-          "name": "adjustedTemp",
-          "type": 8
-        },
-        {
-          "id": "6:3891072045656880456",
-          "name": "name",
-          "type": 9
-        },
-        {
-          "id": "7:647131839827812853",
-          "name": "profileId",
-          "type": 9
-        },
-        {
-          "id": "8:3008075691008235314",
-          "name": "grinderDoseWeight",
-          "type": 8
-        },
-        {
-          "id": "9:3336924770577751042",
-          "name": "grinderSettings",
-          "type": 8
-        },
-        {
-          "id": "10:3868213321838280891",
-          "name": "isDeleted",
-          "type": 1
-        },
-        {
-          "id": "11:4204171820753323126",
-          "name": "isFavorite",
-          "type": 1
-        },
-        {
-          "id": "12:3155549701286458303",
-          "name": "ratio1",
-          "type": 8
-        },
-        {
-          "id": "13:1901110978839052278",
-          "name": "ratio2",
-          "type": 8
-        },
-        {
-          "id": "15:7025254451475299925",
-          "name": "weightWater",
-          "type": 8
-        },
-        {
-          "id": "16:15425906396748186",
-          "name": "useWater",
-          "type": 1
-        },
-        {
-          "id": "17:9055581799472750245",
-          "name": "tempWater",
-          "type": 8
-        },
-        {
-          "id": "18:4711319393184164790",
-          "name": "timeWater",
-          "type": 8
-        },
-        {
-          "id": "19:1770550326036569594",
-          "name": "tempSteam",
-          "type": 8
-        },
-        {
-          "id": "20:6084341035853340078",
-          "name": "flowSteam",
-          "type": 8
-        },
-        {
-          "id": "21:3919563489562326148",
-          "name": "timeSteam",
-          "type": 8
-        },
-        {
-          "id": "22:2201822893454360106",
-          "name": "weightMilk",
-          "type": 8
-        },
-        {
-          "id": "23:4030549021668168783",
-          "name": "useSteam",
-          "type": 1
-        },
-        {
-          "id": "24:5553698550197971705",
-          "name": "description",
-          "type": 9
-        },
-        {
-          "id": "25:1050422726627456052",
-          "name": "grinderModel",
-          "type": 9
-        },
-        {
-          "id": "27:5975506820285440095",
-          "name": "disableStopOnWeight",
-          "type": 1
-        }
-      ],
-      "relations": []
-    },
-    {
-      "id": "11:2746153146489174759",
-      "lastPropertyId": "7:649428367441394162",
-      "name": "SettingsEntry",
-      "properties": [
-        {
-          "id": "1:5338240427175828934",
-          "name": "id",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:8227203168176223394",
-          "name": "doubleVal",
-          "type": 8
-        },
-        {
-          "id": "3:4672631448573261939",
-          "name": "intVal",
-          "type": 6
-        },
-        {
-          "id": "4:6775070129254440298",
-          "name": "stringVal",
-          "type": 9
-        },
-        {
-          "id": "5:6064803487869840239",
-          "name": "boolVal",
-          "type": 1
-        },
-        {
-          "id": "6:7666011173201483948",
-          "name": "key",
-          "type": 9,
-          "flags": 2048,
-          "indexId": "8:899743464370898125"
-        },
-        {
-          "id": "7:649428367441394162",
-          "name": "type",
-          "type": 9
-        }
-      ],
-      "relations": []
-    }
-  ],
-  "lastEntityId": "11:2746153146489174759",
-  "lastIndexId": "8:899743464370898125",
-  "lastRelationId": "1:2516218059471133212",
-  "lastSequenceId": "0:0",
-  "modelVersion": 5,
-  "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [
-    2372411160892302204,
-    5004946134676291479,
-    6316057013526616538,
-    4429298076511472570
-  ],
-  "retiredIndexUids": [],
-  "retiredPropertyUids": [
-    5255554628564942194,
-    4168856612577632112,
-    3658428756522006494,
-    2013349328392287066,
-    9166906492209766753,
-    5231134079281534832,
-    1727902073541153245,
-    1222105438427089261,
-    3645189919220185120,
-    1883480049140865748,
-    4649133190255639234,
-    2790985158327310841,
-    8906507704897213981,
-    4326142425280702554,
-    2470357611331815358,
-    4175497157621930327,
-    5263902387495551329,
-    262288466734433874,
-    6341762800821505123,
-    6441265075855571922,
-    7453959482162594558,
-    4587334211713455012,
-    6520200225208100644,
-    6062984101281118472,
-    4933890882353956688,
-    7949353400056856564,
-    2787873785153115014,
-    3265645285527168845,
-    305379594325964681,
-    5124145356428750686,
-    1973948115627604173,
-    7066844979841951108,
-    1831677913184358060,
-    9066171640428561255
-  ],
-  "retiredRelationUids": [],
-  "version": 1
+    ],
+    "lastEntityId": "11:2746153146489174759",
+    "lastIndexId": "8:899743464370898125",
+    "lastRelationId": "1:2516218059471133212",
+    "lastSequenceId": "0:0",
+    "modelVersion": 5,
+    "modelVersionParserMinimum": 5,
+    "retiredEntityUids": [
+        2372411160892302204,
+        5004946134676291479,
+        6316057013526616538,
+        4429298076511472570
+    ],
+    "retiredIndexUids": [],
+    "retiredPropertyUids": [
+        5255554628564942194,
+        4168856612577632112,
+        3658428756522006494,
+        2013349328392287066,
+        9166906492209766753,
+        5231134079281534832,
+        1727902073541153245,
+        1222105438427089261,
+        3645189919220185120,
+        1883480049140865748,
+        4649133190255639234,
+        2790985158327310841,
+        8906507704897213981,
+        4326142425280702554,
+        2470357611331815358,
+        4175497157621930327,
+        5263902387495551329,
+        262288466734433874,
+        6341762800821505123,
+        6441265075855571922,
+        7453959482162594558,
+        4587334211713455012,
+        6520200225208100644,
+        6062984101281118472,
+        4933890882353956688,
+        7949353400056856564,
+        2787873785153115014,
+        3265645285527168845,
+        305379594325964681,
+        5124145356428750686,
+        1973948115627604173,
+        7066844979841951108,
+        1831677913184358060,
+        9066171640428561255
+    ],
+    "retiredRelationUids": [],
+    "version": 1
 }

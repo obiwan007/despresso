@@ -86,7 +86,7 @@ class ScaleService extends ChangeNotifier {
       await scale?.writeTare();
       Future.delayed(const Duration(milliseconds: 500), () {
         tareInProgress = false;
-        setWeight(0);
+        // setWeight(0);
       });
     }
   }

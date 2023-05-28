@@ -30,16 +30,8 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(29, 7092783304172893944),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 3409921168948181785),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 2023678536313964966),
-            name: 'date',
-            type: 10,
-            flags: 0),
+        ModelProperty(id: const IdUid(1, 3409921168948181785), name: 'id', type: 6, flags: 1),
+        ModelProperty(id: const IdUid(2, 2023678536313964966), name: 'date', type: 10, flags: 0),
         ModelProperty(
             id: const IdUid(3, 8622027867479492178),
             name: 'coffeeId',
@@ -47,31 +39,11 @@ final _entities = <ModelEntity>[
             flags: 520,
             indexId: const IdUid(3, 6812967169057673456),
             relationTarget: 'Coffee'),
-        ModelProperty(
-            id: const IdUid(4, 8755594923067759447),
-            name: 'profileId',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 5926041023112911997),
-            name: 'pourTime',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 3371539309151542209),
-            name: 'pourWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 2364668778724218869),
-            name: 'targetEspressoWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 3676925190157138581),
-            name: 'targetTempCorrection',
-            type: 8,
-            flags: 0),
+        ModelProperty(id: const IdUid(4, 8755594923067759447), name: 'profileId', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(5, 5926041023112911997), name: 'pourTime', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(6, 3371539309151542209), name: 'pourWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(7, 2364668778724218869), name: 'targetEspressoWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(8, 3676925190157138581), name: 'targetTempCorrection', type: 8, flags: 0),
         ModelProperty(
             id: const IdUid(9, 111349150896732313),
             name: 'recipeId',
@@ -79,107 +51,29 @@ final _entities = <ModelEntity>[
             flags: 520,
             indexId: const IdUid(6, 446388852719725051),
             relationTarget: 'Recipe'),
-        ModelProperty(
-            id: const IdUid(10, 7125372405899859202),
-            name: 'doseWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 3218706867177652460),
-            name: 'drinkWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 843222103065987409),
-            name: 'grinderSettings',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 3391691028545881063),
-            name: 'description',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 7115326853722345534),
-            name: 'grinderName',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 1080541265960096120),
-            name: 'roastingDate',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 8073143111153977311),
-            name: 'extractionYield',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 6900766595761360168),
-            name: 'enjoyment',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 1657747884825847241),
-            name: 'barrista',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 1949502433090459020),
-            name: 'drinker',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 3188265368046958522),
-            name: 'totalDissolvedSolids',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 7608631056957421432),
-            name: 'visualizerId',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 2565185120432732135),
-            name: 'estimatedWeightReachedTime',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(24, 7385542231737088542),
-            name: 'estimatedWeight_m',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(25, 1614129143662966902),
-            name: 'estimatedWeight_b',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(26, 3360550099619244198),
-            name: 'estimatedWeight_tEnd',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(27, 7751808523866622917),
-            name: 'estimatedWeight_tStart',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(28, 7560094062746893331),
-            name: 'ratio1',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(29, 7092783304172893944),
-            name: 'ratio2',
-            type: 8,
-            flags: 0)
+        ModelProperty(id: const IdUid(10, 7125372405899859202), name: 'doseWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(11, 3218706867177652460), name: 'drinkWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(12, 843222103065987409), name: 'grinderSettings', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(13, 3391691028545881063), name: 'description', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(14, 7115326853722345534), name: 'grinderName', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(15, 1080541265960096120), name: 'roastingDate', type: 10, flags: 0),
+        ModelProperty(id: const IdUid(17, 8073143111153977311), name: 'extractionYield', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(18, 6900766595761360168), name: 'enjoyment', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(19, 1657747884825847241), name: 'barrista', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(20, 1949502433090459020), name: 'drinker', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(21, 3188265368046958522), name: 'totalDissolvedSolids', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(22, 7608631056957421432), name: 'visualizerId', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(23, 2565185120432732135), name: 'estimatedWeightReachedTime', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(24, 7385542231737088542), name: 'estimatedWeight_m', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(25, 1614129143662966902), name: 'estimatedWeight_b', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(26, 3360550099619244198), name: 'estimatedWeight_tEnd', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(27, 7751808523866622917), name: 'estimatedWeight_tStart', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(28, 7560094062746893331), name: 'ratio1', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(29, 7092783304172893944), name: 'ratio2', type: 8, flags: 0)
       ],
       relations: <ModelRelation>[
         ModelRelation(
-            id: const IdUid(1, 2516218059471133212),
-            name: 'shotstates',
-            targetId: const IdUid(7, 7915358336460233027))
+            id: const IdUid(1, 2516218059471133212), name: 'shotstates', targetId: const IdUid(7, 7915358336460233027))
       ],
       backlinks: <ModelBacklink>[]),
   ModelEntity(
@@ -188,16 +82,8 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(22, 6473077172521626198),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5615950171516587099),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 8472885439572250925),
-            name: 'name',
-            type: 9,
-            flags: 0),
+        ModelProperty(id: const IdUid(1, 5615950171516587099), name: 'id', type: 6, flags: 1),
+        ModelProperty(id: const IdUid(2, 8472885439572250925), name: 'name', type: 9, flags: 0),
         ModelProperty(
             id: const IdUid(3, 5110044840806149074),
             name: 'roasterId',
@@ -205,91 +91,23 @@ final _entities = <ModelEntity>[
             flags: 520,
             indexId: const IdUid(2, 3069173701919379915),
             relationTarget: 'Roaster'),
-        ModelProperty(
-            id: const IdUid(4, 5457947097987531063),
-            name: 'imageURL',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 4303540774085095790),
-            name: 'grinderSettings',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 225021759355650432),
-            name: 'acidRating',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 6130861246586256372),
-            name: 'intensityRating',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 1334308936684528664),
-            name: 'roastLevel',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 5546651948055766963),
-            name: 'description',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 1497565644929136769),
-            name: 'origin',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 8572628874963105062),
-            name: 'price',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 7230184989598744286),
-            name: 'type',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 6441439649929911062),
-            name: 'taste',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 3584125557140279811),
-            name: 'grinderDoseWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 3180181574963034735),
-            name: 'roastDate',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 6938000416295761114),
-            name: 'region',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 9026359374085873224),
-            name: 'farm',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 5729031423788409720),
-            name: 'cropyear',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 6055219836272863790),
-            name: 'process',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 6473077172521626198),
-            name: 'elevation',
-            type: 6,
-            flags: 0)
+        ModelProperty(id: const IdUid(4, 5457947097987531063), name: 'imageURL', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(5, 4303540774085095790), name: 'grinderSettings', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(6, 225021759355650432), name: 'acidRating', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(7, 6130861246586256372), name: 'intensityRating', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(8, 1334308936684528664), name: 'roastLevel', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(11, 5546651948055766963), name: 'description', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(12, 1497565644929136769), name: 'origin', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(13, 8572628874963105062), name: 'price', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(14, 7230184989598744286), name: 'type', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(15, 6441439649929911062), name: 'taste', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(16, 3584125557140279811), name: 'grinderDoseWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(17, 3180181574963034735), name: 'roastDate', type: 10, flags: 0),
+        ModelProperty(id: const IdUid(18, 6938000416295761114), name: 'region', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(19, 9026359374085873224), name: 'farm', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(20, 5729031423788409720), name: 'cropyear', type: 10, flags: 0),
+        ModelProperty(id: const IdUid(21, 6055219836272863790), name: 'process', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(22, 6473077172521626198), name: 'elevation', type: 6, flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -299,36 +117,12 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(6, 970876983252056704),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5991058579053841031),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 2492045522554162963),
-            name: 'name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 109766545405737050),
-            name: 'imageURL',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 9028335971533423619),
-            name: 'description',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 5316187485168323519),
-            name: 'address',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 970876983252056704),
-            name: 'homepage',
-            type: 9,
-            flags: 0)
+        ModelProperty(id: const IdUid(1, 5991058579053841031), name: 'id', type: 6, flags: 1),
+        ModelProperty(id: const IdUid(2, 2492045522554162963), name: 'name', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(3, 109766545405737050), name: 'imageURL', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(4, 9028335971533423619), name: 'description', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(5, 5316187485168323519), name: 'address', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(6, 970876983252056704), name: 'homepage', type: 9, flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[
@@ -340,91 +134,23 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(17, 6151090906092388458),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5911801733392743346),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 873810899844548098),
-            name: 'subState',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 5430882212744780164),
-            name: 'weight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 7057243266656013589),
-            name: 'sampleTime',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 7139045219632015353),
-            name: 'sampleTimeCorrected',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 8336035996648567372),
-            name: 'pourTime',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 3728387464400538728),
-            name: 'groupPressure',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 7163267269115276469),
-            name: 'groupFlow',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 3024067366106544243),
-            name: 'mixTemp',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 6481804704343187952),
-            name: 'headTemp',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 4452444150576753969),
-            name: 'setMixTemp',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 5828096454211460982),
-            name: 'setHeadTemp',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 6404583577823963796),
-            name: 'setGroupPressure',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 953787600600014188),
-            name: 'setGroupFlow',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 4614454596637650047),
-            name: 'flowWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 8625810897882043509),
-            name: 'frameNumber',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 6151090906092388458),
-            name: 'steamTemp',
-            type: 6,
-            flags: 0)
+        ModelProperty(id: const IdUid(1, 5911801733392743346), name: 'id', type: 6, flags: 1),
+        ModelProperty(id: const IdUid(2, 873810899844548098), name: 'subState', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(3, 5430882212744780164), name: 'weight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(4, 7057243266656013589), name: 'sampleTime', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(5, 7139045219632015353), name: 'sampleTimeCorrected', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(6, 8336035996648567372), name: 'pourTime', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(7, 3728387464400538728), name: 'groupPressure', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(8, 7163267269115276469), name: 'groupFlow', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(9, 3024067366106544243), name: 'mixTemp', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(10, 6481804704343187952), name: 'headTemp', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(11, 4452444150576753969), name: 'setMixTemp', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(12, 5828096454211460982), name: 'setHeadTemp', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(13, 6404583577823963796), name: 'setGroupPressure', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(14, 953787600600014188), name: 'setGroupFlow', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(15, 4614454596637650047), name: 'flowWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(16, 8625810897882043509), name: 'frameNumber', type: 6, flags: 0),
+        ModelProperty(id: const IdUid(17, 6151090906092388458), name: 'steamTemp', type: 6, flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -434,11 +160,7 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(2, 6993582572867488081),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 9118758589013466597),
-            name: 'id',
-            type: 6,
-            flags: 1),
+        ModelProperty(id: const IdUid(1, 9118758589013466597), name: 'id', type: 6, flags: 1),
         ModelProperty(
             id: const IdUid(2, 6993582572867488081),
             name: 'recipeId',
@@ -455,11 +177,7 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(27, 5975506820285440095),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 4913052187613295020),
-            name: 'id',
-            type: 6,
-            flags: 1),
+        ModelProperty(id: const IdUid(1, 4913052187613295020), name: 'id', type: 6, flags: 1),
         ModelProperty(
             id: const IdUid(2, 7810214585185210043),
             name: 'coffeeId',
@@ -467,121 +185,29 @@ final _entities = <ModelEntity>[
             flags: 520,
             indexId: const IdUid(5, 7106111853969068341),
             relationTarget: 'Coffee'),
-        ModelProperty(
-            id: const IdUid(3, 1845236010514477562),
-            name: 'adjustedWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 8386295331633147748),
-            name: 'adjustedPressure',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 4533756232448450794),
-            name: 'adjustedTemp',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 3891072045656880456),
-            name: 'name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 647131839827812853),
-            name: 'profileId',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 3008075691008235314),
-            name: 'grinderDoseWeight',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 3336924770577751042),
-            name: 'grinderSettings',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 3868213321838280891),
-            name: 'isDeleted',
-            type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 4204171820753323126),
-            name: 'isFavorite',
-            type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 3155549701286458303),
-            name: 'ratio1',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 1901110978839052278),
-            name: 'ratio2',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 7025254451475299925),
-            name: 'weightWater',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 15425906396748186),
-            name: 'useWater',
-            type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 9055581799472750245),
-            name: 'tempWater',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 4711319393184164790),
-            name: 'timeWater',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 1770550326036569594),
-            name: 'tempSteam',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 6084341035853340078),
-            name: 'flowSteam',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 3919563489562326148),
-            name: 'timeSteam',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 2201822893454360106),
-            name: 'weightMilk',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 4030549021668168783),
-            name: 'useSteam',
-            type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(24, 5553698550197971705),
-            name: 'description',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(25, 1050422726627456052),
-            name: 'grinderModel',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(27, 5975506820285440095),
-            name: 'disableStopOnWeight',
-            type: 1,
-            flags: 0)
+        ModelProperty(id: const IdUid(3, 1845236010514477562), name: 'adjustedWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(4, 8386295331633147748), name: 'adjustedPressure', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(5, 4533756232448450794), name: 'adjustedTemp', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(6, 3891072045656880456), name: 'name', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(7, 647131839827812853), name: 'profileId', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(8, 3008075691008235314), name: 'grinderDoseWeight', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(9, 3336924770577751042), name: 'grinderSettings', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(10, 3868213321838280891), name: 'isDeleted', type: 1, flags: 0),
+        ModelProperty(id: const IdUid(11, 4204171820753323126), name: 'isFavorite', type: 1, flags: 0),
+        ModelProperty(id: const IdUid(12, 3155549701286458303), name: 'ratio1', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(13, 1901110978839052278), name: 'ratio2', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(15, 7025254451475299925), name: 'weightWater', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(16, 15425906396748186), name: 'useWater', type: 1, flags: 0),
+        ModelProperty(id: const IdUid(17, 9055581799472750245), name: 'tempWater', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(18, 4711319393184164790), name: 'timeWater', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(19, 1770550326036569594), name: 'tempSteam', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(20, 6084341035853340078), name: 'flowSteam', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(21, 3919563489562326148), name: 'timeSteam', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(22, 2201822893454360106), name: 'weightMilk', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(23, 4030549021668168783), name: 'useSteam', type: 1, flags: 0),
+        ModelProperty(id: const IdUid(24, 5553698550197971705), name: 'description', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(25, 1050422726627456052), name: 'grinderModel', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(27, 5975506820285440095), name: 'disableStopOnWeight', type: 1, flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -591,42 +217,18 @@ final _entities = <ModelEntity>[
       lastPropertyId: const IdUid(7, 649428367441394162),
       flags: 0,
       properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5338240427175828934),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 8227203168176223394),
-            name: 'doubleVal',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 4672631448573261939),
-            name: 'intVal',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 6775070129254440298),
-            name: 'stringVal',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 6064803487869840239),
-            name: 'boolVal',
-            type: 1,
-            flags: 0),
+        ModelProperty(id: const IdUid(1, 5338240427175828934), name: 'id', type: 6, flags: 1),
+        ModelProperty(id: const IdUid(2, 8227203168176223394), name: 'doubleVal', type: 8, flags: 0),
+        ModelProperty(id: const IdUid(3, 4672631448573261939), name: 'intVal', type: 6, flags: 0),
+        ModelProperty(id: const IdUid(4, 6775070129254440298), name: 'stringVal', type: 9, flags: 0),
+        ModelProperty(id: const IdUid(5, 6064803487869840239), name: 'boolVal', type: 1, flags: 0),
         ModelProperty(
             id: const IdUid(6, 7666011173201483948),
             name: 'key',
             type: 9,
             flags: 2048,
             indexId: const IdUid(8, 899743464370898125)),
-        ModelProperty(
-            id: const IdUid(7, 649428367441394162),
-            name: 'type',
-            type: 9,
-            flags: 0)
+        ModelProperty(id: const IdUid(7, 649428367441394162), name: 'type', type: 9, flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
@@ -656,12 +258,7 @@ ModelDefinition getObjectBoxModel() {
       lastIndexId: const IdUid(8, 899743464370898125),
       lastRelationId: const IdUid(1, 2516218059471133212),
       lastSequenceId: const IdUid(0, 0),
-      retiredEntityUids: const [
-        2372411160892302204,
-        5004946134676291479,
-        6316057013526616538,
-        4429298076511472570
-      ],
+      retiredEntityUids: const [2372411160892302204, 5004946134676291479, 6316057013526616538, 4429298076511472570],
       retiredIndexUids: const [],
       retiredPropertyUids: const [
         5255554628564942194,
@@ -708,8 +305,7 @@ ModelDefinition getObjectBoxModel() {
     Shot: EntityDefinition<Shot>(
         model: _entities[0],
         toOneRelations: (Shot object) => [object.coffee, object.recipe],
-        toManyRelations: (Shot object) =>
-            {RelInfo<Shot>.toMany(1, object.id): object.shotstates},
+        toManyRelations: (Shot object) => {RelInfo<Shot>.toMany(1, object.id): object.shotstates},
         getId: (Shot object) => object.id,
         setId: (Shot object, int id) {
           object.id = id;
@@ -759,64 +355,37 @@ ModelDefinition getObjectBoxModel() {
 
           final object = Shot()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
-            ..date = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0))
-            ..profileId = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 10, '')
-            ..pourTime =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
-            ..pourWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
-            ..targetEspressoWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0)
-            ..targetTempCorrection =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
-            ..doseWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0)
-            ..drinkWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0)
-            ..grinderSettings =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0)
-            ..description = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 28, '')
-            ..grinderName = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 30, '')
-            ..roastingDate = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0))
-            ..extractionYield =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0)
-            ..enjoyment =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0)
-            ..barrista = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 40, '')
-            ..drinker = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 42, '')
-            ..totalDissolvedSolids =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0)
-            ..visualizerId = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 46, '')
-            ..estimatedWeightReachedTime =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0)
-            ..estimatedWeight_m =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0)
-            ..estimatedWeight_b =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 52, 0)
-            ..estimatedWeight_tEnd =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 54, 0)
-            ..estimatedWeight_tStart =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 56, 0)
-            ..ratio1 =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 58, 0)
-            ..ratio2 =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 60, 0);
-          object.coffee.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+            ..date = DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0))
+            ..profileId = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 10, '')
+            ..pourTime = const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
+            ..pourWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
+            ..targetEspressoWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0)
+            ..targetTempCorrection = const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
+            ..doseWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0)
+            ..drinkWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0)
+            ..grinderSettings = const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0)
+            ..description = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, '')
+            ..grinderName = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, '')
+            ..roastingDate =
+                DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0))
+            ..extractionYield = const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0)
+            ..enjoyment = const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0)
+            ..barrista = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 40, '')
+            ..drinker = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, '')
+            ..totalDissolvedSolids = const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0)
+            ..visualizerId = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, '')
+            ..estimatedWeightReachedTime = const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0)
+            ..estimatedWeight_m = const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0)
+            ..estimatedWeight_b = const fb.Float64Reader().vTableGet(buffer, rootOffset, 52, 0)
+            ..estimatedWeight_tEnd = const fb.Float64Reader().vTableGet(buffer, rootOffset, 54, 0)
+            ..estimatedWeight_tStart = const fb.Float64Reader().vTableGet(buffer, rootOffset, 56, 0)
+            ..ratio1 = const fb.Float64Reader().vTableGet(buffer, rootOffset, 58, 0)
+            ..ratio2 = const fb.Float64Reader().vTableGet(buffer, rootOffset, 60, 0);
+          object.coffee.targetId = const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.coffee.attach(store);
-          object.recipe.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          object.recipe.targetId = const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
           object.recipe.attach(store);
-          InternalToManyAccess.setRelInfo<Shot>(
-              object.shotstates, store, RelInfo<Shot>.toMany(1, object.id));
+          InternalToManyAccess.setRelInfo<Shot>(object.shotstates, store, RelInfo<Shot>.toMany(1, object.id));
           return object;
         }),
     Coffee: EntityDefinition<Coffee>(
@@ -868,55 +437,35 @@ ModelDefinition getObjectBoxModel() {
 
           final object = Coffee()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
-            ..name = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 6, '')
-            ..imageURL = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 10, '')
-            ..grinderSettings =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
-            ..acidRating =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
-            ..intensityRating =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0)
-            ..roastLevel =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
-            ..description = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 24, '')
-            ..origin = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 26, '')
-            ..price = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 28, '')
-            ..type = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 30, '')
-            ..taste = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 32, '')
-            ..grinderDoseWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0)
-            ..roastDate = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0))
-            ..region = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 38, '')
-            ..farm = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 40, '')
-            ..cropyear = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 42, 0))
-            ..process = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 44, '')
-            ..elevation =
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 46, 0);
-          object.roaster.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+            ..name = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, '')
+            ..imageURL = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 10, '')
+            ..grinderSettings = const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
+            ..acidRating = const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
+            ..intensityRating = const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0)
+            ..roastLevel = const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
+            ..description = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, '')
+            ..origin = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, '')
+            ..price = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, '')
+            ..type = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, '')
+            ..taste = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, '')
+            ..grinderDoseWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0)
+            ..roastDate =
+                DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0))
+            ..region = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, '')
+            ..farm = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 40, '')
+            ..cropyear =
+                DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 42, 0))
+            ..process = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, '')
+            ..elevation = const fb.Int64Reader().vTableGet(buffer, rootOffset, 46, 0);
+          object.roaster.targetId = const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.roaster.attach(store);
           return object;
         }),
     Roaster: EntityDefinition<Roaster>(
         model: _entities[2],
         toOneRelations: (Roaster object) => [],
-        toManyRelations: (Roaster object) => {
-              RelInfo<Coffee>.toOneBacklink(
-                      3, object.id, (Coffee srcObject) => srcObject.roaster):
-                  object.coffees
-            },
+        toManyRelations: (Roaster object) =>
+            {RelInfo<Coffee>.toOneBacklink(3, object.id, (Coffee srcObject) => srcObject.roaster): object.coffees},
         getId: (Roaster object) => object.id,
         setId: (Roaster object, int id) {
           object.id = id;
@@ -943,21 +492,13 @@ ModelDefinition getObjectBoxModel() {
 
           final object = Roaster()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
-            ..name = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 6, '')
-            ..imageURL = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 8, '')
-            ..description = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 10, '')
-            ..address = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 12, '')
-            ..homepage = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 14, '');
-          InternalToManyAccess.setRelInfo<Roaster>(
-              object.coffees,
-              store,
-              RelInfo<Coffee>.toOneBacklink(
-                  3, object.id, (Coffee srcObject) => srcObject.roaster));
+            ..name = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, '')
+            ..imageURL = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 8, '')
+            ..description = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 10, '')
+            ..address = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 12, '')
+            ..homepage = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, '');
+          InternalToManyAccess.setRelInfo<Roaster>(object.coffees, store,
+              RelInfo<Coffee>.toOneBacklink(3, object.id, (Coffee srcObject) => srcObject.roaster));
           return object;
         }),
     ShotState: EntityDefinition<ShotState>(
@@ -1009,13 +550,10 @@ ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 34, 0),
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0),
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0),
-              const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''))
+              const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
-            ..pourTime =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
-            ..flowWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 32, 0);
+            ..pourTime = const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
+            ..flowWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 32, 0);
 
           return object;
         }),
@@ -1038,10 +576,8 @@ ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
-          final object = Favorite()
-            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          object.recipe.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          final object = Favorite()..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          object.recipe.targetId = const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.recipe.attach(store);
           return object;
         }),
@@ -1093,54 +629,30 @@ ModelDefinition getObjectBoxModel() {
 
           final object = Recipe()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
-            ..adjustedWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0)
-            ..adjustedPressure =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0)
-            ..adjustedTemp =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
-            ..name = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 14, '')
-            ..profileId = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 16, '')
-            ..grinderDoseWeight =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
-            ..grinderSettings =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0)
-            ..isDeleted =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false)
-            ..isFavorite =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 24, false)
-            ..ratio1 =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0)
-            ..ratio2 =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0)
-            ..weightWater =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 32, 0)
-            ..useWater =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false)
-            ..tempWater =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0)
-            ..timeWater =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0)
-            ..tempSteam =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0)
-            ..flowSteam =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 42, 0)
-            ..timeSteam =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0)
-            ..weightMilk =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0)
-            ..useSteam =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false)
-            ..description = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 50, '')
-            ..grinderModel = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 52, '')
-            ..disableStopOnWeight =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false);
-          object.coffee.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+            ..adjustedWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0)
+            ..adjustedPressure = const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0)
+            ..adjustedTemp = const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0)
+            ..name = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, '')
+            ..profileId = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, '')
+            ..grinderDoseWeight = const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0)
+            ..grinderSettings = const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0)
+            ..isDeleted = const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false)
+            ..isFavorite = const fb.BoolReader().vTableGet(buffer, rootOffset, 24, false)
+            ..ratio1 = const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0)
+            ..ratio2 = const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0)
+            ..weightWater = const fb.Float64Reader().vTableGet(buffer, rootOffset, 32, 0)
+            ..useWater = const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false)
+            ..tempWater = const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0)
+            ..timeWater = const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0)
+            ..tempSteam = const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0)
+            ..flowSteam = const fb.Float64Reader().vTableGet(buffer, rootOffset, 42, 0)
+            ..timeSteam = const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0)
+            ..weightMilk = const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0)
+            ..useSteam = const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false)
+            ..description = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, '')
+            ..grinderModel = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 52, '')
+            ..disableStopOnWeight = const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false);
+          object.coffee.targetId = const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
           return object;
         }),
@@ -1173,18 +685,12 @@ ModelDefinition getObjectBoxModel() {
 
           final object = SettingsEntry()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
-            ..doubleVal =
-                const fb.Float64Reader().vTableGet(buffer, rootOffset, 6, 0)
-            ..intVal =
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)
-            ..stringVal = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 10, '')
-            ..boolVal =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false)
-            ..key = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 14, '')
-            ..type = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 16, '');
+            ..doubleVal = const fb.Float64Reader().vTableGet(buffer, rootOffset, 6, 0)
+            ..intVal = const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)
+            ..stringVal = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 10, '')
+            ..boolVal = const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false)
+            ..key = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, '')
+            ..type = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, '');
 
           return object;
         })
@@ -1202,98 +708,76 @@ class Shot_ {
   static final date = QueryIntegerProperty<Shot>(_entities[0].properties[1]);
 
   /// see [Shot.coffee]
-  static final coffee =
-      QueryRelationToOne<Shot, Coffee>(_entities[0].properties[2]);
+  static final coffee = QueryRelationToOne<Shot, Coffee>(_entities[0].properties[2]);
 
   /// see [Shot.profileId]
-  static final profileId =
-      QueryStringProperty<Shot>(_entities[0].properties[3]);
+  static final profileId = QueryStringProperty<Shot>(_entities[0].properties[3]);
 
   /// see [Shot.pourTime]
   static final pourTime = QueryDoubleProperty<Shot>(_entities[0].properties[4]);
 
   /// see [Shot.pourWeight]
-  static final pourWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[5]);
+  static final pourWeight = QueryDoubleProperty<Shot>(_entities[0].properties[5]);
 
   /// see [Shot.targetEspressoWeight]
-  static final targetEspressoWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[6]);
+  static final targetEspressoWeight = QueryDoubleProperty<Shot>(_entities[0].properties[6]);
 
   /// see [Shot.targetTempCorrection]
-  static final targetTempCorrection =
-      QueryDoubleProperty<Shot>(_entities[0].properties[7]);
+  static final targetTempCorrection = QueryDoubleProperty<Shot>(_entities[0].properties[7]);
 
   /// see [Shot.recipe]
-  static final recipe =
-      QueryRelationToOne<Shot, Recipe>(_entities[0].properties[8]);
+  static final recipe = QueryRelationToOne<Shot, Recipe>(_entities[0].properties[8]);
 
   /// see [Shot.doseWeight]
-  static final doseWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[9]);
+  static final doseWeight = QueryDoubleProperty<Shot>(_entities[0].properties[9]);
 
   /// see [Shot.drinkWeight]
-  static final drinkWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[10]);
+  static final drinkWeight = QueryDoubleProperty<Shot>(_entities[0].properties[10]);
 
   /// see [Shot.grinderSettings]
-  static final grinderSettings =
-      QueryDoubleProperty<Shot>(_entities[0].properties[11]);
+  static final grinderSettings = QueryDoubleProperty<Shot>(_entities[0].properties[11]);
 
   /// see [Shot.description]
-  static final description =
-      QueryStringProperty<Shot>(_entities[0].properties[12]);
+  static final description = QueryStringProperty<Shot>(_entities[0].properties[12]);
 
   /// see [Shot.grinderName]
-  static final grinderName =
-      QueryStringProperty<Shot>(_entities[0].properties[13]);
+  static final grinderName = QueryStringProperty<Shot>(_entities[0].properties[13]);
 
   /// see [Shot.roastingDate]
-  static final roastingDate =
-      QueryIntegerProperty<Shot>(_entities[0].properties[14]);
+  static final roastingDate = QueryIntegerProperty<Shot>(_entities[0].properties[14]);
 
   /// see [Shot.extractionYield]
-  static final extractionYield =
-      QueryDoubleProperty<Shot>(_entities[0].properties[15]);
+  static final extractionYield = QueryDoubleProperty<Shot>(_entities[0].properties[15]);
 
   /// see [Shot.enjoyment]
-  static final enjoyment =
-      QueryDoubleProperty<Shot>(_entities[0].properties[16]);
+  static final enjoyment = QueryDoubleProperty<Shot>(_entities[0].properties[16]);
 
   /// see [Shot.barrista]
-  static final barrista =
-      QueryStringProperty<Shot>(_entities[0].properties[17]);
+  static final barrista = QueryStringProperty<Shot>(_entities[0].properties[17]);
 
   /// see [Shot.drinker]
   static final drinker = QueryStringProperty<Shot>(_entities[0].properties[18]);
 
   /// see [Shot.totalDissolvedSolids]
-  static final totalDissolvedSolids =
-      QueryDoubleProperty<Shot>(_entities[0].properties[19]);
+  static final totalDissolvedSolids = QueryDoubleProperty<Shot>(_entities[0].properties[19]);
 
   /// see [Shot.visualizerId]
-  static final visualizerId =
-      QueryStringProperty<Shot>(_entities[0].properties[20]);
+  static final visualizerId = QueryStringProperty<Shot>(_entities[0].properties[20]);
 
   /// see [Shot.estimatedWeightReachedTime]
-  static final estimatedWeightReachedTime =
-      QueryDoubleProperty<Shot>(_entities[0].properties[21]);
+  static final estimatedWeightReachedTime = QueryDoubleProperty<Shot>(_entities[0].properties[21]);
 
   /// see [Shot.estimatedWeight_m]
-  static final estimatedWeight_m =
-      QueryDoubleProperty<Shot>(_entities[0].properties[22]);
+  static final estimatedWeight_m = QueryDoubleProperty<Shot>(_entities[0].properties[22]);
 
   /// see [Shot.estimatedWeight_b]
-  static final estimatedWeight_b =
-      QueryDoubleProperty<Shot>(_entities[0].properties[23]);
+  static final estimatedWeight_b = QueryDoubleProperty<Shot>(_entities[0].properties[23]);
 
   /// see [Shot.estimatedWeight_tEnd]
-  static final estimatedWeight_tEnd =
-      QueryDoubleProperty<Shot>(_entities[0].properties[24]);
+  static final estimatedWeight_tEnd = QueryDoubleProperty<Shot>(_entities[0].properties[24]);
 
   /// see [Shot.estimatedWeight_tStart]
-  static final estimatedWeight_tStart =
-      QueryDoubleProperty<Shot>(_entities[0].properties[25]);
+  static final estimatedWeight_tStart = QueryDoubleProperty<Shot>(_entities[0].properties[25]);
 
   /// see [Shot.ratio1]
   static final ratio1 = QueryDoubleProperty<Shot>(_entities[0].properties[26]);
@@ -1302,8 +786,7 @@ class Shot_ {
   static final ratio2 = QueryDoubleProperty<Shot>(_entities[0].properties[27]);
 
   /// see [Shot.shotstates]
-  static final shotstates =
-      QueryRelationToMany<Shot, ShotState>(_entities[0].relations[0]);
+  static final shotstates = QueryRelationToMany<Shot, ShotState>(_entities[0].relations[0]);
 }
 
 /// [Coffee] entity fields to define ObjectBox queries.
@@ -1315,32 +798,25 @@ class Coffee_ {
   static final name = QueryStringProperty<Coffee>(_entities[1].properties[1]);
 
   /// see [Coffee.roaster]
-  static final roaster =
-      QueryRelationToOne<Coffee, Roaster>(_entities[1].properties[2]);
+  static final roaster = QueryRelationToOne<Coffee, Roaster>(_entities[1].properties[2]);
 
   /// see [Coffee.imageURL]
-  static final imageURL =
-      QueryStringProperty<Coffee>(_entities[1].properties[3]);
+  static final imageURL = QueryStringProperty<Coffee>(_entities[1].properties[3]);
 
   /// see [Coffee.grinderSettings]
-  static final grinderSettings =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[4]);
+  static final grinderSettings = QueryDoubleProperty<Coffee>(_entities[1].properties[4]);
 
   /// see [Coffee.acidRating]
-  static final acidRating =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[5]);
+  static final acidRating = QueryDoubleProperty<Coffee>(_entities[1].properties[5]);
 
   /// see [Coffee.intensityRating]
-  static final intensityRating =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[6]);
+  static final intensityRating = QueryDoubleProperty<Coffee>(_entities[1].properties[6]);
 
   /// see [Coffee.roastLevel]
-  static final roastLevel =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[7]);
+  static final roastLevel = QueryDoubleProperty<Coffee>(_entities[1].properties[7]);
 
   /// see [Coffee.description]
-  static final description =
-      QueryStringProperty<Coffee>(_entities[1].properties[8]);
+  static final description = QueryStringProperty<Coffee>(_entities[1].properties[8]);
 
   /// see [Coffee.origin]
   static final origin = QueryStringProperty<Coffee>(_entities[1].properties[9]);
@@ -1355,31 +831,25 @@ class Coffee_ {
   static final taste = QueryStringProperty<Coffee>(_entities[1].properties[12]);
 
   /// see [Coffee.grinderDoseWeight]
-  static final grinderDoseWeight =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[13]);
+  static final grinderDoseWeight = QueryDoubleProperty<Coffee>(_entities[1].properties[13]);
 
   /// see [Coffee.roastDate]
-  static final roastDate =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[14]);
+  static final roastDate = QueryIntegerProperty<Coffee>(_entities[1].properties[14]);
 
   /// see [Coffee.region]
-  static final region =
-      QueryStringProperty<Coffee>(_entities[1].properties[15]);
+  static final region = QueryStringProperty<Coffee>(_entities[1].properties[15]);
 
   /// see [Coffee.farm]
   static final farm = QueryStringProperty<Coffee>(_entities[1].properties[16]);
 
   /// see [Coffee.cropyear]
-  static final cropyear =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[17]);
+  static final cropyear = QueryIntegerProperty<Coffee>(_entities[1].properties[17]);
 
   /// see [Coffee.process]
-  static final process =
-      QueryStringProperty<Coffee>(_entities[1].properties[18]);
+  static final process = QueryStringProperty<Coffee>(_entities[1].properties[18]);
 
   /// see [Coffee.elevation]
-  static final elevation =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[19]);
+  static final elevation = QueryIntegerProperty<Coffee>(_entities[1].properties[19]);
 }
 
 /// [Roaster] entity fields to define ObjectBox queries.
@@ -1391,20 +861,16 @@ class Roaster_ {
   static final name = QueryStringProperty<Roaster>(_entities[2].properties[1]);
 
   /// see [Roaster.imageURL]
-  static final imageURL =
-      QueryStringProperty<Roaster>(_entities[2].properties[2]);
+  static final imageURL = QueryStringProperty<Roaster>(_entities[2].properties[2]);
 
   /// see [Roaster.description]
-  static final description =
-      QueryStringProperty<Roaster>(_entities[2].properties[3]);
+  static final description = QueryStringProperty<Roaster>(_entities[2].properties[3]);
 
   /// see [Roaster.address]
-  static final address =
-      QueryStringProperty<Roaster>(_entities[2].properties[4]);
+  static final address = QueryStringProperty<Roaster>(_entities[2].properties[4]);
 
   /// see [Roaster.homepage]
-  static final homepage =
-      QueryStringProperty<Roaster>(_entities[2].properties[5]);
+  static final homepage = QueryStringProperty<Roaster>(_entities[2].properties[5]);
 }
 
 /// [ShotState] entity fields to define ObjectBox queries.
@@ -1413,68 +879,52 @@ class ShotState_ {
   static final id = QueryIntegerProperty<ShotState>(_entities[3].properties[0]);
 
   /// see [ShotState.subState]
-  static final subState =
-      QueryStringProperty<ShotState>(_entities[3].properties[1]);
+  static final subState = QueryStringProperty<ShotState>(_entities[3].properties[1]);
 
   /// see [ShotState.weight]
-  static final weight =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[2]);
+  static final weight = QueryDoubleProperty<ShotState>(_entities[3].properties[2]);
 
   /// see [ShotState.sampleTime]
-  static final sampleTime =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[3]);
+  static final sampleTime = QueryDoubleProperty<ShotState>(_entities[3].properties[3]);
 
   /// see [ShotState.sampleTimeCorrected]
-  static final sampleTimeCorrected =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[4]);
+  static final sampleTimeCorrected = QueryDoubleProperty<ShotState>(_entities[3].properties[4]);
 
   /// see [ShotState.pourTime]
-  static final pourTime =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[5]);
+  static final pourTime = QueryDoubleProperty<ShotState>(_entities[3].properties[5]);
 
   /// see [ShotState.groupPressure]
-  static final groupPressure =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[6]);
+  static final groupPressure = QueryDoubleProperty<ShotState>(_entities[3].properties[6]);
 
   /// see [ShotState.groupFlow]
-  static final groupFlow =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[7]);
+  static final groupFlow = QueryDoubleProperty<ShotState>(_entities[3].properties[7]);
 
   /// see [ShotState.mixTemp]
-  static final mixTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[8]);
+  static final mixTemp = QueryDoubleProperty<ShotState>(_entities[3].properties[8]);
 
   /// see [ShotState.headTemp]
-  static final headTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[9]);
+  static final headTemp = QueryDoubleProperty<ShotState>(_entities[3].properties[9]);
 
   /// see [ShotState.setMixTemp]
-  static final setMixTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[10]);
+  static final setMixTemp = QueryDoubleProperty<ShotState>(_entities[3].properties[10]);
 
   /// see [ShotState.setHeadTemp]
-  static final setHeadTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[11]);
+  static final setHeadTemp = QueryDoubleProperty<ShotState>(_entities[3].properties[11]);
 
   /// see [ShotState.setGroupPressure]
-  static final setGroupPressure =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[12]);
+  static final setGroupPressure = QueryDoubleProperty<ShotState>(_entities[3].properties[12]);
 
   /// see [ShotState.setGroupFlow]
-  static final setGroupFlow =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[13]);
+  static final setGroupFlow = QueryDoubleProperty<ShotState>(_entities[3].properties[13]);
 
   /// see [ShotState.flowWeight]
-  static final flowWeight =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[14]);
+  static final flowWeight = QueryDoubleProperty<ShotState>(_entities[3].properties[14]);
 
   /// see [ShotState.frameNumber]
-  static final frameNumber =
-      QueryIntegerProperty<ShotState>(_entities[3].properties[15]);
+  static final frameNumber = QueryIntegerProperty<ShotState>(_entities[3].properties[15]);
 
   /// see [ShotState.steamTemp]
-  static final steamTemp =
-      QueryIntegerProperty<ShotState>(_entities[3].properties[16]);
+  static final steamTemp = QueryIntegerProperty<ShotState>(_entities[3].properties[16]);
 }
 
 /// [Favorite] entity fields to define ObjectBox queries.
@@ -1483,8 +933,7 @@ class Favorite_ {
   static final id = QueryIntegerProperty<Favorite>(_entities[4].properties[0]);
 
   /// see [Favorite.recipe]
-  static final recipe =
-      QueryRelationToOne<Favorite, Recipe>(_entities[4].properties[1]);
+  static final recipe = QueryRelationToOne<Favorite, Recipe>(_entities[4].properties[1]);
 }
 
 /// [Recipe] entity fields to define ObjectBox queries.
@@ -1493,128 +942,98 @@ class Recipe_ {
   static final id = QueryIntegerProperty<Recipe>(_entities[5].properties[0]);
 
   /// see [Recipe.coffee]
-  static final coffee =
-      QueryRelationToOne<Recipe, Coffee>(_entities[5].properties[1]);
+  static final coffee = QueryRelationToOne<Recipe, Coffee>(_entities[5].properties[1]);
 
   /// see [Recipe.adjustedWeight]
-  static final adjustedWeight =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[2]);
+  static final adjustedWeight = QueryDoubleProperty<Recipe>(_entities[5].properties[2]);
 
   /// see [Recipe.adjustedPressure]
-  static final adjustedPressure =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[3]);
+  static final adjustedPressure = QueryDoubleProperty<Recipe>(_entities[5].properties[3]);
 
   /// see [Recipe.adjustedTemp]
-  static final adjustedTemp =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[4]);
+  static final adjustedTemp = QueryDoubleProperty<Recipe>(_entities[5].properties[4]);
 
   /// see [Recipe.name]
   static final name = QueryStringProperty<Recipe>(_entities[5].properties[5]);
 
   /// see [Recipe.profileId]
-  static final profileId =
-      QueryStringProperty<Recipe>(_entities[5].properties[6]);
+  static final profileId = QueryStringProperty<Recipe>(_entities[5].properties[6]);
 
   /// see [Recipe.grinderDoseWeight]
-  static final grinderDoseWeight =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[7]);
+  static final grinderDoseWeight = QueryDoubleProperty<Recipe>(_entities[5].properties[7]);
 
   /// see [Recipe.grinderSettings]
-  static final grinderSettings =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[8]);
+  static final grinderSettings = QueryDoubleProperty<Recipe>(_entities[5].properties[8]);
 
   /// see [Recipe.isDeleted]
-  static final isDeleted =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[9]);
+  static final isDeleted = QueryBooleanProperty<Recipe>(_entities[5].properties[9]);
 
   /// see [Recipe.isFavorite]
-  static final isFavorite =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[10]);
+  static final isFavorite = QueryBooleanProperty<Recipe>(_entities[5].properties[10]);
 
   /// see [Recipe.ratio1]
-  static final ratio1 =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[11]);
+  static final ratio1 = QueryDoubleProperty<Recipe>(_entities[5].properties[11]);
 
   /// see [Recipe.ratio2]
-  static final ratio2 =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[12]);
+  static final ratio2 = QueryDoubleProperty<Recipe>(_entities[5].properties[12]);
 
   /// see [Recipe.weightWater]
-  static final weightWater =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[13]);
+  static final weightWater = QueryDoubleProperty<Recipe>(_entities[5].properties[13]);
 
   /// see [Recipe.useWater]
-  static final useWater =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[14]);
+  static final useWater = QueryBooleanProperty<Recipe>(_entities[5].properties[14]);
 
   /// see [Recipe.tempWater]
-  static final tempWater =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[15]);
+  static final tempWater = QueryDoubleProperty<Recipe>(_entities[5].properties[15]);
 
   /// see [Recipe.timeWater]
-  static final timeWater =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[16]);
+  static final timeWater = QueryDoubleProperty<Recipe>(_entities[5].properties[16]);
 
   /// see [Recipe.tempSteam]
-  static final tempSteam =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[17]);
+  static final tempSteam = QueryDoubleProperty<Recipe>(_entities[5].properties[17]);
 
   /// see [Recipe.flowSteam]
-  static final flowSteam =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[18]);
+  static final flowSteam = QueryDoubleProperty<Recipe>(_entities[5].properties[18]);
 
   /// see [Recipe.timeSteam]
-  static final timeSteam =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[19]);
+  static final timeSteam = QueryDoubleProperty<Recipe>(_entities[5].properties[19]);
 
   /// see [Recipe.weightMilk]
-  static final weightMilk =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[20]);
+  static final weightMilk = QueryDoubleProperty<Recipe>(_entities[5].properties[20]);
 
   /// see [Recipe.useSteam]
-  static final useSteam =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[21]);
+  static final useSteam = QueryBooleanProperty<Recipe>(_entities[5].properties[21]);
 
   /// see [Recipe.description]
-  static final description =
-      QueryStringProperty<Recipe>(_entities[5].properties[22]);
+  static final description = QueryStringProperty<Recipe>(_entities[5].properties[22]);
 
   /// see [Recipe.grinderModel]
-  static final grinderModel =
-      QueryStringProperty<Recipe>(_entities[5].properties[23]);
+  static final grinderModel = QueryStringProperty<Recipe>(_entities[5].properties[23]);
 
   /// see [Recipe.disableStopOnWeight]
-  static final disableStopOnWeight =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[24]);
+  static final disableStopOnWeight = QueryBooleanProperty<Recipe>(_entities[5].properties[24]);
 }
 
 /// [SettingsEntry] entity fields to define ObjectBox queries.
 class SettingsEntry_ {
   /// see [SettingsEntry.id]
-  static final id =
-      QueryIntegerProperty<SettingsEntry>(_entities[6].properties[0]);
+  static final id = QueryIntegerProperty<SettingsEntry>(_entities[6].properties[0]);
 
   /// see [SettingsEntry.doubleVal]
-  static final doubleVal =
-      QueryDoubleProperty<SettingsEntry>(_entities[6].properties[1]);
+  static final doubleVal = QueryDoubleProperty<SettingsEntry>(_entities[6].properties[1]);
 
   /// see [SettingsEntry.intVal]
-  static final intVal =
-      QueryIntegerProperty<SettingsEntry>(_entities[6].properties[2]);
+  static final intVal = QueryIntegerProperty<SettingsEntry>(_entities[6].properties[2]);
 
   /// see [SettingsEntry.stringVal]
-  static final stringVal =
-      QueryStringProperty<SettingsEntry>(_entities[6].properties[3]);
+  static final stringVal = QueryStringProperty<SettingsEntry>(_entities[6].properties[3]);
 
   /// see [SettingsEntry.boolVal]
-  static final boolVal =
-      QueryBooleanProperty<SettingsEntry>(_entities[6].properties[4]);
+  static final boolVal = QueryBooleanProperty<SettingsEntry>(_entities[6].properties[4]);
 
   /// see [SettingsEntry.key]
-  static final key =
-      QueryStringProperty<SettingsEntry>(_entities[6].properties[5]);
+  static final key = QueryStringProperty<SettingsEntry>(_entities[6].properties[5]);
 
   /// see [SettingsEntry.type]
-  static final type =
-      QueryStringProperty<SettingsEntry>(_entities[6].properties[6]);
+  static final type = QueryStringProperty<SettingsEntry>(_entities[6].properties[6]);
 }

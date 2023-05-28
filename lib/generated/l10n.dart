@@ -1292,10 +1292,10 @@ class S {
     );
   }
 
-  /// `Bahaviour`
+  /// `Behaviour`
   String get screenSettingsBahaviour {
     return Intl.message(
-      'Bahaviour',
+      'Behaviour',
       name: 'screenSettingsBahaviour',
       desc: '',
       args: [],
@@ -1916,6 +1916,16 @@ class S {
     );
   }
 
+  /// `Show clock during screensaver`
+  String get screenSettingsShowClockDuringScreensaver {
+    return Intl.message(
+      'Show clock during screensaver',
+      name: 'screenSettingsShowClockDuringScreensaver',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Show Flush`
   String get screenSettingsShowFlush {
     return Intl.message(
@@ -2386,6 +2396,26 @@ class S {
     );
   }
 
+  /// `Water Temperature`
+  String get screenWaterTemp {
+    return Intl.message(
+      'Water Temperature',
+      name: 'screenWaterTemp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Water Temperature {watertemp} °C`
+  String screenWaterTemperatureWatertemp(Object watertemp) {
+    return Intl.message(
+      'Water Temperature $watertemp °C',
+      name: 'screenWaterTemperatureWatertemp',
+      desc: '',
+      args: [watertemp],
+    );
+  }
+
   /// `Weight {w} g`
   String screenWaterWeightG(Object w) {
     return Intl.message(
@@ -2393,6 +2423,16 @@ class S {
       name: 'screenWaterWeightG',
       desc: '',
       args: [w],
+    );
+  }
+
+  /// `Water Weight/Volume {volume} g or ml`
+  String screenWaterWeightVolume(Object volume) {
+    return Intl.message(
+      'Water Weight/Volume $volume g or ml',
+      name: 'screenWaterWeightVolume',
+      desc: '',
+      args: [volume],
     );
   }
 
@@ -2601,16 +2641,6 @@ class S {
     return Intl.message(
       'Weight',
       name: 'weight',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Show clock during screensaver`
-  String get screenSettingsShowClockDuringScreensaver {
-    return Intl.message(
-      'Show clock during screensaver',
-      name: 'screenSettingsShowClockDuringScreensaver',
       desc: '',
       args: [],
     );
