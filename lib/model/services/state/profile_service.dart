@@ -108,9 +108,9 @@ class ProfileService extends ChangeNotifier {
   }
 
   void setProfileFromId(String profileId) {
-    var found = profiles.where((element) => profileId == element.id);
-    if (found.isNotEmpty) {
-      setProfile(found.first);
+    var found = getProfile(profileId);
+    if (found != null) {
+      setProfile(found);
     }
   }
 
