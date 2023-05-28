@@ -33,6 +33,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   bool weightStability = true;
   int tareCounter = 0;
+  double _weight = 0.0;
   DeviceCommunication connection;
   DecentScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
@@ -46,12 +47,12 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   void _notificationCallback(List<int> data) {
     if (data.length < 4) return;
-    var weight = ((data[2] << 8) + data[3]) / 10;
-    if (weight > 3200) {
+    _weight = ((data[2] << 8) + data[3]) / 10;
+    if (_weight > 3200) {
       // This gives us also the negative weight - similar implementation as in Beanconqueror
-      weight = ((data[2].toSigned(8) << 8) + data[3].toSigned(8)) / 10;
+      _weight = ((data[2].toSigned(8) << 8) + data[3].toSigned(8)) / 10;
     }
-    scaleService.setWeight(weight);
+    scaleService.setWeight(_weight);
 
     if (data[1] == 0xCE) {
       // log.info('weight stable');
@@ -90,7 +91,29 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  writeTare() {
+  writeTare() async {
+    // tare command
+    bool exit = false;
+    _weight = 100;
+    for (var i = 0; i < 3; i++) {
+      await sendTare();
+      await Future.delayed(
+        const Duration(milliseconds: 200),
+        () {
+          if (_weight < 0.1 && _weight > -0.1) {
+            exit = true;
+          }
+        },
+      );
+      if (exit == true) {
+        log.fine("Tare finished without repeat $i");
+        return;
+      }
+      log.fine("Tare repeat $_weight");
+    }
+  }
+
+  sendTare() {
     List<int> payload = [0x03, 0x0F, 0xFD, tareCounter, 0x00, 0x00];
     payload.add(getXOR(payload));
     tareCounter++;
@@ -142,7 +165,6 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Decent");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteCharacteristicUUID, deviceId: device.id);
-    await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
     return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
