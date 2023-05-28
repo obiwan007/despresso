@@ -675,7 +675,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           KeyValueWidget(
               width: width,
               label: S.of(context).screenEspressoTarget,
-              value: '${settingsService.targetEspressoWeight} g'),
+              value: '${settingsService.targetEspressoWeight.toStringAsFixed(1)} g'),
         if (machineService.lastPourTime > 0)
           const Divider(
             height: 20,
@@ -699,6 +699,18 @@ class EspressoScreenState extends State<EspressoScreen> {
               label: "",
               value:
                   S.of(context).screenEspressoTtw(machineService.state.shot?.timeToWeight.toStringAsFixed(1) ?? "?")),
+        StreamBuilder<String>(
+            stream: machineService.streamFrameName,
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != "") {
+                return Text(
+                  snapshot.data!,
+                  style:
+                      Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
         const Divider(
           height: 20,
           thickness: 5,

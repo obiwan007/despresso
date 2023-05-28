@@ -194,6 +194,10 @@ class EspressoMachineService extends ChangeNotifier {
   late Stream<ShotState> _streamShotState;
   late TempService tempService;
 
+  late StreamController<String> _controllerFrameName;
+  late Stream<String> _streamFrameName;
+  Stream<String> get streamFrameName => _streamFrameName;
+
   EspressoMachineState lastState = EspressoMachineState.disconnected;
 
   final Battery _battery = Battery();
@@ -209,6 +213,8 @@ class EspressoMachineService extends ChangeNotifier {
   ShotState? _newestShot;
 
   ShotState? _floatingShot;
+
+  int _lastFrameNumber = -1;
 
   Stream<ShotState> get streamShotState => _streamShotState;
 
@@ -238,6 +244,9 @@ class EspressoMachineService extends ChangeNotifier {
 
     _controllerBattery = StreamController<int>();
     _streamBatteryState = _controllerBattery.stream.asBroadcastStream();
+
+    _controllerFrameName = StreamController<String>();
+    _streamFrameName = _controllerFrameName.stream.asBroadcastStream();
 
     init();
     _controllerEspressoMachineState.add(currentFullState);
@@ -558,6 +567,8 @@ class EspressoMachineService extends ChangeNotifier {
       baseTimeDate = DateTime.now();
       refillAnounced = false;
       inShot = false;
+      _controllerFrameName.add("");
+      _lastFrameNumber = -1;
       if (shotList.saved == false &&
           shotList.entries.isNotEmpty &&
           shotList.saving == false &&
@@ -579,6 +590,15 @@ class EspressoMachineService extends ChangeNotifier {
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log.info("basetime $baseTime");
       lastPourTime = 0;
+    }
+    if (state.coffeeState == EspressoMachineState.espresso && shot.frameNumber != _lastFrameNumber) {
+      if (profileService.currentProfile != null &&
+          shot.frameNumber <= profileService.currentProfile!.shotFrames.length) {
+        var frame = profileService.currentProfile!.shotFrames[shot.frameNumber];
+        _controllerFrameName.add(frame.name);
+      }
+
+      _lastFrameNumber = shot.frameNumber;
     }
     if (state.coffeeState == EspressoMachineState.espresso &&
         lastSubstate != state.subState &&

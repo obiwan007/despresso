@@ -830,7 +830,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
 
         _enableNotification(Endpoint.shotMapRequest, _parseShotMapRequest);
         // enableNotification(Endpoint.headerWrite, parseShotHeaderSettings);
-        // enableNotification(Endpoint.frameWrite, parseFrameWrite);
+        // _enableNotification(Endpoint.frameWrite, _parseFrameWrite);
 
         _enableNotification(Endpoint.readFromMMR, _mmrNotification);
         _enableNotification(Endpoint.writeToMMR, _mmrNotification);
