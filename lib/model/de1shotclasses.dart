@@ -96,7 +96,9 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   String beverageType = "";
 
-  double targetGroupTemp = 0.0; // to compare bytes
+  double targetGroupTemp = 0.0;
+
+  String version = "2";
 
   De1ShotHeaderClass();
 

@@ -511,7 +511,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     final box = context.findRenderObject() as RenderBox?;
     // var profileAsString = jsonEncode(_selectedProfile!.toJson());
     var encoder = const JsonEncoder.withIndent("  ");
-    var profileAsString = encoder.convert(_selectedProfile!.toJson());
+    // var profileAsString = encoder.convert(_selectedProfile!.toJson());
+    var profileAsString = profileService.createProfileDefaultJson(_selectedProfile!);
     await Share.share(
       profileAsString,
       subject: _selectedProfile!.title,
