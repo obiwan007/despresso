@@ -49,7 +49,8 @@ De1ShotHeaderClass _$De1ShotHeaderClassFromJson(Map<String, dynamic> json) =>
       ..author = json['author'] as String
       ..notes = json['notes'] as String
       ..beverageType = json['beverageType'] as String
-      ..targetGroupTemp = (json['targetGroupTemp'] as num).toDouble();
+      ..targetGroupTemp = (json['targetGroupTemp'] as num).toDouble()
+      ..version = json['version'] as String;
 
 Map<String, dynamic> _$De1ShotHeaderClassToJson(De1ShotHeaderClass instance) =>
     <String, dynamic>{
@@ -72,6 +73,7 @@ Map<String, dynamic> _$De1ShotHeaderClassToJson(De1ShotHeaderClass instance) =>
       'notes': instance.notes,
       'beverageType': instance.beverageType,
       'targetGroupTemp': instance.targetGroupTemp,
+      'version': instance.version,
     };
 
 De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>

@@ -319,6 +319,108 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
+  String createProfileDefaultJson(De1ShotProfile prof) {
+    var buffer = StringBuffer();
+    buffer.writeln("{");
+
+    buffer.writeln('"title": "${prof.title}",');
+    buffer.writeln('"author": "${prof.shotHeader.author}",');
+    buffer.writeln('"notes": "${prof.shotHeader.notes}",');
+    buffer.writeln('"beverage_type": "${prof.shotHeader.beverageType}",');
+    buffer.writeln('"id": "${prof.id}",');
+    buffer.writeln('"tank_temperature": "${prof.shotHeader.tankTemperature}",');
+    buffer.writeln('"target_weight": "${prof.shotHeader.targetWeight}",');
+    buffer.writeln('"target_volume": "${prof.shotHeader.targetVolume}",');
+    buffer.writeln('"target_volume_count_start": "${prof.shotHeader.targetVolumeCountStart}",');
+    buffer.writeln('"legacy_profile_type": "${prof.shotHeader.legacyProfileType}",');
+    buffer.writeln('"type": "${prof.shotHeader.type}",');
+    buffer.writeln('"lang": "${prof.shotHeader.lang}",');
+    buffer.writeln('"hidden": "${prof.shotHeader.hidden}",');
+    buffer.writeln('"version": "${prof.shotHeader.version}",');
+    buffer.writeln('"steps": [');
+
+    var frameNum = 0;
+    for (var step in prof.shotFrames) {
+      buffer.writeln("{");
+      buffer.writeln('"name": "${step.name}",');
+      buffer.writeln('"temperature": "${step.temp}",');
+
+      var sensor = (step.flag & TMixTemp == TMixTemp) ? "water" : "coffee";
+      buffer.writeln('"sensor": "${sensor}",');
+
+      buffer.writeln('"pump": "${step.pump}",');
+      buffer.writeln('"transition": "${step.transition}",');
+
+      if (step.pump == "flow") {
+        buffer.writeln('"flow": "${step.setVal}",');
+      } else {
+        buffer.writeln('"pressure": "${step.setVal}",');
+      }
+
+      buffer.writeln('"seconds": "${step.frameLen}",');
+
+      buffer.writeln('"volume": "${step.maxVol}"');
+      // buffer.writeln('"weight": "${step.}",');
+
+      var exitValue = "0";
+      var exitCondition = "";
+      var exitType = "";
+
+      if (step.flag & (DoCompare) == DoCompare) {
+        exitType = "pressure";
+        exitCondition = "under";
+        exitValue = step.triggerVal.toString();
+      }
+      if (step.flag & (DoCompare | DC_GT) == DoCompare | DC_GT) {
+        exitType = "pressure";
+        exitCondition = "over";
+        exitValue = step.triggerVal.toString();
+      }
+      if (step.flag & (DoCompare | DC_CompF) == DoCompare | DC_CompF) {
+        exitType = "flow";
+        exitCondition = "under";
+        exitValue = step.triggerVal.toString();
+      }
+      if (step.flag & (DoCompare | DC_CompF | DC_GT) == DoCompare | DC_CompF | DC_GT) {
+        exitType = "flow";
+        exitCondition = "over";
+        exitValue = step.triggerVal.toString();
+      }
+
+      if (exitType.isNotEmpty) {
+        buffer.writeln(',');
+        buffer.writeln('"exit": {');
+        buffer.writeln('  "type": "${exitType}",');
+        buffer.writeln('  "condition": "${exitCondition}",');
+        buffer.writeln('  "value": "${exitValue}"');
+        buffer.writeln("}");
+      }
+
+      if (prof.shotExframes.isNotEmpty) {
+        var extended =
+            prof.shotExframes.singleWhereIndexedOrNull((index, element) => element.frameToWrite - 32 == frameNum);
+        if (extended != null) {
+          buffer.writeln(',');
+          buffer.writeln('"limiter": {');
+          buffer.writeln('  "value": "${extended.limiterValue}",');
+          buffer.writeln('  "range": "${extended.limiterRange}"');
+          buffer.writeln("  }");
+        }
+      }
+
+      if (frameNum < prof.shotFrames.length - 1) {
+        buffer.writeln("},");
+      } else {
+        buffer.writeln("}");
+      }
+      frameNum++;
+    }
+    buffer.writeln(']'); // ending steps
+    buffer.writeln("}"); // Ending profile
+    var ret = buffer.toString();
+    return ret;
+  }
+
   static bool shotJsonParserAdvanced(
     Map<String, dynamic> json,
     De1ShotProfile profile,
@@ -332,6 +434,7 @@ class ProfileService extends ChangeNotifier {
     if (dynamic2Double(json["version"]) != 2.0) return false;
 
     profile.id = dynamic2String(json["id"]);
+    shotHeader.version = dynamic2String(json["version"]);
 
     shotHeader.hidden = dynamic2Double(json["hidden"]).toInt();
     shotHeader.type = dynamic2String(json["type"]);
@@ -428,7 +531,7 @@ class ProfileService extends ChangeNotifier {
         frame.triggerVal = 0;
       } // no exit condition was checked
 
-      // "limiter...."
+      // "limiter"
       var limiterValue = double.negativeInfinity;
       var limiterRange = double.negativeInfinity;
 
