@@ -156,6 +156,12 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         defaultValue: settingsService.hasSteamThermometer,
                         title: S.of(context).screenSettingsMilkSteamingThermometerSupport,
                       ),
+                      SwitchSettingsTile(
+                        leading: const Icon(Icons.water_drop),
+                        settingKey: SettingKeys.hasRefractometer.name,
+                        defaultValue: settingsService.hasRefractometer,
+                        title: 'Refractometer Support',
+                      ),
                     ],
                   ),
                   SettingsGroup(

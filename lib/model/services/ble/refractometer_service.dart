@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:despresso/devices/abstract_refractometer.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import '../../../service_locator.dart';
+import '../state/settings_service.dart';
 import 'ble_service.dart';
+import 'machine_service.dart';
 
 enum RefractometerState {
   /// Currently establishing a connection.
@@ -19,12 +22,10 @@ enum RefractometerState {
   disconnected
 }
 
-class TempMeassurement {
-  double temp1;
-  double temp2;
+class TdsMeassurement {
+  double tds;
   RefractometerState state;
-  double time = 0;
-  TempMeassurement(this.temp1, this.temp2, this.state);
+  TdsMeassurement(this.tds, this.state);
 }
 
 class RefractometerService extends ChangeNotifier {
@@ -39,7 +40,7 @@ class RefractometerService extends ChangeNotifier {
 
   DateTime t1 = DateTime.now();
 
-  Stream<TempMeassurement> get stream => _stream;
+  Stream<TdsMeassurement> get stream => _stream;
   Stream<int> get streamBattery => _streamBattery;
 
   // double get temp1 => _temp1;
@@ -48,15 +49,30 @@ class RefractometerService extends ChangeNotifier {
 
   RefractometerState get state => _state;
 
-  late StreamController<TempMeassurement> _controller;
-  late Stream<TempMeassurement> _stream;
+  late StreamController<TdsMeassurement> _controller;
+  late Stream<TdsMeassurement> _stream;
 
-  // AbstractThermometer? tempProbe;
+  AbstractRefractometer? refractometer;
 
+  SettingsService? _settingsService;
+
+  EspressoMachineService? _machineService;
   late StreamController<int> _controllerBattery;
   late Stream<int> _streamBattery;
 
-  RefractometerService() {}
+  RefractometerService() {
+    _controller = StreamController<TdsMeassurement>();
+    _stream = _controller.stream.asBroadcastStream();
+
+    _controllerBattery = StreamController<int>();
+    _streamBattery = _controllerBattery.stream.asBroadcastStream();
+  }
+
+  void setRefractometerInstance(AbstractRefractometer abstractRefractometer) {
+    refractometer = abstractRefractometer;
+    _settingsService = getIt<SettingsService>();
+    _machineService = getIt<EspressoMachineService>();
+  }
 
   setState(RefractometerState state) {
     if (state == RefractometerState.connected) {

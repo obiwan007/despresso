@@ -184,7 +184,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
           log.info('Smartchef Scale');
           SmartchefScale(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
-        } else if (device.name.startsWith('Difluid R2')) {
+        } else if (device.name.startsWith('DiFluid R2')) {
           log.info('Difluid R2');
           DifluidR2Refractometer(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);

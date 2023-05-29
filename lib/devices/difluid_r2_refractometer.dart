@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_refractometer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:despresso/service_locator.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:logging/logging.dart' as l;
 
@@ -11,11 +12,11 @@ import '../model/services/ble/refractometer_service.dart';
 class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractometer {
   final log = l.Logger('DifluidR2Refractometer');
   // ignore: non_constant_identifier_names
-  static Uuid ServiceUUID = useLongCharacteristics() ? Uuid.parse('x') : Uuid.parse('x');
+  static Uuid ServiceUUID =
+      useLongCharacteristics() ? Uuid.parse('000000ff-0000-1000-8000-00805f9b34fb') : Uuid.parse('00ff');
 // ignore: non_constant_identifier_names
-  static Uuid ReadCharacteristicUUID = useLongCharacteristics() ? Uuid.parse('x') : Uuid.parse('x');
-// ignore: non_constant_identifier_names
-  static Uuid WriteCharacteristicUUID = useLongCharacteristics() ? Uuid.parse('x') : Uuid.parse('x');
+  static Uuid CharacteristicUUID =
+      useLongCharacteristics() ? Uuid.parse('0000aa01-0000-1000-8000-00805f9b34fb') : Uuid.parse('aa01');
 
   late RefractometerService refractometerService;
 
@@ -28,14 +29,24 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
   DeviceCommunication connection;
-  DifluidR2Refractometer(this.device, this.connection) {}
+  DifluidR2Refractometer(this.device, this.connection) {
+    refractometerService = getIt<RefractometerService>();
+    refractometerService.setRefractometerInstance(this);
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
+      _onStateChange(connectionState.connectionState);
+    }, onError: (Object error) {
+      // Handle a possible error
+    });
+  }
   @override
   Future<void> requestValue() {
     // TODO: implement requestValue
     throw UnimplementedError();
   }
 
-  void _notificationCallback(List<int> data) {}
+  void _notificationCallback(List<int> data) {
+    log.info(data);
+  }
 
   void _onStateChange(DeviceConnectionState state) async {
     log.info('REFRACTOMETER State changed to $state');
@@ -50,8 +61,8 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
         log.info('Connected');
         refractometerService.setState(RefractometerState.connected);
 
-        final characteristic = QualifiedCharacteristic(
-            serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
+        final characteristic =
+            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharacteristicUUID, deviceId: device.id);
 
         _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
           _notificationCallback(data);
