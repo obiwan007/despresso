@@ -43,41 +43,21 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
-    log.info(int.parse(hex.encode(data.slice(6, 9)), radix: 16) / 10);
-    // log.info(int.parse(data.slice(5, 8) as String, radix: 16) / 10);
+    if (data.length < 19) return;
     if (data[17] != 0) {
       setScaleUnitToGram();
-      log.info('change scale to grams!');
+      log.info('changing scale to grams!');
     }
 
-    if (data[0] == 223) {
-      var weight = int.parse(hex.encode(data.slice(6, 9)), radix: 16);
-      if (weight > 2500) {
-        weight =
-            int.parse(hex.encode(data.slice(6, 9).map((element) => element.toSigned(8)).join()) as String, radix: 16);
-      }
-      scaleService.setWeight(weight / 10);
-    } else {
-      log.info('not a weight update');
-    }
+    var weight = int.parse(hex.encode(data.sublist(6, 9)), radix: 16);
+    scaleService.setWeight(weight / 10);
   }
 
   @override
   writeTare() {
-    var payload = [0xDF, 0xDF, 0x03, 0x02, 0x01, 0x01, 0XC5];
-    // payload.add(calculateChecksum(payload));
-    // this is equal to a single power button click
+    var payload = [0xDF, 0xDF, 0x03, 0x02, 0x01, 0x01, 0xC5];
     return writeToDifluidScale(payload);
   }
-
-  // calculateChecksum(data) {
-  //   // according to difluid example app
-  //   var checksum = 0;
-  //   for (var i = 0; i < data.length; i++) {
-  //     checksum += int.parse(data[i] & 0xFF);
-  //   }
-  //   return (checksum & 0xFF).toString().toUpperCase().padLeft(2, '0');
-  // }
 
   startWeightNotifications() {
     log.info('enabling weight notifications');
