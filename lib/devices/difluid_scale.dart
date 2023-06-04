@@ -48,8 +48,7 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
       setScaleUnitToGram();
       log.info('changing scale to grams!');
     }
-    var weight = getInt(data.sublist(6, 9));
-    //var weight = int.parse(hex.encode(data.sublist(6, 9), radix: 16);
+    var weight = getInt(data.sublist(5, 9));
     scaleService.setWeight(weight / 10);
   }
 
@@ -61,7 +60,7 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
       list[i] = buffer[i];
       i++;
     }
-    return bytes.getInt32(0, Endian.little);
+    return bytes.getInt32(0, Endian.big);
   }
 
   @override
