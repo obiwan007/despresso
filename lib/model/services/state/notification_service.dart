@@ -43,13 +43,7 @@ class SnackbarService extends ChangeNotifier {
   }
 
   void init() async {
-    //notifyListeners();
-    Future.delayed(Duration(seconds: 1), () {
-      notify("Info", SnackbarNotificationType.info);
-    });
-    Future.delayed(Duration(seconds: 2), () {
-      notify("Warn", SnackbarNotificationType.warn);
-    });
+    notifyListeners();
   }
 
   @override

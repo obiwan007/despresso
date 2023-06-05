@@ -523,6 +523,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       settingsService.notifyDelayed();
                     },
                   ),
+                  SliderSettingsTile(
+                    title: "Refill watertank at limit",
+                    settingKey: SettingKeys.targetWaterlevel.name,
+                    defaultValue: settingsService.targetWaterlevel.toInt().toDouble(),
+                    min: 20,
+                    max: 2040,
+                    step: 20.0,
+                    leading: const Icon(Icons.water),
+                    onChange: (value) {
+                      machineService.de1?.setWaterLevelWarning(value.toInt());
+                    },
+                  ),
                 ],
               ),
             ),

@@ -421,6 +421,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
       if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
       final characteristic =
           QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+      log.info("encode Sending: ${getCharacteristic(e)}: ${data.length} ${Helper.toHex(data)}");
       return connection.writeCharacteristicWithResponse(characteristic, value: data);
     } catch (e) {
       log.severe("Failing BLE write $e");
@@ -435,6 +436,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
     if (connection.status != BleStatus.ready) throw ("de1 not connected ${connection.status}");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: getCharacteristic(e), deviceId: device.id);
+    log.info("encode Sending: ${getCharacteristic(e)}: ${data.length} ${Helper.toHex(data)}");
     return connection.writeCharacteristicWithResponse(characteristic, value: data);
 
     // device.writeCharacteristic(ServiceUUID, getCharacteristic(e), data, false);
@@ -483,9 +485,26 @@ class DE1 extends ChangeNotifier implements IDe1 {
     try {
       var waterlevel = value.getUint16(0, Endian.big);
       var waterThreshold = value.getUint16(2, Endian.big);
-      service.setWaterLevel(WaterLevel(waterlevel, waterThreshold));
+      var wl = WaterLevel(waterlevel, waterThreshold);
+      service.setWaterLevel(wl);
     } catch (e) {
       log.severe("waternotify: $e");
+    }
+  }
+
+  Future<void> setWaterLevelWarning(int warningLevelVolume) {
+    ByteData value = ByteData(4);
+    try {
+      // 00 00 0c 00
+      // 00 00 00 07
+      int height = WaterLevel.getLevelFromVolume(warningLevelVolume);
+      value.setInt16(0, 0, Endian.big);
+      value.setInt16(2, height * 256, Endian.big);
+
+      return writeWithResult(Endpoint.waterLevels, value.buffer.asUint8List());
+    } catch (e) {
+      log.severe("waternotify: $e");
+      rethrow;
     }
   }
 
