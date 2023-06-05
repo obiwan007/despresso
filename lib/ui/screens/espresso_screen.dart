@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
@@ -129,15 +130,7 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   void checkForRefill() {
     if (refillAnounced == false && machineService.state.coffeeState == EspressoMachineState.refill) {
-      var snackBar = SnackBar(
-          content: Text(S.of(context).screenEspressoRefillTheWaterTank),
-          action: SnackBarAction(
-            label: 'ok',
-            onPressed: () {
-              // Some code to undo the change.
-            },
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      getIt<SnackbarService>().notify(S.of(context).screenEspressoRefillTheWaterTank, SnackbarNotificationType.info);
       refillAnounced = true;
     }
   }

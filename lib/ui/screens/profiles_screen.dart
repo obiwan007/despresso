@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -157,15 +158,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                 try {
                   await profileService.delete(_selectedProfile!);
                 } catch (e) {
-                  var snackBar = SnackBar(
-                      content: Text("Error deleting profile: $e"),
-                      action: SnackBarAction(
-                        label: '',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  getIt<SnackbarService>().notify("Error deleting profile: $e", SnackbarNotificationType.severe);
                   log.severe("Error deleting profile $e");
                 }
               },
@@ -199,15 +192,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                   );
                 });
               } catch (e) {
-                var snackBar = SnackBar(
-                    content: Text("Error loading profile: $e"),
-                    action: SnackBarAction(
-                      label: 'Undo',
-                      onPressed: () {
-                        // Some code to undo the change.
-                      },
-                    ));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                getIt<SnackbarService>().notify("Error loading profile: $e", SnackbarNotificationType.severe);
+
                 log.severe("Error loading profile $e");
               }
             },
@@ -341,25 +327,15 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                                   ElevatedButton.icon(
                                     icon: const Icon(Icons.add),
                                     onPressed: () async {
-                                      var messenger = ScaffoldMessenger.of(context);
-                                      Text result;
+                                      String result;
                                       try {
                                         var r = await machineService.uploadProfile(_selectedProfile!);
-                                        result = Text('Profile is selected: $r');
+                                        result = 'Profile is selected: $r';
                                       } catch (e) {
-                                        result = Text('Profile is not selected: $e');
+                                        result = 'Profile is not selected: $e';
                                       }
 
-                                      var snackBar = SnackBar(
-                                          content: result,
-                                          action: SnackBarAction(
-                                            label: 'Ok',
-                                            onPressed: () {
-                                              // Some code to undo the change.
-                                            },
-                                          ));
-
-                                      messenger.showSnackBar(snackBar);
+                                      getIt<SnackbarService>().notify(result, SnackbarNotificationType.severe);
                                     },
                                     label: const Text(
                                       "Save to Decent",

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -18,6 +19,7 @@ import 'package:despresso/ui/widgets/machine_footer.dart';
 import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:feedback_sentry/feedback_sentry.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:logging/logging.dart';
@@ -54,14 +56,13 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   late CoffeeService coffeeService;
   late ProfileService profileService;
   late EspressoMachineService machineService;
-
+  late ScreensaverService _screensaver;
+  late SnackbarService _notifications;
   late BLEService bleService;
 
   EspressoMachineState? lastState;
 
   late TabController _tabController;
-
-  late ScreensaverService _screensaver;
 
   BuildContext? _saverContext;
 
@@ -96,6 +97,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     profileService.addListener(updatedProfile);
 
     _screensaver = getIt<ScreensaverService>();
+    _notifications = getIt<SnackbarService>();
     _screensaver.addListener(screenSaverEvent);
 
     _settings.addListener(updatedSettings);
@@ -117,6 +119,50 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
           return SystemChrome.restoreSystemUIOverlays();
         });
       }
+    });
+
+    _notifications.streamSnackbarNotification.listen((event) {
+      var n = event!;
+      log.info(n);
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        Color? col = const Color.fromARGB(255, 250, 141, 141);
+        var duration = const Duration(seconds: 3);
+        switch (n.type) {
+          case SnackbarNotificationType.severe:
+            col = const Color.fromARGB(255, 250, 141, 141);
+            log.severe(n.text);
+            duration = const Duration(seconds: 10);
+            break;
+          case SnackbarNotificationType.info:
+            col = null;
+            Theme.of(context).primaryColor;
+            log.info(n.text);
+            break;
+          case SnackbarNotificationType.warn:
+            col = const Color.fromARGB(255, 239, 174, 113);
+            log.warning(n.text);
+            duration = const Duration(seconds: 5);
+            break;
+          case SnackbarNotificationType.ok:
+            col = Colors.greenAccent;
+            log.info(n.text);
+            duration = const Duration(seconds: 5);
+            break;
+        }
+        var snackBar = SnackBar(
+          backgroundColor: col,
+          content: Text(n.text),
+          duration: duration,
+          action: SnackBarAction(
+            label: "Ok",
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
     });
   }
 
@@ -387,18 +433,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     );
     return tb;
   }
-
-  // void configureCoffee() {
-  //   var snackBar = SnackBar(
-  //       content: const Text('Configure your coffee'),
-  //       action: SnackBarAction(
-  //         label: 'Undo',
-  //         onPressed: () {
-  //           // Some code to undo the change.
-  //         },
-  //       ));
-  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  // }
 
   void updatedProfile() {
     setState(() {});
