@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:despresso/devices/acaia_pyxis_scale.dart';
 import 'package:despresso/devices/decent_scale.dart';
+import 'package:despresso/devices/difluid_scale.dart';
 import 'package:despresso/devices/felicita_scale.dart';
 import 'package:despresso/devices/meater_thermometer.dart';
 import 'package:despresso/devices/skale2_scale.dart';
@@ -23,7 +24,7 @@ import 'package:despresso/devices/decent_de1.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' as ble;
 
 import '../../../devices/abstract_comm.dart';
-import '../../../devices/smartchef_scale.dart';
+import 'package:despresso/devices/smartchef_scale.dart';
 
 class BLEService extends ChangeNotifier implements DeviceCommunication {
   final log = Logger('BLEService');
@@ -182,6 +183,10 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
         } else if (device.name.startsWith('smartchef')) {
           log.info('Smartchef Scale');
           SmartchefScale(device, this).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        } else if (device.name.startsWith('Microbalance')) {
+          log.info('Difluid Scale');
+          DifluidScale(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         } else {
           _devicesIgnoreList.add(device);
