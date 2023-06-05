@@ -486,6 +486,11 @@ class DE1 extends ChangeNotifier implements IDe1 {
       var waterlevel = value.getUint16(0, Endian.big);
       var waterThreshold = value.getUint16(2, Endian.big);
       var wl = WaterLevel(waterlevel, waterThreshold);
+
+      if (service.state.water?.waterLimit != waterThreshold) {
+        _settings.targetWaterlevel = wl.getLevelRefill();
+        log.info("WaterThreshold changed ${_settings.targetWaterlevel}");
+      }
       service.setWaterLevel(wl);
     } catch (e) {
       log.severe("waternotify: $e");
@@ -822,12 +827,12 @@ class DE1 extends ChangeNotifier implements IDe1 {
       case DeviceConnectionState.connected:
         // await device.discoverAllServicesAndCharacteristics();
         // Enable notification
-
+        service.setSubState("5");
         _parseVersion(ByteData.sublistView(Uint8List.fromList((await _read(Endpoint.versions)))));
         _stateNotification(ByteData.sublistView(Uint8List.fromList((await _read(Endpoint.stateInfo)))));
         _waterLevelNotification(ByteData.sublistView(Uint8List.fromList((await _read(Endpoint.waterLevels)))));
         _parseShotSetting(ByteData.sublistView(Uint8List.fromList((await _read(Endpoint.shotSettings)))));
-
+        service.setSubState("7");
         // parseShotMapRequest(ByteData.sublistView(
         //     Uint8List.fromList((await read(Endpoint.ShotMapRequest)))));
         var header =
@@ -843,7 +848,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
         _enableNotification(Endpoint.temperatures, _tempatureNotification);
         _enableNotification(Endpoint.waterLevels, _waterLevelNotification);
         _enableNotification(Endpoint.stateInfo, _stateNotification);
-
+        service.setSubState("8");
         _enableNotification(Endpoint.shotSample, _shotSampleNotification);
         _enableNotification(Endpoint.shotSettings, _parseShotSetting);
 
@@ -855,20 +860,25 @@ class DE1 extends ChangeNotifier implements IDe1 {
         _enableNotification(Endpoint.writeToMMR, _mmrNotification);
 
         try {
+          service.setSubState("10%");
           await updateSettings();
-
+          service.setSubState("20%");
           ghcInfo = await getGhcInfo();
           ghcMode = await getGhcMode();
-
+          service.setSubState("30%");
           machineSerial = await getSerialNumber();
-
+          service.setSubState("40%");
           firmware = await getFirmwareBuild();
+          service.setSubState("50%");
           var fan = await getFanThreshhold();
+          service.setSubState("60%");
           if (fan < 50) setFanThreshhold(50);
-
+          service.setSubState("70%");
+          await setWaterLevelWarning(_settings.targetWaterlevel);
+          service.setSubState("80%");
           await setSteamFlow(_settings.targetSteamFlow);
           steamFlow = await getSteamFlow();
-
+          service.setSubState("90%");
           steamPurgeMode = await getSteamPurgeMode();
 
           flowEstimation = await getFlowEstimation();
@@ -881,7 +891,8 @@ class DE1 extends ChangeNotifier implements IDe1 {
 
           var coffeeService = getIt<CoffeeService>();
           await coffeeService.setSelectedRecipe(_settings.selectedRecipe);
-
+          service.setSubState("100%");
+          Future.delayed(Duration(seconds: 10), () => service.setSubState(""));
           log.info(
               "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");
         } catch (e) {

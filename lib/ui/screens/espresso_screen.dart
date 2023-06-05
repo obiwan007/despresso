@@ -130,7 +130,7 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   void checkForRefill() {
     if (refillAnounced == false && machineService.state.coffeeState == EspressoMachineState.refill) {
-      getIt<SnackbarService>().notify(S.of(context).screenEspressoRefillTheWaterTank, SnackbarNotificationType.info);
+      getIt<SnackbarService>().notify(S.of(context).screenEspressoRefillTheWaterTank, SnackbarNotificationType.warn);
       refillAnounced = true;
     }
   }
