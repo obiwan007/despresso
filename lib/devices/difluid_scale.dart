@@ -20,7 +20,7 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
       useLongCharacteristics() ? Uuid.parse('000000ee-0000-1000-8000-00805f9b34fb') : Uuid.parse('00ee');
   // ignore: non_constant_identifier_names
   static Uuid DataUUID =
-      useLongCharacteristics() ? Uuid.parse('0000aa01-0000-1000-8000-00805f9b34fb') : Uuid.parse('ff01');
+      useLongCharacteristics() ? Uuid.parse('0000aa01-0000-1000-8000-00805f9b34fb') : Uuid.parse('aa01');
 
   late ScaleService scaleService;
 
