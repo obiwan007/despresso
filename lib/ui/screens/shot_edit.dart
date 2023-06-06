@@ -1,4 +1,5 @@
 import 'package:despresso/generated/l10n.dart';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/ui/widgets/height_widget.dart';
@@ -165,27 +166,10 @@ class ShotEditState extends State<ShotEdit> {
                     _editedShot.visualizerId = id;
                     coffeeService.updateShot(_editedShot);
                   }
-                  var snackBar = SnackBar(
-                      backgroundColor: Colors.greenAccent,
-                      content: Text(S.of(context).screenShotEditSuccessUploadingYourShot),
-                      action: SnackBarAction(
-                        label: 'Ok',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  getIt<SnackbarService>()
+                      .notify(S.of(context).screenShotEditSuccessUploadingYourShot, SnackbarNotificationType.ok);
                 } catch (e) {
-                  var snackBar = SnackBar(
-                      backgroundColor: const Color.fromARGB(255, 250, 141, 141),
-                      content: Text("Error uploading shot: $e"),
-                      action: SnackBarAction(
-                        label: S.of(context).ok,
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  getIt<SnackbarService>().notify("Error uploading shot: $e", SnackbarNotificationType.severe);
                   log.severe("Error uploading shot $e");
                 }
                 setState(() {
