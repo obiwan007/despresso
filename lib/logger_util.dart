@@ -66,6 +66,11 @@ Future<Directory?> getDirectory() async {
       dir = await getApplicationDocumentsDirectory();
     }
   }
+  try {
+    dir ??= await getApplicationDocumentsDirectory();
+  } catch (e) {
+    print("Not possible to store to app directory $e");
+  }
 
   return dir;
 }
@@ -185,7 +190,7 @@ class UtcLogRecordFormatter extends LogRecordFormatter {
     if (split.isNotEmpty) {
       for (var line in split) {
         sb.write('${rec.time.toUtc()} ${rec.level.name} '
-          '${rec.loggerName} - $line');
+            '${rec.loggerName} - $line');
       }
     } else {
       sb.write('${rec.time.toUtc()} ${rec.level.name} '

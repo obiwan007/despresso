@@ -372,6 +372,8 @@
   "@screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart": {},
   "screenSettingsShotSettings": "Ajustes de tiro",
   "@screenSettingsShotSettings": {},
+  "screenSettingsShowClockDuringScreensaver": "Mostrar reloj durante el salvapantallas",
+  "@screenSettingsShowClockDuringScreensaver": {},
   "screenSettingsShowFlush": "Mostrar al ras",
   "@screenSettingsShowFlush": {},
   "screenSettingsSmartCharging": "Carga inteligente",
@@ -466,8 +468,14 @@
   "@screenSteamTimeS": {},
   "screenSteamTwotapMode": "Modo Steam de dos toques:",
   "@screenSteamTwotapMode": {},
+  "screenWaterTemp": "Temperatura de agua",
+  "@screenWaterTemp": {},
+  "screenWaterTemperatureWatertemp": "Temperatura del agua {watertemp} °C",
+  "@screenWaterTemperatureWatertemp": {},
   "screenWaterWeightG": "Peso {w} g",
   "@screenWaterWeightG": {},
+  "screenWaterWeightVolume": "Agua Peso/Volumen {volumen} g o ml",
+  "@screenWaterWeightVolume": {},
   "settings": "Ajustes",
   "@settings": {},
   "show": "Espectáculo",
@@ -509,6 +517,5 @@
   "wait": "Esperar",
   "@wait": {},
   "weight": "Peso",
-  "@weight": {},
-  "screenSettingsShowClockDuringScreensaver": "Show clock during screensaver"
+  "@weight": {}
 }

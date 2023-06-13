@@ -92,7 +92,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   int instance = 0;
   DeviceCommunication connection;
 
-  int index = 0;
+  double _weight = 0.0;
 
   AcaiaPyxisScale(this.device, this.connection) {
     instances++;
@@ -166,7 +166,11 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           case 12: // weight
           case 5: // weight
             double? weight = decodeWeight(payload);
-            if (weight != null) scaleService.setWeight(weight, index);
+
+            if (weight != null) {
+              _weight = weight;
+              scaleService.setWeight(weight);
+            }
             _lastResponse = DateTime.now();
             break;
           case 8: // Tara done
@@ -187,7 +191,10 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
             if (payload[3] == 5) {
               var w = decodeWeight(payload.sublist(3));
-              if (w != null) scaleService.setWeight(w, index);
+              if (w != null) {
+                _weight = w;
+                scaleService.setWeight(w);
+              }
             }
             // if (payload[3] == 7) time = decodeTime(payload.sublist(3));
 
@@ -315,6 +322,28 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   @override
   writeTare() async {
     // tare command
+    bool exit = false;
+    _weight = 100;
+    for (var i = 0; i < 3; i++) {
+      await sendTare();
+      await Future.delayed(
+        const Duration(milliseconds: 200),
+        () {
+          if (_weight < 0.1 && _weight > -0.1) {
+            exit = true;
+          }
+        },
+      );
+      if (exit == true) {
+        log.fine("Tare finished without repeat $i");
+        return;
+      }
+      log.fine("Tare repeat $_weight");
+    }
+  }
+
+  sendTare() async {
+    // tare command
 
     var list = [
       0x00,
@@ -339,17 +368,11 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     try {
       await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
       await ack();
-      // await _sendConfig();
       log.info("tara send Ok");
     } catch (e) {
       log.severe("tara failed $e");
     }
-    // Future.delayed(Duration(milliseconds: 100), () async {
-    //   await _sendIdent();
-    //   return await _sendConfig();
-    // });
   }
-
   // Future<void> writeToAcaia(Uint8List payload) async {
   //   log.info("Sending to Acaia");
   //   final characteristic = QualifiedCharacteristic(

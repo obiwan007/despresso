@@ -17,8 +17,13 @@ class ObjectBox {
   static Future<ObjectBox> create() async {
     final docsDir = await getApplicationDocumentsDirectory();
     // Future<Store> openStore() {...} is defined in the generated objectbox.g.dart
-    final store = await openStore(directory: p.join(docsDir.path, "database"));
-    return ObjectBox._create(store);
+    try {
+      final store = await openStore(directory: p.join(docsDir.path, "database"));
+      return ObjectBox._create(store);
+    } catch (e) {
+      print("Error $e");
+      rethrow;
+    }
   }
 
   getBackupData() {

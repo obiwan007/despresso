@@ -50,6 +50,7 @@ enum SettingKeys {
   targetGroupTemp,
   targetEspressoWeight,
   targetEspressoWeightTimeAdjust,
+  targetWaterlevel,
   webServer,
   targetTempCorrection,
   screenBrightnessTimer,
@@ -86,6 +87,7 @@ enum SettingKeys {
   scaleDisplayOffOnSleep,
   scalePrimary,
   scaleSecondary,
+  targetSteamFlow,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -171,6 +173,9 @@ class SettingsService extends ChangeNotifier {
   int get targetSteamLength => Settings.getValue<int>(SettingKeys.targetSteamLength.name) ?? 90;
   set targetSteamLength(int value) => Settings.setValue<int>(SettingKeys.targetSteamLength.name, value);
 
+  double get targetSteamFlow => Settings.getValue<double>(SettingKeys.targetSteamFlow.name) ?? 1.4;
+  set targetSteamFlow(double value) => Settings.setValue<double>(SettingKeys.targetSteamFlow.name, value);
+
   int get targetMilkTemperature => Settings.getValue<int>(SettingKeys.targetMilkTemperature.name) ?? 55;
   set targetMilkTemperature(int value) => Settings.setValue<int>(SettingKeys.targetMilkTemperature.name, value);
 
@@ -211,6 +216,9 @@ class SettingsService extends ChangeNotifier {
 
   double get targetTempCorrection => Settings.getValue<double>(SettingKeys.targetTempCorrection.name) ?? 0;
   set targetTempCorrection(double value) => Settings.setValue<double>(SettingKeys.targetTempCorrection.name, value);
+
+  int get targetWaterlevel => Settings.getValue<int>(SettingKeys.targetWaterlevel.name) ?? 200;
+  set targetWaterlevel(int value) => Settings.setValue<int>(SettingKeys.targetWaterlevel.name, value);
 
   double get screenBrightnessTimer => Settings.getValue<double>(SettingKeys.screenBrightnessTimer.name) ?? 10;
   set screenBrightnessTimer(double value) => Settings.setValue<double>(SettingKeys.screenBrightnessTimer.name, value);

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
@@ -129,15 +130,7 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   void checkForRefill() {
     if (refillAnounced == false && machineService.state.coffeeState == EspressoMachineState.refill) {
-      var snackBar = SnackBar(
-          content: Text(S.of(context).screenEspressoRefillTheWaterTank),
-          action: SnackBarAction(
-            label: 'ok',
-            onPressed: () {
-              // Some code to undo the change.
-            },
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      getIt<SnackbarService>().notify(S.of(context).screenEspressoRefillTheWaterTank, SnackbarNotificationType.warn);
       refillAnounced = true;
     }
   }
@@ -675,7 +668,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           KeyValueWidget(
               width: width,
               label: S.of(context).screenEspressoTarget,
-              value: '${settingsService.targetEspressoWeight} g'),
+              value: '${settingsService.targetEspressoWeight.toStringAsFixed(1)} g'),
         if (machineService.lastPourTime > 0)
           const Divider(
             height: 20,
@@ -699,6 +692,18 @@ class EspressoScreenState extends State<EspressoScreen> {
               label: "",
               value:
                   S.of(context).screenEspressoTtw(machineService.state.shot?.timeToWeight.toStringAsFixed(1) ?? "?")),
+        StreamBuilder<String>(
+            stream: machineService.streamFrameName,
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != "") {
+                return Text(
+                  snapshot.data!,
+                  style:
+                      Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
         const Divider(
           height: 20,
           thickness: 5,

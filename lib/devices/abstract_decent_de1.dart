@@ -23,6 +23,7 @@ abstract class IDe1 {
   Future<int> getGhcInfo();
   Future<int> getGhcMode();
   Future<void> setUsbChargerMode(int t);
+  Future<void> setWaterLevelWarning(int t);
   Future<void> setSteamPurgeMode(int t);
   Future<int> getSteamPurgeMode();
   Future<void> updateSettings();

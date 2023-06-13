@@ -492,4 +492,10 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     log.info("write");
     return Future.delayed(const Duration(milliseconds: 10));
   }
+
+  @override
+  Future<void> setWaterLevelWarning(int t) {
+    // TODO: implement setWaterLevelWarning
+    throw UnimplementedError();
+  }
 }
