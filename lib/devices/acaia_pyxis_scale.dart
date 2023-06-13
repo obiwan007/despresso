@@ -94,6 +94,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   double _weight = 0.0;
 
+  int index = 0;
+
   AcaiaPyxisScale(this.device, this.connection) {
     instances++;
     instance = instances;
@@ -169,13 +171,13 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
             if (weight != null) {
               _weight = weight;
-              scaleService.setWeight(weight);
+              scaleService.setWeight(weight, index);
             }
             _lastResponse = DateTime.now();
             break;
           case 8: // Tara done
 
-            scaleService.setTara();
+            scaleService.setTara(index);
             if (payload[0] == 0 && payload[1] == 5) {
               var weight = decodeWeight(payload.sublist(2));
               log.info("Tare received $weight ${Helper.toHex(Uint8List.fromList(payload))}");
@@ -193,7 +195,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
               var w = decodeWeight(payload.sublist(3));
               if (w != null) {
                 _weight = w;
-                scaleService.setWeight(w);
+                scaleService.setWeight(w, index);
               }
             }
             // if (payload[3] == 7) time = decodeTime(payload.sublist(3));
@@ -495,7 +497,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
       try {
         _notificationCallback(data);
       } catch (e) {
-        log.severe("Handling notification failed $e");
+        log.severe("Handling notification failed ScaleIndex: $index $e");
       }
     }, onError: (dynamic error) {
       // code to handle errors

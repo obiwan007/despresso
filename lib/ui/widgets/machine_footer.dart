@@ -7,7 +7,6 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
-import 'package:despresso/ui/theme.dart' as theme;
 import 'package:logging/logging.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 
@@ -110,7 +109,12 @@ class _MachineFooterState extends State<MachineFooter> {
               }),
           const Spacer(),
           if (settingsService.hasScale) ScaleFooter(machineService: machineService, index: 0),
-          if (settingsService.hasScale && machineService.scaleService.hasSecondaryScale)
+          if (machineService.state.coffeeState != EspressoMachineState.espresso &&
+              machineService.state.coffeeState != EspressoMachineState.flush &&
+              machineService.state.coffeeState != EspressoMachineState.steam &&
+              machineService.state.coffeeState != EspressoMachineState.water &&
+              settingsService.hasScale &&
+              machineService.scaleService.hasSecondaryScale)
             ScaleFooter(machineService: machineService, index: 1),
           if (settingsService.hasSteamThermometer) ThermprobeFooter(machineService: machineService),
           const Spacer(),
@@ -287,14 +291,24 @@ class ScaleFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var showWeightIn = (machineService.state.coffeeState == EspressoMachineState.idle ||
+            machineService.state.coffeeState == EspressoMachineState.disconnected) &&
+        ((machineService.scaleService.hasSecondaryScale && index == 1) ||
+            (machineService.scaleService.hasSecondaryScale == false && index == 0));
+
+    var showFlowIn = !(machineService.state.coffeeState == EspressoMachineState.idle ||
+            machineService.state.coffeeState == EspressoMachineState.disconnected) &&
+        machineService.scaleService.hasPrimaryScale &&
+        index == 0;
+
     return SizedBox(
       width: 310,
       child: StreamBuilder<WeightMeassurement>(
-          stream: machineService.scaleService.stream,
+          stream: index == 0 ? machineService.scaleService.stream0 : machineService.scaleService.stream1,
           builder: (context, snapshot) {
             return Container(
-              color: machineService.scaleService.state != ScaleState.connecting
-                  ? machineService.scaleService.state != ScaleState.connected
+              color: machineService.scaleService.state[index] != ScaleState.connecting
+                  ? machineService.scaleService.state[index] != ScaleState.connected
                       ? Colors.red
                       : null
                   : Colors.orange.shade900,
@@ -305,21 +319,21 @@ class ScaleFooter extends StatelessWidget {
                   SizedBox(
                     height: 36,
                     child: StreamBuilder<WeightMeassurement>(
-                        stream: machineService.scaleService.stream,
+                        stream: index == 0 ? machineService.scaleService.stream0 : machineService.scaleService.stream1,
                         builder: (context, snapshot) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (machineService.scaleService.state != ScaleState.connecting &&
-                                  machineService.scaleService.state == ScaleState.connected)
+                              if (machineService.scaleService.state[index] != ScaleState.connecting &&
+                                  machineService.scaleService.state[index] == ScaleState.connected)
                                 OutlinedButton(
                                   onPressed: () async {
-                                    await machineService.scaleService.tare();
+                                    await machineService.scaleService.tare(index: index);
                                   },
                                   child: Text(S.of(context).footerTare),
                                 ),
-                              if (machineService.scaleService.state != ScaleState.connecting &&
-                                  machineService.scaleService.state != ScaleState.connected)
+                              if (machineService.scaleService.state[index] != ScaleState.connecting &&
+                                  machineService.scaleService.state[index] != ScaleState.connected)
                                 ElevatedButton(
                                   onPressed: () {
                                     machineService.scaleService.connect();
@@ -332,10 +346,10 @@ class ScaleFooter extends StatelessWidget {
                               if (machineService.scaleService.state == ScaleState.connecting)
                                 Text(
                                   textAlign: TextAlign.right,
-                                  machineService.scaleService.state.name,
+                                  machineService.scaleService.state[index].name,
                                   style: Theme.of(context).textTheme.labelMedium,
                                 ),
-                              if (machineService.scaleService.state == ScaleState.connected)
+                              if (machineService.scaleService.state[index] == ScaleState.connected)
                                 SizedBox(
                                   width: 190,
                                   child: Row(
@@ -344,55 +358,55 @@ class ScaleFooter extends StatelessWidget {
                                         width: 100,
                                         child: FittedBox(
                                           fit: BoxFit.fitHeight,
-                                          child: machineService.scaleService.state == ScaleState.connected
+                                          child: machineService.scaleService.state[index] == ScaleState.connected
                                               ? Text(
                                                   textAlign: TextAlign.right,
                                                   "${snapshot.data?.weight.toStringAsFixed(1)} g",
                                                   style: Theme.of(context).textTheme.headlineSmall,
                                                 )
-                                              : machineService.scaleService.state != ScaleState.disconnected
+                                              : machineService.scaleService.state[index] != ScaleState.disconnected
                                                   ? FittedBox(
                                                       fit: BoxFit.fitWidth,
                                                       child: Text(
                                                         textAlign: TextAlign.right,
-                                                        machineService.scaleService.state.name,
+                                                        machineService.scaleService.state[index].name,
                                                         style: Theme.of(context).textTheme.labelSmall,
                                                       ),
                                                     )
                                                   : const Text(""),
                                         ),
                                       ),
-                                      machineService.state.coffeeState == EspressoMachineState.idle ||
-                                              machineService.state.coffeeState == EspressoMachineState.disconnected
-                                          ? SizedBox(
-                                              width: 90,
-                                              child: OutlinedButton(
-                                                onPressed: () {
-                                                  Feedback.forTap(context);
-                                                  var coffeeService = getIt<CoffeeService>();
-                                                  var settingsService = getIt<SettingsService>();
-                                                  var r = coffeeService.currentRecipe;
-                                                  if (r != null) {
-                                                    r.grinderDoseWeight = machineService.scaleService.weight[index];
-                                                    r.adjustedWeight = machineService.scaleService.weight[index] *
-                                                        (r.ratio2 / r.ratio1);
-                                                    coffeeService.updateRecipe(r);
-                                                    settingsService.targetEspressoWeight = r.adjustedWeight;
-                                                  }
-                                                },
-                                                child: const FittedBox(child: Text("Set-in")),
-                                              ),
-                                            )
-                                          : SizedBox(
-                                              width: 90,
-                                              child: Text(
-                                                textAlign: TextAlign.right,
-                                                machineService.scaleService.state == ScaleState.connected
-                                                    ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
-                                                    : "",
-                                                style: Theme.of(context).textTheme.bodyMedium,
-                                              ),
-                                            ),
+                                      if (showWeightIn)
+                                        SizedBox(
+                                          width: 90,
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              Feedback.forTap(context);
+                                              var coffeeService = getIt<CoffeeService>();
+                                              var settingsService = getIt<SettingsService>();
+                                              var r = coffeeService.currentRecipe;
+                                              if (r != null) {
+                                                r.grinderDoseWeight = machineService.scaleService.weight[index];
+                                                r.adjustedWeight =
+                                                    machineService.scaleService.weight[index] * (r.ratio2 / r.ratio1);
+                                                coffeeService.updateRecipe(r);
+                                                settingsService.targetEspressoWeight = r.adjustedWeight;
+                                              }
+                                            },
+                                            child: const FittedBox(child: Text("Set-in")),
+                                          ),
+                                        ),
+                                      if (showFlowIn)
+                                        SizedBox(
+                                          width: 90,
+                                          child: Text(
+                                            textAlign: TextAlign.right,
+                                            machineService.scaleService.state[index] == ScaleState.connected
+                                                ? "${snapshot.data?.flow.toStringAsFixed(1)} g/s"
+                                                : "",
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -411,7 +425,9 @@ class ScaleFooter extends StatelessWidget {
                   ),
                   if (machineService.scaleService.state == ScaleState.connected)
                     StreamBuilder<Object>(
-                        stream: machineService.scaleService.streamBattery,
+                        stream: index == 0
+                            ? machineService.scaleService.streamBattery0
+                            : machineService.scaleService.streamBattery1,
                         builder: (context, snapshot) {
                           var bat = snapshot.hasData ? (snapshot.data as int) / 100.0 : 0.0;
                           return LinearProgressIndicator(

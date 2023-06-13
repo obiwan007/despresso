@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/generated/l10n.dart';
 import 'package:despresso/logger_util.dart';
@@ -132,10 +133,9 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             Row(
                               children: [
                                 SizedBox(width: 100, child: Text("Found: ${bleService.devices.length} devices")),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: bleService.devices.map((e) => Text("${e.name} (${e.id})")).toList(),
+                                DeviceAssignment(
+                                  bleService: bleService,
+                                  settingsService: settingsService,
                                 ),
                               ],
                             ),
@@ -308,7 +308,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     onChange: (value) {},
                   ),
                   StreamBuilder<Object>(
-                      stream: scaleService.stream,
+                      stream: scaleService.stream0,
                       builder: (context, snapshot) {
                         const w = 250.0;
                         return SettingsContainer(
@@ -1125,5 +1125,75 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
   void updateView() {
     _controllerRefresh.add(0);
+  }
+}
+
+class DeviceAssignment extends StatefulWidget {
+  const DeviceAssignment({
+    super.key,
+    required this.bleService,
+    required this.settingsService,
+  });
+
+  final BLEService bleService;
+  final SettingsService settingsService;
+
+  @override
+  State<DeviceAssignment> createState() => _DeviceAssignmentState();
+}
+
+class _DeviceAssignmentState extends State<DeviceAssignment> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: widget.bleService.scales.map((e) {
+        return Row(
+          children: [
+            SizedBox(width: 200, child: Text("${e.name})")),
+            SizedBox(width: 200, child: Text("(${e.id})")),
+            if (!e.id.startsWith("DE1") && !e.id.startsWith("MEATER")) ...[
+              Checkbox(
+                value: widget.settingsService.scalePrimary == e.id,
+                onChanged: (bool? value) {
+                  if (value == true) {
+                    widget.settingsService.scalePrimary = e.id;
+                    if (widget.settingsService.scaleSecondary == e.id) {
+                      widget.settingsService.scaleSecondary = "";
+                    }
+                  } else {
+                    widget.settingsService.scalePrimary = "";
+                  }
+                  setState(
+                    () {},
+                  );
+                },
+              ),
+              SizedBox(width: 70, child: Text("Primary")),
+              Checkbox(
+                value: widget.settingsService.scaleSecondary == e.id,
+                onChanged: (bool? value) {
+                  if (value == true) {
+                    widget.settingsService.scaleSecondary = e.id;
+                    if (widget.settingsService.scalePrimary == e.id) {
+                      widget.settingsService.scalePrimary = "";
+                    }
+                  } else {
+                    widget.settingsService.scaleSecondary = "";
+                  }
+                  setState(
+                    () {},
+                  );
+                },
+              ),
+              Text("Secondary"),
+              if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
+                Icon(Icons.bluetooth_connected),
+            ]
+          ],
+        );
+      }).toList(),
+    );
   }
 }

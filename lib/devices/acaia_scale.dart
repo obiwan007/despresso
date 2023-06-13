@@ -126,7 +126,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
             scaleService.setWeight(weight, index);
             break;
           case 8: // Tara done
-            scaleService.setTara();
+            scaleService.setTara(index);
             break;
           case 7:
             double time = decodeTime(payload.sublist(2));

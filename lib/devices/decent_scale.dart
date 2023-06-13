@@ -57,7 +57,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
       // This gives us also the negative weight - similar implementation as in Beanconqueror
       _weight = ((data[2].toSigned(8) << 8) + data[3].toSigned(8)) / 10;
     }
-    scaleService.setWeight(weight, index);
+    scaleService.setWeight(_weight, index);
 
     if (data[1] == 0xCE) {
       // log.info('weight stable');
