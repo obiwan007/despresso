@@ -17,11 +17,15 @@ import 'package:despresso/ui/widgets/screen_saver.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' as ble;
+// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:reactive_ble_platform_interface/src/model/discovered_device.dart' as bledevice;
 import 'package:screen_brightness/screen_brightness.dart';
+
 import '../../service_locator.dart';
 
 class AppSettingsScreen extends StatefulWidget {
@@ -1148,52 +1152,80 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
-      children: widget.bleService.scales.map((e) {
-        return Row(
-          children: [
-            SizedBox(width: 200, child: Text("${e.name})")),
-            SizedBox(width: 200, child: Text("(${e.id})")),
-            if (!e.id.startsWith("DE1") && !e.id.startsWith("MEATER")) ...[
-              Checkbox(
-                value: widget.settingsService.scalePrimary == e.id,
-                onChanged: (bool? value) {
-                  if (value == true) {
-                    widget.settingsService.scalePrimary = e.id;
-                    if (widget.settingsService.scaleSecondary == e.id) {
-                      widget.settingsService.scaleSecondary = "";
-                    }
-                  } else {
-                    widget.settingsService.scalePrimary = "";
-                  }
-                  setState(
-                    () {},
-                  );
-                },
-              ),
-              SizedBox(width: 70, child: Text("Primary")),
-              Checkbox(
-                value: widget.settingsService.scaleSecondary == e.id,
-                onChanged: (bool? value) {
-                  if (value == true) {
-                    widget.settingsService.scaleSecondary = e.id;
-                    if (widget.settingsService.scalePrimary == e.id) {
-                      widget.settingsService.scalePrimary = "";
-                    }
-                  } else {
-                    widget.settingsService.scaleSecondary = "";
-                  }
-                  setState(
-                    () {},
-                  );
-                },
-              ),
-              Text("Secondary"),
-              if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
-                Icon(Icons.bluetooth_connected),
-            ]
-          ],
-        );
-      }).toList(),
+      children: [
+        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scalePrimary) ==
+            null)
+          scaleRow(bledevice.DiscoveredDevice(
+            id: widget.settingsService.scalePrimary,
+            name: "Scale 1",
+            manufacturerData: Uint8List(0),
+            rssi: 0,
+            serviceUuids: [],
+            serviceData: Map<ble.Uuid, Uint8List>(),
+          )),
+        if (widget.bleService.scales
+                .firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) ==
+            null)
+          scaleRow(bledevice.DiscoveredDevice(
+            id: widget.settingsService.scaleSecondary,
+            name: "Scale 2",
+            manufacturerData: Uint8List(0),
+            rssi: 0,
+            serviceUuids: [],
+            serviceData: Map<ble.Uuid, Uint8List>(),
+          )),
+        // scanned scales list
+        ...widget.bleService.scales.map((e) {
+          return scaleRow(e);
+        }).toList(),
+      ],
+    );
+  }
+
+  Row scaleRow(bledevice.DiscoveredDevice e) {
+    return Row(
+      children: [
+        SizedBox(width: 200, child: Text("${e.name}")),
+        SizedBox(width: 200, child: Text("(${e.id})")),
+        if (!e.id.startsWith("DE1") && !e.id.startsWith("MEATER")) ...[
+          Checkbox(
+            value: widget.settingsService.scalePrimary == e.id,
+            onChanged: (bool? value) {
+              if (value == true) {
+                widget.settingsService.scalePrimary = e.id;
+                if (widget.settingsService.scaleSecondary == e.id) {
+                  widget.settingsService.scaleSecondary = "";
+                }
+              } else {
+                widget.settingsService.scalePrimary = "";
+              }
+              setState(
+                () {},
+              );
+            },
+          ),
+          SizedBox(width: 70, child: Text("Primary")),
+          Checkbox(
+            value: widget.settingsService.scaleSecondary == e.id,
+            onChanged: (bool? value) {
+              if (value == true) {
+                widget.settingsService.scaleSecondary = e.id;
+                if (widget.settingsService.scalePrimary == e.id) {
+                  widget.settingsService.scalePrimary = "";
+                }
+              } else {
+                widget.settingsService.scaleSecondary = "";
+              }
+              setState(
+                () {},
+              );
+            },
+          ),
+          Text("Secondary"),
+          if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
+            Icon(Icons.bluetooth_connected),
+        ]
+      ],
     );
   }
 }
