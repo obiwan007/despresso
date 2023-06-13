@@ -59,9 +59,6 @@ class RefractometerService extends ChangeNotifier {
 
   AbstractRefractometer? refractometer;
 
-  // SettingsService? _settingsService;
-
-  // EspressoMachineService? _machineService;
   late StreamController<int> _controllerBattery;
   late Stream<int> _streamBattery;
 
@@ -75,8 +72,6 @@ class RefractometerService extends ChangeNotifier {
 
   void setRefractometerInstance(AbstractRefractometer abstractRefractometer) {
     refractometer = abstractRefractometer;
-    // _settingsService = getIt<SettingsService>();
-    // _machineService = getIt<EspressoMachineService>();
   }
 
   setState(RefractometerState state) {
@@ -93,25 +88,6 @@ class RefractometerService extends ChangeNotifier {
   void setTemp(double tempPrism, double tempTank) {
     _tempPrism = tempPrism;
     _tempTank = tempTank;
-
-    // calc flow, cap on 10g/s
-    // var m = TdsMeassurement(temp1, temp2, _state);
-    // m.time = DateTime.now().millisecondsSinceEpoch / 1000.0 - _baseTime;
-    // history.add(m);
-    // if (history.length > 200) {
-    //   history.removeAt(0);
-    // }
-    // _controller.add(m);
-    // notifyListeners();
-
-    //   _count++;
-    //   if (_count % 10 == 0) {
-    //     var t = DateTime.now();
-    //     var ms = t.difference(t1).inMilliseconds;
-    //     var hz = 10 / ms * 1000.0;
-    //     log.finer("Temp Hz: $ms $hz");
-    //     t1 = t;
-    //   }
   }
 
   void setRefraction(double tds, double refrIndex) {

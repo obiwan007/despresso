@@ -367,7 +367,7 @@ class ShotEditState extends State<ShotEdit> {
                   ),
                 ),
                 // eventually check also for && refractometerService.state == RefractometerState.connected
-                if (settingsService.hasRefractometer)
+                if (settingsService.hasRefractometer && refractometerService.state == RefractometerState.connected)
                   ElevatedButton(
                       onPressed: () => {getRefractometerData()}, child: const Text('Read TDS from Refractometer'))
               ],
