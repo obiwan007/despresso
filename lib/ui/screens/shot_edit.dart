@@ -369,8 +369,7 @@ class ShotEditState extends State<ShotEdit> {
                 // eventually check also for && refractometerService.state == RefractometerState.connected
                 if (settingsService.hasRefractometer)
                   ElevatedButton(
-                      onPressed: () => {currentForm?.controls['totalDissolvedSolids']?.value = 8.3},
-                      child: const Text('Read TDS from Refractometer'))
+                      onPressed: () => {getRefractometerData()}, child: const Text('Read TDS from Refractometer'))
               ],
             ),
           )),
@@ -494,5 +493,16 @@ class ShotEditState extends State<ShotEdit> {
         .toList();
 
     return roasters;
+  }
+
+  getRefractometerData() {
+    var tds = 0.0;
+    refractometerService.read();
+    tds = refractometerService.tds;
+    var pouringWeight = currentForm?.controls['pourWeight']?.value as double? ?? 0.0;
+    var doseWeight = currentForm?.controls['doseWeight']?.value as double? ?? 0.0;
+    var extractionYield = (pouringWeight * tds) / doseWeight;
+    currentForm?.controls['totalDissolvedSolids']?.value = tds;
+    currentForm?.controls['extractionYield']?.value = extractionYield;
   }
 }

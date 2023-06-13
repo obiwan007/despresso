@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_refractometer.dart';
@@ -40,12 +41,65 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
   }
   @override
   Future<void> requestValue() {
-    // TODO: implement requestValue
-    throw UnimplementedError();
+    return writeToDifluidRefractometer([0xDF, 0xDF, 0x03, 0x00, 0x00, 0xC1]);
+
+    // if average is wanted an average test return writeToDifluidRefractometer([0xDF, 0xDF, 0x03, 0x01, 0x01, 0x03 0xC6]);
+  }
+
+  startDeviceNotifications() {
+    log.info('enabling notifications');
+    return writeToDifluidRefractometer([0xDF, 0xDF, 0x01, 0x00, 0x01, 0x01, 0xC1]);
+  }
+
+  setDeviceToCelsius() {
+    log.info('enabling notifications');
+    return writeToDifluidRefractometer([0xDF, 0xDF, 0x01, 0x00, 0x01, 0x00, 0xC0]);
+  }
+
+  Future<void> writeToDifluidRefractometer(List<int> payload) async {
+    log.info("Sending to Difluid Refractometer");
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CharacteristicUUID, deviceId: device.id);
+    return await connection.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _notificationCallback(List<int> data) {
     log.info(data);
+    if (data[3] == 254) {
+      log.info('no liquid');
+    }
+    if (data[4] == 3 && data[5] == 0) {
+      if (data[6] == 11) {
+        log.info('test started');
+      } else if (data[6] == 0) {
+        log.info('test finished');
+      }
+    } else if (data[4] == 6 && data[5] == 1) {
+      log.info('temp result');
+      var tempPrism = getInt(data.sublist(6, 8));
+      var tempTank = getInt(data.sublist(9, 11));
+      refractometerService.setTemp(tempPrism / 10, tempTank / 10);
+    } else if (data[4] == 7 && data[5] == 2) {
+      log.info('tds result');
+      var tds = getInt(data.sublist(6, 8));
+      var refractiveIndex = getInt(data.sublist(8, 12));
+      refractometerService.setRefraction(tds / 100, refractiveIndex / 100000);
+    }
+  }
+
+  int getInt(List<int> buffer) {
+    ByteData bytes = ByteData(buffer.length);
+    var i = 0;
+    var list = bytes.buffer.asUint8List();
+    for (var _ in buffer) {
+      list[i] = buffer[i];
+      i++;
+    }
+    if (buffer.length == 2) {
+      return bytes.getInt16(0, Endian.big);
+    } else {
+      return bytes.getInt32(0, Endian.big);
+    }
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -69,7 +123,8 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
         }, onError: (dynamic error) {
           log.severe("Subscribe to $characteristic failed: $error");
         });
-
+        startDeviceNotifications();
+        setDeviceToCelsius();
         return;
       case DeviceConnectionState.disconnected:
         refractometerService.setState(RefractometerState.disconnected);
