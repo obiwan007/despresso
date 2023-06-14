@@ -30,6 +30,8 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
   late StreamSubscription<List<int>> _characteristicsSubscription;
 
   DeviceCommunication connection;
+
+  late bool responseReceived = false;
   DifluidR2Refractometer(this.device, this.connection) {
     refractometerService = getIt<RefractometerService>();
     refractometerService.setRefractometerInstance(this);
@@ -40,10 +42,18 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
     });
   }
   @override
-  Future<void> requestValue() {
-    return writeToDifluidRefractometer([0xDF, 0xDF, 0x03, 0x00, 0x00, 0xC1]);
-
+  Future<void> requestValue() async {
+    responseReceived = false;
+    writeToDifluidRefractometer([0xDF, 0xDF, 0x03, 0x00, 0x00, 0xC1]);
+    return await waitForResponse();
     // if average is wanted an average test return writeToDifluidRefractometer([0xDF, 0xDF, 0x03, 0x01, 0x01, 0x03 0xC6]);
+  }
+
+  waitForResponse() async {
+    while (!responseReceived) {
+      // Wait for a short duration before checking again
+      await Future.delayed(Duration(milliseconds: 100));
+    }
   }
 
   startDeviceNotifications() {
@@ -84,6 +94,7 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
       var tds = getInt(data.sublist(6, 8));
       var refractiveIndex = getInt(data.sublist(8, 12));
       refractometerService.setRefraction(tds / 100, refractiveIndex / 100000);
+      responseReceived = true;
     }
   }
 

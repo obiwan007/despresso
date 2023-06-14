@@ -495,9 +495,9 @@ class ShotEditState extends State<ShotEdit> {
     return roasters;
   }
 
-  getRefractometerData() {
+  getRefractometerData() async {
     var tds = 0.0;
-    refractometerService.read();
+    await refractometerService.read();
     tds = refractometerService.tds;
     var pouringWeight = currentForm?.controls['pourWeight']?.value as double? ?? 0.0;
     var doseWeight = currentForm?.controls['doseWeight']?.value as double? ?? 0.0;
