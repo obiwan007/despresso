@@ -1,4 +1,5 @@
 import 'package:despresso/generated/l10n.dart';
+import 'package:despresso/model/services/ble/refractometer_service.dart';
 import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
@@ -36,6 +37,7 @@ class ShotEditState extends State<ShotEdit> {
   late EspressoMachineService machineService;
   late VisualizerService visualizerService;
   late SettingsService settingsService;
+  late RefractometerService refractometerService;
 
   Shot _editedShot = Shot();
 
@@ -91,6 +93,7 @@ class ShotEditState extends State<ShotEdit> {
     machineService = getIt<EspressoMachineService>();
     visualizerService = getIt<VisualizerService>();
     settingsService = getIt<SettingsService>();
+    refractometerService = getIt<RefractometerService>();
 
     coffeeService.addListener(updateCoffee);
     roasters = loadRoasters();
@@ -335,6 +338,10 @@ class ShotEditState extends State<ShotEdit> {
                   decoration: InputDecoration(
                     labelText: S.of(context).screenShotEditTotalDissolvedSolidssTds,
                   ),
+                  onChanged: (control) => {
+                    currentForm?.controls['extractionYield']?.value =
+                        (_editedShot.pourWeight * control.value!) / _editedShot.doseWeight
+                  },
                 ),
                 ReactiveTextField<double>(
                   formControlName: 'extractionYield',
@@ -343,6 +350,10 @@ class ShotEditState extends State<ShotEdit> {
                     labelText: S.of(context).screenShotEditExtractionYield,
                   ),
                 ),
+                // eventually check also for && refractometerService.state == RefractometerState.connected
+                if (settingsService.hasRefractometer && refractometerService.state == RefractometerState.connected)
+                  ElevatedButton(
+                      onPressed: () => {getRefractometerData()}, child: const Text('Read TDS from Refractometer'))
               ],
             ),
           )),
@@ -466,5 +477,16 @@ class ShotEditState extends State<ShotEdit> {
         .toList();
 
     return roasters;
+  }
+
+  getRefractometerData() async {
+    var tds = 0.0;
+    await refractometerService.read();
+    tds = refractometerService.tds;
+    var pouringWeight = currentForm?.controls['pourWeight']?.value as double? ?? 0.0;
+    var doseWeight = currentForm?.controls['doseWeight']?.value as double? ?? 0.0;
+    var extractionYield = (pouringWeight * tds) / doseWeight;
+    currentForm?.controls['totalDissolvedSolids']?.value = tds;
+    currentForm?.controls['extractionYield']?.value = extractionYield;
   }
 }

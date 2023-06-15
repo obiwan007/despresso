@@ -26,8 +26,6 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   final DiscoveredDevice device;
 
-  final flutterReactiveBle = FlutterReactiveBle();
-
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
   late StreamSubscription<List<int>> _characteristicsSubscription;
@@ -43,7 +41,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     scaleService = getIt<ScaleService>();
     index = getScaleIndex(device.id);
     scaleService.setScaleInstance(this, index);
-    _deviceListener = flutterReactiveBle.connectToDevice(id: device.id).listen((connectionState) {
+    _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
       // Handle a possible error
@@ -170,7 +168,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     log.info("Sending to Decent");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: WriteCharacteristicUUID, deviceId: device.id);
-    return await flutterReactiveBle.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
@@ -190,7 +188,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
         final characteristic = QualifiedCharacteristic(
             serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
 
-        _characteristicsSubscription = flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           _notificationCallback(data);
         }, onError: (dynamic error) {
           log.severe("Subscribe to $characteristic failed: $error");
