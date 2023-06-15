@@ -343,7 +343,7 @@ class ScaleFooter extends StatelessWidget {
                                   ),
                                 ),
 
-                              if (machineService.scaleService.state == ScaleState.connecting)
+                              if (machineService.scaleService.state[index] == ScaleState.connecting)
                                 Text(
                                   textAlign: TextAlign.right,
                                   machineService.scaleService.state[index].name,
@@ -423,7 +423,7 @@ class ScaleFooter extends StatelessWidget {
                     S.of(context).footerScale,
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
-                  if (machineService.scaleService.state == ScaleState.connected)
+                  if (machineService.scaleService.state[index] == ScaleState.connected)
                     StreamBuilder<Object>(
                         stream: index == 0
                             ? machineService.scaleService.streamBattery0

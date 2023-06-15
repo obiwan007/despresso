@@ -460,7 +460,7 @@ class EspressoMachineService extends ChangeNotifier {
       }
     }
     if (state == EspressoMachineState.idle &&
-        scaleService.state == ScaleState.disconnected &&
+        scaleService.state[0] == ScaleState.disconnected &&
         (_state.subState == "heat_water_tank" || _state.subState == "no_state")) {
       log.info("Trying to autoconnect to scale");
       bleService.startScan();
@@ -698,7 +698,7 @@ class EspressoMachineService extends ChangeNotifier {
 
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
-          if (lastPourTime > 5 && scaleService.state == ScaleState.connected) {
+          if (lastPourTime > 5 && scaleService.state[0] == ScaleState.connected) {
             var weight = settingsService.targetEspressoWeight;
             if (weight < 1) {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
@@ -737,7 +737,7 @@ class EspressoMachineService extends ChangeNotifier {
           }
           break;
         case EspressoMachineState.water:
-          if (scaleService.state == ScaleState.connected) {
+          if (scaleService.state[0] == ScaleState.connected) {
             if (state.subState == "pour" &&
                 settingsService.targetHotWaterWeight > 1 &&
                 scaleService.weight[0] + 1 > settingsService.targetHotWaterWeight) {

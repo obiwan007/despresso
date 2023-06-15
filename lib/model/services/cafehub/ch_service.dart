@@ -252,7 +252,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
     isScanning = true;
 
     ScaleService scaleService = getIt<ScaleService>();
-    if (scaleService.state != ScaleState.connected) {
+    if (scaleService.state[0] != ScaleState.connected) {
       scaleService.setState(ScaleState.connecting, -1);
     }
 
@@ -308,7 +308,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
       log.info('stoppedScan');
 
       isScanning = false;
-      if (scaleService.state == ScaleState.connecting) {
+      if (scaleService.state[0] == ScaleState.connecting) {
         scaleService.setState(ScaleState.disconnected, -1);
       }
       notifyListeners();
