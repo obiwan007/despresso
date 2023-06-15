@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:despresso/devices/acaia_pyxis_scale.dart';
 import 'package:despresso/devices/decent_scale.dart';
+import 'package:despresso/devices/difluid_r2_refractometer.dart';
 import 'package:despresso/devices/difluid_scale.dart';
 import 'package:despresso/devices/felicita_scale.dart';
 import 'package:despresso/devices/ibraai_thermometer.dart';
@@ -185,6 +186,9 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
           log.info('Smartchef Scale');
           SmartchefScale(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
+        } else if (device.name.startsWith('DiFluid R2')) {
+          log.info('Difluid R2');
+          DifluidR2Refractometer(device, this).addListener(() => _checkdevice(device));
         } else if (device.name.startsWith('Microbalance')) {
           log.info('Difluid Scale');
           DifluidScale(device, this).addListener(() => _checkdevice(device));

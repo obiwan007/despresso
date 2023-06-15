@@ -30,6 +30,7 @@ enum SettingKeys {
   smartCharging,
   hasSteamThermometer,
   hasScale,
+  hasRefractometer,
   useSentry,
   currentProfile,
   selectedRoaster,
@@ -140,6 +141,7 @@ class SettingsService extends ChangeNotifier {
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
 
   bool get hasSteamThermometer => Settings.getValue<bool>(SettingKeys.hasSteamThermometer.name) ?? false;
+  bool get hasRefractometer => Settings.getValue<bool>(SettingKeys.hasRefractometer.name) ?? false;
   bool get hasScale => Settings.getValue<bool>(SettingKeys.hasScale.name) ?? true;
 
   bool get useSentry => Settings.getValue<bool>(SettingKeys.useSentry.name) ?? true;

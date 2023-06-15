@@ -3,6 +3,7 @@ import 'package:despresso/model/services/cafehub/ch_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
+import 'package:despresso/model/services/ble/refractometer_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
@@ -25,6 +26,7 @@ void setupServices() {
   getIt.registerSingleton<CoffeeService>(CoffeeService(), signalsReady: false);
   getIt.registerSingleton<ProfileService>(ProfileService(), signalsReady: false);
   getIt.registerSingleton<TempService>(TempService(), signalsReady: false);
+  getIt.registerSingleton<RefractometerService>(RefractometerService(), signalsReady: false);
   getIt.registerSingleton<EspressoMachineService>(EspressoMachineService(), signalsReady: false);
   getIt.registerSingleton<MqttService>(MqttService(), signalsReady: false);
   getIt.registerSingleton<VisualizerService>(VisualizerService(), signalsReady: false);
