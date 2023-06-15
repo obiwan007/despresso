@@ -127,6 +127,22 @@ class WaterLevel {
     var l = (waterLimit / 256).round();
     return l > 0 && l < waterMap.length ? waterMap[l] : 0;
   }
+
+  static int getLevelFromHeight(int height) {
+    var l = (height / 256).round();
+    return l > 0 && l < waterMap.length ? waterMap[l] : 0;
+  }
+
+  static int getLevelFromVolume(int vol) {
+    int i = 0;
+    for (var element in waterMap) {
+      if (element > vol) {
+        return i - 1;
+      }
+      i++;
+    }
+    return 0;
+  }
 }
 
 class MachineState {

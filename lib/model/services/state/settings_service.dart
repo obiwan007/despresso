@@ -51,6 +51,7 @@ enum SettingKeys {
   targetGroupTemp,
   targetEspressoWeight,
   targetEspressoWeightTimeAdjust,
+  targetWaterlevel,
   webServer,
   targetTempCorrection,
   screenBrightnessTimer,
@@ -215,6 +216,9 @@ class SettingsService extends ChangeNotifier {
 
   double get targetTempCorrection => Settings.getValue<double>(SettingKeys.targetTempCorrection.name) ?? 0;
   set targetTempCorrection(double value) => Settings.setValue<double>(SettingKeys.targetTempCorrection.name, value);
+
+  int get targetWaterlevel => Settings.getValue<int>(SettingKeys.targetWaterlevel.name) ?? 200;
+  set targetWaterlevel(int value) => Settings.setValue<int>(SettingKeys.targetWaterlevel.name, value);
 
   double get screenBrightnessTimer => Settings.getValue<double>(SettingKeys.screenBrightnessTimer.name) ?? 10;
   set screenBrightnessTimer(double value) => Settings.setValue<double>(SettingKeys.screenBrightnessTimer.name, value);

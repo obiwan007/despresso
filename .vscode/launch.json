@@ -7,7 +7,8 @@
         {
             "name": "despresso",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flutterMode": "debug"
         },
         {
             "name": "despresso (profile mode)",

@@ -8,6 +8,7 @@ import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/mqtt_service.dart';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/objectbox.dart';
@@ -528,6 +529,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       settingsService.notifyDelayed();
                     },
                   ),
+                  SliderSettingsTile(
+                    title: "Refill watertank at limit",
+                    settingKey: SettingKeys.targetWaterlevel.name,
+                    defaultValue: settingsService.targetWaterlevel.toInt().toDouble(),
+                    min: 20,
+                    max: 2040,
+                    step: 20.0,
+                    leading: const Icon(Icons.water),
+                    onChange: (value) {
+                      machineService.de1?.setWaterLevelWarning(value.toInt());
+                    },
+                  ),
                 ],
               ),
             ),
@@ -1004,16 +1017,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   }
 
   void showSnackbar(BuildContext context) {
-    var snackBar = SnackBar(
-        duration: const Duration(seconds: 5),
-        content: Text(S.of(context).screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp),
-        action: SnackBarAction(
-          label: 'ok',
-          onPressed: () {
-            // Some code to undo the change.
-          },
-        ));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    getIt<SnackbarService>().notify(
+        S.of(context).screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp, SnackbarNotificationType.info);
   }
 
   void settingsServiceListener() {
@@ -1038,29 +1043,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
         "application/zip",
       ]);
       log.info("Backupdata saved ${data[0].length + data[1].length}");
-
-      var snackBar = SnackBar(
-          backgroundColor: Colors.greenAccent,
-          content: Text(S.of(context).screenSettingsSavedBackup),
-          action: SnackBarAction(
-            label: 'ok',
-            onPressed: () {
-              // Some code to undo the change.
-            },
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      getIt<SnackbarService>().notify(S.of(context).screenSettingsSavedBackup, SnackbarNotificationType.info);
     } catch (e) {
+      getIt<SnackbarService>().notify('Saving backup failed $e', SnackbarNotificationType.severe);
       log.severe("Save database failed $e");
-      var snackBar = SnackBar(
-          backgroundColor: const Color.fromARGB(255, 250, 141, 141),
-          content: Text('Saving backup failed $e'),
-          action: SnackBarAction(
-            label: 'ok',
-            onPressed: () {
-              // Some code to undo the change.
-            },
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
@@ -1072,26 +1058,11 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       try {
         await objectBox.restoreBackupData(filePickerResult.files.single.path.toString());
         showRestartNowScreen();
-        var snackBar = SnackBar(
-            content: Text(S.of(context).screenSettingsRestoredBackup),
-            action: SnackBarAction(
-              label: 'ok',
-              onPressed: () {
-                // Some code to undo the change.
-              },
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        getIt<SnackbarService>().notify(S.of(context).screenSettingsRestoredBackup, SnackbarNotificationType.ok);
       } catch (e) {
         log.severe("Store restored $e");
-        var snackBar = SnackBar(
-            content: Text(S.of(context).screenSettingsFailedRestoringBackup),
-            action: SnackBarAction(
-              label: S.of(context).error,
-              onPressed: () {
-                // Some code to undo the change.
-              },
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        getIt<SnackbarService>()
+            .notify(S.of(context).screenSettingsFailedRestoringBackup, SnackbarNotificationType.severe);
       }
     } else {
       // can perform some actions like notification etc

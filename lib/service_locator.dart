@@ -5,6 +5,7 @@ import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/ble/refractometer_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -31,4 +32,5 @@ void setupServices() {
   getIt.registerSingleton<VisualizerService>(VisualizerService(), signalsReady: false);
   getIt.registerSingleton<WebService>(WebService(), signalsReady: false);
   getIt.registerSingleton<ScreensaverService>(ScreensaverService(), signalsReady: false);
+  getIt.registerSingleton<SnackbarService>(SnackbarService(), signalsReady: false);
 }

@@ -95,17 +95,6 @@ class _ShotGraphState extends State<ShotGraph> {
       var data = _createDataFlCharts(shot!.id, shot.shotstates);
       datamap.addAll(data);
     }
-    // var data = _createDataFlCharts();
-    // double maxTime = 0;
-    // var id = overlayIds!.first;
-    // try {
-    //   var t = shotOverlay.first!.shotstates.last.sampleTimeCorrected;
-    //   //var maxData = datamap["pressure$id"]!.last;
-    //   // var t = maxData.x;
-    //   maxTime = t;
-    // } catch (ex) {
-    //   maxTime = 0;
-    // }
 
     var single = _buildGraphSingleFlCharts(datamap, ranges);
     return {"single": single};
@@ -115,7 +104,7 @@ class _ShotGraphState extends State<ShotGraph> {
     var stateChanges = states.where((element) => element.subState.isNotEmpty).toList();
 
     int i = 0;
-    var maxSampleTime = states.last.sampleTimeCorrected;
+    var maxSampleTime = states.isNotEmpty ? states.last.sampleTimeCorrected : 10.0;
     return stateChanges.map((from) {
       var toSampleTime = maxSampleTime;
 

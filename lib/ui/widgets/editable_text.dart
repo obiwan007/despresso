@@ -40,6 +40,10 @@ class _IconEditableTextState extends State<IconEditableText> {
               : TextFormField(
                   initialValue: initialValue,
                   textInputAction: TextInputAction.done,
+                  onChanged: (value) {
+                    initialValue = value;
+                    if (onChanged != null) onChanged!(value);
+                  },
                   onFieldSubmitted: (value) {
                     setState(() {
                       isEditable = false;
@@ -50,7 +54,9 @@ class _IconEditableTextState extends State<IconEditableText> {
       IconButton(
         icon: const Icon(Icons.edit),
         onPressed: () {
-          setState(() => isEditable = true,);
+          setState(
+            () => isEditable = true,
+          );
         },
       )
     ]);

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:csv/csv.dart';
 import 'package:despresso/generated/l10n.dart';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/services/state/visualizer_service.dart';
 import 'package:despresso/model/shot.dart';
@@ -88,15 +89,9 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
               label: const Text("Visualizer"),
               onPressed: () async {
                 if (selectedShots.isEmpty) {
-                  var snackBar = SnackBar(
-                      content: Text(S.of(context).screenDiaryNoShotsToUploadSelected),
-                      action: SnackBarAction(
-                        label: 'Ok',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  getIt<SnackbarService>()
+                      .notify(S.of(context).screenDiaryNoShotsToUploadSelected, SnackbarNotificationType.info);
+
                   return;
                 }
                 try {
@@ -112,27 +107,12 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                     shot.visualizerId = id;
                     shotBox.put(shot);
                   }
-                  var snackBar = SnackBar(
-                      backgroundColor: Colors.greenAccent,
-                      content: Text(S.of(context).screenDiarySuccessUploadingYourShots),
-                      action: SnackBarAction(
-                        label: 'Ok',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  getIt<SnackbarService>()
+                      .notify(S.of(context).screenDiarySuccessUploadingYourShots, SnackbarNotificationType.info);
                 } catch (e) {
-                  var snackBar = SnackBar(
-                      backgroundColor: const Color.fromARGB(255, 250, 141, 141),
-                      content: Text(S.of(context).screenDiaryErrorUploadingShots + e.toString()),
-                      action: SnackBarAction(
-                        label: 'Ok',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  getIt<SnackbarService>().notify(
+                      S.of(context).screenDiaryErrorUploadingShots + e.toString(), SnackbarNotificationType.severe);
+
                   log.severe("Error uploading shots $e");
                 }
                 setState(() {
