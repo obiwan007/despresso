@@ -3,6 +3,7 @@ import 'dart:async';
 // import 'dart:html';
 // import 'dart:html';
 
+import 'package:collection/collection.dart';
 import 'package:despresso/devices/acaia_pyxis_scale.dart';
 import 'package:despresso/devices/decent_scale.dart';
 import 'package:despresso/devices/difluid_r2_refractometer.dart';
@@ -35,6 +36,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
   final flutterReactiveBle = ble.FlutterReactiveBle();
 
   final List<ble.DiscoveredDevice> _devicesList = <ble.DiscoveredDevice>[];
+  final List<ble.DiscoveredDevice> _scalesList = <ble.DiscoveredDevice>[];
   final List<ble.DiscoveredDevice> _devicesIgnoreList = <ble.DiscoveredDevice>[];
   late SettingsService _settings;
   StreamSubscription<ble.DiscoveredDevice>? _subscription;
@@ -89,8 +91,11 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
 
     log.info('startScan');
     ScaleService scaleService = getIt<ScaleService>();
-    if (scaleService.state != ScaleState.connected) {
-      scaleService.setState(ScaleState.connecting);
+    if (scaleService.state[0] != ScaleState.connected) {
+      scaleService.setState(ScaleState.connecting, 0);
+    }
+    if (scaleService.state[1] != ScaleState.connected) {
+      scaleService.setState(ScaleState.connecting, 1);
     }
     _subscription =
         flutterReactiveBle.scanForDevices(withServices: [], scanMode: ble.ScanMode.lowLatency).listen((device) async {
@@ -107,8 +112,11 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
       log.info('stoppedScan');
       _subscription = null;
       isScanning = false;
-      if (scaleService.state == ScaleState.connecting) {
-        scaleService.setState(ScaleState.disconnected);
+      if (scaleService.state[0] == ScaleState.connecting) {
+        scaleService.setState(ScaleState.disconnected, 0);
+      }
+      if (scaleService.state[1] == ScaleState.connecting) {
+        scaleService.setState(ScaleState.disconnected, 1);
       }
       notifyListeners();
     });
@@ -128,6 +136,8 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
 
   List<ble.DiscoveredDevice> get devices => _devicesList;
 
+  List<ble.DiscoveredDevice> get scales => _scalesList;
+
   void _checkdevice(ble.DiscoveredDevice device) async {
     if (true) {
       log.info('Removing device');
@@ -138,12 +148,71 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
     }
   }
 
+  bool shouldBeAdded(ble.DiscoveredDevice device) {
+    var scaleService = getIt<ScaleService>();
+    if (isSupportedScale(device) && _scalesList.firstWhereOrNull((element) => element.id == device.id) == null) {
+      _scalesList.add(device);
+    }
+
+// Add any scale if nothing was configured.
+    if (_settings.scalePrimary.isEmpty && _settings.scaleSecondary.isEmpty && scaleService.scaleInstances[0] == null) {
+      return true;
+    }
+    if (scaleService.scaleInstances[0] == null && device.id == _settings.scalePrimary) {
+      return true;
+    }
+    if (scaleService.scaleInstances[1] == null && device.id == _settings.scaleSecondary) {
+      return true;
+    }
+
+    return false;
+  }
+
+  isSupportedScale(ble.DiscoveredDevice device) {
+    if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
+      return true;
+    } else if (device.name.startsWith('PEARLS') || device.name.startsWith('LUNAR') || device.name.startsWith('PYXIS')) {
+      return true;
+    } else if (device.name.startsWith('CFS-9002')) {
+      return true;
+    } else if (device.name.startsWith('Decent')) {
+      return true;
+    } else if (device.name.startsWith('Skale')) {
+      return true;
+    } else if (device.name.startsWith('FELICITA')) {
+      return true;
+    } else if (device.name.startsWith('HIROIA')) {
+      return true;
+    } else if (device.name.startsWith('smartchef')) {
+      return true;
+    } else if (device.name.startsWith('Microbalance')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void _addDeviceTolist(final ble.DiscoveredDevice device) async {
     if (device.name.isNotEmpty) {
       if (!_devicesIgnoreList.map((e) => e.id).contains(device.id) &&
           !_devicesList.map((e) => e.id).contains(device.id)) {
         log.fine(
             'Found new device: ${device.name} ID: ${device.id} UUIDs: ${device.serviceUuids} RSSI ${device.rssi} ');
+
+        if (device.name.startsWith('DE1')) {
+          log.info('Creating DE1 machine!');
+          DE1(device, this).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        } else if (device.name.startsWith('MEATER')) {
+          log.info('Meater thermometer ');
+          MeaterThermometer(device, this).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        }
+
+// Check for Scales only if they already added or not
+
+        if (!shouldBeAdded(device)) return;
+
         if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
           log.info('Creating Acaia Scale!');
           AcaiaScale(device, this).addListener(() => _checkdevice(device));
@@ -161,14 +230,6 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
         } else if (device.name.startsWith('Decent')) {
           log.info('decent scale found');
           DecentScale(device, this).addListener(() => _checkdevice(device));
-          _devicesList.add(device);
-        } else if (device.name.startsWith('DE1')) {
-          log.info('Creating DE1 machine!');
-          DE1(device, this).addListener(() => _checkdevice(device));
-          _devicesList.add(device);
-        } else if (device.name.startsWith('MEATER')) {
-          log.info('Meater thermometer ');
-          MeaterThermometer(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         } else if (device.name.startsWith('Skale')) {
           log.info('Skala 2');

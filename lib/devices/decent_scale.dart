@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -33,9 +34,13 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
   int tareCounter = 0;
   double _weight = 0.0;
   DeviceCommunication connection;
+
+  int index = 0;
+
   DecentScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
-    scaleService.setScaleInstance(this);
+    index = getScaleIndex(device.id);
+    scaleService.setScaleInstance(this, index);
     _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       _onStateChange(connectionState.connectionState);
     }, onError: (Object error) {
@@ -50,7 +55,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
       // This gives us also the negative weight - similar implementation as in Beanconqueror
       _weight = ((data[2].toSigned(8) << 8) + data[3].toSigned(8)) / 10;
     }
-    scaleService.setWeight(_weight);
+    scaleService.setWeight(_weight, index);
 
     if (data[1] == 0xCE) {
       // log.info('weight stable');
@@ -172,12 +177,12 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
     switch (state) {
       case DeviceConnectionState.connecting:
         log.info('Connecting');
-        scaleService.setState(ScaleState.connecting);
+        scaleService.setState(ScaleState.connecting, index);
         break;
 
       case DeviceConnectionState.connected:
         log.info('Connected');
-        scaleService.setState(ScaleState.connected);
+        scaleService.setState(ScaleState.connected, index);
         ledOn(); // make the scale report weight by sending an inital write cmd
 
         final characteristic = QualifiedCharacteristic(
@@ -191,8 +196,8 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
         return;
       case DeviceConnectionState.disconnected:
-        scaleService.setState(ScaleState.disconnected);
-        scaleService.setBattery(0);
+        scaleService.setState(ScaleState.disconnected, index);
+        scaleService.setBattery(0, index);
         log.info('Decent Scale disconnected. Destroying');
         _characteristicsSubscription.cancel();
 

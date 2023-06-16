@@ -27,7 +27,7 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
-  late StreamSubscription<List<int>> _characteristicsSubscription;
+  StreamSubscription<List<int>>? _characteristicsSubscription;
 
   DeviceCommunication connection;
 
@@ -141,8 +141,8 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
         refractometerService.setState(RefractometerState.disconnected);
         refractometerService.setBattery(0);
         log.info('Difluid R2 Refractometer disconnected. Destroying');
-        _characteristicsSubscription.cancel();
-
+        _characteristicsSubscription?.cancel();
+        _characteristicsSubscription = null;
         _deviceListener.cancel();
         notifyListeners();
         return;

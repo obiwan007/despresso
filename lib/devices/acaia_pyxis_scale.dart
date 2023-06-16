@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:logging/logging.dart' as l;
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -93,13 +94,18 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   double _weight = 0.0;
 
+  int index = 0;
+
   AcaiaPyxisScale(this.device, this.connection) {
     instances++;
     instance = instances;
     log = l.Logger('AcaiaPyxisScale $instance');
     scaleService = getIt<ScaleService>();
+
+    index = getScaleIndex(device.id);
+
     log.info("Connect to Acaia");
-    scaleService.setScaleInstance(this);
+    scaleService.setScaleInstance(this, index);
     init();
     // device
     //     .observeConnectionState(
@@ -165,13 +171,13 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
             if (weight != null) {
               _weight = weight;
-              scaleService.setWeight(weight);
+              scaleService.setWeight(weight, index);
             }
             _lastResponse = DateTime.now();
             break;
           case 8: // Tara done
 
-            scaleService.setTara();
+            scaleService.setTara(index);
             if (payload[0] == 0 && payload[1] == 5) {
               var weight = decodeWeight(payload.sublist(2));
               log.info("Tare received $weight ${Helper.toHex(Uint8List.fromList(payload))}");
@@ -189,7 +195,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
               var w = decodeWeight(payload.sublist(3));
               if (w != null) {
                 _weight = w;
-                scaleService.setWeight(w);
+                scaleService.setWeight(w, index);
               }
             }
             // if (payload[3] == 7) time = decodeTime(payload.sublist(3));
@@ -211,7 +217,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
       case 8:
         var batteryLevel = commandBuffer[4];
         log.info('Got status message, battery= $batteryLevel');
-        scaleService.setBattery(batteryLevel);
+        scaleService.setBattery(batteryLevel, index);
         break;
       default:
         log.info('Unparsed acaia response: $type');
@@ -259,8 +265,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
 
-      scaleService.setState(ScaleState.disconnected);
-      scaleService.setBattery(0);
+      scaleService.setState(ScaleState.disconnected, index);
+      scaleService.setBattery(0, index);
       return;
     }
 
@@ -294,7 +300,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending ident');
 
-      scaleService.setState(ScaleState.disconnected);
+      scaleService.setState(ScaleState.disconnected, index);
       return;
     }
 
@@ -306,7 +312,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   Future<void> _sendConfig() async {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending config');
-      scaleService.setState(ScaleState.disconnected);
+      scaleService.setState(ScaleState.disconnected, index);
       return;
     }
     log.info('Send config');
@@ -383,7 +389,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
     switch (state) {
       case DeviceConnectionState.connecting:
         log.info('Connecting');
-        scaleService.setState(ScaleState.connecting);
+        scaleService.setState(ScaleState.connecting, index);
         break;
 
       case DeviceConnectionState.connected:
@@ -395,7 +401,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
           log.severe("AcaiaPyxisScale MTU $e");
         }
 
-        scaleService.setState(ScaleState.connected);
+        scaleService.setState(ScaleState.connected, index);
 
         _lastResponse = DateTime.now();
         await _sendIdent();
@@ -460,8 +466,8 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
             log.info("Timer canceled");
           }
           _heartBeatTimer = null;
-          scaleService.setState(ScaleState.disconnected);
-          scaleService.setBattery(0);
+          scaleService.setState(ScaleState.disconnected, index);
+          scaleService.setBattery(0, index);
 
           _characteristicsSubscription?.cancel();
 
@@ -491,7 +497,7 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
       try {
         _notificationCallback(data);
       } catch (e) {
-        log.severe("Handling notification failed $e");
+        log.severe("Handling notification failed ScaleIndex: $index $e");
       }
     }, onError: (dynamic error) {
       // code to handle errors

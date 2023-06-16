@@ -10,6 +10,8 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
+import '../model/services/state/settings_service.dart';
+
 class AcaiaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('AcaiaScale');
 
@@ -68,10 +70,13 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   int _sequence = 0;
 
+  int index = 0;
+
   AcaiaScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     log.info("Connect to Acaia");
-    scaleService.setScaleInstance(this);
+    index = getScaleIndex(device.id);
+    scaleService.setScaleInstance(this, index);
     _deviceListener = connection.connectToDevice(id: device.id).listen((connectionState) {
       // Handle connection state updates
       log.info('Peripheral ${device.name} connection state is $connectionState');
@@ -118,10 +123,10 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         switch (subType) {
           case 5: // weight
             double weight = decodeWeight(payload);
-            scaleService.setWeight(weight);
+            scaleService.setWeight(weight, index);
             break;
           case 8: // Tara done
-            scaleService.setTara();
+            scaleService.setTara(index);
             break;
           case 7:
             double time = decodeTime(payload.sublist(2));
@@ -130,9 +135,11 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
           case 11: // Heartbeat
             var weight = 0.0;
 
-            if (payload[3] == 5) weight = decodeWeight(payload.sublist(3));
+            if (payload[3] == 5) {
+              weight = decodeWeight(payload.sublist(3));
 //             if (payload[3] == 7) time = decodeTime(payload.sublist(3));
-            scaleService.setWeight(weight);
+              scaleService.setWeight(weight, index);
+            }
             break;
           default:
             log.fine('Acaia: 12 Subtype $subType');
@@ -147,7 +154,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       case 8:
         var batteryLevel = commandBuffer[4];
         log.info('Got status message, battery= $batteryLevel');
-        scaleService.setBattery(batteryLevel);
+        scaleService.setBattery(batteryLevel, index);
         break;
       default:
         log.info('Unparsed acaia response: $type');
@@ -193,8 +200,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
 
-      scaleService.setState(ScaleState.disconnected);
-      scaleService.setBattery(0);
+      scaleService.setState(ScaleState.disconnected, index);
+      scaleService.setBattery(0, index);
       return;
     }
     final characteristic =
@@ -204,7 +211,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x00, _heartbeatPayload));
     } catch (e) {
       log.severe("Heartbeat failure $e");
-      scaleService.setState(ScaleState.disconnected);
+      scaleService.setState(ScaleState.disconnected, index);
       _onStateChange(DeviceConnectionState.disconnected);
     }
   }
@@ -213,7 +220,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending ident');
 
-      scaleService.setState(ScaleState.disconnected);
+      scaleService.setState(ScaleState.disconnected, index);
       return;
     }
 
@@ -229,7 +236,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
   void _sendConfig() {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending config');
-      scaleService.setState(ScaleState.disconnected);
+      scaleService.setState(ScaleState.disconnected, index);
       return;
     }
 
@@ -271,12 +278,12 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     switch (state) {
       case DeviceConnectionState.connecting:
         log.info('Connecting');
-        scaleService.setState(ScaleState.connecting);
+        scaleService.setState(ScaleState.connecting, index);
         break;
 
       case DeviceConnectionState.connected:
         log.info('Connected');
-        scaleService.setState(ScaleState.connected);
+        scaleService.setState(ScaleState.connected, index);
         // await device.discoverAllServicesAndCharacteristics();
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
@@ -295,8 +302,8 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
         return;
       case DeviceConnectionState.disconnected:
-        scaleService.setState(ScaleState.disconnected);
-        scaleService.setBattery(0);
+        scaleService.setState(ScaleState.disconnected, index);
+        scaleService.setBattery(0, index);
         log.info('Acaia Scale disconnected. Destroying');
         _characteristicsSubscription?.cancel();
         _heartBeatTimer?.cancel();

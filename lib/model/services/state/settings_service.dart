@@ -86,6 +86,8 @@ enum SettingKeys {
   tareOnWeight3,
   tareOnWeight4,
   scaleDisplayOffOnSleep,
+  scalePrimary,
+  scaleSecondary,
   targetSteamFlow,
 }
 
@@ -321,6 +323,12 @@ class SettingsService extends ChangeNotifier {
 
   bool get scaleDisplayOffOnSleep => Settings.getValue<bool>(SettingKeys.scaleDisplayOffOnSleep.name) ?? true;
   set scaleDisplayOffOnSleep(bool value) => Settings.setValue<bool>(SettingKeys.scaleDisplayOffOnSleep.name, value);
+
+  String get scalePrimary => Settings.getValue<String>(SettingKeys.scalePrimary.name) ?? "";
+  set scalePrimary(String value) => Settings.setValue<String>(SettingKeys.scalePrimary.name, value);
+
+  String get scaleSecondary => Settings.getValue<String>(SettingKeys.scaleSecondary.name) ?? "";
+  set scaleSecondary(String value) => Settings.setValue<String>(SettingKeys.scaleSecondary.name, value);
 
   void notifyDelayed() {
     Future.delayed(

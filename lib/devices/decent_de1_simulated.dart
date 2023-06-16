@@ -178,8 +178,8 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     _shot = coffee.getLastShot();
     _onStateChange(DeviceConnectionState.connected);
 
-    service.scaleService.setState(ScaleState.connected);
-    service.scaleService.setWeight(0.1);
+    service.scaleService.setState(ScaleState.connected, 0);
+    service.scaleService.setWeight(0.1, 0);
     var hz = 4;
     Timer.periodic(Duration(milliseconds: (1.0 / hz * 1000).toInt()), (Timer t) {
       try {
@@ -189,7 +189,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     Timer(
       const Duration(seconds: 1),
       () {
-        service.scaleService.setWeight(0.1);
+        service.scaleService.setWeight(0.1, 0);
         requestState(De1StateEnum.idle);
       },
     );
@@ -234,7 +234,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
           _setGroupFlow = s.setGroupFlow;
           _frameNumber = s.frameNumber;
           _steamTemp = s.steamTemp;
-          service.scaleService.setWeight(s.weight);
+          service.scaleService.setWeight(s.weight, 0);
           log.info("$_groupPressure ${s.subState} $shotPointer");
           shotPointer++;
           if (s.subState != _lastSubState && s.subState != "") {
@@ -454,7 +454,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
 
           flowEstimation = await getFlowEstimation();
           service.setWaterLevel(WaterLevel(9550, 100));
-          service.scaleService.setWeight(0);
+          service.scaleService.setWeight(0, 0);
           await setFlushTimeout(max(_settings.targetFlushTime, _settings.targetFlushTime2));
 
           if (_settings.launchWake) {

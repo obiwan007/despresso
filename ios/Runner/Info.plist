@@ -8,7 +8,8 @@
             <string>de</string>
             <string>es</string>
 		</array>
-
+        <key>CADisableMinimumFrameDurationOnPhone</key>
+	    <true/>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>FLogs would like to save photos from the app to your gallery</string>
 		<key>NSPhotoLibraryUsageDescription</key>

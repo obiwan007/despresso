@@ -207,11 +207,11 @@ class WaterScreenState extends State<WaterScreen> {
                                   height: 200,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 15,
-                                    value: machineService.scaleService.weight / settings.targetHotWaterWeight,
+                                    value: machineService.scaleService.weight[0] / settings.targetHotWaterWeight,
                                   ),
                                 ),
                               ),
-                              Center(child: Text("${machineService.scaleService.weight.toStringAsFixed(0)} g")),
+                              Center(child: Text("${machineService.scaleService.weight[0].toStringAsFixed(0)} g")),
                             ]
                           ],
                         ),
