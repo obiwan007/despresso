@@ -429,7 +429,7 @@ class ScaleFooter extends StatelessWidget {
                             ? machineService.scaleService.streamBattery0
                             : machineService.scaleService.streamBattery1,
                         builder: (context, snapshot) {
-                          var bat = snapshot.hasData ? (snapshot.data as int) / 100.0 : 0.0;
+                          var bat = snapshot.hasData ? ((snapshot.data as BatteryLevel).level) / 100.0 : 0.0;
                           return LinearProgressIndicator(
                             backgroundColor: Colors.black38,
                             color: bat < 40 ? Theme.of(context).progressIndicatorTheme.linearTrackColor : Colors.red,
