@@ -168,7 +168,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
     return false;
   }
 
-  isSupportedScale(ble.DiscoveredDevice device) {
+  static isSupportedScale(ble.DiscoveredDevice device) {
     if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
       return true;
     } else if (device.name.startsWith('PEARLS') || device.name.startsWith('LUNAR') || device.name.startsWith('PYXIS')) {

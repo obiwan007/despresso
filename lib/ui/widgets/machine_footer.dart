@@ -108,22 +108,21 @@ class _MachineFooterState extends State<MachineFooter> {
                 );
               }),
           const Spacer(),
-          if (settingsService.hasScale) ScaleFooter(machineService: machineService, index: 0),
-          if (machineService.state.coffeeState != EspressoMachineState.espresso &&
-              machineService.state.coffeeState != EspressoMachineState.flush &&
-              machineService.state.coffeeState != EspressoMachineState.steam &&
-              machineService.state.coffeeState != EspressoMachineState.water &&
-              settingsService.hasScale &&
-              machineService.scaleService.hasSecondaryScale)
-            ScaleFooter(machineService: machineService, index: 1),
           if (settingsService.hasSteamThermometer) ThermprobeFooter(machineService: machineService),
-          const Spacer(),
           StreamBuilder<ShotState>(
               stream: machineService.streamShotState,
               builder: (context, snapshot) {
                 return Row(
                   children: snapshot.data != null && machineService.currentFullState.state != EspressoMachineState.sleep
                       ? [
+                          if (settingsService.hasScale) ScaleFooter(machineService: machineService, index: 0),
+                          if (machineService.state.coffeeState != EspressoMachineState.espresso &&
+                              machineService.state.coffeeState != EspressoMachineState.flush &&
+                              machineService.state.coffeeState != EspressoMachineState.steam &&
+                              machineService.state.coffeeState != EspressoMachineState.water &&
+                              settingsService.hasScale &&
+                              machineService.scaleService.hasSecondaryScale)
+                            ScaleFooter(machineService: machineService, index: 1),
                           FooterValue(
                               value: "${snapshot.data?.headTemp.toStringAsFixed(1)} °C",
                               label: S.of(context).footerGroup),
@@ -136,7 +135,16 @@ class _MachineFooterState extends State<MachineFooter> {
                                 value: "${snapshot.data?.groupFlow.toStringAsFixed(1)} ml/s",
                                 label: S.of(context).flow),
                         ]
-                      : [],
+                      : [
+                          if (settingsService.hasScale) ScaleFooter(machineService: machineService, index: 0),
+                          if (machineService.state.coffeeState != EspressoMachineState.espresso &&
+                              machineService.state.coffeeState != EspressoMachineState.flush &&
+                              machineService.state.coffeeState != EspressoMachineState.steam &&
+                              machineService.state.coffeeState != EspressoMachineState.water &&
+                              settingsService.hasScale &&
+                              machineService.scaleService.hasSecondaryScale)
+                            ScaleFooter(machineService: machineService, index: 1),
+                        ],
                 );
               }),
           const Spacer(),
@@ -291,21 +299,25 @@ class ScaleFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var showWeightIn = (machineService.state.coffeeState == EspressoMachineState.idle ||
-            machineService.state.coffeeState == EspressoMachineState.disconnected) &&
+    var showWeightIn = (machineService.state.coffeeState == EspressoMachineState.idle) &&
         ((machineService.scaleService.hasSecondaryScale && index == 1) ||
             (machineService.scaleService.hasSecondaryScale == false && index == 0));
 
-    var showFlowIn = !(machineService.state.coffeeState == EspressoMachineState.idle ||
-            machineService.state.coffeeState == EspressoMachineState.disconnected) &&
+    var showFlowIn = (machineService.state.coffeeState == EspressoMachineState.espresso) &&
         machineService.scaleService.hasPrimaryScale &&
         index == 0;
-
     return SizedBox(
-      width: 310,
+      width: (showWeightIn == false && showFlowIn == false) ? 210 : 310,
       child: StreamBuilder<WeightMeassurement>(
           stream: index == 0 ? machineService.scaleService.stream0 : machineService.scaleService.stream1,
           builder: (context, snapshot) {
+            showWeightIn = (machineService.state.coffeeState == EspressoMachineState.idle) &&
+                ((machineService.scaleService.hasSecondaryScale && index == 1) ||
+                    (machineService.scaleService.hasSecondaryScale == false && index == 0));
+
+            showFlowIn = (machineService.state.coffeeState == EspressoMachineState.espresso) &&
+                machineService.scaleService.hasPrimaryScale &&
+                index == 0;
             return Container(
               color: machineService.scaleService.state[index] != ScaleState.connecting
                   ? machineService.scaleService.state[index] != ScaleState.connected
@@ -351,7 +363,7 @@ class ScaleFooter extends StatelessWidget {
                                 ),
                               if (machineService.scaleService.state[index] == ScaleState.connected)
                                 SizedBox(
-                                  width: 190,
+                                  width: (showWeightIn == false && showFlowIn == false) ? 100 : 190,
                                   child: Row(
                                     children: [
                                       SizedBox(

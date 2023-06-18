@@ -1159,9 +1159,15 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        // scanned scales list
+        ...widget.bleService.devices
+            .where((element) => widget.bleService.scales.firstWhereOrNull((scale) => scale.id == element.id) == null)
+            .map((e) {
+          return deviceRow(e);
+        }).toList(),
         if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scalePrimary) ==
             null)
-          scaleRow(bledevice.DiscoveredDevice(
+          deviceRow(bledevice.DiscoveredDevice(
             id: widget.settingsService.scalePrimary,
             name: "Scale 1",
             manufacturerData: Uint8List(0),
@@ -1172,7 +1178,7 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
         if (widget.bleService.scales
                 .firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) ==
             null)
-          scaleRow(bledevice.DiscoveredDevice(
+          deviceRow(bledevice.DiscoveredDevice(
             id: widget.settingsService.scaleSecondary,
             name: "Scale 2",
             manufacturerData: Uint8List(0),
@@ -1182,18 +1188,26 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
           )),
         // scanned scales list
         ...widget.bleService.scales.map((e) {
-          return scaleRow(e);
+          return deviceRow(e);
         }).toList(),
       ],
     );
   }
 
-  Row scaleRow(bledevice.DiscoveredDevice e) {
+  Row deviceRow(bledevice.DiscoveredDevice e) {
     return Row(
       children: [
-        SizedBox(width: 200, child: Text("${e.name}")),
+        SizedBox(
+            width: 200,
+            child: Row(
+              children: [
+                Text("${e.name}"),
+                if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
+                  Icon(Icons.bluetooth_connected),
+              ],
+            )),
         SizedBox(width: 200, child: Text("(${e.id})")),
-        if (!e.id.startsWith("DE1") && !e.id.startsWith("MEATER")) ...[
+        if (BLEService.isSupportedScale(e)) ...[
           Checkbox(
             value: widget.settingsService.scalePrimary == e.id,
             onChanged: (bool? value) {
@@ -1228,9 +1242,7 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             },
           ),
           Text("Secondary"),
-          if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
-            Icon(Icons.bluetooth_connected),
-        ]
+        ],
       ],
     );
   }
