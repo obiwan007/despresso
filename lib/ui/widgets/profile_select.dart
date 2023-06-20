@@ -72,9 +72,8 @@ class ProfileSelectState extends State<ProfileSelect> {
 
     selectedFilter = settingsService.profileFilterList;
 
-    profileService.addListener(profileListener);
-    log.info(profileService.currentProfile.toString());
     _selectedProfile = profileService.currentProfile;
+    profileService.addListener(profileListener);
   }
 
   @override
