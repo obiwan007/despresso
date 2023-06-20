@@ -52,7 +52,7 @@ class DifluidR2Refractometer extends ChangeNotifier implements AbstractRefractom
   waitForResponse() async {
     while (!responseReceived) {
       // Wait for a short duration before checking again
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
   }
 

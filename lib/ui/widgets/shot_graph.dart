@@ -11,15 +11,15 @@ import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
 
 class ShotGraph extends StatefulWidget {
-  int id;
-  List<int>? overlayIds;
+  final int id;
+  final List<int>? overlayIds;
 
-  bool showFlow;
-  bool showPressure;
-  bool showWeight;
-  bool showTemp;
+  final bool showFlow;
+  final bool showPressure;
+  final bool showWeight;
+  final bool showTemp;
 
-  ShotGraph(
+  const ShotGraph(
       {Key? key,
       required this.id,
       this.overlayIds,
@@ -30,10 +30,10 @@ class ShotGraph extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ShotGraphState createState() => _ShotGraphState();
+  ShotGraphState createState() => ShotGraphState();
 }
 
-class _ShotGraphState extends State<ShotGraph> {
+class ShotGraphState extends State<ShotGraph> {
   int id = 0;
 
   List<int>? overlayIds;
@@ -42,7 +42,7 @@ class _ShotGraphState extends State<ShotGraph> {
 
   List<Shot?> shotOverlay = [];
 
-  _ShotGraphState();
+  ShotGraphState();
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +59,7 @@ class _ShotGraphState extends State<ShotGraph> {
       overlayIds = [id];
       shotOverlay.add(shot);
     }
+    // ignore: avoid_unnecessary_containers
     return Container(
       child: Column(
         children: [

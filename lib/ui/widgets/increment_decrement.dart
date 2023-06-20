@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
 class IncrementDecrement extends StatefulWidget {
-  IncrementDecrement({
+  const IncrementDecrement({
     super.key,
     required this.initialValue,
     this.onChanged,
   });
-  double initialValue;
-  ValueChanged<double>? onChanged;
+  final double initialValue;
+  final ValueChanged<double>? onChanged;
 
   @override
-  _IncrementDecrementState createState() => _IncrementDecrementState();
+  IncrementDecrementState createState() => IncrementDecrementState();
 }
 
-class _IncrementDecrementState extends State<IncrementDecrement> {
-  _IncrementDecrementState();
+class IncrementDecrementState extends State<IncrementDecrement> {
+  late double initialValue;
+  late ValueChanged<double>? onChanged;
+
+  IncrementDecrementState() {
+    initialValue = widget.initialValue;
+    onChanged = widget.onChanged;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,7 @@ class _IncrementDecrementState extends State<IncrementDecrement> {
     return FloatingActionButton(
       onPressed: () {
         setState(() {
-          widget.initialValue--;
+          initialValue--;
           if (widget.onChanged != null) widget.onChanged!(widget.initialValue);
         });
       },
@@ -54,7 +60,7 @@ class _IncrementDecrementState extends State<IncrementDecrement> {
     return FloatingActionButton(
       onPressed: () {
         setState(() {
-          widget.initialValue++;
+          initialValue++;
           if (widget.onChanged != null) widget.onChanged!(widget.initialValue);
         });
       },

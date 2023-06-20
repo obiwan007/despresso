@@ -10,11 +10,11 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class RoasterEdit extends StatefulWidget {
-  RoasterEdit(this.selectedRoasterId, {super.key});
-  int selectedRoasterId;
+  const RoasterEdit(this.selectedRoasterId, {super.key});
+  final int selectedRoasterId;
 
   @override
-  RoasterEditState createState() => RoasterEditState(selectedRoasterId);
+  RoasterEditState createState() => RoasterEditState();
 }
 
 enum EditModes { show, add, edit }
@@ -28,7 +28,7 @@ class RoasterEditState extends State<RoasterEdit> {
   late EspressoMachineService machineService;
 
   Roaster _editedRoaster = Roaster();
-  int selectedRoasterId;
+  late int selectedRoasterId;
 
   FormGroup? currentForm;
 
@@ -42,7 +42,9 @@ class RoasterEditState extends State<RoasterEdit> {
 
   late FormGroup theForm;
 
-  RoasterEditState(this.selectedRoasterId);
+  RoasterEditState() {
+    selectedRoasterId = widget.selectedRoasterId;
+  }
 
   @override
   void initState() {

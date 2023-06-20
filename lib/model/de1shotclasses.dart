@@ -247,19 +247,19 @@ class De1ShotFrameClass // proc spec_shotframe
 
   De1ShotFrameClass();
 
-  static int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
+  static int ctrlF = 0x01; // Are we in Pressure or Flow priority mode?
   // ignore: constant_identifier_names
-  static int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+  static int doCompare = 0x02; // Do a compare, early exit current frame if compare true
   // ignore: constant_identifier_names
-  static int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+  static int dcGT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
   // ignore: constant_identifier_names
-  static int DC_CompF = 0x08; // Compare Pressure or Flow?
+  static int dcCompF = 0x08; // Compare Pressure or Flow?
   // ignore: constant_identifier_names
-  static int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+  static int tMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
   // ignore: constant_identifier_names
-  static int Interpolate = 0x20; // Hard jump to target value, or ramp?
+  static int interpolate = 0x20; // Hard jump to target value, or ramp?
   // ignore: constant_identifier_names
-  static int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+  static int ignoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
   factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) => _$De1ShotFrameClassFromJson(json);
 
@@ -388,13 +388,13 @@ class De1ShotFrameClass // proc spec_shotframe
 //     const int IgnoreLimit = 0x40; // Ignore minimum pressure and max flow settings
 
     var flagStr = "";
-    if ((flag & CtrlF) > 0) flagStr += "CtrlF";
-    if ((flag & DoCompare) > 0) flagStr += " DoCompare";
-    if ((flag & DC_GT) > 0) flagStr += " DC_GT";
-    if ((flag & DC_CompF) > 0) flagStr += " DC_CompF";
-    if ((flag & TMixTemp) > 0) flagStr += " TMixTemp";
+    if ((flag & ctrlF) > 0) flagStr += "CtrlF";
+    if ((flag & doCompare) > 0) flagStr += " DoCompare";
+    if ((flag & dcGT) > 0) flagStr += " DC_GT";
+    if ((flag & dcCompF) > 0) flagStr += " DC_CompF";
+    if ((flag & tMixTemp) > 0) flagStr += " TMixTemp";
     if ((flag & 0x20) > 0) flagStr += " Interpolate";
-    if ((flag & IgnoreLimit) > 0) flagStr += " IgnoreLimit";
+    if ((flag & ignoreLimit) > 0) flagStr += " IgnoreLimit";
 
     // StringBuilder sb = new StringBuilder();
     var sb = "";

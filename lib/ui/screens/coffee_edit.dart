@@ -18,7 +18,7 @@ class CoffeeEdit extends StatefulWidget {
   final int selectedCoffeeId;
 
   @override
-  CoffeeEditState createState() => CoffeeEditState(selectedCoffeeId);
+  CoffeeEditState createState() => CoffeeEditState();
 }
 
 enum EditModes { show, add, edit }
@@ -51,7 +51,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
 
   late FormGroup theForm;
 
-  CoffeeEditState(this.selectedCoffeeId);
+  CoffeeEditState() {
+    selectedCoffeeId = widget.selectedCoffeeId;
+  }
 
   @override
   void initState() {
@@ -145,7 +147,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          KeyValueWidget(label: "Roaster", value: ""),
+          const KeyValueWidget(label: "Roaster", value: ""),
           DropdownButton(
             isExpanded: true,
             alignment: Alignment.centerLeft,
@@ -291,8 +293,8 @@ class CoffeeEditState extends State<CoffeeEdit> {
             ),
           ),
 
-          HeightWidget(height: 20),
-          KeyValueWidget(label: "Acidity", value: ""),
+          const HeightWidget(height: 20),
+          const KeyValueWidget(label: "Acidity", value: ""),
           ReactiveRatingBarBuilder<double>(
             formControlName: 'acidRating',
             minRating: 1,
@@ -305,9 +307,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
               color: Colors.amber,
             ),
           ),
-          HeightWidget(height: 20),
+          const HeightWidget(height: 20),
 
-          KeyValueWidget(label: "Intensity", value: ""),
+          const KeyValueWidget(label: "Intensity", value: ""),
           ReactiveRatingBarBuilder<double>(
             formControlName: 'intensityRating',
             minRating: 1,
@@ -320,8 +322,8 @@ class CoffeeEditState extends State<CoffeeEdit> {
               color: Colors.amber,
             ),
           ),
-          HeightWidget(height: 20),
-          KeyValueWidget(label: "Roast Level", value: ""),
+          const HeightWidget(height: 20),
+          const KeyValueWidget(label: "Roast Level", value: ""),
 
           ReactiveRatingBarBuilder<double>(
             formControlName: 'roastLevel',

@@ -73,6 +73,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
   final List<ble.DiscoveredDevice> _devicesList = <ble.DiscoveredDevice>[];
   final List<ble.DiscoveredDevice> _devicesIgnoreList = <ble.DiscoveredDevice>[];
 
+  // ignore: unused_field
   StreamSubscription<ble.DiscoveredDevice>? _subscription;
 
   bool isScanning = false;
@@ -92,6 +93,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
       StreamController<ble.ConnectionStateUpdate>();
 
   final StreamController<GATTNotify> _gattNotificationController = StreamController<GATTNotify>();
+  // ignore: unused_field
   late Stream<ble.ConnectionStateUpdate> _controllerConnectionStream;
 
   ble.BleStatus _status = ble.BleStatus.unknown;
@@ -501,7 +503,6 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   @override
   Future<List<int>> readCharacteristic(ble.QualifiedCharacteristic characteristic) {
-    // TODO: implement readCharacteristic
     var c = Completer<List<int>>();
     _sendRequest(
         makeGATTRead(
@@ -606,7 +607,6 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
 
   @override
   Future<int> requestMtu({required String deviceId, required int mtu}) {
-    // TODO: implement requestMtu
     return Future.value(0);
   }
 }

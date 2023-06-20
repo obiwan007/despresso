@@ -21,6 +21,7 @@ class ObjectBox {
       final store = await openStore(directory: p.join(docsDir.path, "database"));
       return ObjectBox._create(store);
     } catch (e) {
+      // ignore: avoid_print
       print("Error $e");
       rethrow;
     }

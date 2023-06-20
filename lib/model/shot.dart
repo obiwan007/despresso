@@ -43,9 +43,13 @@ class Shot {
   String visualizerId = "";
 
   double estimatedWeightReachedTime = 0;
+  // ignore: non_constant_identifier_names
   double estimatedWeight_m = 0;
+  // ignore: non_constant_identifier_names
   double estimatedWeight_b = 0;
+  // ignore: non_constant_identifier_names
   double estimatedWeight_tEnd = 0;
+  // ignore: non_constant_identifier_names
   double estimatedWeight_tStart = 0;
 
   double ratio1 = 1;

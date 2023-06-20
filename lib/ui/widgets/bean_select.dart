@@ -9,10 +9,10 @@ class BeanSelect extends StatefulWidget {
   const BeanSelect({Key? key, this.onChanged}) : super(key: key);
   final void Function(int)? onChanged;
   @override
-  _BeanSelectState createState() => _BeanSelectState();
+  BeanSelectState createState() => BeanSelectState();
 }
 
-class _BeanSelectState extends State<BeanSelect> {
+class BeanSelectState extends State<BeanSelect> {
   int _selectedCoffeeId = 0;
 
   List<DropdownMenuItem<int>> coffees = [];

@@ -170,6 +170,7 @@ class ShotEditState extends State<ShotEdit> {
                     coffeeService.updateShot(_editedShot);
                   }
                   getIt<SnackbarService>()
+                      // ignore: use_build_context_synchronously
                       .notify(S.of(context).screenShotEditSuccessUploadingYourShot, SnackbarNotificationType.ok);
                 } catch (e) {
                   getIt<SnackbarService>().notify("Error uploading shot: $e", SnackbarNotificationType.severe);
@@ -281,7 +282,7 @@ class ShotEditState extends State<ShotEdit> {
                     ValidationMessage.required: (_) => S.of(context).validatorNotBeEmpty,
                   },
                 ),
-                HeightWidget(height: 20),
+                const HeightWidget(height: 20),
                 KeyValueWidget(label: S.of(context).screenShotEditEnjoyment, value: ""),
                 ReactiveRatingBarBuilder<double>(
                   formControlName: 'enjoyment',
@@ -300,7 +301,7 @@ class ShotEditState extends State<ShotEdit> {
           ),
         ),
 
-        HeightWidget(height: 20),
+        const HeightWidget(height: 20),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Card(
@@ -422,7 +423,7 @@ class ShotEditState extends State<ShotEdit> {
           ),
         ),
 
-        HeightWidget(height: 20),
+        const HeightWidget(height: 20),
 
         // ReactiveFormConsumer(
         //   builder: (context, form, child) {

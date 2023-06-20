@@ -346,7 +346,7 @@ class ProfileService extends ChangeNotifier {
       buffer.writeln('"temperature": "${step.temp}",');
 
       var sensor = (step.flag & TMixTemp == TMixTemp) ? "water" : "coffee";
-      buffer.writeln('"sensor": "${sensor}",');
+      buffer.writeln('"sensor": "$sensor",');
 
       buffer.writeln('"pump": "${step.pump}",');
       buffer.writeln('"transition": "${step.transition}",');
@@ -390,9 +390,9 @@ class ProfileService extends ChangeNotifier {
       if (exitType.isNotEmpty) {
         buffer.writeln(',');
         buffer.writeln('"exit": {');
-        buffer.writeln('  "type": "${exitType}",');
-        buffer.writeln('  "condition": "${exitCondition}",');
-        buffer.writeln('  "value": "${exitValue}"');
+        buffer.writeln('  "type": "$exitType",');
+        buffer.writeln('  "condition": "$exitCondition",');
+        buffer.writeln('  "value": "$exitValue"');
         buffer.writeln("}");
       }
 

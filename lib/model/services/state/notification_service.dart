@@ -1,14 +1,7 @@
 import 'dart:async';
 
-import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:screen_brightness/screen_brightness.dart';
-import 'package:despresso/model/services/state/settings_service.dart';
-import 'package:wakelock/wakelock.dart';
-
-import '../../../service_locator.dart';
 
 enum SnackbarNotificationType {
   info,
@@ -46,19 +39,14 @@ class SnackbarService extends ChangeNotifier {
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void _notifyDelayed() {
-    Future.delayed(
-      const Duration(milliseconds: 100),
-      () {
-        notifyListeners();
-      },
-    );
-  }
+  // void _notifyDelayed() {
+  //   Future.delayed(
+  //     const Duration(milliseconds: 100),
+  //     () {
+  //       notifyListeners();
+  //     },
+  //   );
+  // }
 
   notify(String text, SnackbarNotificationType type) {
     _controllerNotification.add(SnackbarNotification(text, type));

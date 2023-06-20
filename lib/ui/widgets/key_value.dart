@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class KeyValueWidget extends StatelessWidget {
-  KeyValueWidget({
+  const KeyValueWidget({
     super.key,
     required this.label,
     required this.value,
@@ -12,7 +12,7 @@ class KeyValueWidget extends StatelessWidget {
   final String label;
   final String value;
   final double width;
-  Widget? widget;
+  final Widget? widget;
 
   @override
   Widget build(BuildContext context) {

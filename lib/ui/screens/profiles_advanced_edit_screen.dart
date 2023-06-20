@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
-import 'package:despresso/ui/widgets/key_value.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:despresso/ui/widgets/selectable_steps.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +13,13 @@ import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 
 class AdvancedProfilesEditScreen extends StatefulWidget {
-  De1ShotProfile profile;
+  final De1ShotProfile profile;
 
-  AdvancedProfilesEditScreen(this.profile, {Key? key}) : super(key: key);
+  const AdvancedProfilesEditScreen(this.profile, {Key? key}) : super(key: key);
 
   @override
   AdvancedProfilesEditScreenState createState() {
-    return AdvancedProfilesEditScreenState(profile);
+    return AdvancedProfilesEditScreenState();
   }
 }
 
@@ -31,7 +30,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   late EspressoMachineService machineService;
 
-  final De1ShotProfile _profile;
+  late De1ShotProfile _profile;
 
   De1ShotFrameClass? preInfusion;
   // De1ShotFrameClass? forcedRise;
@@ -44,13 +43,15 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
-  final List<KeyValueWidget> _steps = [];
+  // final List<KeyValueWidget> _steps = [];
 
   int _selectedStepIndex = 0;
 
   De1ShotFrameClass _selectedStep = De1ShotFrameClass();
 
-  AdvancedProfilesEditScreenState(this._profile);
+  AdvancedProfilesEditScreenState() {
+    _profile = widget.profile;
+  }
 
   @override
   void initState() {
@@ -242,7 +243,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
   createTabs(De1ShotFrameClass frame, {required MaterialColor color}) {
     var h = 30.0;
     var hTab = 95.0;
-    var fontsize = 20.0;
+
     var ts = Theme.of(context).textTheme.headlineSmall;
     var ts2 = Theme.of(context).textTheme.bodyLarge;
     var ts3 = Theme.of(context).textTheme.bodyLarge;
@@ -254,9 +255,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         fontSize: ts2.fontSize); // TextStyle(fontWeight: FontWeight.normal, fontSize: fontsize);
     // var style2 = TextStyle();
     var style3 = TextStyle(fontWeight: ts3!.fontWeight, fontSize: ts3.fontSize);
-    bool isComparing = ((frame.flag & De1ShotFrameClass.DoCompare) > 0);
-    bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
-    bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
+    bool isComparing = ((frame.flag & De1ShotFrameClass.doCompare) > 0);
+    bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.dcCompF) > 0;
 
     return [
       Tab(
@@ -295,7 +296,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 Column(
                   children: [
                     Text(
-                      (frame.pump != "pressure" ? frame.setVal.toStringAsFixed(1) : "<${frame.triggerVal.toStringAsFixed(1)}"),
+                      (frame.pump != "pressure"
+                          ? frame.setVal.toStringAsFixed(1)
+                          : "<${frame.triggerVal.toStringAsFixed(1)}"),
                       style: style3,
                     ),
                     Text("ml/s", style: style3),
@@ -307,7 +310,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 Column(
                   children: [
                     Text(
-                      (frame.pump == "pressure" ? frame.setVal.toStringAsFixed(1) : "<${frame.triggerVal.toStringAsFixed(1)}"),
+                      (frame.pump == "pressure"
+                          ? frame.setVal.toStringAsFixed(1)
+                          : "<${frame.triggerVal.toStringAsFixed(1)}"),
                       style: style3,
                     ),
                     Text("bar", style: style3),
@@ -338,7 +343,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "${(frame.frameLen.toStringAsFixed(1) ?? 0)}",
+                      (frame.frameLen.toStringAsFixed(1)),
                       style: style3,
                     ),
                     Text("s", style: style3),
@@ -351,7 +356,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   Column(
                     children: [
                       Text(
-                        "${(frame.maxVol.toStringAsFixed(1) ?? 0)}",
+                        (frame.maxVol.toStringAsFixed(1)),
                         style: style3,
                       ),
                       Text("ml", style: style3),
@@ -381,7 +386,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   children: [
                     Text(
                       isComparing
-                          ? ("${isFlow ? "f " : "p "}${isGt ? "> " : "< "}${(frame.triggerVal.toStringAsFixed(1) ?? 0)}")
+                          ? ("${isFlow ? "f " : "p "}${isGt ? "> " : "< "}${(frame.triggerVal.toStringAsFixed(1))}")
                           : "goal reached",
                       style: style3,
                     ),
@@ -395,7 +400,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   Column(
                     children: [
                       Text(
-                        "${(frame.maxVol.toStringAsFixed(1) ?? 0)}",
+                        (frame.maxVol.toStringAsFixed(1)),
                         style: style3,
                       ),
                       Text("ml", style: style3),
@@ -619,14 +624,14 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
             (temp, isMixer) {
           frame.temp = (temp * 10).round() / 10;
           // int mask = (De1ShotFrameClass.TMixTemp);
-          var mask = frame.flag & (255 - De1ShotFrameClass.TMixTemp);
+          var mask = frame.flag & (255 - De1ShotFrameClass.tMixTemp);
 
           log.info("Changed $frame");
 
           if (!isMixer) {
             frame.flag &= mask;
           } else {
-            frame.flag |= De1ShotFrameClass.TMixTemp;
+            frame.flag |= De1ShotFrameClass.tMixTemp;
           }
 
           setState(() {});
@@ -644,19 +649,19 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
             frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value, isFast, isPressure) {
           frame.transition = isFast ? "fast" : "smooth";
 
-          var mask = frame.flag & (255 - De1ShotFrameClass.CtrlF);
+          var mask = frame.flag & (255 - De1ShotFrameClass.ctrlF);
           if (isPressure) {
             frame.flag &= mask;
           } else {
-            frame.flag |= De1ShotFrameClass.CtrlF;
+            frame.flag |= De1ShotFrameClass.ctrlF;
           }
-          frame.pump = (frame.flag & De1ShotFrameClass.CtrlF) == 0 ? "pressure" : "flow";
+          frame.pump = (frame.flag & De1ShotFrameClass.ctrlF) == 0 ? "pressure" : "flow";
 
-          mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
+          mask = frame.flag & (255 - De1ShotFrameClass.interpolate);
           if (isFast) {
             frame.flag &= mask;
           } else {
-            frame.flag |= De1ShotFrameClass.Interpolate;
+            frame.flag |= De1ShotFrameClass.interpolate;
           }
           setState(() {});
           log.info("Changed");
@@ -679,7 +684,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   Widget changePressure(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
-    bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
+    bool isFast = (frame.flag & De1ShotFrameClass.interpolate) == 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -765,7 +770,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
       De1ShotFrameClass frame, double value, Function(double value, bool isMixer, bool isPressure) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
     bool isPressure = (frame.pump == "pressure" ? true : false);
-    bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
+    bool isFast = (frame.flag & De1ShotFrameClass.interpolate) == 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -806,24 +811,22 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 ),
                 SizedBox(
                   height: 160,
-                  child: true
-                      ? changeValueRow(
-                          unit: "ml/s",
-                          title: frame.pump == "pressure" ? "limit Flow" : "Flow",
-                          min: 0,
-                          max: 16,
-                          interval: 1,
-                          frame,
-                          frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
-                          if (frame.pump == "flow") {
-                            frame.setVal = value;
-                          } else {
-                            frame.triggerVal = value;
-                          }
-                          setState(() {});
-                          log.info("Changed");
-                        })
-                      : null,
+                  child: changeValueRow(
+                      unit: "ml/s",
+                      title: frame.pump == "pressure" ? "limit Flow" : "Flow",
+                      min: 0,
+                      max: 16,
+                      interval: 1,
+                      frame,
+                      frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
+                    if (frame.pump == "flow") {
+                      frame.setVal = value;
+                    } else {
+                      frame.triggerVal = value;
+                    }
+                    setState(() {});
+                    log.info("Changed");
+                  }),
                 ),
               ],
             ),
@@ -870,8 +873,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
   Widget changeMax(
       De1ShotFrameClass frame, double value, Function(double value, bool isMixer, bool isPressure) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
-    bool isPressure = (frame.pump == "pressure" ? true : false);
-    bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -902,48 +903,13 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
             ),
           ),
         ),
-        if (false)
-          IntrinsicHeight(
-            child: Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(width: 80, child: Text("Limiting:", style: Theme.of(context).textTheme.labelMedium)),
-                      ToggleButtons(
-                        isSelected: [isPressure, !isPressure],
-                        onPressed: (index) {
-                          valueChanged(value, isFast, index == 0 ? true : false);
-                        },
-                        children: const [Text("Pressure"), Text("Flow")],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(width: 80, child: Text("Transition:", style: Theme.of(context).textTheme.labelMedium)),
-                      ToggleButtons(
-                        isSelected: [isFast, !isFast],
-                        onPressed: (index) {
-                          valueChanged(value, index == 0 ? true : false, isPressure);
-                        },
-                        children: const [Text("Fast"), Text("Smooth")],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
       ],
     );
   }
 
   Widget changeFlow(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
-    bool isFast = (frame.flag & De1ShotFrameClass.Interpolate) == 0;
+    bool isFast = (frame.flag & De1ShotFrameClass.interpolate) == 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1030,7 +996,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   Widget changeTemp(De1ShotFrameClass frame, double value, Function(double value, bool isMixer) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
-    bool isMix = ((frame.flag & De1ShotFrameClass.TMixTemp) > 0);
+    bool isMix = ((frame.flag & De1ShotFrameClass.tMixTemp) > 0);
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1118,9 +1084,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   Widget changeMoveOnIf(De1ShotFrameClass frame, double value, Function(De1ShotFrameClass value) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
-    bool isComparing = ((frame.flag & De1ShotFrameClass.DoCompare) > 0);
-    bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
-    bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
+    bool isComparing = ((frame.flag & De1ShotFrameClass.doCompare) > 0);
+    bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.dcCompF) > 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1137,11 +1103,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                       Switch(
                         value: isComparing,
                         onChanged: (value) {
-                          var mask = frame.flag & (255 - De1ShotFrameClass.DoCompare);
+                          var mask = frame.flag & (255 - De1ShotFrameClass.doCompare);
                           if (!value) {
                             frame.flag &= mask;
                           } else {
-                            frame.flag |= De1ShotFrameClass.DoCompare;
+                            frame.flag |= De1ShotFrameClass.doCompare;
                           }
 
                           valueChanged(frame);
@@ -1156,11 +1122,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                         ToggleButtons(
                           isSelected: [!isFlow, isFlow],
                           onPressed: (index) {
-                            var mask = frame.flag & (255 - De1ShotFrameClass.DC_CompF);
+                            var mask = frame.flag & (255 - De1ShotFrameClass.dcCompF);
                             if (index == 0) {
                               frame.flag &= mask;
                             } else {
-                              frame.flag |= De1ShotFrameClass.DC_CompF;
+                              frame.flag |= De1ShotFrameClass.dcCompF;
                             }
 
                             valueChanged(frame);
@@ -1177,11 +1143,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                           isSelected: [isGt, !isGt],
                           onPressed: (index) {
                             // DC_GT
-                            var mask = frame.flag & (255 - De1ShotFrameClass.DC_GT);
+                            var mask = frame.flag & (255 - De1ShotFrameClass.dcGT);
                             if (index == 1) {
                               frame.flag &= mask;
                             } else {
-                              frame.flag |= De1ShotFrameClass.DC_GT;
+                              frame.flag |= De1ShotFrameClass.dcGT;
                             }
 
                             valueChanged(frame);

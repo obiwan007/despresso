@@ -223,14 +223,14 @@ class WaterScreenState extends State<WaterScreen> {
             ),
           ),
         ),
-        Expanded(
+        const Expanded(
           flex: 1,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: StartStopButton(requestedState: De1StateEnum.hotWater),
               ),
             ],

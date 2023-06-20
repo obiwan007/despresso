@@ -51,7 +51,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
 
   double _busyProgress = 0;
 
-  CoffeeSelectionTabState() {}
+  ShotSelectionTabState();
 
   @override
   void initState() {
@@ -108,6 +108,7 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
                     shotBox.put(shot);
                   }
                   getIt<SnackbarService>()
+                      // ignore: use_build_context_synchronously
                       .notify(S.of(context).screenDiarySuccessUploadingYourShots, SnackbarNotificationType.info);
                 } catch (e) {
                   getIt<SnackbarService>().notify(

@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:collection/collection.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
@@ -22,15 +24,15 @@ enum FilterModes {
 }
 
 class ProfileSelect extends StatefulWidget {
-  ProfileSelect({Key? key, this.onChanged}) : super(key: key);
+  const ProfileSelect({Key? key, this.onChanged}) : super(key: key);
 
-  void Function(De1ShotProfile)? onChanged;
+  final void Function(De1ShotProfile)? onChanged;
 
   @override
-  _ProfileSelectState createState() => _ProfileSelectState();
+  ProfileSelectState createState() => ProfileSelectState();
 }
 
-class _ProfileSelectState extends State<ProfileSelect> {
+class ProfileSelectState extends State<ProfileSelect> {
   final log = Logger('ProfileSelect');
 
   late SettingsService settingsService;

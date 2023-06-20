@@ -23,7 +23,7 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:reactive_ble_platform_interface/src/model/discovered_device.dart' as bledevice;
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart' as bledevice;
 import 'package:screen_brightness/screen_brightness.dart';
 
 import '../../service_locator.dart';
@@ -1047,6 +1047,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
         "application/zip",
       ]);
       log.info("Backupdata saved ${data[0].length + data[1].length}");
+      // ignore: use_build_context_synchronously
       getIt<SnackbarService>().notify(S.of(context).screenSettingsSavedBackup, SnackbarNotificationType.info);
     } catch (e) {
       getIt<SnackbarService>().notify('Saving backup failed $e', SnackbarNotificationType.severe);
@@ -1062,10 +1063,12 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       try {
         await objectBox.restoreBackupData(filePickerResult.files.single.path.toString());
         showRestartNowScreen();
+        // ignore: use_build_context_synchronously
         getIt<SnackbarService>().notify(S.of(context).screenSettingsRestoredBackup, SnackbarNotificationType.ok);
       } catch (e) {
         log.severe("Store restored $e");
         getIt<SnackbarService>()
+            // ignore: use_build_context_synchronously
             .notify(S.of(context).screenSettingsFailedRestoringBackup, SnackbarNotificationType.severe);
       }
     } else {
@@ -1172,8 +1175,8 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             name: "Scale 1",
             manufacturerData: Uint8List(0),
             rssi: 0,
-            serviceUuids: [],
-            serviceData: Map<ble.Uuid, Uint8List>(),
+            serviceUuids: const [],
+            serviceData: const <ble.Uuid, Uint8List>{},
           )),
         if (widget.bleService.scales
                 .firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) ==
@@ -1183,8 +1186,8 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             name: "Scale 2",
             manufacturerData: Uint8List(0),
             rssi: 0,
-            serviceUuids: [],
-            serviceData: Map<ble.Uuid, Uint8List>(),
+            serviceUuids: const [],
+            serviceData: const <ble.Uuid, Uint8List>{},
           )),
         // scanned scales list
         ...widget.bleService.scales.map((e) {
@@ -1201,9 +1204,9 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             width: 200,
             child: Row(
               children: [
-                Text("${e.name}"),
+                Text(e.name),
                 if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
-                  Icon(Icons.bluetooth_connected),
+                  const Icon(Icons.bluetooth_connected),
               ],
             )),
         SizedBox(width: 200, child: Text("(${e.id})")),
@@ -1224,7 +1227,7 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
               );
             },
           ),
-          SizedBox(width: 70, child: Text("Primary")),
+          const SizedBox(width: 70, child: Text("Primary")),
           Checkbox(
             value: widget.settingsService.scaleSecondary == e.id,
             onChanged: (bool? value) {
@@ -1241,7 +1244,7 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
               );
             },
           ),
-          Text("Secondary"),
+          const Text("Secondary"),
         ],
       ],
     );

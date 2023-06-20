@@ -310,6 +310,5 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
   }
 
   @override
-  // TODO: implement status
   ble.BleStatus get status => flutterReactiveBle.status;
 }

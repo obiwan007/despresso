@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:collection/collection.dart';
+// import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'dart:typed_data';
 
@@ -7,7 +7,7 @@ import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:convert/convert.dart';
+// import 'package:convert/convert.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import 'package:logging/logging.dart' as l;
@@ -162,19 +162,16 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> beep() {
-    // TODO: implement beep
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> display(DisplayMode start) {
-    // TODO: implement display
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> power(PowerMode start) {
-    // TODO: implement power
-    throw UnimplementedError();
+    return Future(() => null);
   }
 }

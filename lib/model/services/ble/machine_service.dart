@@ -393,6 +393,7 @@ class EspressoMachineService extends ChangeNotifier {
           log.info("Battery: SmartCharging off");
           _controllerBattery.add(batteryLevel);
         }
+        // ignore: empty_catches
       } catch (e) {}
     });
   }
@@ -415,7 +416,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   updateProfile() {}
 
-  void setShot(ShotState shot) {
+  void setShot(ShotState? shot) {
     if (shot == null) return;
     _state.shot = shot;
     _count++;
@@ -794,7 +795,7 @@ class EspressoMachineService extends ChangeNotifier {
       if (inShot == true) {
         shot.isPouring = isPouring;
         if (isPouring) {
-          var t = 50;
+          // var t = 50;
           // var index = shotList.entries.length - 5;
           // if (index > 0) {
           //   shotList.entries.removeAt(index);
@@ -802,7 +803,7 @@ class EspressoMachineService extends ChangeNotifier {
           //   shotList.entries.removeAt(index);
           //   shotList.entries.removeAt(index);
           // }
-          var l = shotList.entries.length;
+          // var l = shotList.entries.length;
           shot.isInterpolated = false;
 
           // shotList.entries.removeWhere(
@@ -849,7 +850,7 @@ class EspressoMachineService extends ChangeNotifier {
             // _floatingShot = ShotState.fromJson(_previousShot!.toJson());
             _floatingShot = ShotState.fromJson(_previousShot!.toJson());
             shotList.add(_floatingShot!);
-            var base = ShotState.fromJson(_previousShot!.toJson());
+            // var base = ShotState.fromJson(_previousShot!.toJson());
             var fs = _floatingShot!;
             // fs.sampleTimeCorrected = base.sampleTimeCorrected;
 
@@ -1021,6 +1022,10 @@ class EspressoMachineService extends ChangeNotifier {
     } else {
       return 0;
     }
+  }
+
+  void notify() {
+    notifyListeners();
   }
 }
 
