@@ -22,7 +22,11 @@ class IconEditableTextState extends State<IconEditableText> {
   String? initialValue = "";
   ValueChanged<String>? onChanged;
 
-  IconEditableTextState() {
+  IconEditableTextState();
+
+  @override
+  void initState() {
+    super.initState();
     initialValue = widget.initialValue;
     onChanged = widget.onChanged;
   }

@@ -49,14 +49,12 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   De1ShotFrameClass _selectedStep = De1ShotFrameClass();
 
-  AdvancedProfilesEditScreenState() {
-    _profile = widget.profile;
-  }
+  AdvancedProfilesEditScreenState();
 
   @override
   void initState() {
     super.initState();
-
+    _profile = widget.profile;
     log.info('Init State ${_profile.shotHeader.title}');
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     machineService = getIt<EspressoMachineService>();

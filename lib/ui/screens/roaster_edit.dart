@@ -42,13 +42,12 @@ class RoasterEditState extends State<RoasterEdit> {
 
   late FormGroup theForm;
 
-  RoasterEditState() {
-    selectedRoasterId = widget.selectedRoasterId;
-  }
+  RoasterEditState();
 
   @override
   void initState() {
     super.initState();
+    selectedRoasterId = widget.selectedRoasterId;
     coffeeService = getIt<CoffeeService>();
     machineService = getIt<EspressoMachineService>();
     coffeeService.addListener(updateCoffee);

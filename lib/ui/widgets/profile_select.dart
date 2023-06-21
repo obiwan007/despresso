@@ -77,6 +77,12 @@ class ProfileSelectState extends State<ProfileSelect> {
   }
 
   @override
+  dispose() {
+    super.dispose();
+    profileService.removeListener(profileListener);
+  }
+
+  @override
   Widget build(BuildContext context) {
     var showHidden = selectedFilter.contains(FilterModes.Hidden.name);
     var showDefault = selectedFilter.contains(FilterModes.Default.name);

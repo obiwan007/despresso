@@ -17,7 +17,11 @@ class IncrementDecrementState extends State<IncrementDecrement> {
   late double initialValue;
   late ValueChanged<double>? onChanged;
 
-  IncrementDecrementState() {
+  IncrementDecrementState();
+
+  @override
+  void initState() {
+    super.initState();
     initialValue = widget.initialValue;
     onChanged = widget.onChanged;
   }

@@ -51,13 +51,12 @@ class CoffeeEditState extends State<CoffeeEdit> {
 
   late FormGroup theForm;
 
-  CoffeeEditState() {
-    selectedCoffeeId = widget.selectedCoffeeId;
-  }
+  CoffeeEditState();
 
   @override
   void initState() {
     super.initState();
+    selectedCoffeeId = widget.selectedCoffeeId;
     coffeeService = getIt<CoffeeService>();
     machineService = getIt<EspressoMachineService>();
     coffeeService.addListener(updateCoffee);

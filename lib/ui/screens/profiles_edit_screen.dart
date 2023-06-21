@@ -41,14 +41,12 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
-  ProfilesEditScreenState() {
-    _profile = widget.profile;
-  }
+  ProfilesEditScreenState();
 
   @override
   void initState() {
     super.initState();
-
+    _profile = widget.profile;
     log.info('Init State ${_profile.shotHeader.title}');
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();

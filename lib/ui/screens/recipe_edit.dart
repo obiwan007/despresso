@@ -407,11 +407,16 @@ class RecipeEditState extends State<RecipeEdit> {
               ),
               const Divider(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(S.of(context).screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo),
-                  ReactiveSwitch(
-                    formControlName: 'disableStopOnWeight',
-                    onChanged: (control) => setState(() {}),
+                  Expanded(
+                      child: Text(S.of(context).screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo)),
+                  SizedBox(
+                    width: 120,
+                    child: ReactiveSwitch(
+                      formControlName: 'disableStopOnWeight',
+                      onChanged: (control) => setState(() {}),
+                    ),
                   ),
                 ],
               ),
@@ -428,7 +433,7 @@ class RecipeEditState extends State<RecipeEdit> {
               Text(S.of(context).screenRecipeEditMilkAndWater, style: Theme.of(context).textTheme.labelMedium),
               Row(
                 children: [
-                  Text(S.of(context).screenRecipeEditUseSteam),
+                  SizedBox(width: 150, child: Text(S.of(context).screenRecipeEditUseSteam)),
                   ReactiveSwitch(
                     formControlName: 'useSteam',
                     onChanged: (control) => setState(() {}),
@@ -449,7 +454,7 @@ class RecipeEditState extends State<RecipeEdit> {
               const Divider(),
               Row(
                 children: [
-                  Text(S.of(context).screenRecipeEditUseWater),
+                  SizedBox(width: 150, child: Text(S.of(context).screenRecipeEditUseWater)),
                   ReactiveSwitch(
                     formControlName: 'useWater',
                     onChanged: (control) => setState(() {}),

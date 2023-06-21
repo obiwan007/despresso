@@ -25,13 +25,12 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
   ShotList shotList = ShotList([]);
   late De1ShotProfile? _selectedProfile;
 
-  ProfileGraphWidgetState() {
-    _selectedProfile = widget.selectedProfile;
-  }
+  ProfileGraphWidgetState();
 
   @override
   void initState() {
     super.initState();
+    _selectedProfile = widget.selectedProfile;
     settingsService = getIt<SettingsService>();
   }
 
