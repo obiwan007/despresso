@@ -341,7 +341,7 @@ class ShotEditState extends State<ShotEdit> {
                   ),
                   onChanged: (control) => {
                     currentForm?.controls['extractionYield']?.value =
-                        (_editedShot.pourWeight * control.value!) / _editedShot.doseWeight
+                        (_editedShot.pourWeight * (control.value ?? 0.0)) / _editedShot.doseWeight
                   },
                 ),
                 ReactiveTextField<double>(
