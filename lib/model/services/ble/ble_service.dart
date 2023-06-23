@@ -186,6 +186,8 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
       return true;
     } else if (device.name.startsWith('smartchef')) {
       return true;
+    } else if (device.name.startsWith('Blackcoffee')) {
+      return true;
     } else if (device.name.startsWith('Microbalance')) {
       return true;
     } else {
