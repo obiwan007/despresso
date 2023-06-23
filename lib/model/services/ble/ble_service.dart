@@ -21,6 +21,7 @@ import 'package:logging/logging.dart';
 import 'package:despresso/devices/acaia_scale.dart';
 import 'package:despresso/devices/eureka_scale.dart';
 import 'package:despresso/devices/hiroia_scale.dart';
+import 'package:despresso/devices/blackcoffee_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 
 // import 'package:flutter_ble_lib/flutter_ble_lib.dart';
@@ -246,6 +247,10 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
         } else if (device.name.startsWith('smartchef')) {
           log.info('Smartchef Scale');
           SmartchefScale(device, this).addListener(() => _checkdevice(device));
+          _devicesList.add(device);
+        } else if (device.name.startsWith('Blackcoffee.io')) {
+          log.info('BlackCoffee Scale');
+          BlackCoffeeScale(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         } else if (device.name.startsWith('DiFluid R2')) {
           log.info('Difluid R2');
