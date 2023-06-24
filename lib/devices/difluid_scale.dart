@@ -46,7 +46,7 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
-    if (data.length < 19) return;
+    if (data.length < 19 && data[3] != 0) return;
     if (data[17] != 0) {
       setScaleUnitToGram();
       log.info('changing scale to grams!');
