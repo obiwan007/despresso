@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
-import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/ui/screens/shot_edit.dart';
 import 'package:logging/logging.dart';
 import 'dart:math' as math;
@@ -154,7 +153,7 @@ class EspressoScreenState extends State<EspressoScreen> {
         maxTime = 0;
       }
 
-      List<ShotState> raw = machineService.shotList.entries;
+      // List<ShotState> raw = machineService.shotList.entries;
       _lastLength = machineService.shotList.lastTouched; // raw.length;
       var tEnd = machineService.currentShot.estimatedWeight_tEnd;
       var tStart = machineService.currentShot.estimatedWeight_tStart;
@@ -242,8 +241,8 @@ class EspressoScreenState extends State<EspressoScreen> {
   }
 
   LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col, List<int>? dash) {
-    var data = machineService.shotList.entries;
-    var last = data.lastIndexWhere((element) => !element.isInterpolated);
+    // var data = machineService.shotList.entries;
+    // var last = data.lastIndexWhere((element) => !element.isInterpolated);
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
@@ -823,8 +822,8 @@ class EspressoScreenState extends State<EspressoScreen> {
         //   child: _buildScaleInsight(),
         // ),
         if (expand > 0) SizedBox(height: expand),
-        Padding(
-          padding: const EdgeInsets.all(5.0),
+        const Padding(
+          padding: EdgeInsets.all(5.0),
           child: StartStopButton(requestedState: De1StateEnum.espresso),
         ),
         // _buildButtons()

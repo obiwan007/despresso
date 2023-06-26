@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/de1shotclasses.dart';
-import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:logging/logging.dart' as l;
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
@@ -542,19 +541,16 @@ class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> beep() {
-    // TODO: implement beep
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> display(DisplayMode start) {
-    // TODO: implement display
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> power(PowerMode start) {
-    // TODO: implement power
-    throw UnimplementedError();
+    return Future(() => null);
   }
 }

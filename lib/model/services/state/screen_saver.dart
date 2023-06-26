@@ -50,6 +50,12 @@ class ScreensaverService extends ChangeNotifier {
             resume();
             pause();
             break;
+          case EspressoMachineState.disconnected:
+            break;
+          case EspressoMachineState.connecting:
+            break;
+          case EspressoMachineState.refill:
+            break;
         }
       }
     });

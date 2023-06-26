@@ -497,6 +497,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
     }
   }
 
+  @override
   Future<void> setWaterLevelWarning(int warningLevelVolume) {
     ByteData value = ByteData(4);
     try {
@@ -582,16 +583,16 @@ class DE1 extends ChangeNotifier implements IDe1 {
     log.info("parseShotMapRequest received");
   }
 
-  De1ShotFrameClass _parseFrameWrite(ByteData r) {
-    log.info("parseFrameWrite: decoding shot frame ${r.buffer.lengthInBytes}");
-    var sh = De1ShotFrameClass();
-    if (De1ShotFrameClass.decodeDe1ShotFrame(r, sh, true) == false) {
-      log.info("Error decoding shot frame");
-    }
+  // De1ShotFrameClass _parseFrameWrite(ByteData r) {
+  //   log.info("parseFrameWrite: decoding shot frame ${r.buffer.lengthInBytes}");
+  //   var sh = De1ShotFrameClass();
+  //   if (De1ShotFrameClass.decodeDe1ShotFrame(r, sh, true) == false) {
+  //     log.info("Error decoding shot frame");
+  //   }
 
-    service.setShotFrame(sh);
-    return sh;
-  }
+  //   service.setShotFrame(sh);
+  //   return sh;
+  // }
 
   void _parseShotSetting(ByteData r) {
     var steamBits = r.getUint8(0);
@@ -892,7 +893,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
           var coffeeService = getIt<CoffeeService>();
           await coffeeService.setSelectedRecipe(_settings.selectedRecipe);
           service.setSubState("100%");
-          Future.delayed(Duration(seconds: 10), () => service.setSubState(""));
+          Future.delayed(const Duration(seconds: 10), () => service.setSubState(""));
           log.info(
               "Fan:$fan GHCInfo:$ghcInfo GHCMode:$ghcMode Firmware:$firmware Serial:$machineSerial SteamFlow: $steamFlow SteamPurgeMode: $steamPurgeMode FlowEstimation> $flowEstimation");
         } catch (e) {

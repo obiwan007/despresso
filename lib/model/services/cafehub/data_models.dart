@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, constant_identifier_names, non_constant_identifier_names
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 

@@ -11,13 +11,13 @@ import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 
 class ProfilesEditScreen extends StatefulWidget {
-  De1ShotProfile profile;
+  final De1ShotProfile profile;
 
-  ProfilesEditScreen(this.profile, {Key? key}) : super(key: key);
+  const ProfilesEditScreen(this.profile, {Key? key}) : super(key: key);
 
   @override
   ProfilesEditScreenState createState() {
-    return ProfilesEditScreenState(profile);
+    return ProfilesEditScreenState();
   }
 }
 
@@ -28,7 +28,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
 
   late EspressoMachineService machineService;
 
-  final De1ShotProfile _profile;
+  late De1ShotProfile _profile;
 
   De1ShotFrameClass? preInfusion;
   // De1ShotFrameClass? forcedRise;
@@ -41,12 +41,12 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
-  ProfilesEditScreenState(this._profile);
+  ProfilesEditScreenState();
 
   @override
   void initState() {
     super.initState();
-
+    _profile = widget.profile;
     log.info('Init State ${_profile.shotHeader.title}');
     machineService = getIt<EspressoMachineService>();
     profileService = getIt<ProfileService>();
@@ -354,7 +354,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               ),
             ),
             Text(
-              "${(frame.frameLen.toStringAsFixed(1) ?? 0)}",
+              (frame.frameLen.toStringAsFixed(1)),
               style: style1,
             ),
             Text(

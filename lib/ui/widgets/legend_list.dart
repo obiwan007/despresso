@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LegendWidget extends StatelessWidget {
-  LegendWidget({
+  const LegendWidget({
     super.key,
     required this.name,
     required this.color,
@@ -11,7 +11,7 @@ class LegendWidget extends StatelessWidget {
   final String name;
   final Color color;
   final void Function(bool)? onChanged;
-  bool? value;
+  final bool? value;
 
   @override
   Widget build(BuildContext context) {

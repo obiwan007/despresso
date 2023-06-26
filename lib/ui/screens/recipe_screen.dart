@@ -93,6 +93,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
+            // ignore: avoid_unnecessary_containers
             child: Container(
                 child: SingleChildScrollView(
                     child: RecipeDetails(
@@ -301,8 +302,6 @@ class RecipeDetails extends StatefulWidget {
 
 class _RecipeDetailsState extends State<RecipeDetails> {
   final log = Logger('RecipeDetails');
-  final String _ratio1 = "0";
-  final String _ratio2 = "0";
 
   late ScreensaverService _screensaver;
 
@@ -375,11 +374,12 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     var id = await widget.coffeeService.copyRecipeFromId(widget.coffeeService.currentRecipe!.id);
                     if (id > 0) {
                       _screensaver.pause();
+                      // ignore: use_build_context_synchronously
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => RecipeEdit(
-                                  id ?? 0,
+                                  id,
                                   title: "Copy Recipe",
                                 )),
                       );
@@ -453,7 +453,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                     var result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ProfilesScreen(
+                                          builder: (context) => const ProfilesScreen(
                                                 saveToRecipe: false,
                                               )),
                                     );
@@ -517,7 +517,8 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => CoffeeSelectionTab(saveToRecipe: true)),
+                                      MaterialPageRoute(
+                                          builder: (context) => const CoffeeSelectionTab(saveToRecipe: true)),
                                     );
                                   },
                                   child: Text(widget.coffeeService.currentCoffee?.name ?? "No Bean selected"),
@@ -796,7 +797,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
     );
   }
 
-  String? numberValidator(String value) {
+  String? numberValidator(String? value) {
     if (value == null) {
       return null;
     }

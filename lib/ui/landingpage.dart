@@ -122,7 +122,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     });
 
     _notifications.streamSnackbarNotification.listen((event) {
-      var n = event!;
+      var n = event;
       log.info(n);
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Color? col = const Color.fromARGB(255, 250, 141, 141);
@@ -272,7 +272,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ProfilesScreen(
+                      builder: (context) => const ProfilesScreen(
                             saveToRecipe: false,
                           )),
                 ).then((value) => _screensaver.resume());
@@ -287,7 +287,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => CoffeeSelectionTab(
+                      builder: (context) => const CoffeeSelectionTab(
                             saveToRecipe: false,
                           )),
                 ).then((value) => _screensaver.resume());
@@ -591,7 +591,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   }
 
   bool _onKey(KeyEvent event) {
-    final key = event.logicalKey.keyLabel;
+    // final key = event.logicalKey.keyLabel;
     final keys = RawKeyboard.instance.keysPressed;
     if (event is KeyDownEvent && keys.contains(LogicalKeyboardKey.controlLeft)) {
       if (event.logicalKey == LogicalKeyboardKey.keyB) {

@@ -91,7 +91,7 @@ class SteamScreenState extends State<SteamScreen> {
                                 if (machineService.state.coffeeState != EspressoMachineState.steam) {
                                   machineService.de1?.setSteamPurgeMode(value == true ? 1 : 0);
                                   setState(() {});
-                                  machineService.notifyListeners();
+                                  machineService.notify();
                                 }
                               },
                             ),
@@ -294,8 +294,8 @@ class SteamScreenState extends State<SteamScreen> {
                             ))
                           : const Text("No data");
                     }),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: StartStopButton(requestedState: De1StateEnum.steam),
               ),
             ],
@@ -329,6 +329,7 @@ class SteamScreenState extends State<SteamScreen> {
 
       var corrected = (t ~/ 5.0).toInt() * 5.0 + 5;
       maxTime = max(45, corrected);
+      // ignore: empty_catches
     } catch (ex) {}
 
     var flowChart2 = LineChart(

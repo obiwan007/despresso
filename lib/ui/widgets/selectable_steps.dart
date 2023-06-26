@@ -20,11 +20,11 @@ class SelectableSteps extends StatelessWidget {
   final De1ShotProfile _profile;
   final Function(int) onSelected;
   final int selected;
-  bool isEditable = false;
-  Function(String)? onChanged;
-  Function(int)? onDeleted;
-  Function(int)? onCopied;
-  Function(int, int)? onReordered;
+  final bool isEditable;
+  final Function(String)? onChanged;
+  final Function(int)? onDeleted;
+  final Function(int)? onCopied;
+  final Function(int, int)? onReordered;
 
   @override
   Widget build(BuildContext context) {
@@ -157,10 +157,10 @@ class SelectableSteps extends StatelessWidget {
   }
 
   Widget getSubtitle(De1ShotFrameClass frame) {
-    bool isMix = ((frame.flag & De1ShotFrameClass.TMixTemp) > 0);
-    bool isGt = (frame.flag & De1ShotFrameClass.DC_GT) > 0;
-    bool isFlow = (frame.flag & De1ShotFrameClass.DC_CompF) > 0;
-    bool isCompared = (frame.flag & De1ShotFrameClass.DoCompare) > 0;
+    bool isMix = ((frame.flag & De1ShotFrameClass.tMixTemp) > 0);
+    bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.dcCompF) > 0;
+    bool isCompared = (frame.flag & De1ShotFrameClass.doCompare) > 0;
     String vol = frame.maxVol > 0 ? " or ${frame.maxVol} ml" : "";
     String limitFlow = frame.triggerVal > 0 ? "with a pressure limit of ${frame.triggerVal} bar" : "";
     String limitPressure = frame.triggerVal > 0 ? "with a flow limit of ${frame.triggerVal} ml/s" : "";

@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
 
 class IconEditableText extends StatefulWidget {
-  IconEditableText({
+  const IconEditableText({
     super.key,
     this.initialValue,
     this.onChanged,
     this.style,
     this.textAlign,
   });
-  String? initialValue;
-  TextStyle? style;
-  TextAlign? textAlign;
-  ValueChanged<String>? onChanged;
+  final String? initialValue;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final ValueChanged<String>? onChanged;
 
   @override
-  _IconEditableTextState createState() => _IconEditableTextState(initialValue: initialValue, onChanged: onChanged);
+  IconEditableTextState createState() => IconEditableTextState();
 }
 
-class _IconEditableTextState extends State<IconEditableText> {
+class IconEditableTextState extends State<IconEditableText> {
   bool isEditable = false;
   String? initialValue = "";
   ValueChanged<String>? onChanged;
 
-  _IconEditableTextState({
-    this.initialValue,
-    this.onChanged,
-  });
+  IconEditableTextState();
+
+  @override
+  void initState() {
+    super.initState();
+    initialValue = widget.initialValue;
+    onChanged = widget.onChanged;
+  }
 
   @override
   Widget build(BuildContext context) {

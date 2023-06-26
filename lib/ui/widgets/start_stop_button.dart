@@ -7,9 +7,9 @@ import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
 
 class StartStopButton extends StatefulWidget {
-  De1StateEnum requestedState;
+  final De1StateEnum requestedState;
 
-  StartStopButton({
+  const StartStopButton({
     Key? key,
     required this.requestedState,
   }) : super(key: key);

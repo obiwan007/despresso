@@ -213,8 +213,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> beep() {
-    // TODO: implement beep
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
@@ -232,7 +231,6 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> power(PowerMode start) {
-    // TODO: implement power
-    throw UnimplementedError();
+    return Future(() => null);
   }
 }

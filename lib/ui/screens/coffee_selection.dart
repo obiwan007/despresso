@@ -17,8 +17,8 @@ import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class CoffeeSelectionTab extends StatefulWidget {
-  bool saveToRecipe = false;
-  CoffeeSelectionTab({super.key, required this.saveToRecipe});
+  final bool saveToRecipe;
+  const CoffeeSelectionTab({super.key, required this.saveToRecipe});
 
   @override
   CoffeeSelectionTabState createState() => CoffeeSelectionTabState();
@@ -114,7 +114,7 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
                                 if (value == 0) {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => RoasterEdit(0)),
+                                    MaterialPageRoute(builder: (context) => const RoasterEdit(0)),
                                   );
                                 } else {
                                   coffeeService.setSelectedRoaster(_selectedRoasterId);
@@ -290,7 +290,8 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
         KeyValueWidget(label: S.of(context).screenBeanSelectTypeOfBeans, value: coffee.type),
         KeyValueWidget(
             label: S.of(context).screenBeanSelectRoastingDate,
-            value: "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} ${S.of(context).screenBeanSelectDaysAgo}"),
+            value:
+                "${DateFormat.Md().format(coffee.roastDate)}, ${d1.difference(coffee.roastDate).inDays} ${S.of(context).screenBeanSelectDaysAgo}"),
         const SizedBox(height: 10),
         KeyValueWidget(
           label: S.of(context).screenBeanSelectAcidity,

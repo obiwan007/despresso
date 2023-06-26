@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
-import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -231,8 +230,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> beep() {
-    // TODO: implement beep
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
@@ -253,7 +251,6 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> power(PowerMode start) {
-    // TODO: implement power
-    throw UnimplementedError();
+    return Future(() => null);
   }
 }

@@ -147,19 +147,16 @@ class FelicitaScale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> beep() {
-    // TODO: implement beep
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> display(DisplayMode start) {
-    // TODO: implement display
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> power(PowerMode start) {
-    // TODO: implement power
-    throw UnimplementedError();
+    return Future(() => null);
   }
 }

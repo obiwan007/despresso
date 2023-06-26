@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 

@@ -1,6 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -21,7 +20,7 @@ import '../../model/services/ble/machine_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../service_locator.dart';
 import './profiles_edit_screen.dart';
-import './profiles_d-flow_edit_screen.dart';
+import 'profiles_dflow_edit_screen.dart';
 import './profiles_advanced_edit_screen.dart';
 
 enum FilterModes {
@@ -35,8 +34,8 @@ enum FilterModes {
 }
 
 class ProfilesScreen extends StatefulWidget {
-  bool saveToRecipe = false;
-  ProfilesScreen({Key? key, required this.saveToRecipe}) : super(key: key);
+  final bool saveToRecipe;
+  const ProfilesScreen({Key? key, required this.saveToRecipe}) : super(key: key);
 
   @override
   ProfilesScreenState createState() => ProfilesScreenState();
@@ -247,7 +246,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      ProfileSelect(),
+                      const ProfileSelect(),
                       Expanded(
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
@@ -486,7 +485,7 @@ class ProfilesScreenState extends State<ProfilesScreen> {
     log.info("Share profile $_selectedProfile");
     final box = context.findRenderObject() as RenderBox?;
     // var profileAsString = jsonEncode(_selectedProfile!.toJson());
-    var encoder = const JsonEncoder.withIndent("  ");
+    // var encoder = const JsonEncoder.withIndent("  ");
     // var profileAsString = encoder.convert(_selectedProfile!.toJson());
     var profileAsString = profileService.createProfileDefaultJson(_selectedProfile!);
     await Share.share(

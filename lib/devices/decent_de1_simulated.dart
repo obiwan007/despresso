@@ -103,6 +103,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
 
   int fwSHA = 0;
   late StreamController<List<int>> _controllerMmrStream;
+  // ignore: unused_field
   late Stream<List<int>> _streamMMR;
 
   int ghcInfo = 0;
@@ -147,6 +148,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
   double _setGroupFlow = 7;
   int _frameNumber = 0;
 
+  // ignore: unused_field
   int _tick = 0;
 
   De1StateEnum _lastState = De1StateEnum.sleep;
@@ -184,6 +186,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     Timer.periodic(Duration(milliseconds: (1.0 / hz * 1000).toInt()), (Timer t) {
       try {
         _stateTick();
+        // ignore: empty_catches
       } catch (e) {}
     });
     Timer(
@@ -283,6 +286,7 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
     _stateNotification();
   }
 
+  // ignore: unused_element
   void _temperatureNotification(ByteData value) {}
   void _stateNotification() {
     var state = _state;
@@ -488,14 +492,12 @@ class DE1Simulated extends ChangeNotifier implements IDe1 {
 
   @override
   Future<void> writeWithResult(Endpoint e, Uint8List data) {
-    // TODO: implement writeWithResult
     log.info("write");
     return Future.delayed(const Duration(milliseconds: 10));
   }
 
   @override
   Future<void> setWaterLevelWarning(int t) {
-    // TODO: implement setWaterLevelWarning
     throw UnimplementedError();
   }
 }

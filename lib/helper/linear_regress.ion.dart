@@ -105,11 +105,11 @@ Line linearRegressionViaGradient(List<DataPoint> data) {
     iteration++;
   }
 
-  if (iteration == maxIterations) {
-    print("Maximum iterations reached");
-  } else {
-    print("Converged in $iteration iterations");
-  }
+  // if (iteration == maxIterations) {
+  //   print("Maximum iterations reached");
+  // } else {
+  //   print("Converged in $iteration iterations");
+  // }
   return Line(slope, intercept);
   // return "y = ${slope.toStringAsFixed(2)}x + ${intercept.toStringAsFixed(2)}";
 }

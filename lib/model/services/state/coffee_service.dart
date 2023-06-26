@@ -210,7 +210,7 @@ class CoffeeService extends ChangeNotifier {
     var recipe = recipeBox.get(id);
     if (recipe == null) return 0;
 
-    recipe.name = recipe.name + " Copy";
+    recipe.name = "${recipe.name} Copy";
     recipe.id = 0;
     var idNew = updateRecipe(recipe);
 

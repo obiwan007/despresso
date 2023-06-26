@@ -10,12 +10,10 @@ import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-import '../model/services/state/settings_service.dart';
-
 class AcaiaScale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('AcaiaScale');
 
-  static Uuid ServiceUUID =
+  static Uuid serviceUUID =
       useLongCharacteristics() ? Uuid.parse('00001820-0000-1000-8000-00805f9b34fb') : Uuid.parse('1820');
 
   static Uuid characteristicUUID =
@@ -205,7 +203,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
       return;
     }
     final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
 
     try {
       await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x00, _heartbeatPayload));
@@ -225,7 +223,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     }
 
     final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
     connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0b, _identPayload));
 
     // device.writeCharacteristic(
@@ -241,7 +239,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     }
 
     final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
     connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x0c, _configPayload));
 
     // device.writeCharacteristic(
@@ -255,7 +253,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     var list = [0x00];
 
     final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
     try {
       await connection.writeCharacteristicWithoutResponse(characteristic, value: encode(0x04, list));
       log.info("tara Ok");
@@ -267,7 +265,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
   Future<void> writeToAcaia(Uint8List payload) async {
     log.info("Sending to Acaia");
     final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
     return await connection.writeCharacteristicWithResponse(characteristic, value: payload);
   }
 
@@ -286,7 +284,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         scaleService.setState(ScaleState.connected, index);
         // await device.discoverAllServicesAndCharacteristics();
         final characteristic =
-            QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+            QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
 
         _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
           // code to handle incoming data
@@ -319,7 +317,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
   @override
   Future<void> timer(TimerMode start) async {
     final characteristic =
-        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: characteristicUUID, deviceId: device.id);
+        QualifiedCharacteristic(serviceId: serviceUUID, characteristicId: characteristicUUID, deviceId: device.id);
     try {
       switch (start) {
         case TimerMode.reset:
@@ -347,19 +345,16 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   @override
   Future<void> beep() {
-    // TODO: implement beep
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> display(DisplayMode start) {
-    // TODO: implement display
-    throw UnimplementedError();
+    return Future(() => null);
   }
 
   @override
   Future<void> power(PowerMode start) {
-    // TODO: implement power
-    throw UnimplementedError();
+    return Future(() => null);
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/ui/widgets/editable_text.dart';
@@ -9,13 +8,13 @@ import 'package:logging/logging.dart';
 import '../../model/services/ble/machine_service.dart';
 
 class DFlowEditScreen extends StatefulWidget {
-  De1ShotProfile profile;
+  final De1ShotProfile profile;
 
-  DFlowEditScreen(this.profile, {Key? key}) : super(key: key);
+  const DFlowEditScreen(this.profile, {Key? key}) : super(key: key);
 
   @override
   DFlowEditScreenState createState() {
-    return DFlowEditScreenState(profile);
+    return DFlowEditScreenState();
   }
 }
 
@@ -26,7 +25,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
 
   late EspressoMachineService machineService;
 
-  final De1ShotProfile _profile;
+  late De1ShotProfile _profile;
 
   De1ShotFrameClass? infusion;
   // De1ShotFrameClass? forcedRise;
@@ -40,7 +39,9 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
 
   List<MaterialColor> phaseColors = [Colors.blue, Colors.purple, Colors.green, Colors.brown];
 
-  DFlowEditScreenState(this._profile);
+  DFlowEditScreenState() {
+    _profile = widget.profile;
+  }
 
   @override
   void initState() {
@@ -213,7 +214,7 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'g'),
-                    onChanged: (value) => print(value),
+                    // onChanged: (value) => null,
                   ),
                 ],
               ),
@@ -239,7 +240,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: '°C'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -265,7 +265,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'bar'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -291,7 +290,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 's'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -317,7 +315,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'ml'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -343,7 +340,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'g'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -369,7 +365,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: '°C'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -395,7 +390,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'ml/s'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -426,7 +420,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'bar'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -452,7 +445,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'ml'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),
@@ -478,7 +470,6 @@ class DFlowEditScreenState extends State<DFlowEditScreen> with SingleTickerProvi
                     incrementIcon: const Icon(Icons.keyboard_arrow_up, size: 20),
                     decrementIcon: const Icon(Icons.keyboard_arrow_down, size: 20),
                     decoration: const InputDecoration(labelText: 'g'),
-                    onChanged: (value) => print(value),
                   ),
                 ],
               ),

@@ -8,28 +8,29 @@ import 'package:despresso/ui/theme.dart' as theme;
 
 class ProfileGraphWidget extends StatefulWidget {
   final De1ShotProfile selectedProfile;
-  int selectedPhase = -1;
-  ProfileGraphWidget({
+  final int selectedPhase;
+  const ProfileGraphWidget({
     Key? key,
     required this.selectedProfile,
     this.selectedPhase = -1,
   }) : super(key: key);
 
   @override
-  State<ProfileGraphWidget> createState() => ProfileGraphWidgetState(selectedProfile);
+  State<ProfileGraphWidget> createState() => ProfileGraphWidgetState();
 }
 
 class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
   late SettingsService settingsService;
 
   ShotList shotList = ShotList([]);
-  final De1ShotProfile? _selectedProfile;
+  late De1ShotProfile? _selectedProfile;
 
-  ProfileGraphWidgetState(this._selectedProfile);
+  ProfileGraphWidgetState();
 
   @override
   void initState() {
     super.initState();
+    _selectedProfile = widget.selectedProfile;
     settingsService = getIt<SettingsService>();
   }
 
@@ -143,10 +144,10 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
   calcProfileGraph() {
     shotList.clear();
     var time = 0.0;
-    var frame = _selectedProfile!.shotFrames.first;
+    // var frame = _selectedProfile!.shotFrames.first;
 
-    ShotState shotState = ShotState(
-        time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
+    // ShotState shotState = ShotState(
+    //     time, time, 0, 0, frame.temp, frame.temp, frame.temp, frame.temp, 0, 0, frame.frameToWrite, 0, 0, frame.name);
 
     // shotList.entries.add(shotState);
     double lastVal = 0;
@@ -306,7 +307,7 @@ class ProfileGraphWidgetState extends State<ProfileGraphWidget> {
       var col = i == widget.selectedPhase + 1
           ? Theme.of(context).colorScheme.onPrimary
           : theme.ThemeColors.backgroundColor; // theme.ThemeColors.statesColors[from.subState];
-      var col2 = charts.ColorUtil.fromDartColor(col ?? theme.ThemeColors.backgroundColor);
+      var col2 = charts.ColorUtil.fromDartColor(col);
       // col == null ? col! : charts.Color(r: 0xff, g: 50, b: i * 19, a: 100);
       return charts.RangeAnnotationSegment(
           from.sampleTimeCorrected, toSampleTime, charts.RangeAnnotationAxisType.domain,

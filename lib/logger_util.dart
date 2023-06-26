@@ -69,6 +69,7 @@ Future<Directory?> getDirectory() async {
   try {
     dir ??= await getApplicationDocumentsDirectory();
   } catch (e) {
+    // ignore: avoid_print
     print("Not possible to store to app directory $e");
   }
 

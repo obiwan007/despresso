@@ -43,13 +43,13 @@ class BatteryLevel {
 class ScaleService extends ChangeNotifier {
   final log = Logger('ScaleService');
 
-  List<double> _weight = [0.0, 0.0];
-  List<double> _flow = [0.0, 0.0];
+  final List<double> _weight = [0.0, 0.0];
+  final List<double> _flow = [0.0, 0.0];
 
   final List<int> _battery = [0, 0];
   DateTime last = DateTime.now();
 
-  List<ScaleState> _state = [ScaleState.disconnected, ScaleState.disconnected];
+  final List<ScaleState> _state = [ScaleState.disconnected, ScaleState.disconnected];
 
   bool tareInProgress = false;
   var _count = 0;
