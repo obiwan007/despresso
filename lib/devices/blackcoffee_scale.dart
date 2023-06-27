@@ -1,5 +1,4 @@
 import 'dart:async';
-// import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
 import 'dart:typed_data';
 
@@ -7,26 +6,29 @@ import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:convert/convert.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import 'package:logging/logging.dart' as l;
 
-class DifluidScale extends ChangeNotifier implements AbstractScale {
-  final log = l.Logger('DifluidScale');
+class BlackCoffeeScale extends ChangeNotifier implements AbstractScale {
+  final log = l.Logger('BlackCoffeeScale');
 
   // ignore: non_constant_identifier_names
   static Uuid ServiceUUID =
-      useLongCharacteristics() ? Uuid.parse('000000ee-0000-1000-8000-00805f9b34fb') : Uuid.parse('00ee');
+      useLongCharacteristics() ? Uuid.parse('0000ffb0-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff0');
   // ignore: non_constant_identifier_names
   static Uuid DataUUID =
-      useLongCharacteristics() ? Uuid.parse('0000aa01-0000-1000-8000-00805f9b34fb') : Uuid.parse('aa01');
+      useLongCharacteristics() ? Uuid.parse('0000ffb2-0000-1000-8000-00805f9b34fb') : Uuid.parse('fff1');
 
   late ScaleService scaleService;
+
+  static const int cmdTare = 0;
 
   final DiscoveredDevice device;
 
   List<int> commandBuffer = [];
+  double weightAtTare = 0.00; // this is a workaround for the missing taring function
+  double weightFromScale = 0.00;
 
   late StreamSubscription<ConnectionStateUpdate> _deviceListener;
 
@@ -34,7 +36,7 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
   DeviceCommunication connection;
 
   int index = 0;
-  DifluidScale(this.device, this.connection) {
+  BlackCoffeeScale(this.device, this.connection) {
     scaleService = getIt<ScaleService>();
     index = getScaleIndex(device.id);
     scaleService.setScaleInstance(this, index);
@@ -46,13 +48,12 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
   }
 
   void _notificationCallback(List<int> data) {
-    if (data.length < 19 && data[3] != 0) return;
-    if (data[17] != 0) {
-      setScaleUnitToGram();
-      log.info('changing scale to grams!');
+    var weight = getInt(data.sublist(3, 7));
+    weightFromScale = weight / 1000;
+    if (data[2] >= 128) {
+      weightFromScale = weightFromScale * -1;
     }
-    var weight = getInt(data.sublist(5, 9));
-    scaleService.setWeight(weight / 10, index);
+    scaleService.setWeight(weightFromScale - weightAtTare, index);
   }
 
   int getInt(List<int> buffer) {
@@ -68,33 +69,12 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
 
   @override
   writeTare() {
-    var payload = [0xDF, 0xDF, 0x03, 0x02, 0x01, 0x01, 0xC5];
-    return writeToDifluidScale(payload);
+    weightAtTare = weightFromScale;
+    return Future(() => null); // the black coffee scale doesn't support ble taring
   }
 
-  startWeightNotifications() {
-    log.info('enabling weight notifications');
-    return writeToDifluidScale([0xDF, 0xDF, 0x01, 0x00, 0x01, 0x01, 0xC1]);
-  }
-
-  setScaleUnitToGram() {
-    return writeToDifluidScale([0xDF, 0xDF, 0x01, 0x04, 0x01, 0x00, 0xC4]);
-  }
-
-  Future<void> startTimer() {
-    return writeToDifluidScale([0xDF, 0xDF, 0x03, 0x02, 0x01, 0x00, 0xC4]);
-  }
-
-  Future<void> stopTimer() {
-    return writeToDifluidScale([0xDF, 0xDF, 0x03, 0x01, 0x01, 0x00, 0xC3]);
-  }
-
-  Future<void> resetTimer() {
-    return writeToDifluidScale([0xDF, 0xDF, 0x03, 0x02, 0x01, 0x00, 0xC4]);
-  }
-
-  Future<void> writeToDifluidScale(List<int> payload) async {
-    log.info("Sending to Difluid Scale");
+  Future<void> writeToBlackCoffee(List<int> payload) async {
+    log.info("Sending to Smartchef");
     final characteristic =
         QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
     return await connection.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
@@ -113,7 +93,6 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
         log.info('Connected');
         scaleService.setState(ScaleState.connected, index);
         // await device.discoverAllServicesAndCharacteristics();
-
         final characteristic =
             QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: DataUUID, deviceId: device.id);
 
@@ -122,13 +101,12 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
         }, onError: (dynamic error) {
           log.severe("Subscribe to $characteristic failed: $error");
         });
-        startWeightNotifications();
-        setScaleUnitToGram();
+
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected, index);
         scaleService.setBattery(0, index);
-        log.info('Difluid Scale disconnected. Destroying');
+        log.info('Smartchef Scale disconnected. Destroying');
         // await device.disconnectOrCancelConnection();
         _characteristicsSubscription.cancel();
 
@@ -141,23 +119,8 @@ class DifluidScale extends ChangeNotifier implements AbstractScale {
   }
 
   @override
-  Future<void> timer(TimerMode start) async {
-    try {
-      switch (start) {
-        case TimerMode.reset:
-          await resetTimer();
-          break;
-        case TimerMode.start:
-          await resetTimer();
-          await startTimer();
-          break;
-        case TimerMode.stop:
-          await stopTimer();
-          break;
-      }
-    } catch (e) {
-      log.severe("timer failed $e");
-    }
+  Future<void> timer(TimerMode start) {
+    return Future(() => null);
   }
 
   @override
