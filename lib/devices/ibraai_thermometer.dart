@@ -13,10 +13,9 @@ class IBraaiThermometer extends ChangeNotifier implements AbstractThermometer {
   final log = l.Logger('iBraaiTherm');
 
   // ignore: non_constant_identifier_names
-  Uuid ServiceUUID = useLongCharacteristics() ? Uuid.parse('00001000-0000-1000-8000-00805f9b34fb') : Uuid.parse('1000');
+  Uuid ServiceUUID = Uuid.parse('00001000-0000-1000-8000-00805f9b34fb');
   // ignore: non_constant_identifier_names
-  static Uuid CharateristicUUID =
-      useLongCharacteristics() ? Uuid.parse('00001002-0000-1000-8000-00805f9b34fb') : Uuid.parse('1002');
+  static Uuid CharateristicUUID = Uuid.parse('00001002-0000-1000-8000-00805f9b34fb');
 
   late TempService tempService;
 
