@@ -89,6 +89,9 @@ enum SettingKeys {
   scalePrimary,
   scaleSecondary,
   targetSteamFlow,
+  targetMilkTempPreset1,
+  targetMilkTempPreset2,
+  targetMilkTempPreset3,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -180,6 +183,15 @@ class SettingsService extends ChangeNotifier {
 
   int get targetMilkTemperature => Settings.getValue<int>(SettingKeys.targetMilkTemperature.name) ?? 55;
   set targetMilkTemperature(int value) => Settings.setValue<int>(SettingKeys.targetMilkTemperature.name, value);
+
+  int get targetMilkTempPreset1 => Settings.getValue<int>(SettingKeys.targetMilkTempPreset1.name) ?? 55;
+  set targetMilkTempPreset1(int value) => Settings.setValue<int>(SettingKeys.targetMilkTempPreset1.name, value);
+
+  int get targetMilkTempPreset2 => Settings.getValue<int>(SettingKeys.targetMilkTempPreset2.name) ?? 55;
+  set targetMilkTempPreset2(int value) => Settings.setValue<int>(SettingKeys.targetMilkTempPreset2.name, value);
+
+  int get targetMilkTempPreset3 => Settings.getValue<int>(SettingKeys.targetMilkTempPreset3.name) ?? 55;
+  set targetMilkTempPreset3(int value) => Settings.setValue<int>(SettingKeys.targetMilkTempPreset3.name, value);
 
   int get targetHotWaterTemp => Settings.getValue<int>(SettingKeys.targetHotWaterTemp.name) ?? 85;
   set targetHotWaterTemp(int value) => Settings.setValue<int>(SettingKeys.targetHotWaterTemp.name, value);
