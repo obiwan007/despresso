@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../service_locator.dart';
 
@@ -87,10 +87,10 @@ class ScreensaverService extends ChangeNotifier {
   void setupScreensaver() {
     try {
       if (useWakeLock()) {
-        Wakelock.enable();
+        WakelockPlus.enable();
         log.info('Enable WakeLock');
       } else {
-        Wakelock.disable();
+        WakelockPlus.disable();
       }
     } catch (e) {
       log.severe("Could not use WakeLock $e");
@@ -105,9 +105,9 @@ class ScreensaverService extends ChangeNotifier {
         await checkAndActivateSaver();
         if (_screenSaverTimer > _settings.screenLockTimer * 60 && !allwaysWakeLock()) {
           try {
-            if (await Wakelock.enabled) {
+            if (await WakelockPlus.enabled) {
               log.info('Disable WakeLock');
-              Wakelock.disable();
+              WakelockPlus.disable();
             }
           } on MissingPluginException catch (e) {
             log.severe('Failed to set wakelock: $e');
@@ -145,9 +145,9 @@ class ScreensaverService extends ChangeNotifier {
         machine.de1?.switchOn();
       }
       try {
-        if ((await Wakelock.enabled) == false) {
+        if ((await WakelockPlus.enabled) == false) {
           log.info('enable WakeLock');
-          Wakelock.enable();
+          WakelockPlus.enable();
         } else {
           log.fine('is enabled WakeLock');
         }

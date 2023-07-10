@@ -14,7 +14,7 @@ import 'helper/objectbox_cache_provider.dart';
 import 'logger_util.dart';
 import 'objectbox.dart';
 import 'ui/landingpage.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'color_schemes.g.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -38,7 +38,7 @@ Future<void> main() async {
   getIt.registerSingleton<ObjectBox>(objectbox, signalsReady: false);
   log.info("Starting app");
   try {
-    Wakelock.enable();
+    WakelockPlus.enable();
   } on MissingPluginException catch (e) {
     log.info('Failed to set wakelock: $e');
   }
