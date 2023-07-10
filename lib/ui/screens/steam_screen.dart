@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/helper/message.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
@@ -279,8 +280,8 @@ class SteamScreenState extends State<SteamScreen> {
         Expanded(
           flex: 1,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (tempService.state == TempState.connected)
                 StreamBuilder<TempMeassurement>(
@@ -294,9 +295,78 @@ class SteamScreenState extends State<SteamScreen> {
                             ))
                           : const Text("No data");
                     }),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: StartStopButton(requestedState: De1StateEnum.steam),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+                    child: Wrap(
+                      direction: Axis.vertical,
+                      spacing: 10,
+                      children: [
+                        OutlinedButton(
+                            onLongPress: () {
+                              settings.targetMilkTempPreset1 = settings.targetMilkTemperature;
+                              showOk(context, "Saved");
+                            },
+                            onPressed: () {
+                              settings.targetMilkTemperature = settings.targetMilkTempPreset1;
+                              machineService.updateSettings();
+                            },
+                            child: Column(
+                              children: [
+                                const Text("Stop 1"),
+                                Text(
+                                  "${settings.targetMilkTempPreset1}°C",
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ],
+                            )),
+                        OutlinedButton(
+                            onLongPress: () {
+                              settings.targetMilkTempPreset2 = settings.targetMilkTemperature;
+                              showOk(context, "Saved");
+                            },
+                            onPressed: () {
+                              settings.targetMilkTemperature = settings.targetMilkTempPreset2;
+                              machineService.updateSettings();
+                            },
+                            child: Column(
+                              children: [
+                                const Text("Stop 2"),
+                                Text(
+                                  "${settings.targetMilkTempPreset2}°C",
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ],
+                            )),
+                        OutlinedButton(
+                            onLongPress: () {
+                              settings.targetMilkTempPreset3 = settings.targetMilkTemperature;
+                              showOk(context, "Saved");
+                            },
+                            onPressed: () {
+                              settings.targetMilkTemperature = settings.targetMilkTempPreset3;
+                              machineService.updateSettings();
+                            },
+                            child: Column(
+                              children: [
+                                const Text("Stop 3"),
+                                Text(
+                                  "${settings.targetMilkTempPreset3}°C",
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              ],
+                            )),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: StartStopButton(requestedState: De1StateEnum.steam),
+                  ),
+                ],
               ),
             ],
           ),
