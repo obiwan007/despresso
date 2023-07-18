@@ -502,7 +502,6 @@ class EspressoScreenState extends State<EspressoScreen> {
           ),
           bottomTitles: AxisTitles(
             axisNameSize: 25,
-            drawBehindEverything: false,
             axisNameWidget: Text(
               S.of(context).screenEspressoTimes,
               style: Theme.of(context).textTheme.labelSmall,
