@@ -7,7 +7,7 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/ui/widgets/labeled_checkbox.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+// import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -134,10 +134,11 @@ class ProfileSelectState extends State<ProfileSelect> {
         Expanded(
           child: items.isNotEmpty
               ? DropdownButton(
-                  isExpanded: true,
+                  isExpanded: false,
                   alignment: Alignment.centerLeft,
                   value: _selectedProfile,
                   items: items,
+                  // itemHeight: 40,
                   onChanged: (value) {
                     setState(() {
                       _selectedProfile = value!;
@@ -152,19 +153,23 @@ class ProfileSelectState extends State<ProfileSelect> {
                   hint: const Text("Select item"))
               : const Text("No profiles found for selection"),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: renderFilterDropdown(context, items),
-        ),
+        SizedBox(width: 50, child: renderFilterDropdown(context, items)),
+        // Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: renderFilterDropdown(context, items),
+        // ),
       ],
     );
   }
 
   DropdownButtonHideUnderline renderFilterDropdown(BuildContext context, List<DropdownMenuItem<De1ShotProfile>> items) {
     return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        isExpanded: false, customButton: const Icon(Icons.filter_alt),
-        dropdownWidth: 160,
+      child: DropdownButton(
+        isExpanded: true,
+        iconSize: 15,
+        elevation: 16,
+
+        icon: const Icon(Icons.filter_alt),
 
         // hint: Align(
         //   alignment: AlignmentDirectional.center,
@@ -176,10 +181,10 @@ class ProfileSelectState extends State<ProfileSelect> {
         //     ),
         //   ),
         // ),
+
         items: filterOptions.map((item) {
           return DropdownMenuItem<String>(
             value: item,
-
             //disable default onTap to avoid closing menu when selecting an item
             enabled: false,
             child: StatefulBuilder(
@@ -187,6 +192,7 @@ class ProfileSelectState extends State<ProfileSelect> {
                 final isSelected = selectedFilter.contains(item);
                 return Container(
                   height: double.infinity,
+                  width: 100,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     children: [
@@ -210,27 +216,30 @@ class ProfileSelectState extends State<ProfileSelect> {
         //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
         value: selectedFilter.isEmpty ? null : selectedFilter.last,
         onChanged: (value) {},
-        buttonHeight: 40,
-        buttonWidth: 140,
-        itemHeight: 40,
-        itemPadding: EdgeInsets.zero,
+        // buttonHeight: 40,
+        // buttonWidth: 140,
+        // itemHeight: 40,
+        // itemPadding: EdgeInsets.zero,
         selectedItemBuilder: (context) {
-          return items.map(
-            (item) {
-              return Container(
-                alignment: AlignmentDirectional.center,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  selectedFilter.join(', '),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  maxLines: 1,
-                ),
-              );
-            },
-          ).toList();
+          return [
+            Icon(Icons.filter_alt),
+          ];
+          // items.map(
+          //   (item) {
+          //     return Container(
+          //       alignment: AlignmentDirectional.center,
+          //       padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          //       child: Text(
+          //         selectedFilter.join(', '),
+          //         style: const TextStyle(
+          //           fontSize: 14,
+          //           overflow: TextOverflow.ellipsis,
+          //         ),
+          //         maxLines: 1,
+          //       ),
+          //     );
+          //   },
+          // ).toList();
         },
       ),
     );
