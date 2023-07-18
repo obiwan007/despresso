@@ -1038,11 +1038,11 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       data.add(await getLoggerBackupData());
 
       var dateStr = DateTime.now().toLocal();
-
-      await DocumentFileSavePlus.saveMultipleFiles(data, [
+      var doc = DocumentFileSavePlus();
+      await doc.saveMultipleFiles(dataList: data, fileNameList: [
         "despresso_backup_$dateStr.bak",
         "logs_$dateStr.zip"
-      ], [
+      ], mimeTypeList: [
         "application/octet-stream",
         "application/zip",
       ]);

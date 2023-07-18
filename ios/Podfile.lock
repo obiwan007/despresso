@@ -71,13 +71,13 @@ PODS:
   - SDWebImage (5.15.5):
     - SDWebImage/Core (= 5.15.5)
   - SDWebImage/Core (5.15.5)
-  - Sentry/HybridSDK (8.4.0):
-    - SentryPrivate (= 8.4.0)
+  - Sentry/HybridSDK (8.8.0):
+    - SentryPrivate (= 8.8.0)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.4.0)
-  - SentryPrivate (8.4.0)
+    - Sentry/HybridSDK (= 8.8.0)
+  - SentryPrivate (8.8.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
