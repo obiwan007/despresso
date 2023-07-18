@@ -298,36 +298,16 @@ class EspressoMachineService extends ChangeNotifier {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (state.coffeeState == EspressoMachineState.sleep) {
         try {
-          log.fine("Machine is still sleeping $sleepTime ${settingsService.screenLockTimer * 60}");
+          log.fine("Machine is still sleeping $sleepTime");
           sleepTime += 10;
           if (sleepTime < 30 && settingsService.scaleDisplayOffOnSleep) {
             scaleService.display(DisplayMode.off);
           }
-          // if (sleepTime > settingsService.screenLockTimer * 60 && settingsService.screenLockTimer > 0.1) {
-          //   try {
-          //     if (await Wakelock.enabled) {
-          //       log.info('Disable WakeLock');
-          //       Wakelock.disable();
-          //     }
-          //   } on MissingPluginException catch (e) {
-          //     log.severe('Failed to set wakelock: $e');
-          //   }
-          // }
         } catch (e) {
           log.severe("Error $e");
         }
       } else {
         sleepTime = 0;
-        // try {
-        //   if ((await Wakelock.enabled) == false) {
-        //     log.info('enable WakeLock');
-        //     Wakelock.enable();
-        //   } else {
-        //     log.fine('is enabled WakeLock');
-        //   }
-        // } on MissingPluginException catch (e) {
-        //   log.severe('Failed to set wakelock enable: $e');
-        // }
       }
 
       if (state.coffeeState == EspressoMachineState.idle) {
