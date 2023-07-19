@@ -280,7 +280,7 @@ class SteamScreenState extends State<SteamScreen> {
         Expanded(
           flex: 1,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (tempService.state == TempState.connected)
@@ -297,69 +297,72 @@ class SteamScreenState extends State<SteamScreen> {
                     }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      spacing: 10,
-                      children: [
-                        OutlinedButton(
-                            onLongPress: () {
-                              settings.targetMilkTempPreset1 = settings.targetMilkTemperature;
-                              showOk(context, "Saved");
-                            },
-                            onPressed: () {
-                              settings.targetMilkTemperature = settings.targetMilkTempPreset1;
-                              machineService.updateSettings();
-                            },
-                            child: Column(
-                              children: [
-                                const Text("Stop 1"),
-                                Text(
-                                  "${settings.targetMilkTempPreset1}°C",
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                              ],
-                            )),
-                        OutlinedButton(
-                            onLongPress: () {
-                              settings.targetMilkTempPreset2 = settings.targetMilkTemperature;
-                              showOk(context, "Saved");
-                            },
-                            onPressed: () {
-                              settings.targetMilkTemperature = settings.targetMilkTempPreset2;
-                              machineService.updateSettings();
-                            },
-                            child: Column(
-                              children: [
-                                const Text("Stop 2"),
-                                Text(
-                                  "${settings.targetMilkTempPreset2}°C",
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                              ],
-                            )),
-                        OutlinedButton(
-                            onLongPress: () {
-                              settings.targetMilkTempPreset3 = settings.targetMilkTemperature;
-                              showOk(context, "Saved");
-                            },
-                            onPressed: () {
-                              settings.targetMilkTemperature = settings.targetMilkTempPreset3;
-                              machineService.updateSettings();
-                            },
-                            child: Column(
-                              children: [
-                                const Text("Stop 3"),
-                                Text(
-                                  "${settings.targetMilkTempPreset3}°C",
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                              ],
-                            )),
-                      ],
-                    ),
+                    child: (tempService.state != TempState.connected)
+                        ? Container()
+                        : Wrap(
+                            direction: Axis.vertical,
+                            spacing: 10,
+                            children: [
+                              OutlinedButton(
+                                  onLongPress: () {
+                                    settings.targetMilkTempPreset1 = settings.targetMilkTemperature;
+                                    showOk(context, "Saved");
+                                  },
+                                  onPressed: () {
+                                    settings.targetMilkTemperature = settings.targetMilkTempPreset1;
+                                    machineService.updateSettings();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      const Text("Stop 1"),
+                                      Text(
+                                        "${settings.targetMilkTempPreset1}°C",
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  )),
+                              OutlinedButton(
+                                  onLongPress: () {
+                                    settings.targetMilkTempPreset2 = settings.targetMilkTemperature;
+                                    showOk(context, "Saved");
+                                  },
+                                  onPressed: () {
+                                    settings.targetMilkTemperature = settings.targetMilkTempPreset2;
+                                    machineService.updateSettings();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      const Text("Stop 2"),
+                                      Text(
+                                        "${settings.targetMilkTempPreset2}°C",
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  )),
+                              OutlinedButton(
+                                  onLongPress: () {
+                                    settings.targetMilkTempPreset3 = settings.targetMilkTemperature;
+                                    showOk(context, "Saved");
+                                  },
+                                  onPressed: () {
+                                    settings.targetMilkTemperature = settings.targetMilkTempPreset3;
+                                    machineService.updateSettings();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      const Text("Stop 3"),
+                                      Text(
+                                        "${settings.targetMilkTempPreset3}°C",
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          ),
                   ),
                   const Spacer(),
                   const Padding(
