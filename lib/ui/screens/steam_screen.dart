@@ -411,9 +411,9 @@ class SteamScreenState extends State<SteamScreen> {
         maxY: settings.targetMilkTemperature.toDouble() + 15,
         minX: data["temp1"]!.first.x,
         maxX: maxTime,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
@@ -422,10 +422,10 @@ class SteamScreenState extends State<SteamScreen> {
           createChartLineDatapoints(data["temp2"]!, 2, theme.ThemeColors.flowColor),
         ],
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          leftTitles: AxisTitles(
+          leftTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           bottomTitles: AxisTitles(
@@ -501,7 +501,7 @@ class SteamScreenState extends State<SteamScreen> {
   LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col) {
     return LineChartBarData(
       spots: points,
-      dotData: FlDotData(
+      dotData: const FlDotData(
         show: false,
       ),
       barWidth: barWidth,

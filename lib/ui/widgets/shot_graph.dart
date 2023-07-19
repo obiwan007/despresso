@@ -143,7 +143,7 @@ class ShotGraphState extends State<ShotGraph> {
   LineChartBarData createChartLineDatapoints(List<FlSpot> points, double barWidth, Color col, List<int>? dash) {
     return LineChartBarData(
       spots: points,
-      dotData: FlDotData(
+      dotData: const FlDotData(
         show: false,
       ),
       barWidth: barWidth,
@@ -202,9 +202,9 @@ class ShotGraphState extends State<ShotGraph> {
         // maxY: 15,
         // minX: data["pressure${overlayIds!.first}"]!.first.x,
         // maxX: maxTime,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
@@ -222,10 +222,10 @@ class ShotGraphState extends State<ShotGraph> {
           // ],
         ),
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           // bottomTitles: AxisTitles(
@@ -292,18 +292,18 @@ class ShotGraphState extends State<ShotGraph> {
         // maxY: 15,
         // minX: data["pressure${overlayIds!.first}"]!.first.x,
         // maxX: maxTime,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
         lineBarsData: lineBarsDataTempWeight,
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           bottomTitles: !widget.showTemp
@@ -353,18 +353,18 @@ class ShotGraphState extends State<ShotGraph> {
         // maxY: 15,
         // minX: data["pressure${overlayIds!.first}"]!.first.x,
         // maxX: maxTime,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
         lineBarsData: lineBarsDataTemp,
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           bottomTitles: AxisTitles(
