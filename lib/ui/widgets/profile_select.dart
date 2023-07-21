@@ -222,7 +222,7 @@ class ProfileSelectState extends State<ProfileSelect> {
         // itemPadding: EdgeInsets.zero,
         selectedItemBuilder: (context) {
           return [
-            Icon(Icons.filter_alt),
+            const Icon(Icons.filter_alt),
           ];
           // items.map(
           //   (item) {
