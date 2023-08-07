@@ -49,11 +49,10 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
 
   void _notificationCallback(List<int> data) {
     if (data.length < 4) return;
-    _weight = ((data[2] << 8) + data[3]) / 10;
-    if (_weight > 3200) {
-      // This gives us also the negative weight - similar implementation as in Beanconqueror
-      _weight = ((data[2].toSigned(8) << 8) + data[3].toSigned(8)) / 10;
-    }
+    var d = ByteData(2);
+    d.setInt8(0, data[2]);
+    d.setInt8(1, data[3]);
+    _weight = d.getInt16(0) / 10;
     scaleService.setWeight(_weight, index);
 
     if (data[1] == 0xCE) {
@@ -70,7 +69,8 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
           log.info('button 1 short pressed');
           break;
         case 0x02:
-          log.info('button 2 short pressed');
+          log.info('button 2 short pressed, init tare');
+          Future.delayed(Duration(seconds: 1), () => writeTare());
       }
     }
     if (data[1] == 0xAA && data[3] == 0x02) {
@@ -184,14 +184,7 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
         scaleService.setState(ScaleState.connected, index);
         ledOn(); // make the scale report weight by sending an inital write cmd
 
-        final characteristic = QualifiedCharacteristic(
-            serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
-
-        _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
-          _notificationCallback(data);
-        }, onError: (dynamic error) {
-          log.severe("Subscribe to $characteristic failed: $error");
-        });
+        subscribeToNotifications();
 
         return;
       case DeviceConnectionState.disconnected:
@@ -206,6 +199,17 @@ class DecentScale extends ChangeNotifier implements AbstractScale {
       default:
         return;
     }
+  }
+
+  subscribeToNotifications() {
+    final characteristic =
+        QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: ReadCharacteristicUUID, deviceId: device.id);
+
+    _characteristicsSubscription = connection.subscribeToCharacteristic(characteristic).listen((data) {
+      _notificationCallback(data);
+    }, onError: (dynamic error) {
+      log.severe("Subscribe to $characteristic failed: $error");
+    });
   }
 
   @override
