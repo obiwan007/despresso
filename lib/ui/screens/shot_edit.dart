@@ -1,4 +1,5 @@
 import 'package:despresso/generated/l10n.dart';
+import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/refractometer_service.dart';
 import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -98,6 +99,11 @@ class ShotEditState extends State<ShotEdit> {
     coffeeService.addListener(updateCoffee);
     roasters = loadRoasters();
 
+    if (settingsService.hasRefractometer && refractometerService.state != RefractometerState.connected) {
+      getIt<BLEService>().startScan();
+      refractometerService.addListener(updateRefractometer);
+    }
+
     if (widget.selectedShotId > 0) {
       _editedShot = coffeeService.shotBox.get(widget.selectedShotId)!;
     } else {
@@ -126,7 +132,8 @@ class ShotEditState extends State<ShotEdit> {
   void dispose() {
     super.dispose();
     coffeeService.removeListener(updateCoffee);
-    log.info('Disposed coffeeselection');
+    refractometerService.removeListener(updateRefractometer);
+    log.info('Disposed DYE');
   }
 
   @override
@@ -489,5 +496,9 @@ class ShotEditState extends State<ShotEdit> {
     var extractionYield = (pouringWeight * tds) / doseWeight;
     currentForm?.controls['totalDissolvedSolids']?.value = tds;
     currentForm?.controls['extractionYield']?.value = extractionYield;
+  }
+
+  updateRefractometer() {
+    setState(() {});
   }
 }
