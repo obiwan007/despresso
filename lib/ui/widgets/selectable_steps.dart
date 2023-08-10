@@ -26,6 +26,33 @@ class SelectableSteps extends StatelessWidget {
   final Function(int)? onCopied;
   final Function(int, int)? onReordered;
 
+  String? getMoveOnSubtitle(De1ShotFrameClass frame) {
+    bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
+    bool isFlow = (frame.flag & De1ShotFrameClass.dcCompF) > 0;
+    bool isCompared = (frame.flag & De1ShotFrameClass.doCompare) > 0;
+
+    if (!isCompared && frame.maxWeight == 0) {
+      return null;
+    }
+
+    String subtitle = "Move on if ";
+
+    if (isCompared) {
+      subtitle +=
+          "${isFlow ? "flow" : "pressure"} is ${isGt ? "over" : "below"} ${frame.triggerVal.toStringAsFixed(1)} ${isFlow ? "ml/s" : "bar"}";
+
+      if (frame.maxWeight > 0.0) {
+        subtitle += " or ";
+      }
+    }
+
+    if (frame.maxWeight > 0.0) {
+      subtitle += "weight is over ${frame.maxWeight}g";
+    }
+
+    return subtitle;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -87,9 +114,11 @@ class SelectableSteps extends StatelessWidget {
                   ),
                   onDismissed: (direction) {
                     log.info(direction);
-                    if (direction == DismissDirection.startToEnd && onDeleted != null) {
+                    if (direction == DismissDirection.startToEnd &&
+                        onDeleted != null) {
                       onDeleted!(index);
-                    } else if (direction == DismissDirection.endToStart && onCopied != null) {
+                    } else if (direction == DismissDirection.endToStart &&
+                        onCopied != null) {
                       onCopied!(index);
                     }
                     // coffeeService.removeRecipe(data.id);
@@ -158,25 +187,31 @@ class SelectableSteps extends StatelessWidget {
 
   Widget getSubtitle(De1ShotFrameClass frame) {
     bool isMix = ((frame.flag & De1ShotFrameClass.tMixTemp) > 0);
-    bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
-    bool isFlow = (frame.flag & De1ShotFrameClass.dcCompF) > 0;
-    bool isCompared = (frame.flag & De1ShotFrameClass.doCompare) > 0;
     String vol = frame.maxVol > 0 ? " or ${frame.maxVol} ml" : "";
-    String limitFlow = frame.triggerVal > 0 ? "with a pressure limit of ${frame.triggerVal} bar" : "";
-    String limitPressure = frame.triggerVal > 0 ? "with a flow limit of ${frame.triggerVal} ml/s" : "";
+    String limitFlow = frame.triggerVal > 0
+        ? "with a pressure limit of ${frame.triggerVal} bar"
+        : "";
+    String limitPressure = frame.triggerVal > 0
+        ? "with a flow limit of ${frame.triggerVal} ml/s"
+        : "";
     log.info("RenderFrame Test: $frame");
+
+    var moveOnSubtitle = getMoveOnSubtitle(frame);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Set ${isMix ? "water" : "coffee"} temperature to ${frame.temp.toStringAsFixed(0)} °C"),
+        Text(
+            "Set ${isMix ? "water" : "coffee"} temperature to ${frame.temp.toStringAsFixed(0)} °C"),
         if (frame.pump != "pressure")
-          Text("pour ${frame.transition} at rate of ${frame.setVal.toStringAsFixed(1)} ml/s $limitFlow"),
-        if (frame.pump == "pressure")
-          Text("Pressurize ${frame.transition} to ${frame.setVal.toStringAsFixed(1)} bar $limitPressure"),
-        Text("For a maximum of ${frame.frameLen.toStringAsFixed(0)} seconds $vol"),
-        if (isCompared)
           Text(
-              "Move on if ${isFlow ? "flow" : "pressure"} is ${isGt ? "over" : "below"} ${frame.triggerVal.toStringAsFixed(1)} bar"),
+              "pour ${frame.transition} at rate of ${frame.setVal.toStringAsFixed(1)} ml/s $limitFlow"),
+        if (frame.pump == "pressure")
+          Text(
+              "Pressurize ${frame.transition} to ${frame.setVal.toStringAsFixed(1)} bar $limitPressure"),
+        Text(
+            "For a maximum of ${frame.frameLen.toStringAsFixed(0)} seconds $vol"),
+        if (moveOnSubtitle != null) Text(moveOnSubtitle),
       ],
     );
   }

@@ -238,6 +238,7 @@ class De1ShotFrameClass // proc spec_shotframe
   double frameLen = 0.0; // convert_F8_1_7_to_float
   double triggerVal = 0; // {
   double maxVol = 0.0; // convert_bottom_10_of_U10P0
+  double maxWeight = 0.0;
   String name = "";
   String pump = "";
   String sensor = "";
@@ -282,6 +283,7 @@ class De1ShotFrameClass // proc spec_shotframe
     copy.temp = temp;
     copy.transition = transition;
     copy.triggerVal = triggerVal;
+    copy.maxWeight = maxWeight;
 
     return copy;
   }
