@@ -254,6 +254,7 @@ class ProfileService extends ChangeNotifier {
       file.deleteSync();
     }
     await file.create();
+
     var json = profile.toJson();
     log.info("Save json $json");
 
@@ -344,6 +345,7 @@ class ProfileService extends ChangeNotifier {
       buffer.writeln("{");
       buffer.writeln('"name": "${step.name}",');
       buffer.writeln('"temperature": "${step.temp}",');
+      buffer.writeln('"weight": "${step.maxWeight}",');
 
       var sensor = (step.flag & TMixTemp == TMixTemp) ? "water" : "coffee";
       buffer.writeln('"sensor": "$sensor",');
@@ -468,6 +470,7 @@ class ProfileService extends ChangeNotifier {
 
       frame.pump = dynamic2String(frameData["pump"]);
       frame.name = dynamic2String(frameData["name"]);
+      frame.maxWeight = dynamic2Double(frameData["weight"]);
 
       // flow control
       if (!frameData.containsKey("pump")) return false;

@@ -85,6 +85,7 @@ De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
       ..frameLen = (json['frameLen'] as num).toDouble()
       ..triggerVal = (json['triggerVal'] as num).toDouble()
       ..maxVol = (json['maxVol'] as num).toDouble()
+      ..maxWeight = (json['maxWeight'] as num).toDouble()
       ..name = json['name'] as String
       ..pump = json['pump'] as String
       ..sensor = json['sensor'] as String
@@ -100,6 +101,7 @@ Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
       'frameLen': instance.frameLen,
       'triggerVal': instance.triggerVal,
       'maxVol': instance.maxVol,
+      'maxWeight': instance.maxWeight,
       'name': instance.name,
       'pump': instance.pump,
       'sensor': instance.sensor,
