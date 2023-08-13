@@ -194,7 +194,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
     }
   }
 
-  Future<void> _sendHeatbeat() async {
+  Future<void> _sendHeartbeat() async {
     if (_state != DeviceConnectionState.connected) {
       log.info('Disconnected from acaia scale. Not sending heartbeat');
 
@@ -297,7 +297,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         Timer(const Duration(seconds: 1), _sendIdent);
         Timer(const Duration(seconds: 2), _sendConfig);
 
-        _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeatbeat());
+        _heartBeatTimer = Timer.periodic(_heartbeatTime, (Timer t) => _sendHeartbeat());
         return;
       case DeviceConnectionState.disconnected:
         scaleService.setState(ScaleState.disconnected, index);
