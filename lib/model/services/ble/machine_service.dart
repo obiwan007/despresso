@@ -233,6 +233,7 @@ class EspressoMachineService extends ChangeNotifier {
   final List<int> _waterAverager = [];
 
   bool _delayedStopActive = false;
+  int? _delayedMoveOnFrame;
 
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
@@ -594,6 +595,7 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
 
       _delayedStopActive = false;
+      _delayedMoveOnFrame = null;
       isPouring = false;
       shotList.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -741,18 +743,66 @@ class EspressoMachineService extends ChangeNotifier {
             }
           }
 
+          // move-on-at-weight logic
+          // N.B. I tried using linear regression like we do for stop-at-weight
+          // but got really poor results. Probably due to the small amount of
+          // data we have to work with when doing weight-based fill steps etc.
+          // This instead does exponential smoothing over the past ~1s of flow
+          // weight readings.
           if (scaleService.state[0] == ScaleState.connected) {
-            var frame = profileService.currentProfile?.shotFrames[shot.frameNumber];
-            //var stepWeightLimit = state.shotFrame?.maxWeight ?? 0.0;
+            // log.info("weight ${shot.weight}g");
+
+            // if a delayed skip is in progress, start checking for the next one
+            var frameNumberAtMoveOnCalc = _delayedMoveOnFrame != null
+                ? _delayedMoveOnFrame! + 1
+                : shot.frameNumber;
+
+            var frame = profileService
+                .currentProfile?.shotFrames[frameNumberAtMoveOnCalc];
             var stepWeightLimit = frame?.maxWeight ?? 0.0;
-            log.info("frame ${frame?.name}");
-              log.info("step weight: $stepWeightLimit, current weight: ${shot.weight}");
-            if (isPouring &&
+            var flowRate = getSmoothedFlowRate(shot, 5);
+
+            // check if we should skip soon if
+            // - we haven't already queued a skip (or stop)
+            // - water is coming out of the group, even if we're still in
+            //   pre-infusion
+            // - this frame has a weight limit
+            // - and stuff is landing on the scale
+            if (_delayedMoveOnFrame == null &&
+                (isPouring || state.subState == "pre_infuse") &&
                 stepWeightLimit > 0.0 &&
+                flowRate > 0.2 &&
                 _delayedStopActive == false) {
-              if (shot.weight >= stepWeightLimit) {
-                log.info("MOVING ON!");
-                moveToNextFrame();
+              // log.info("flow ${shot.flowWeight}, avg flow $flowRate");
+
+              var timeToWeight = (stepWeightLimit - shot.weight) / flowRate;
+              // log.info("time to weight ${timeToWeight}s");
+
+              if (timeToWeight > 0 && timeToWeight < 1.5) {
+                log.info(
+                    "Frame weight reached soon, starting delayed move on at ${shot.weight}g in ${timeToWeight}s");
+
+                _delayedMoveOnFrame = frameNumberAtMoveOnCalc;
+
+                Future.delayed(
+                  Duration(
+                      milliseconds: ((timeToWeight -
+                                  settingsService
+                                      .targetEspressoWeightTimeAdjust) *
+                              1000)
+                          .toInt()),
+                  () {
+                    if (state.shot!.frameNumber != frameNumberAtMoveOnCalc) {
+                      // some other frame skip was triggered, don't skip twice
+                      return;
+                    }
+
+                    log.info(
+                        "Frame weight reached now!, moving on ${state.shot!.weight}");
+                    _delayedMoveOnFrame = null;
+                    moveToNextFrame();
+                  },
+                );
               }
             }
           }
@@ -1048,6 +1098,15 @@ class EspressoMachineService extends ChangeNotifier {
     } else {
       return 0;
     }
+  }
+
+  double getSmoothedFlowRate(ShotState currentShot, int framesToAvg) {
+    var smoothingFactor = 0.2;
+    var startIdx = max(0, shotList.entries.length - framesToAvg + 1);
+    var flowWeights = shotList.entries.sublist(startIdx).map((shot) => shot.flowWeight).toList();
+    flowWeights.add(currentShot.flowWeight);
+    log.info("asked for $framesToAvg got ${flowWeights.length}");
+    return flowWeights.reduce((value, flow) => smoothingFactor * flow + (1 - smoothingFactor) * flow);
   }
 
   void notify() {
