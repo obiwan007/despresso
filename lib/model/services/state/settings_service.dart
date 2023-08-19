@@ -234,7 +234,7 @@ class SettingsService extends ChangeNotifier {
       Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
   double get stepLimitWeightTimeAdjust =>
-      Settings.getValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name) ?? 0.5;
+      Settings.getValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name) ?? -0.5;
   set stepLimitWeightTimeAdjust(value) =>
       Settings.setValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name, value);
 

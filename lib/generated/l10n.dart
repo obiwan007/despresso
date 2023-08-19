@@ -2016,16 +2016,6 @@ class S {
     );
   }
 
-  /// `Stop before step "move on at weight" reached [s]`
-  String get screenSettingsStopBeforeStepWeightWasReachedS {
-    return Intl.message(
-      'Stop before step weight limit is reached [s]',
-      name: 'screenSettingsStopBeforeStepWeightWasReachedS',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Stop on Weight if scale detected`
   String get screenSettingsStopOnWeightIfScaleDetected {
     return Intl.message(
