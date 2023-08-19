@@ -750,7 +750,7 @@ class EspressoMachineService extends ChangeNotifier {
           // This instead does exponential smoothing over the past ~1s of flow
           // weight readings.
           if (scaleService.state[0] == ScaleState.connected) {
-            // log.info("weight ${shot.weight}g");
+            log.info("weight ${shot.weight}g");
 
             // if a delayed skip is in progress, start checking for the next one
             var frameNumberAtMoveOnCalc = _delayedMoveOnFrame != null
@@ -767,18 +767,18 @@ class EspressoMachineService extends ChangeNotifier {
             // - water is coming out of the group, even if we're still in
             //   pre-infusion
             // - this frame has a weight limit
-            // - and stuff is landing on the scale
+            // - and some fluid has come out of the portafilter
             if (_delayedMoveOnFrame == null &&
                 (isPouring || state.subState == "pre_infuse") &&
                 stepWeightLimit > 0.0 &&
-                flowRate > 0.2 &&
+                shot.weight > 0.0 &&
                 _delayedStopActive == false) {
-              // log.info("flow ${shot.flowWeight}, avg flow $flowRate");
+              log.info("flow ${shot.flowWeight}, avg flow $flowRate");
 
               var timeToWeight = (stepWeightLimit - shot.weight) / flowRate;
-              // log.info("time to weight ${timeToWeight}s");
+              log.info("time to weight ${timeToWeight}s");
 
-              if (timeToWeight > 0 && timeToWeight < 1.5) {
+              if (timeToWeight > 0 && timeToWeight < 1.0) {
                 log.info(
                     "Frame weight reached soon, starting delayed move on at ${shot.weight}g in ${timeToWeight}s");
 
@@ -786,9 +786,9 @@ class EspressoMachineService extends ChangeNotifier {
 
                 Future.delayed(
                   Duration(
-                      milliseconds: ((timeToWeight -
+                      milliseconds: (max(0, timeToWeight -
                                   settingsService
-                                      .targetEspressoWeightTimeAdjust) *
+                                      .stepLimitWeightTimeAdjust) *
                               1000)
                           .toInt()),
                   () {
