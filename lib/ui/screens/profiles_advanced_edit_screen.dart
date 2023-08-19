@@ -394,14 +394,14 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 const SizedBox(
                   width: 10,
                 ),
-                if (frame.maxVol > 0)
+                if (frame.maxWeight > 0.0)
                   Column(
                     children: [
                       Text(
-                        (frame.maxVol.toStringAsFixed(1)),
+                        (frame.maxWeight.toStringAsFixed(1)),
                         style: style3,
                       ),
-                      Text("ml", style: style3),
+                      Text("g", style: style3),
                     ],
                   ),
               ],
