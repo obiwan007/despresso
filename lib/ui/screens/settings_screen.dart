@@ -459,7 +459,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     title: S.of(context).screenSettingsStopBeforeStepWeightWasReachedS,
                     settingKey: SettingKeys.stepLimitWeightTimeAdjust.name,
                     defaultValue: settingsService.stepLimitWeightTimeAdjust,
-                    min: 0.0,
+                    min: -1.0,
                     max: 1.0,
                     step: 0.05,
                     leading: const Icon(Icons.timer),

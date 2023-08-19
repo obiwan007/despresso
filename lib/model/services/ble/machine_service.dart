@@ -760,7 +760,8 @@ class EspressoMachineService extends ChangeNotifier {
             var frame = profileService
                 .currentProfile?.shotFrames[frameNumberAtMoveOnCalc];
             var stepWeightLimit = frame?.maxWeight ?? 0.0;
-            var flowRate = getSmoothedFlowRate(shot, 5);
+
+            log.info("DEBUG $_delayedMoveOnFrame $isPouring $stepWeightLimit ${shot.weight} $_delayedStopActive");
 
             // check if we should skip soon if
             // - we haven't already queued a skip (or stop)
@@ -773,22 +774,26 @@ class EspressoMachineService extends ChangeNotifier {
                 stepWeightLimit > 0.0 &&
                 shot.weight > 0.0 &&
                 _delayedStopActive == false) {
+              var flowRate = getSmoothedFlowRate(shot, 5);
               log.info("flow ${shot.flowWeight}, avg flow $flowRate");
 
               var timeToWeight = (stepWeightLimit - shot.weight) / flowRate;
               log.info("time to weight ${timeToWeight}s");
 
-              if (timeToWeight > 0 && timeToWeight < 1.0) {
+              // allow small negative values in case we just missed our chance
+              if (timeToWeight > -1.0 && timeToWeight < 1.0) {
                 log.info(
                     "Frame weight reached soon, starting delayed move on at ${shot.weight}g in ${timeToWeight}s");
 
                 _delayedMoveOnFrame = frameNumberAtMoveOnCalc;
 
+              var userAdjustedTimeToWeight = timeToWeight +
+                                  settingsService
+                                      .stepLimitWeightTimeAdjust;
+
                 Future.delayed(
                   Duration(
-                      milliseconds: (max(0, timeToWeight -
-                                  settingsService
-                                      .stepLimitWeightTimeAdjust) *
+                      milliseconds: (max(0, userAdjustedTimeToWeight ) *
                               1000)
                           .toInt()),
                   () {
@@ -1098,13 +1103,37 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
+  // Get exponentially-smoothed flow rate over given period
+  // note this doesn't use flowWeight since the scale service averages flow
+  // over 10 readings, which results in too-small flow values at the start of
+  // the shot.
   double getSmoothedFlowRate(ShotState currentShot, int framesToAvg) {
-    var smoothingFactor = 0.2;
+    // gather shot states
     var startIdx = max(0, shotList.entries.length - framesToAvg + 1);
-    var flowWeights = shotList.entries.sublist(startIdx).map((shot) => shot.flowWeight).toList();
-    flowWeights.add(currentShot.flowWeight);
-    log.info("asked for $framesToAvg got ${flowWeights.length}");
-    return flowWeights.reduce((value, flow) => smoothingFactor * flow + (1 - smoothingFactor) * flow);
+    var shotStates = shotList.entries.sublist(startIdx);
+    shotStates.add(currentShot);
+
+    if (shotStates.length < 2) {
+      return 0.0;
+    }
+
+    // calculate flow rates
+    // TODO records would be better here but need to enable support
+    var flowRates = List.generate(shotStates.length - 1,
+            (index) => [shotStates[index], shotStates[index + 1]])
+        .map((pair) =>
+            (pair[1].weight - pair[0].weight) /
+            (pair[1].sampleTime - pair[0].sampleTime))
+        // TODO: occasionally +-Infinity comes up
+        // why are there shot states with identical sample times?
+        .where((flowRate) => flowRate.isFinite)
+        .toList();
+
+    log.info("flow rate samples $flowRates");
+
+    var smoothingFactor = 0.2;
+    return flowRates.reduce(
+        (value, flow) => smoothingFactor * flow + (1 - smoothingFactor) * value);
   }
 
   void notify() {
@@ -1137,7 +1166,7 @@ class LineEq {
 
   getY(double x) {
     double y = (m) * (x - x1) + b;
-    log.info("lin: $y = ($m * $x + $b");
+    // log.info("lin: $y = ($m * $x + $b");
     return y;
   }
 }
