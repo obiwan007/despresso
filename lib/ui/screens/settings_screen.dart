@@ -454,6 +454,16 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     leading: const Icon(Icons.timer),
                     onChange: (value) {},
                   ),
+                  SliderSettingsTile(
+                    title: S.of(context).screenSettingsStopBeforeStepWeightWasReachedS,
+                    settingKey: SettingKeys.stepLimitWeightTimeAdjust.name,
+                    defaultValue: settingsService.stepLimitWeightTimeAdjust,
+                    min: 0.0,
+                    max: 1.0,
+                    step: 0.05,
+                    leading: const Icon(Icons.timer),
+                    onChange: (value) {},
+                  ),
                   SwitchSettingsTile(
                     settingKey: SettingKeys.shotAutoTare.name,
                     defaultValue: settingsService.shotAutoTare,
