@@ -50,6 +50,7 @@ enum SettingKeys {
   targetGroupTemp,
   targetEspressoWeight,
   targetEspressoWeightTimeAdjust,
+  stepLimitWeightTimeAdjust,
   targetWaterlevel,
   webServer,
   targetTempCorrection,
@@ -231,6 +232,11 @@ class SettingsService extends ChangeNotifier {
       Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
   set targetEspressoWeightTimeAdjust(value) =>
       Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
+
+  double get stepLimitWeightTimeAdjust =>
+      Settings.getValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name) ?? 0.5;
+  set stepLimitWeightTimeAdjust(value) =>
+      Settings.setValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name, value);
 
   double get targetFlushTime => Settings.getValue<double>(SettingKeys.targetFlushTime.name) ?? 3.0;
   set targetFlushTime(double value) => Settings.setValue<double>(SettingKeys.targetFlushTime.name, value);
