@@ -752,11 +752,7 @@ class EspressoMachineService extends ChangeNotifier {
           if (scaleService.state[0] == ScaleState.connected) {
             log.info("weight ${shot.weight}g");
 
-            // if a delayed skip is in progress, start checking for the next one
-            var frameNumberAtMoveOnCalc = _delayedMoveOnFrame != null
-                ? _delayedMoveOnFrame! + 1
-                : shot.frameNumber;
-
+            var frameNumberAtMoveOnCalc = shot.frameNumber;
             var frame = profileService
                 .currentProfile?.shotFrames[frameNumberAtMoveOnCalc];
             var stepWeightLimit = frame?.maxWeight ?? 0.0;
@@ -774,8 +770,8 @@ class EspressoMachineService extends ChangeNotifier {
                 stepWeightLimit > 0.0 &&
                 shot.weight > 0.0 &&
                 _delayedStopActive == false) {
-              var flowRate = getSmoothedFlowRate(shot, 5);
-              log.info("flow ${shot.flowWeight}, avg flow $flowRate");
+              var flowRate = getFlowRateForecast(shot, 1.0);
+              log.info("flow ${shot.flowWeight}, flow rate forecast $flowRate");
 
               var timeToWeight = (stepWeightLimit - shot.weight) / flowRate;
               log.info("time to weight ${timeToWeight}s");
@@ -784,8 +780,6 @@ class EspressoMachineService extends ChangeNotifier {
               if (timeToWeight > -1.0 && timeToWeight < 1.0) {
                 log.info(
                     "Frame weight reached soon, starting delayed move on at ${shot.weight}g in ${timeToWeight}s");
-
-                _delayedMoveOnFrame = frameNumberAtMoveOnCalc;
 
               var userAdjustedTimeToWeight = timeToWeight +
                                   settingsService
@@ -1105,37 +1099,131 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
-  // Get exponentially-smoothed flow rate over given period
-  // note this doesn't use flowWeight since the scale service averages flow
+  // Linear interpolation
+  // xpNew: the new x-coordinates to interpolate values to
+  // xp: x-coordinates of the original data
+  // fp: y-coordinates of the original data
+  List<double> interp(List<double> xpNew, List<double> xp, List<double> fp) {
+    if (xp.length != fp.length) {
+      throw ArgumentError(
+          "Input lists 'xp' and 'fp' must have the same length.");
+    }
+
+    List<double> results = [];
+
+    for (int i = 0; i < xpNew.length; i++) {
+      double x = xpNew[i];
+
+      int j = 0;
+      while (j < xp.length - 1 && xp[j + 1] <= x) {
+        j++;
+      }
+
+      double x0 = xp[j];
+      double x1 = xp[j + 1];
+      double f0 = fp[j];
+      double f1 = fp[j + 1];
+
+      double interpolatedValue = f0 + (f1 - f0) * (x - x0) / (x1 - x0);
+      results.add(interpolatedValue);
+    }
+
+    return results;
+  }
+
+  // Double exponential smoothing over the given data. Data points are assumed
+  // to have equal temporal spacing. Returns the values of s, b at each point.
+  List<List<double>> doubleExponentialSmoothing(List<double> input,
+      double dataSmoothingFactor, double trendSmoothingFactor) {
+    var s = input[0];
+    var b = input[1] - input[0];
+
+    List<List<double>> result = [[s, b]];
+
+    input.sublist(1).forEach((x) {
+      var s_1 = s;
+      var b_1 = b;
+      s = x * dataSmoothingFactor + (1 - dataSmoothingFactor) * (s_1 + b_1);
+      b = trendSmoothingFactor * (s - s_1) + (1 - trendSmoothingFactor) * b_1;
+      result.add([s, b]);
+    });
+
+    return result;
+  }
+
+  // Get flow rate forecast using double exponential smoothing.
+  // note we don't use flowWeight since the scale service averages flow
   // over 10 readings, which results in too-small flow values at the start of
   // the shot.
-  double getSmoothedFlowRate(ShotState currentShot, int framesToAvg) {
-    // gather shot states
-    var startIdx = max(0, shotList.entries.length - framesToAvg + 1);
-    var shotStates = shotList.entries.sublist(startIdx);
-    shotStates.add(currentShot);
+  double getFlowRateForecast(
+      ShotState currentShot, double sampleWindowSeconds) {
+    var sampleStartTime = currentShot.sampleTime - sampleWindowSeconds;
+    var samplesStartIndex = shotList.entries.length - 1;
+    List<ShotState> samples = [currentShot];
 
-    if (shotStates.length < 2) {
+    // iterate backwards through shots until we find the start of the window
+    while (samplesStartIndex >= 0 &&
+        shotList.entries[samplesStartIndex].sampleTime > sampleStartTime) {
+      if (!shotList.entries[samplesStartIndex].isInterpolated) {
+        samples.add(shotList.entries[samplesStartIndex]);
+      }
+
+      samplesStartIndex--;
+    }
+
+    if (samples.isEmpty) {
       return 0.0;
     }
 
-    // calculate flow rates
-    // TODO records would be better here but need to enable support
-    var flowRates = List.generate(shotStates.length - 1,
-            (index) => [shotStates[index], shotStates[index + 1]])
-        .map((pair) =>
-            (pair[1].weight - pair[0].weight) /
-            (pair[1].sampleTime - pair[0].sampleTime))
-        // TODO: occasionally +-Infinity comes up
-        // why are there shot states with identical sample times?
-        .where((flowRate) => flowRate.isFinite)
-        .toList();
+    if (samples.length == 1) {
+      return samples[0].flowWeight;
+    }
 
-    log.info("flow rate samples $flowRates");
+    // samples are in reverse order at the moment
+    var selectedSamples = samples.reversed;
 
-    var smoothingFactor = 0.2;
-    return flowRates.reduce(
-        (value, flow) => smoothingFactor * flow + (1 - smoothingFactor) * value);
+    var selectedSampleWeights =
+        selectedSamples.map((shot) => shot.weight).toList();
+    var selectedSampleTimes =
+        selectedSamples.map((shot) => shot.sampleTime).toList();
+
+    // this will probably be slightly different than the requested sample window
+    var actualSampleWindow = samples.first.sampleTime - samples.last.sampleTime;
+
+    // get a list of equally spaced sample times between the start and end
+    // of the sample window
+    var timestep = actualSampleWindow / samples.length;
+    var interpolatedSampleTimes =
+        List.generate(samples.length, (i) => i * timestep + samples.last.sampleTime);
+
+    var interpolatedSampleWeights = interp(
+        interpolatedSampleTimes, selectedSampleTimes, selectedSampleWeights);
+
+    // These values for data smoothing, trend smoothing factors were found by
+    // minimizing square error of forecast weights on real shot data
+    var smoothed = doubleExponentialSmoothing(interpolatedSampleWeights, 0.6, 0.5);
+
+    // double exponential forecast is given by adding b * m to the last smoothed
+    // value, where "m" is a discrete number of time steps.
+    // Therefore the gradient is b divided by the time step size
+    // (and weight gradient == flow rate)
+    var b = smoothed.last[1];
+    var gradient = b / timestep;
+
+    // multiplying by the ratio of current : previous flow rate slightly
+    // improves fit IME, using b alone under-estimates increase/decreases in
+    // flow rate
+    var b_2 = smoothed[smoothed.length - 2][1];
+    var fudgeFactor = b / b_2;
+    fudgeFactor = fudgeFactor.isFinite ? fudgeFactor : 1;
+
+    log.info("weight samples $selectedSampleWeights");
+    log.info("time samples $selectedSampleTimes");
+    log.info("interpolated weight samples $interpolatedSampleWeights");
+    log.info("interpolated time samples $interpolatedSampleTimes");
+    log.info("exp smooth result $smoothed");
+
+    return gradient * fudgeFactor;
   }
 
   void notify() {
