@@ -455,7 +455,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     onChange: (value) {},
                   ),
                   SliderSettingsTile(
-                    title: S.of(context).screenSettingsStopBeforeStepWeightWasReachedS,
+                    title: "Delay move-on-at-weight [s]",
                     settingKey: SettingKeys.stepLimitWeightTimeAdjust.name,
                     defaultValue: settingsService.stepLimitWeightTimeAdjust,
                     min: -1.0,
