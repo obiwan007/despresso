@@ -391,7 +391,7 @@
   "screenSettingsSpecialBluetoothDevices": "Special Bluetooth devices",
   "@screenSettingsSpecialBluetoothDevices": {},
   "screenSettingsStopBeforeWeightWasReachedS": "Stop before weight was reached [s]",
-  "@screenSettingsStopBeforeWeightWasReachedS": 'Offset move-on-at-weight delay [s]',
+  "@screenSettingsStopBeforeWeightWasReachedS": {},
   "screenSettingsStopOnWeightIfScaleDetected": "Stop on Weight if scale detected",
   "@screenSettingsStopOnWeightIfScaleDetected": {},
   "screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor": "Switch de1 to sleep mode if it is idle for some time [min]",
