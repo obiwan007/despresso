@@ -455,7 +455,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     onChange: (value) {},
                   ),
                   SliderSettingsTile(
-                    title: S.of(context).screenSettingsStopBeforeStepWeightWasReachedS,
+                    title: "Stop befoire weight was reached",
                     settingKey: SettingKeys.stepLimitWeightTimeAdjust.name,
                     defaultValue: settingsService.stepLimitWeightTimeAdjust,
                     min: -1.0,
@@ -694,36 +694,34 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     ),
                   ],
                 ),
-                SettingsGroup(
-                  title: "Tablet sleep",
-                  children: [
-                    SwitchSettingsTile(
-                      title: "Allow tablet sleep during screensaver",
-                      settingKey: SettingKeys.tabletSleepDuringScreensaver.name,
-                      defaultValue: settingsService.tabletSleepDuringScreensaver,
-                      childrenIfEnabled: [
-                        SliderSettingsTile(
-                          title: "Minutes to spend in screensaver before allowing sleep",
-                          settingKey: SettingKeys.tabletSleepDuringScreensaverTimeout.name,
-                          defaultValue: settingsService.tabletSleepDuringScreensaverTimeout,
-                          min: 0,
-                          max: 240,
-                          step: 5,
-                          decimalPrecision: 0,
-                        ),
-                      ],
-                    ),
-                    SwitchSettingsTile(
-                      title: "Allow tablet sleep when machine is sleeping or disconnected",
-                      settingKey: SettingKeys.tabletSleepWhenMachineOff.name,
-                      defaultValue: settingsService.tabletSleepWhenMachineOff,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16, bottom: 32, left: 16, right: 16),
-                      child: Text("Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
-                    )
-                  ]
-                ),
+                SettingsGroup(title: "Tablet sleep", children: [
+                  SwitchSettingsTile(
+                    title: "Allow tablet sleep during screensaver",
+                    settingKey: SettingKeys.tabletSleepDuringScreensaver.name,
+                    defaultValue: settingsService.tabletSleepDuringScreensaver,
+                    childrenIfEnabled: [
+                      SliderSettingsTile(
+                        title: "Minutes to spend in screensaver before allowing sleep",
+                        settingKey: SettingKeys.tabletSleepDuringScreensaverTimeout.name,
+                        defaultValue: settingsService.tabletSleepDuringScreensaverTimeout,
+                        min: 0,
+                        max: 240,
+                        step: 5,
+                        decimalPrecision: 0,
+                      ),
+                    ],
+                  ),
+                  SwitchSettingsTile(
+                    title: "Allow tablet sleep when machine is sleeping or disconnected",
+                    settingKey: SettingKeys.tabletSleepWhenMachineOff.name,
+                    defaultValue: settingsService.tabletSleepWhenMachineOff,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 32, left: 16, right: 16),
+                    child: Text(
+                        "Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
+                  )
+                ]),
               ]),
             ),
             SimpleSettingsTile(
