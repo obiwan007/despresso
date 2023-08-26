@@ -394,14 +394,14 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 const SizedBox(
                   width: 10,
                 ),
-                if (frame.maxVol > 0)
+                if (frame.maxWeight > 0.0)
                   Column(
                     children: [
                       Text(
-                        (frame.maxVol.toStringAsFixed(1)),
+                        (frame.maxWeight.toStringAsFixed(1)),
                         style: style3,
                       ),
-                      Text("ml", style: style3),
+                      Text("g", style: style3),
                     ],
                   ),
               ],
@@ -672,7 +672,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
         }),
       ),
       SingleChildScrollView(
-        child: changeMoveOnIf(unit: "sec", title: "Time", min: 0, max: 100, frame, frame.frameLen, (value) {
+        child: changeMoveOnIf(unit: "sec", title: "Time", min: 0, maxValue: 100, frame, frame.frameLen, (value) {
           setState(() {});
           log.info("Changed");
         }),
@@ -1080,111 +1080,183 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     );
   }
 
-  Widget changeMoveOnIf(De1ShotFrameClass frame, double value, Function(De1ShotFrameClass value) valueChanged,
-      {required String unit, required double max, required double min, double? interval, String? title}) {
+  Widget changeMoveOnIf(De1ShotFrameClass frame, double value,
+      Function(De1ShotFrameClass value) valueChanged,
+      {required String unit,
+      required double maxValue,
+      required double min,
+      double? interval,
+      String? title}) {
     bool isComparing = ((frame.flag & De1ShotFrameClass.doCompare) > 0);
+    bool isComparingWeight = frame.maxWeight > 0.0;
     bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
     bool isFlow = (frame.flag & De1ShotFrameClass.dcCompF) > 0;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: IntrinsicHeight(
-            child: Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(width: 75, child: Text("Do\ncompare:", style: Theme.of(context).textTheme.labelMedium)),
-                      Switch(
-                        value: isComparing,
-                        onChanged: (value) {
-                          var mask = frame.flag & (255 - De1ShotFrameClass.doCompare);
-                          if (!value) {
-                            frame.flag &= mask;
-                          } else {
-                            frame.flag |= De1ShotFrameClass.doCompare;
-                          }
+    return Padding(
+        padding: const EdgeInsets.all(28.0),
+        child: Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 200,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                            width: 75,
+                            child: Text("Do\ncompare:",
+                                style:
+                                    Theme.of(context).textTheme.labelMedium)),
+                        Switch(
+                          value: isComparing,
+                          onChanged: (value) {
+                            var mask = frame.flag &
+                                (255 - De1ShotFrameClass.doCompare);
+                            if (!value) {
+                              frame.flag &= mask;
+                            } else {
+                              frame.flag |= De1ShotFrameClass.doCompare;
+                            }
 
-                          valueChanged(frame);
-                        },
+                            valueChanged(frame);
+                          },
+                        ),
+                      ],
+                    ),
+                    if (isComparing)
+                      Row(
+                        children: [
+                          SizedBox(
+                              width: 55,
+                              child: Text("If:",
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium)),
+                          ToggleButtons(
+                            isSelected: [!isFlow, isFlow],
+                            onPressed: (index) {
+                              var mask = frame.flag &
+                                  (255 - De1ShotFrameClass.dcCompF);
+                              if (index == 0) {
+                                frame.flag &= mask;
+                              } else {
+                                frame.flag |= De1ShotFrameClass.dcCompF;
+                              }
+
+                              valueChanged(frame);
+                            },
+                            children: const [Text("Pressure"), Text("Flow")],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  if (isComparing)
-                    Row(
-                      children: [
-                        SizedBox(width: 55, child: Text("If:", style: Theme.of(context).textTheme.labelMedium)),
-                        ToggleButtons(
-                          isSelected: [!isFlow, isFlow],
-                          onPressed: (index) {
-                            var mask = frame.flag & (255 - De1ShotFrameClass.dcCompF);
-                            if (index == 0) {
-                              frame.flag &= mask;
-                            } else {
-                              frame.flag |= De1ShotFrameClass.dcCompF;
-                            }
+                    if (isComparing)
+                      Row(
+                        children: [
+                          SizedBox(
+                              width: 55,
+                              child: Text("is:",
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium)),
+                          ToggleButtons(
+                            isSelected: [isGt, !isGt],
+                            onPressed: (index) {
+                              // DC_GT
+                              var mask =
+                                  frame.flag & (255 - De1ShotFrameClass.dcGT);
+                              if (index == 1) {
+                                frame.flag &= mask;
+                              } else {
+                                frame.flag |= De1ShotFrameClass.dcGT;
+                              }
 
-                            valueChanged(frame);
-                          },
-                          children: const [Text("Pressure"), Text("Flow")],
-                        ),
-                      ],
-                    ),
-                  if (isComparing)
-                    Row(
-                      children: [
-                        SizedBox(width: 55, child: Text("is:", style: Theme.of(context).textTheme.labelMedium)),
-                        ToggleButtons(
-                          isSelected: [isGt, !isGt],
-                          onPressed: (index) {
-                            // DC_GT
-                            var mask = frame.flag & (255 - De1ShotFrameClass.dcGT);
-                            if (index == 1) {
-                              frame.flag &= mask;
-                            } else {
-                              frame.flag |= De1ShotFrameClass.dcGT;
-                            }
-
-                            valueChanged(frame);
-                          },
-                          children: const [Text(" over "), Text(" below ")],
-                        ),
-                      ],
-                    ),
-                ],
+                              valueChanged(frame);
+                            },
+                            children: const [Text(" over "), Text(" below ")],
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: SizedBox(
-              height: 160,
-              child: !isComparing
-                  ? null
-                  : changeValueRow(
+              Expanded(
+                flex: 2,
+                child: Visibility(
+                  visible: isComparing,
+                  child: changeValueRow(
                       unit: isFlow ? "ml/s" : "bar",
-                      title: isFlow ? "${isGt ? ">" : "<"} Flow" : "${isGt ? ">" : "<"} Pressure",
+                      title: isFlow
+                          ? "${isGt ? ">" : "<"} Flow"
+                          : "${isGt ? ">" : "<"} Pressure",
                       min: 0,
                       max: 16,
                       interval: 1,
                       frame,
                       frame.triggerVal, (value) {
-                      frame.triggerVal = value;
+                    frame.triggerVal = value;
 
-                      setState(() {});
-                      log.info("Changed");
-                    }),
-            ),
+                    setState(() {});
+                    log.info("Changed");
+                  }),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 200,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                            width: 75,
+                            child: Text("Compare weight",
+                                style:
+                                    Theme.of(context).textTheme.labelMedium)),
+                        Switch(
+                          value: isComparingWeight,
+                          onChanged: (value) {
+                            if (value) {
+                              frame.maxWeight = 0.1;
+                            } else {
+                              frame.maxWeight = 0.0;
+                            }
+
+                            valueChanged(frame);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Visibility(
+                  visible: isComparingWeight,
+                  child: changeValueRow(
+                      unit: "g",
+                      title: "> Weight",
+                      min: 0,
+                      max: 50,
+                      interval: 5,
+                      frame,
+                      frame.maxWeight, (value) {
+                    frame.maxWeight = max(value, 0.1);
+
+                    setState(() {});
+                    log.info("Changed");
+                  }),
+                ),
+              ),
+            ],
+          ),
+        ]));
   }
 
   Widget changeValue(De1ShotFrameClass frame, double value, Function(double value) valueChanged,
@@ -1242,10 +1314,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
 
   Widget changeValueRow(De1ShotFrameClass frame, double value, Function(double value) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
-    return IntrinsicHeight(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+    return Column(
           children: [
             Row(
               children: [
@@ -1293,8 +1362,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               },
             ),
           ],
-        ),
-      ),
-    );
+        );
   }
 }
