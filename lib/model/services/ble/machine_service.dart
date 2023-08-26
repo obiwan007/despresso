@@ -101,6 +101,13 @@ const waterMap = [
   2058,
 ];
 
+class TimedWeightMeasurement {
+  TimedWeightMeasurement(this.weight, this.time);
+
+  WeightMeassurement weight;
+  double time;
+}
+
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
 
@@ -196,6 +203,11 @@ class EspressoMachineService extends ChangeNotifier {
   late CoffeeService coffeeService;
   late SettingsService settingsService;
 
+  // Keeps track of events from ScaleService (cleared at start of shot).
+  // Useful if you need weight samples that aren't quantized to ShotList
+  // elements
+  List<TimedWeightMeasurement> weightMeasurementsDuringShot = [];
+
   ShotList shotList = ShotList([]);
   double baseTime = 0;
 
@@ -233,7 +245,7 @@ class EspressoMachineService extends ChangeNotifier {
   final List<int> _waterAverager = [];
 
   bool _delayedStopActive = false;
-  int? _delayedMoveOnFrame;
+  Set<int> _delayedMoveOnFrames = {};
 
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
@@ -294,6 +306,12 @@ class EspressoMachineService extends ChangeNotifier {
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
     coffeeService = getIt<CoffeeService>();
+
+    scaleService.stream0.listen((measurement) {
+    if (state.subState == "pour" || state.subState == "pre_infuse" || state.subState =="heat_water_heater") {
+      weightMeasurementsDuringShot.add(TimedWeightMeasurement(measurement, DateTime.now().millisecondsSinceEpoch  / 1000.0));
+      }
+    });
 
     log.fine('Preferences loaded');
 
@@ -595,9 +613,10 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
 
       _delayedStopActive = false;
-      _delayedMoveOnFrame = null;
+      _delayedMoveOnFrames = {};
       isPouring = false;
       shotList.clear();
+      weightMeasurementsDuringShot.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log.info("basetime $baseTime");
       lastPourTime = 0;
@@ -757,7 +776,8 @@ class EspressoMachineService extends ChangeNotifier {
                 .currentProfile?.shotFrames[frameNumberAtMoveOnCalc];
             var stepWeightLimit = frame?.maxWeight ?? 0.0;
 
-            log.info("DEBUG $_delayedMoveOnFrame $isPouring $stepWeightLimit ${shot.weight} $_delayedStopActive");
+            log.info("DEBUG ${_delayedMoveOnFrames.contains(frameNumberAtMoveOnCalc)} $isPouring ${shot.subState} $stepWeightLimit ${shot.weight} $_delayedStopActive");
+            // log.info("listened weights ${thing.map((m) => m.weight.weight)}");
 
             // check if we should skip soon if
             // - we haven't already queued a skip (or stop)
@@ -765,21 +785,21 @@ class EspressoMachineService extends ChangeNotifier {
             //   pre-infusion
             // - this frame has a weight limit
             // - and some fluid has come out of the portafilter
-            if (_delayedMoveOnFrame == null &&
+            if (!_delayedMoveOnFrames.contains(frameNumberAtMoveOnCalc) &&
                 (isPouring || state.subState == "pre_infuse") &&
                 stepWeightLimit > 0.0 &&
                 shot.weight > 0.0 &&
                 _delayedStopActive == false) {
-              var flowRate = getFlowRateForecast(shot, 1.0);
-              log.info("flow ${shot.flowWeight}, flow rate forecast $flowRate");
-
-              var timeToWeight = (stepWeightLimit - shot.weight) / flowRate;
+              var timeToWeight = getTimeToWeightForecast(shot.sampleTime - 1.0, shot.sampleTime, stepWeightLimit);
+              log.info("flow ${shot.flowWeight}");
               log.info("time to weight ${timeToWeight}s");
 
               // allow small negative values in case we just missed our chance
               if (timeToWeight > -1.0 && timeToWeight < 1.0) {
                 log.info(
                     "Frame weight reached soon, starting delayed move on at ${shot.weight}g in ${timeToWeight}s");
+
+                _delayedMoveOnFrames.add(frameNumberAtMoveOnCalc);
 
               var userAdjustedTimeToWeight = timeToWeight +
                                   settingsService
@@ -798,7 +818,6 @@ class EspressoMachineService extends ChangeNotifier {
 
                     log.info(
                         "Frame weight reached now!, moving on ${state.shot!.weight}");
-                    _delayedMoveOnFrame = null;
                     moveToNextFrame();
                   },
                 );
@@ -1113,7 +1132,7 @@ class EspressoMachineService extends ChangeNotifier {
       double x = xpNew[i];
 
       int j = 0;
-      while (j < xp.length - 1 && xp[j + 1] <= x) {
+      while (j < xp.length - 1 && xp[j + 1] < x) {
         j++;
       }
 
@@ -1149,57 +1168,44 @@ class EspressoMachineService extends ChangeNotifier {
     return result;
   }
 
-  // Get flow rate forecast using double exponential smoothing.
-  // note we don't use flowWeight since the scale service averages flow
-  // over 10 readings, which results in too-small flow values at the start of
-  // the shot.
-  double getFlowRateForecast(
-      ShotState currentShot, double sampleWindowSeconds) {
-    var sampleStartTime = currentShot.sampleTime - sampleWindowSeconds;
-    var samplesStartIndex = shotList.entries.length - 1;
-    List<ShotState> samples = [currentShot];
-
-    // iterate backwards through shots until we find the start of the window
-    while (samplesStartIndex >= 0 &&
-        shotList.entries[samplesStartIndex].sampleTime > sampleStartTime) {
-      if (!shotList.entries[samplesStartIndex].isInterpolated) {
-        samples.add(shotList.entries[samplesStartIndex]);
-      }
-
-      samplesStartIndex--;
-    }
+  // Get remaining time to given weight using double exponential smoothing.
+  double getTimeToWeightForecast(
+      double sampleWindowStart, double sampleWindowEnd, double targetWeight) {
+    var samples = weightMeasurementsDuringShot
+        .where((m) => m.time >= sampleWindowStart && m.time <= sampleWindowEnd);
 
     if (samples.isEmpty) {
       return 0.0;
     }
 
     if (samples.length == 1) {
-      return samples[0].flowWeight;
+      return samples.first.weight.flow;
     }
 
-    // samples are in reverse order at the moment
-    var selectedSamples = samples.reversed;
-
-    var selectedSampleWeights =
-        selectedSamples.map((shot) => shot.weight).toList();
-    var selectedSampleTimes =
-        selectedSamples.map((shot) => shot.sampleTime).toList();
+    var selectedSampleWeights = samples.map((m) => m.weight.weight).toList();
+    var selectedSampleTimes = samples.map((m) => m.time).toList();
 
     // this will probably be slightly different than the requested sample window
-    var actualSampleWindow = samples.first.sampleTime - samples.last.sampleTime;
+    var actualSampleWindow = samples.last.time - samples.first.time;
 
     // get a list of equally spaced sample times between the start and end
     // of the sample window
-    var timestep = actualSampleWindow / samples.length;
+    // This might be a bad approach depending on the variance in the
+    // scale's reporting - investigate better solutions?
+    var timestep = actualSampleWindow / (samples.length - 1);
+
     var interpolatedSampleTimes =
-        List.generate(samples.length, (i) => i * timestep + samples.last.sampleTime);
+        List.generate(samples.length, (i) => i * timestep + samples.first.time);
+
+    log.info("hmmmm $actualSampleWindow $timestep $interpolatedSampleTimes $selectedSampleTimes");
 
     var interpolatedSampleWeights = interp(
         interpolatedSampleTimes, selectedSampleTimes, selectedSampleWeights);
 
     // These values for data smoothing, trend smoothing factors were found by
     // minimizing square error of forecast weights on real shot data
-    var smoothed = doubleExponentialSmoothing(interpolatedSampleWeights, 0.6, 0.5);
+    var smoothed =
+        doubleExponentialSmoothing(interpolatedSampleWeights, 0.6, 0.5);
 
     // double exponential forecast is given by adding b * m to the last smoothed
     // value, where "m" is a discrete number of time steps.
@@ -1215,13 +1221,22 @@ class EspressoMachineService extends ChangeNotifier {
     var fudgeFactor = b / b_2;
     fudgeFactor = fudgeFactor.isFinite ? fudgeFactor : 1;
 
+    var flow = gradient * fudgeFactor;
+
+    // The last weight sample probably occurred a little before "now"
+    // so the time would be a little too late without this adjustment
+    var timeOffset = interpolatedSampleTimes.last - sampleWindowEnd;
+
     log.info("weight samples $selectedSampleWeights");
     log.info("time samples $selectedSampleTimes");
     log.info("interpolated weight samples $interpolatedSampleWeights");
     log.info("interpolated time samples $interpolatedSampleTimes");
     log.info("exp smooth result $smoothed");
+    log.info("flow rate forecast $flow");
+    log.info("time offset $timeOffset");
 
-    return gradient * fudgeFactor;
+    var remainingWeight = targetWeight - samples.last.weight.weight;
+    return remainingWeight / flow + timeOffset;
   }
 
   void notify() {
