@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/ui/screens/maintenance.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
 import 'package:despresso/ui/screens/settings_screen.dart';
 import 'package:despresso/service_locator.dart';
@@ -302,6 +303,22 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
+                ).then((value) {
+                  _screensaver.resume();
+                  machineService.updateFlush();
+                });
+                // Then close the drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.build),
+              title: const Text("Maintenance"),
+              onTap: () {
+                _screensaver.pause();
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MaintenanceScreen()),
                 ).then((value) {
                   _screensaver.resume();
                   machineService.updateFlush();

@@ -61,9 +61,11 @@ class _StartStopButtonState extends State<StartStopButton> {
         stream: machineService.streamState,
         initialData: machineService.currentFullState,
         builder: (context, snapshot) {
+          log.info("STATE: ${snapshot.data?.state}");
           var isBusy = snapshot.data?.state == EspressoMachineState.espresso ||
               snapshot.data?.state == EspressoMachineState.water ||
               snapshot.data?.state == EspressoMachineState.steam ||
+              snapshot.data?.state == EspressoMachineState.descale ||
               snapshot.data?.state == EspressoMachineState.flush;
 
           var mainState = snapshot.data?.state.name.toUpperCase() ?? S.of(context).disconnected;
@@ -87,6 +89,21 @@ class _StartStopButtonState extends State<StartStopButton> {
               break;
             case "idle":
               subState = S.of(context).stateIdleHeated;
+              break;
+            case "descale_int":
+              subState = "Descaling start";
+              break;
+            case "descale_fill_group":
+              subState = "Descaling Group Fill";
+              break;
+            case "descale_return":
+              subState = "Descaling internals";
+              break;
+            case "descale_group":
+              subState = "Descaling Group";
+              break;
+            case "descale_steam":
+              subState = "Descaling Steam";
               break;
             case "heat_water_tank":
               subState = S.of(context).subStateHeatWaterTank;
