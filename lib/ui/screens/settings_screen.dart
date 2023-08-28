@@ -684,36 +684,34 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     ),
                   ],
                 ),
-                SettingsGroup(
-                  title: "Tablet sleep",
-                  children: [
-                    SwitchSettingsTile(
-                      title: "Allow tablet sleep during screensaver",
-                      settingKey: SettingKeys.tabletSleepDuringScreensaver.name,
-                      defaultValue: settingsService.tabletSleepDuringScreensaver,
-                      childrenIfEnabled: [
-                        SliderSettingsTile(
-                          title: "Minutes to spend in screensaver before allowing sleep",
-                          settingKey: SettingKeys.tabletSleepDuringScreensaverTimeout.name,
-                          defaultValue: settingsService.tabletSleepDuringScreensaverTimeout,
-                          min: 0,
-                          max: 240,
-                          step: 5,
-                          decimalPrecision: 0,
-                        ),
-                      ],
-                    ),
-                    SwitchSettingsTile(
-                      title: "Allow tablet sleep when machine is sleeping or disconnected",
-                      settingKey: SettingKeys.tabletSleepWhenMachineOff.name,
-                      defaultValue: settingsService.tabletSleepWhenMachineOff,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 16, bottom: 32, left: 16, right: 16),
-                      child: Text("Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
-                    )
-                  ]
-                ),
+                SettingsGroup(title: "Tablet sleep", children: [
+                  SwitchSettingsTile(
+                    title: "Allow tablet sleep during screensaver",
+                    settingKey: SettingKeys.tabletSleepDuringScreensaver.name,
+                    defaultValue: settingsService.tabletSleepDuringScreensaver,
+                    childrenIfEnabled: [
+                      SliderSettingsTile(
+                        title: "Minutes to spend in screensaver before allowing sleep",
+                        settingKey: SettingKeys.tabletSleepDuringScreensaverTimeout.name,
+                        defaultValue: settingsService.tabletSleepDuringScreensaverTimeout,
+                        min: 0,
+                        max: 240,
+                        step: 5,
+                        decimalPrecision: 0,
+                      ),
+                    ],
+                  ),
+                  SwitchSettingsTile(
+                    title: "Allow tablet sleep when machine is sleeping or disconnected",
+                    settingKey: SettingKeys.tabletSleepWhenMachineOff.name,
+                    defaultValue: settingsService.tabletSleepWhenMachineOff,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 32, left: 16, right: 16),
+                    child: Text(
+                        "Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
+                  )
+                ]),
               ]),
             ),
             SimpleSettingsTile(
@@ -1055,11 +1053,11 @@ class SettingsScreenState extends State<AppSettingsScreen> {
       data.add(await getLoggerBackupData());
 
       var dateStr = DateTime.now().toLocal();
-      var doc = DocumentFileSavePlus();
-      await doc.saveMultipleFiles(dataList: data, fileNameList: [
+      // var doc = DocumentFileSavePlus();
+      await DocumentFileSavePlus.saveMultipleFiles(data, [
         "despresso_backup_$dateStr.bak",
         "logs_$dateStr.zip"
-      ], mimeTypeList: [
+      ], [
         "application/octet-stream",
         "application/zip",
       ]);
