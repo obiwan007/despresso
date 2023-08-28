@@ -245,7 +245,7 @@ class EspressoScreenState extends State<EspressoScreen> {
     // var last = data.lastIndexWhere((element) => !element.isInterpolated);
     return LineChartBarData(
       spots: points,
-      dotData: FlDotData(
+      dotData: const FlDotData(
         show: false,
         // getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
         //   radius: 1,
@@ -305,9 +305,9 @@ class EspressoScreenState extends State<EspressoScreen> {
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
@@ -318,7 +318,7 @@ class EspressoScreenState extends State<EspressoScreen> {
           if (hasFlow) createChartLineDatapoints(data["flowSet"]!, 1, theme.ThemeColors.flowColor, [5, 5]),
           if (hasFlow) createChartLineDatapoints(data["flowG"]!, 2, theme.ThemeColors.weightColor, null),
         ],
-        rangeAnnotations: RangeAnnotations(
+        rangeAnnotations: const RangeAnnotations(
           verticalRangeAnnotations: [
             // ...ranges,
           ],
@@ -331,10 +331,10 @@ class EspressoScreenState extends State<EspressoScreen> {
           // ],
         ),
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
 
@@ -403,9 +403,9 @@ class EspressoScreenState extends State<EspressoScreen> {
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
@@ -416,10 +416,10 @@ class EspressoScreenState extends State<EspressoScreen> {
           createChartLineDatapoints(data["weightApprox"]!, 2, theme.ThemeColors.weightColor, [5, 5]),
         ],
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           bottomTitles: (!settingsService.showTempGraph)
@@ -477,9 +477,9 @@ class EspressoScreenState extends State<EspressoScreen> {
         minX: minX,
         maxX: maxTime,
         borderData: borderData,
-        lineTouchData: LineTouchData(enabled: false),
-        clipData: FlClipData.all(),
-        gridData: FlGridData(
+        lineTouchData: const LineTouchData(enabled: false),
+        clipData: const FlClipData.all(),
+        gridData: const FlGridData(
           show: true,
           drawVerticalLine: true,
         ),
@@ -494,15 +494,14 @@ class EspressoScreenState extends State<EspressoScreen> {
           // createChartLineDatapoints(data["weightApprox"]!, 2, theme.ThemeColors.weightColor, [5, 5]),
         ],
         titlesData: FlTitlesData(
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           bottomTitles: AxisTitles(
             axisNameSize: 25,
-            drawBehindEverything: false,
             axisNameWidget: Text(
               S.of(context).screenEspressoTimes,
               style: Theme.of(context).textTheme.labelSmall,

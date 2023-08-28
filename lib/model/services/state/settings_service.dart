@@ -15,7 +15,6 @@ enum SettingKeys {
   visualizerUser,
   visualizerPwd,
   sleepTimer,
-  screenLockTimer,
   graphSingle,
   mqttEnabled,
   mqttServer,
@@ -92,6 +91,9 @@ enum SettingKeys {
   targetMilkTempPreset1,
   targetMilkTempPreset2,
   targetMilkTempPreset3,
+  tabletSleepDuringScreensaver,
+  tabletSleepDuringScreensaverTimeout,
+  tabletSleepWhenMachineOff,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -130,7 +132,9 @@ class SettingsService extends ChangeNotifier {
   String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
-  double get screenLockTimer => Settings.getValue<double>(SettingKeys.screenLockTimer.name) ?? 30;
+  bool get tabletSleepDuringScreensaver => Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
+  double get tabletSleepDuringScreensaverTimeout => Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
+  bool get tabletSleepWhenMachineOff => Settings.getValue<bool>(SettingKeys.tabletSleepWhenMachineOff.name) ?? false;
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
   String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "192.168.178.79";

@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../service_locator.dart';
 
@@ -34,9 +33,11 @@ class ScreensaverService extends ChangeNotifier {
     notifyListeners();
 
 // Prevent screensave to go online during a pour.
-    machine.streamState.listen((event) {
+    machine.streamState.listen((event) async {
       if (event.state != lastState) {
         lastState = event.state;
+        await setWakelock();
+
         switch (lastState) {
           case EspressoMachineState.idle:
             resume();
@@ -76,43 +77,59 @@ class ScreensaverService extends ChangeNotifier {
     );
   }
 
-  bool allwaysWakeLock() {
-    return _settings.screenLockTimer > 239;
+  bool shouldBeWakelocked() {
+    if (_settings.tabletSleepDuringScreensaver && screenSaverOn) {
+      if (_screenSaverTimer >= _settings.tabletSleepDuringScreensaverTimeout * 60) {
+        return false;
+      }
+    }
+
+    if (_settings.tabletSleepWhenMachineOff) {
+      switch (lastState) {
+        case EspressoMachineState.connecting:
+        case EspressoMachineState.disconnected:
+        case EspressoMachineState.sleep:
+          return false;
+        case EspressoMachineState.espresso:
+        case EspressoMachineState.flush:
+        case EspressoMachineState.idle:
+        case EspressoMachineState.refill:
+        case EspressoMachineState.steam:
+        case EspressoMachineState.water:
+          break;
+      }
+    }
+
+    return true;
   }
 
-  bool useWakeLock() {
-    return _settings.screenLockTimer > 0;
+  Future<void> setWakelock() async {
+    var isLocked = await WakelockPlus.enabled;
+    var shouldBeLocked = shouldBeWakelocked();
+
+    try {
+      if (!isLocked && shouldBeLocked) {
+        WakelockPlus.enable();
+      } else if (isLocked && !shouldBeLocked) {
+        WakelockPlus.disable();
+      }
+    } catch (e) {
+      log.severe("Failed to set wakelock: $e");
+    }
   }
 
   void setupScreensaver() {
-    try {
-      if (useWakeLock()) {
-        Wakelock.enable();
-        log.info('Enable WakeLock');
-      } else {
-        Wakelock.disable();
-      }
-    } catch (e) {
-      log.severe("Could not use WakeLock $e");
-    }
+    setWakelock();
 
     _timer = Timer.periodic(
       const Duration(seconds: 5),
       (timer) async {
+        await setWakelock();
+
         if (_paused == true) return;
         _screenSaverTimer += 5;
         // log.fine("Tick  $_screenSaverTimer ${_settings.screenBrightnessTimer * 60} on: $screenSaverOn");
         await checkAndActivateSaver();
-        if (_screenSaverTimer > _settings.screenLockTimer * 60 && !allwaysWakeLock()) {
-          try {
-            if (await Wakelock.enabled) {
-              log.info('Disable WakeLock');
-              Wakelock.disable();
-            }
-          } on MissingPluginException catch (e) {
-            log.severe('Failed to set wakelock: $e');
-          }
-        }
       },
     );
   }
@@ -140,19 +157,10 @@ class ScreensaverService extends ChangeNotifier {
     if (screenSaverOn) {
       screenSaverOn = false;
       ScreenBrightness().resetScreenBrightness();
+      setWakelock();
 
       if (_settings.screenTapWake) {
         machine.de1?.switchOn();
-      }
-      try {
-        if ((await Wakelock.enabled) == false) {
-          log.info('enable WakeLock');
-          Wakelock.enable();
-        } else {
-          log.fine('is enabled WakeLock');
-        }
-      } on MissingPluginException catch (e) {
-        log.severe('Failed to set wakelock enable: $e');
       }
       notifyListeners();
     }
