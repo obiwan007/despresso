@@ -463,8 +463,11 @@ class DE1 extends ChangeNotifier implements IDe1 {
       case 0x06: // 6 Making hot water
         service.setState(EspressoMachineState.water);
         break;
-      case 10: // 10 Descaling
+      case 0x0a: // 10 Descaling
         service.setState(EspressoMachineState.descale);
+        break;
+      case 0x12: // 10 Descaling
+        service.setState(EspressoMachineState.clean);
         break;
       case 0x11: // 6 Water empty
         service.setState(EspressoMachineState.refill);

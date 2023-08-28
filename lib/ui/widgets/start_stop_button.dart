@@ -66,6 +66,7 @@ class _StartStopButtonState extends State<StartStopButton> {
               snapshot.data?.state == EspressoMachineState.water ||
               snapshot.data?.state == EspressoMachineState.steam ||
               snapshot.data?.state == EspressoMachineState.descale ||
+              snapshot.data?.state == EspressoMachineState.clean ||
               snapshot.data?.state == EspressoMachineState.flush;
 
           var mainState = snapshot.data?.state.name.toUpperCase() ?? S.of(context).disconnected;
@@ -104,6 +105,19 @@ class _StartStopButtonState extends State<StartStopButton> {
               break;
             case "descale_steam":
               subState = "Descaling Steam";
+              break;
+
+            case "clean_init":
+              subState = "Cleaning start";
+              break;
+            case "clean_fill_group":
+              subState = "Cleaning Group Fill";
+              break;
+            case "clean_soak":
+              subState = "Clean soaking";
+              break;
+            case "clean_group":
+              subState = "Clean Group";
               break;
             case "heat_water_tank":
               subState = S.of(context).subStateHeatWaterTank;
