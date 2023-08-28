@@ -156,7 +156,19 @@ class MachineState {
   String subState = "";
 }
 
-enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush, descale }
+enum EspressoMachineState {
+  idle,
+  espresso,
+  water,
+  steam,
+  sleep,
+  disconnected,
+  connecting,
+  refill,
+  flush,
+  descale,
+  clean
+}
 
 class EspressoMachineFullState {
   EspressoMachineState state = EspressoMachineState.disconnected;
@@ -1010,6 +1022,10 @@ class EspressoMachineService extends ChangeNotifier {
 
   Future<void> startDescaling() {
     return de1!.requestState(De1StateEnum.descale);
+  }
+
+  Future<void> startCleaning() {
+    return de1!.requestState(De1StateEnum.clean);
   }
 }
 
