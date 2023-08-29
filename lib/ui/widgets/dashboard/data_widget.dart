@@ -1,9 +1,12 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
+import 'package:despresso/ui/widgets/legend_widget.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
 import 'package:dashboard/dashboard.dart';
 import 'package:flutter/gestures.dart';
@@ -15,6 +18,25 @@ const Color blue = Color(0xFF4285F4);
 const Color red = Color(0xFFEA4335);
 const Color yellow = Color(0xFFFBBC05);
 const Color green = Color(0xFF34A853);
+
+const List<Color> colorList = [
+  blue,
+  red,
+  yellow,
+  green,
+  Color.fromARGB(255, 244, 66, 155),
+  Color.fromARGB(255, 244, 66, 119),
+  Color.fromARGB(255, 66, 244, 110),
+  Color.fromARGB(255, 244, 66, 173),
+  Color.fromARGB(255, 232, 244, 66),
+  Color.fromARGB(255, 244, 66, 78),
+  Color.fromARGB(255, 158, 66, 244),
+  Color.fromARGB(255, 244, 122, 66),
+  Color.fromARGB(255, 66, 188, 244),
+  Color.fromARGB(255, 66, 244, 99),
+  Color.fromARGB(255, 66, 244, 93),
+  Color.fromARGB(255, 244, 167, 66),
+];
 
 class ColoredDashboardItem extends DashboardItem {
   ColoredDashboardItem(
@@ -528,6 +550,9 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
 
   Map<String, int> counts = HashMap();
   late LinkedHashMap<String, int> sortedMap;
+
+  int touchedIndex = -1;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -556,36 +581,75 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
 
   @override
   Widget build(BuildContext context) {
+    var legends = sortedMap.entries
+        .mapIndexed((i, e) => Legend(
+              e.key,
+              colorList[i % colorList.length],
+            ))
+        .toList();
+    var w = 100;
+
     return Container(
-        color: Theme.of(context).focusColor,
-        // color: yellow,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            ...sortedMap.entries.map((e) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      e.key,
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "${e.value}",
-                      maxLines: 3,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              );
-            }),
-          ],
-        ));
+      color: Theme.of(context).focusColor,
+      // color: yellow,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: PieChart(
+              PieChartData(
+                pieTouchData: PieTouchData(
+                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                    setState(() {
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null ||
+                          pieTouchResponse.touchedSection == null) {
+                        touchedIndex = -1;
+                        return;
+                      }
+                      touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      print(touchedIndex);
+                    });
+                  },
+                ),
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                sectionsSpace: 0,
+                centerSpaceRadius: 40,
+                sections: showingSections(w! / 2),
+              ),
+            ),
+          ),
+          Expanded(
+            child: LegendsListWidget(legends: legends),
+          )
+        ],
+      ),
+    );
+  }
+
+  List<PieChartSectionData> showingSections(double radius) {
+    const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+    return sortedMap.entries.mapIndexed((i, e) {
+      final isTouched = i == touchedIndex;
+      print(isTouched);
+      return PieChartSectionData(
+        borderSide: isTouched
+            ? BorderSide(color: colorList[i % colorList.length], width: 8)
+            : BorderSide(color: colorList[i % colorList.length].withOpacity(0)),
+        value: e.value.toDouble(),
+        title: "${e.value} = ${(e.value / allShots.length * 100).toInt()}%",
+        radius: radius + 10 * (isTouched == true ? 1 : 0),
+        color: colorList[i % colorList.length],
+        titleStyle: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          shadows: shadows,
+        ),
+      );
+    }).toList();
   }
 }
 

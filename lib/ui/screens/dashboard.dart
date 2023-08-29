@@ -58,6 +58,8 @@ class DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
+
+    itemController.addListener(() {});
   }
 
   @override
@@ -82,13 +84,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         ),
         title: const Text('Statistics Dashboard'),
         actions: [
-          IconButton(
-              onPressed: () async {
-                setState(() {
-                  refreshing = true;
-                });
-              },
-              icon: const Icon(Icons.refresh)),
+          IconButton(onPressed: () async {}, icon: const Icon(Icons.refresh)),
           IconButton(
               onPressed: () {
                 itemController.clear();
@@ -137,7 +133,6 @@ class DashboardScreenState extends State<DashboardScreen> {
         dashboardItemController: itemController,
         itemBuilder: (item) {
           var layout = item.layoutData;
-
           if (item.data != null) {
             return DataWidget(
               item: item,
