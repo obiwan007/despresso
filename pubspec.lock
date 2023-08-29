@@ -305,6 +305,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  dashboard:
+    dependency: "direct main"
+    description:
+      name: dashboard
+      sha256: "5c65edf9dd47df436901d5cb268298f349763e48158c424567445f0e8c57a43e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3+1"
   dbus:
     dependency: transitive
     description:

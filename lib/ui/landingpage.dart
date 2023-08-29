@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/ui/screens/dashboard.dart';
 import 'package:despresso/ui/screens/maintenance.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
 import 'package:despresso/ui/screens/settings_screen.dart';
@@ -322,6 +323,21 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 ).then((value) {
                   _screensaver.resume();
                   machineService.updateFlush();
+                });
+                // Then close the drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.graphic_eq),
+              title: const Text("Statistics"),
+              onTap: () {
+                _screensaver.pause();
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                ).then((value) {
+                  _screensaver.resume();
                 });
                 // Then close the drawer
               },
