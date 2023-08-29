@@ -552,6 +552,12 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
   late LinkedHashMap<String, int> sortedMap;
 
   int touchedIndex = -1;
+  final _key = GlobalKey(); // This function is triggered somehow after build () called
+  Size? _getSize() {
+    final size = _key.currentContext?.size;
+    print(size); // Size(200.0, 100.0)
+    return size;
+  }
 
   @override
   void initState() {
@@ -587,40 +593,47 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
               colorList[i % colorList.length],
             ))
         .toList();
-    var w = 100;
 
     return Container(
+      key: _key,
       color: Theme.of(context).focusColor,
       // color: yellow,
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: PieChart(
-              PieChartData(
-                pieTouchData: PieTouchData(
-                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                    setState(() {
-                      if (!event.isInterestedForInteractions ||
-                          pieTouchResponse == null ||
-                          pieTouchResponse.touchedSection == null) {
-                        touchedIndex = -1;
-                        return;
-                      }
-                      touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                      print(touchedIndex);
-                    });
-                  },
+            child: LayoutBuilder(builder: (context, constrains) {
+              return PieChart(
+                PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                        print(touchedIndex);
+                      });
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 0,
+                  sections: showingSections(constrains.maxWidth / 2),
                 ),
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                sectionsSpace: 0,
-                centerSpaceRadius: 40,
-                sections: showingSections(w! / 2),
-              ),
-            ),
+              );
+            }),
+          ),
+          SizedBox(
+            width: 10,
           ),
           Expanded(
             child: LegendsListWidget(legends: legends),

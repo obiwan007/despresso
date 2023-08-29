@@ -24,11 +24,9 @@ class LegendWidget extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
+          overflow: TextOverflow.clip,
           name,
-          style: const TextStyle(
-            color: Color(0xff757391),
-            fontSize: 12,
-          ),
+          style: Theme.of(context).textTheme.labelSmall,
         ),
       ],
     );
@@ -46,7 +44,7 @@ class LegendsListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: legends
           .map(
             (e) => LegendWidget(
