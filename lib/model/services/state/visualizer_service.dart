@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
+import 'package:despresso/model/shotstate.dart';
 import 'package:flutter/material.dart';
 
 import 'package:logging/logging.dart';
@@ -64,6 +65,24 @@ class VisualizerService extends ChangeNotifier {
     }
   }
 
+  // get espresso_state_change list for Visualizer
+  // N.B. I have no idea why it's formatted like this - anyone know if the
+  // "shot" TCL schema is documented anywhere?
+  List<double> getStateChanges(List<ShotState> states) {
+    const sentinelValue = 10000000.0;
+    int currentFrameNumber = states.isEmpty ? 0 : states.first.frameNumber;
+    bool isPositive = true;
+
+    return [0.0, ...states.skip(1).map((instance) {
+      if (instance.frameNumber != currentFrameNumber) {
+        isPositive = !isPositive;
+        currentFrameNumber = instance.frameNumber;
+      }
+
+      return isPositive ? sentinelValue : sentinelValue * -1;
+    })];
+  }
+
   String createShotJson(Shot shot) {
     var prof = profileService.getProfile(shot.profileId);
 
@@ -86,6 +105,7 @@ class VisualizerService extends ChangeNotifier {
     //   "duration": shot.shotstates.last.sampleTimeCorrected,
     // };
     var times = shot.shotstates.map((e) => e.sampleTimeCorrected.toStringAsFixed(4)).join(" ");
+    var stateChanges = getStateChanges(shot.shotstates).join(" ");
     // var espressoFlow = shot.shotstates.map(
     //   (element) => element.groupFlow,
     // );
@@ -111,6 +131,7 @@ class VisualizerService extends ChangeNotifier {
     // buffer.writeln("app_version {1.39.0}");
     // buffer.writeln("local_time {Thu Jun 23 16:57:46 CST 2022}");
     buffer.writeln("espresso_elapsed {$times}");
+    buffer.writeln("espresso_state_change {$stateChanges}");
     buffer.writeln("espresso_pressure {${shot.shotstates.map((e) => e.groupPressure.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln(
         "espresso_pressure_goal {${shot.shotstates.map((e) => e.setGroupPressure.toStringAsFixed(4)).join(" ")}}");
