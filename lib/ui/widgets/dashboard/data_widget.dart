@@ -45,6 +45,13 @@ class ColoredDashboardItem extends DashboardItem {
       required int height,
       required String identifier,
       this.data,
+      this.dataFooter,
+      this.dataHeader,
+      this.title,
+      this.subTitle,
+      this.footer,
+      this.subFooter,
+      this.value,
       int minWidth = 1,
       int minHeight = 1,
       int? maxHeight,
@@ -69,7 +76,14 @@ class ColoredDashboardItem extends DashboardItem {
 
   Color? color;
 
+  String? dataHeader;
+  String? dataFooter;
   String? data;
+  String? title;
+  String? subTitle;
+  String? footer;
+  String? subFooter;
+  String? value;
 
   @override
   Map<String, dynamic> toMap() {
@@ -92,7 +106,7 @@ class DataWidget extends StatelessWidget {
   final Map<String, Widget Function(ColoredDashboardItem i)> _map = {
     "welcome": (l) => const WelcomeWidget(),
     "shotsperrecipe": (l) => ShotsPerRecipe(),
-    "basic": (l) => const BasicInformation(),
+    "kpi": (l) => KPI(data: l),
     "transform": (l) => const TransformAdvice(),
     "add": (l) => const AddAdvice(),
     "buy_mee": (l) => const BuyMee(),
@@ -451,14 +465,15 @@ class WelcomeWidget extends StatelessWidget {
   }
 }
 
-class BasicInformation extends StatefulWidget {
-  const BasicInformation({Key? key}) : super(key: key);
+class KPI extends StatefulWidget {
+  final ColoredDashboardItem data;
+  const KPI({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<BasicInformation> createState() => _BasicInformationState();
+  State<KPI> createState() => _KPIState();
 }
 
-class _BasicInformationState extends State<BasicInformation> {
+class _KPIState extends State<KPI> {
   late CoffeeService _coffeeService;
 
   @override
@@ -476,61 +491,65 @@ class _BasicInformationState extends State<BasicInformation> {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Shots",
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    "${_coffeeService.shotBox.count()}",
-                    maxLines: 3,
-                    style: Theme.of(context).textTheme.displaySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (widget.data.title != null)
+                    Text(
+                      widget.data.title!,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  if (widget.data.subTitle != null)
+                    Text(
+                      widget.data.subTitle!,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Recipes",
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    "${_coffeeService.recipeBox.count()}",
-                    maxLines: 3,
-                    style: Theme.of(context).textTheme.displaySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (widget.data.dataHeader != null)
+                    Text(
+                      widget.data.dataHeader!,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  if (widget.data.value != null)
+                    Text(
+                      widget.data.value!,
+                      style: widget.data.color != null
+                          ? Theme.of(context).textTheme.titleLarge!.copyWith(color: widget.data.color)
+                          : Theme.of(context).textTheme.titleLarge,
+                    ),
+                  if (widget.data.dataFooter != null)
+                    Text(
+                      widget.data.dataFooter!,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Beans",
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    "${_coffeeService.coffeeBox.count()}",
-                    maxLines: 3,
-                    style: Theme.of(context).textTheme.displaySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (widget.data.footer != null)
+                    Text(
+                      widget.data.footer!,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  if (widget.data.subFooter != null)
+                    Text(
+                      widget.data.subFooter!,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                ],
+              ),
             ),
           ],
         ));
@@ -552,12 +571,6 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
   late LinkedHashMap<String, int> sortedMap;
 
   int touchedIndex = -1;
-  final _key = GlobalKey(); // This function is triggered somehow after build () called
-  Size? _getSize() {
-    final size = _key.currentContext?.size;
-    print(size); // Size(200.0, 100.0)
-    return size;
-  }
 
   @override
   void initState() {
@@ -595,7 +608,6 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
         .toList();
 
     return Container(
-      key: _key,
       color: Theme.of(context).focusColor,
       // color: yellow,
       alignment: Alignment.center,

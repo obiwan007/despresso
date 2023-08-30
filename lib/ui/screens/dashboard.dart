@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dashboard/dashboard.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/ui/widgets/start_stop_button.dart';
 import 'package:flutter/material.dart';
@@ -26,19 +27,34 @@ class DashboardScreenState extends State<DashboardScreen> {
 
   final ScrollController scrollController = ScrollController();
   List<ColoredDashboardItem> items = [
-    ColoredDashboardItem(height: 2, width: 2, identifier: "1", color: Colors.red, data: "basic"),
+    ColoredDashboardItem(
+      height: 2,
+      width: 2,
+      identifier: "1",
+      color: Colors.red,
+      data: "kpi",
+      dataHeader: "#",
+      dataFooter: "Shots",
+      title: "Shots",
+      subTitle: "Shots done over time",
+      footer: "Shots",
+      subFooter: "Shots",
+    ),
     ColoredDashboardItem(height: 2, width: 3, identifier: "2", color: Colors.green, data: "shotsperrecipe"),
     ColoredDashboardItem(height: 2, width: 2, identifier: "3", color: Colors.orange, data: "info")
   ];
 
   ///
-  late var itemController = DashboardItemController<ColoredDashboardItem>(items: items);
+  late DashboardItemController<ColoredDashboardItem>
+      itemController; //  = DashboardItemController<ColoredDashboardItem>(items: items);
 
   bool refreshing = false;
 
   // var storage = MyItemStorage();
 
   int? slot;
+
+  late CoffeeService coffeeService;
 
   setSlot() {
     var w = MediaQuery.of(context).size.width;
@@ -56,9 +72,11 @@ class DashboardScreenState extends State<DashboardScreen> {
   @override
   initState() {
     super.initState();
+
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
-
+    coffeeService = getIt<CoffeeService>();
+    initItems();
     itemController.addListener(() {});
   }
 
@@ -67,6 +85,62 @@ class DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
 
     log.info('Disposed DashboardScreen');
+  }
+
+  initItems() {
+    List<ColoredDashboardItem> items = [
+      ColoredDashboardItem(
+        startX: 0,
+        height: 1,
+        width: 1,
+        identifier: "1",
+        color: Colors.yellow,
+        data: "kpi",
+        // dataHeader: "#",
+        // dataFooter: "Shots",
+        title: "Shots",
+        // subTitle: "Shots done over time",
+        // footer: "Shots",
+        // subFooter: "Shots",
+        value: coffeeService.shotBox.count().toString(),
+      ),
+      ColoredDashboardItem(
+        startX: 1,
+        height: 1,
+        width: 1,
+        identifier: "2",
+        color: Colors.green,
+        data: "kpi",
+        //dataHeader: "#",
+        //dataFooter: "Recipes",
+        title: "Recipes",
+        // subTitle: "Shots done over time",
+        // footer: "Shots",
+        // subFooter: "Shots",
+        value: coffeeService.recipeBox.count().toString(),
+      ),
+      ColoredDashboardItem(
+        startX: 2,
+        startY: 0,
+        height: 1,
+        width: 1,
+        identifier: "3",
+        color: Colors.red,
+        data: "kpi",
+        //dataHeader: "#",
+        // dataFooter: "Beans",
+        title: "Beans",
+        // subTitle: "Shots done over time",
+        // footer: "Shots",
+        // subFooter: "Shots",
+        value: coffeeService.coffeeBox.count().toString(),
+      ),
+      ColoredDashboardItem(startX: 1, startY: 2, height: 2, width: 3, identifier: "4", data: "shotsperrecipe"),
+      // ColoredDashboardItem(
+      //     startX: 3, startY: 1, height: 2, width: 2, identifier: "11", color: Colors.orange, data: "info")
+    ];
+
+    itemController = DashboardItemController<ColoredDashboardItem>(items: items);
   }
 
   @override
