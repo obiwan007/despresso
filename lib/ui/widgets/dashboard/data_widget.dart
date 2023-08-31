@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
@@ -105,7 +106,7 @@ class DataWidget extends StatelessWidget {
 
   final Map<String, Widget Function(ColoredDashboardItem i)> _map = {
     "welcome": (l) => const WelcomeWidget(),
-    "shotsperrecipe": (l) => ShotsPerRecipe(),
+    "shotsperrecipe": (l) => ShotsPerRecipe(data: l),
     "kpi": (l) => KPI(data: l),
     "transform": (l) => const TransformAdvice(),
     "add": (l) => const AddAdvice(),
@@ -496,16 +497,26 @@ class _KPIState extends State<KPI> {
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (widget.data.title != null)
-                    Text(
-                      widget.data.title!,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    Row(
+                      children: [
+                        Text(
+                          widget.data.title!,
+                          textAlign: TextAlign.left,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ],
                     ),
                   if (widget.data.subTitle != null)
-                    Text(
-                      widget.data.subTitle!,
-                      style: Theme.of(context).textTheme.titleSmall,
+                    Row(
+                      children: [
+                        Text(
+                          widget.data.subTitle!,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ],
                     ),
                 ],
               ),
@@ -557,8 +568,8 @@ class _KPIState extends State<KPI> {
 }
 
 class ShotsPerRecipe extends StatefulWidget {
-  const ShotsPerRecipe({Key? key}) : super(key: key);
-
+  const ShotsPerRecipe({Key? key, required this.data}) : super(key: key);
+  final ColoredDashboardItem data;
   @override
   State<ShotsPerRecipe> createState() => _ShotsPerRecipeState();
 }
@@ -604,6 +615,7 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
         .mapIndexed((i, e) => Legend(
               e.key,
               colorList[i % colorList.length],
+              e.value.toString(),
             ))
         .toList();
 
@@ -612,67 +624,100 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
       // color: yellow,
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          Expanded(
-            child: LayoutBuilder(builder: (context, constrains) {
-              return PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          touchedIndex = -1;
-                          return;
-                        }
-                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                        print(touchedIndex);
-                      });
-                    },
-                  ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 0,
-                  sections: showingSections(constrains.maxWidth / 2),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (widget.data.title != null)
+                Row(
+                  children: [
+                    Text(
+                      widget.data.title!,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
                 ),
-              );
-            }),
-          ),
-          SizedBox(
-            width: 10,
+              if (widget.data.subTitle != null)
+                Row(
+                  children: [
+                    Text(
+                      widget.data.subTitle!,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ],
+                ),
+            ],
           ),
           Expanded(
-            child: LegendsListWidget(legends: legends),
-          )
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: LayoutBuilder(builder: (context, constrains) {
+                    var r = min(constrains.maxWidth, constrains.maxHeight) / 2;
+                    return PieChart(
+                      PieChartData(
+                        pieTouchData: PieTouchData(
+                          touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                            setState(() {
+                              if (!event.isInterestedForInteractions ||
+                                  pieTouchResponse == null ||
+                                  pieTouchResponse.touchedSection == null) {
+                                touchedIndex = -1;
+                                return;
+                              }
+                              touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                              print(touchedIndex);
+                            });
+                          },
+                        ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        sectionsSpace: 1,
+                        centerSpaceRadius: r - 30,
+                        sections: showingSections(20),
+                      ),
+                    );
+                  }),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: LegendsListWidget(legends: legends, touchIndex: touchedIndex),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   List<PieChartSectionData> showingSections(double radius) {
-    const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+    // const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
     return sortedMap.entries.mapIndexed((i, e) {
       final isTouched = i == touchedIndex;
-      print(isTouched);
+      var color = colorList[i % colorList.length];
+      // var actCol = Color.fromRGBO(color.red, color.green, color.blue, isTouched || touchedIndex == -1 ? 1 : 0.5);
+      var actCol = color.withOpacity(isTouched || touchedIndex == -1 ? 1 : 0.5);
       return PieChartSectionData(
-        borderSide: isTouched
-            ? BorderSide(color: colorList[i % colorList.length], width: 8)
-            : BorderSide(color: colorList[i % colorList.length].withOpacity(0)),
+        borderSide: isTouched ? BorderSide(color: color, width: 8) : BorderSide(color: color.withOpacity(0)),
         value: e.value.toDouble(),
-        title: "${e.value} = ${(e.value / allShots.length * 100).toInt()}%",
+        showTitle: false,
+        // title: "${e.value} = ${(e.value / allShots.length * 100).toInt()}%",
         radius: radius + 10 * (isTouched == true ? 1 : 0),
-        color: colorList[i % colorList.length],
-        titleStyle: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          shadows: shadows,
-        ),
+        color: actCol,
+        // titleStyle: TextStyle(
+        //   fontSize: 11,
+        //   fontWeight: FontWeight.bold,
+        //   shadows: shadows,
+        // ),
       );
     }).toList();
   }

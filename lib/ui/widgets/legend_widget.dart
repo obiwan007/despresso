@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class LegendWidget extends StatelessWidget {
@@ -5,21 +6,38 @@ class LegendWidget extends StatelessWidget {
     super.key,
     required this.name,
     required this.color,
+    required this.value,
+    required this.touched,
+    required this.touchIndex,
   });
   final String name;
   final Color color;
+  final String value;
+  final bool touched;
+  final int touchIndex;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Container(
+        //   width: 10,
+        //   height: 10,
+        //   decoration: BoxDecoration(
+        //     shape: BoxShape.circle,
+        //     color: color,
+        //   ),
+        // ),
         Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
+          width: touched ? 60 : 50,
+          color: Color.fromRGBO(color.red, color.green, color.blue, touched || touchIndex == -1 ? 1 : 0.3),
+          padding: const EdgeInsets.only(right: 4.0, bottom: 0),
+          child: Text(
+            textAlign: TextAlign.end,
+            overflow: TextOverflow.clip,
+            value,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
         ),
         const SizedBox(width: 6),
@@ -37,8 +55,10 @@ class LegendsListWidget extends StatelessWidget {
   const LegendsListWidget({
     super.key,
     required this.legends,
+    required this.touchIndex,
   });
   final List<Legend> legends;
+  final int touchIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +66,16 @@ class LegendsListWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: legends
-          .map(
-            (e) => LegendWidget(
-              name: e.name,
-              color: e.color,
+          .mapIndexed(
+            (i, e) => Padding(
+              padding: const EdgeInsets.all(1.0),
+              child: LegendWidget(
+                name: e.name,
+                color: e.color,
+                value: e.value,
+                touched: i == touchIndex,
+                touchIndex: touchIndex,
+              ),
             ),
           )
           .toList(),
@@ -58,7 +84,8 @@ class LegendsListWidget extends StatelessWidget {
 }
 
 class Legend {
-  Legend(this.name, this.color);
+  Legend(this.name, this.color, this.value);
   final String name;
   final Color color;
+  final String value;
 }

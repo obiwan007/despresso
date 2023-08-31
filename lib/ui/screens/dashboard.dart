@@ -96,10 +96,10 @@ class DashboardScreenState extends State<DashboardScreen> {
         identifier: "1",
         color: Colors.yellow,
         data: "kpi",
-        // dataHeader: "#",
-        // dataFooter: "Shots",
+        dataHeader: "#",
+        dataFooter: "Shots",
         title: "Shots",
-        // subTitle: "Shots done over time",
+        subTitle: "Shots done over time",
         // footer: "Shots",
         // subFooter: "Shots",
         value: coffeeService.shotBox.count().toString(),
@@ -135,7 +135,15 @@ class DashboardScreenState extends State<DashboardScreen> {
         // subFooter: "Shots",
         value: coffeeService.coffeeBox.count().toString(),
       ),
-      ColoredDashboardItem(startX: 1, startY: 2, height: 2, width: 3, identifier: "4", data: "shotsperrecipe"),
+      ColoredDashboardItem(
+          title: "Recipe Distribution",
+          subTitle: "Show shots per recipe",
+          startX: 0,
+          startY: 1,
+          height: 2,
+          width: 4,
+          identifier: "4",
+          data: "shotsperrecipe"),
       // ColoredDashboardItem(
       //     startX: 3, startY: 1, height: 2, width: 2, identifier: "11", color: Colors.orange, data: "info")
     ];
@@ -180,7 +188,7 @@ class DashboardScreenState extends State<DashboardScreen> {
       body: Scaffold(
           body: Dashboard(
         shrinkToPlace: false,
-        slideToTop: true,
+        slideToTop: false,
         absorbPointer: false,
         padding: const EdgeInsets.all(8),
         horizontalSpace: 8,
