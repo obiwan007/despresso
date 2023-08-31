@@ -766,6 +766,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
     super.initState();
     _coffeeService = getIt<CoffeeService>();
     allShots = _coffeeService.shotBox.getAll();
+    time = allShots.last.date;
     calcData();
     // var sortedKeys = counts.keys.toList(growable: false)..sort((k1, k2) => counts[k2]!.compareTo(counts[k1]!));
     // sortedMap = counts; // LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => counts[k]!);
@@ -775,11 +776,25 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   void calcData() {
     var fromTo = DateTimeRange(end: time, start: time.subtract(Duration(days: _selectedTimeRange)));
     sortedMap.clear();
+    if (_selectedTimeRange > 1) {
+      for (var i = 0; i < _selectedTimeRange; i++) {
+        var d = time.subtract(Duration(days: i));
+        var key = "${d.day}_${d.month}_${d.year}";
+        sortedMap[key] = 0;
+      }
+    }
+    if (_selectedTimeRange == 1) {
+      for (var i = 0; i < 24; i++) {
+        var d = time.subtract(Duration(hours: i));
+        var key = "${d.hour}";
+        sortedMap[key] = 0;
+      }
+    }
     for (var element in allShots) {
       try {
         var d = element.date;
         if (d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
-          var key = "${d.day}_${d.month}_${d.year}";
+          var key = _selectedTimeRange == 1 ? "${d.hour}" : "${d.day}_${d.month}_${d.year}";
 
           if (sortedMap[key] == null) {
             sortedMap[key] = 0;
@@ -834,11 +849,11 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                     value: _selectedTimeRange,
                     items: timeRanges,
                     onChanged: (value) {
-                      setState(() {
-                        if (value != 0) {
-                          _selectedTimeRange = value!;
-                        }
-                      });
+                      if (value != 0) {
+                        _selectedTimeRange = value!;
+                        calcData();
+                      }
+                      setState(() {});
                     },
                   ),
                   ElevatedButton(
@@ -861,6 +876,9 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                   ],
                 ),
             ],
+          ),
+          SizedBox(
+            height: 10,
           ),
           Expanded(
             child: Row(
@@ -890,6 +908,13 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                           show: false,
                         ),
                         barGroups: showingSections(10),
+                        maxY: 10,
+                        titlesData: FlTitlesData(
+                          bottomTitles: AxisTitles(sideTitles: _bottomTitles),
+                          leftTitles: AxisTitles(sideTitles: SideTitles(reservedSize: 30, showTitles: true)),
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
                       ),
                     );
                   }),
@@ -921,20 +946,104 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
           BarChartRodData(
             toY: isTouched ? e.value + 1 : e.value.toDouble(),
             // color: isTouched ? widget.touchedBarColor : barColor,
-            width: 20,
+            width: 10,
+            color: Colors.green,
             // borderSide: isTouched
             //     ? BorderSide(color: widget.touchedBarColor.darken(80))
             //     : const BorderSide(color: Colors.white, width: 0),
-            backDrawRodData: BackgroundBarChartRodData(
-              show: true,
-              toY: 20,
-              // color: widget.barBackgroundColor,
-            ),
+            // backDrawRodData: BackgroundBarChartRodData(
+            //   show: true,
+            //   toY: 10,
+            //   // color: widget.barBackgroundColor,
+            // ),
           ),
+          // BarChartRodData(
+          //   toY: isTouched ? e.value + 1 : e.value.toDouble(),
+          //   color: Colors.amber,
+          //   width: 10,
+          //   // borderSide: isTouched
+          //   //     ? BorderSide(color: widget.touchedBarColor.darken(80))
+          //   //     : const BorderSide(color: Colors.white, width: 0),
+          //   backDrawRodData: BackgroundBarChartRodData(
+          //     show: true,
+          //     toY: 20,
+          //     // color: widget.barBackgroundColor,
+          //   ),
+          // ),
         ],
       );
     }).toList();
   }
+
+  SideTitles get _bottomTitles => SideTitles(
+        showTitles: true,
+        getTitlesWidget: (value, meta) {
+          String text = '';
+          switch (_selectedTimeRange) {
+            case 7:
+              switch (value.toInt()) {
+                case 0:
+                  text = 'Mon';
+                  break;
+                case 1:
+                  text = 'Tue';
+                  break;
+                case 2:
+                  text = 'Wed';
+                  break;
+                case 3:
+                  text = 'Thu';
+                  break;
+                case 4:
+                  text = 'Fri';
+                  break;
+                case 5:
+                  text = 'Sat';
+                  break;
+                case 6:
+                  text = 'Sun';
+                  break;
+              }
+              break;
+            case 30:
+              if (value.toInt() % 2 == 0) {
+                var d = time.subtract(Duration(days: 30 - value.toInt()));
+                text = d.day.toString();
+              }
+
+              break;
+            case 1:
+              if (value.toInt() % 1 == 0) {
+                var d = time.subtract(Duration(hours: 23 - value.toInt()));
+                text = d.hour.toString();
+              }
+
+              break;
+          }
+          // switch (value.toInt()) {
+          //   case 0:
+          //     text = 'Jan';
+          //     break;
+          //   case 2:
+          //     text = 'Mar';
+          //     break;
+          //   case 4:
+          //     text = 'May';
+          //     break;
+          //   case 6:
+          //     text = 'Jul';
+          //     break;
+          //   case 8:
+          //     text = 'Sep';
+          //     break;
+          //   case 10:
+          //     text = 'Nov';
+          //     break;
+          // }
+
+          return Text(text);
+        },
+      );
 }
 
 class AdviceResize extends StatelessWidget {
