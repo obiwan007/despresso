@@ -41,7 +41,8 @@ class DashboardScreenState extends State<DashboardScreen> {
       subFooter: "Shots",
     ),
     ColoredDashboardItem(height: 2, width: 3, identifier: "2", color: Colors.green, data: "shotsperrecipe"),
-    ColoredDashboardItem(height: 2, width: 2, identifier: "3", color: Colors.orange, data: "info")
+    ColoredDashboardItem(height: 2, width: 3, identifier: "3", color: Colors.green, data: "shotsperrecipe"),
+    ColoredDashboardItem(height: 2, width: 2, identifier: "4", color: Colors.orange, data: "info")
   ];
 
   ///
@@ -144,6 +145,15 @@ class DashboardScreenState extends State<DashboardScreen> {
           width: 4,
           identifier: "4",
           data: "shotsperrecipe"),
+      ColoredDashboardItem(
+          title: "Shots Distribution",
+          subTitle: "Show shots over time",
+          startX: 4,
+          startY: 1,
+          height: 2,
+          width: 4,
+          identifier: "5",
+          data: "shotspertime"),
       // ColoredDashboardItem(
       //     startX: 3, startY: 1, height: 2, width: 2, identifier: "11", color: Colors.orange, data: "info")
     ];

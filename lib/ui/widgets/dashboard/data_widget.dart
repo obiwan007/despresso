@@ -107,6 +107,7 @@ class DataWidget extends StatelessWidget {
   final Map<String, Widget Function(ColoredDashboardItem i)> _map = {
     "welcome": (l) => const WelcomeWidget(),
     "shotsperrecipe": (l) => ShotsPerRecipe(data: l),
+    "shotspertime": (l) => ShotsPerTime(data: l),
     "kpi": (l) => KPI(data: l),
     "transform": (l) => const TransformAdvice(),
     "add": (l) => const AddAdvice(),
@@ -718,6 +719,219 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
         //   fontWeight: FontWeight.bold,
         //   shadows: shadows,
         // ),
+      );
+    }).toList();
+  }
+}
+
+class TimeEntry {
+  const TimeEntry({required this.count, required this.time});
+  final int count;
+  final String time;
+}
+
+class ShotsPerTime extends StatefulWidget {
+  const ShotsPerTime({Key? key, required this.data}) : super(key: key);
+  final ColoredDashboardItem data;
+  @override
+  State<ShotsPerTime> createState() => _ShotsPerTimeState();
+}
+
+class _ShotsPerTimeState extends State<ShotsPerTime> {
+  late CoffeeService _coffeeService;
+  late List<Shot> allShots;
+
+  late LinkedHashMap<String, int> sortedMap = LinkedHashMap();
+
+  int touchedIndex = -1;
+  int _selectedTimeRange = 30;
+  DateTime time = DateTime.now();
+  var timeRanges = [
+    DropdownMenuItem(
+      value: 1,
+      child: Text("Day"),
+    ),
+    DropdownMenuItem(
+      value: 7,
+      child: Text("Week"),
+    ),
+    DropdownMenuItem(
+      value: 30,
+      child: Text("Month"),
+    )
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _coffeeService = getIt<CoffeeService>();
+    allShots = _coffeeService.shotBox.getAll();
+    calcData();
+    // var sortedKeys = counts.keys.toList(growable: false)..sort((k1, k2) => counts[k2]!.compareTo(counts[k1]!));
+    // sortedMap = counts; // LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => counts[k]!);
+    // print(sortedMap);
+  }
+
+  void calcData() {
+    var fromTo = DateTimeRange(end: time, start: time.subtract(Duration(days: _selectedTimeRange)));
+    sortedMap.clear();
+    for (var element in allShots) {
+      try {
+        var d = element.date;
+        if (d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
+          var key = "${d.day}_${d.month}_${d.year}";
+
+          if (sortedMap[key] == null) {
+            sortedMap[key] = 0;
+          }
+          sortedMap[key] = sortedMap[key]! + 1;
+        }
+      } catch (e) {
+        debugPrint("Error");
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var legends = sortedMap.entries
+        .mapIndexed((i, e) => Legend(
+              e.key,
+              colorList[i % colorList.length],
+              e.value.toString(),
+            ))
+        .toList();
+
+    return Container(
+      color: Theme.of(context).focusColor,
+      // color: yellow,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Column(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  if (widget.data.title != null)
+                    Text(
+                      widget.data.title!,
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ElevatedButton(
+                      onPressed: () {
+                        time = time.subtract(Duration(days: _selectedTimeRange));
+                        calcData();
+                        setState(() {});
+                      },
+                      child: Text("<")),
+                  DropdownButton(
+                    isExpanded: false,
+                    alignment: Alignment.centerLeft,
+                    value: _selectedTimeRange,
+                    items: timeRanges,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value != 0) {
+                          _selectedTimeRange = value!;
+                        }
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        time = time.subtract(Duration(days: -_selectedTimeRange));
+                        calcData();
+                        setState(() {});
+                      },
+                      child: Text(">")),
+                  Text(time.toLocal().toString()),
+                ],
+              ),
+              if (widget.data.subTitle != null)
+                Row(
+                  children: [
+                    Text(
+                      widget.data.subTitle!,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ],
+                ),
+            ],
+          ),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: LayoutBuilder(builder: (context, constrains) {
+                    var r = min(constrains.maxWidth, constrains.maxHeight) / 2;
+                    return BarChart(
+                      BarChartData(
+                        // pieTouchData: PieTouchData(
+                        //   touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                        //     setState(() {
+                        //       if (!event.isInterestedForInteractions ||
+                        //           pieTouchResponse == null ||
+                        //           pieTouchResponse.touchedSection == null) {
+                        //         touchedIndex = -1;
+                        //         return;
+                        //       }
+                        //       touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                        //       print(touchedIndex);
+                        //     });
+                        //   },
+                        // ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        barGroups: showingSections(10),
+                      ),
+                    );
+                  }),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                // Expanded(
+                //   child: LegendsListWidget(legends: legends, touchIndex: touchedIndex),
+                // )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<BarChartGroupData> showingSections(double radius) {
+    // const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+    return sortedMap.entries.mapIndexed((i, e) {
+      final isTouched = i == touchedIndex;
+      var color = colorList[i % colorList.length];
+      // var actCol = Color.fromRGBO(color.red, color.green, color.blue, isTouched || touchedIndex == -1 ? 1 : 0.5);
+      var actCol = color.withOpacity(isTouched || touchedIndex == -1 ? 1 : 0.5);
+      return BarChartGroupData(
+        x: i,
+        barRods: [
+          BarChartRodData(
+            toY: isTouched ? e.value + 1 : e.value.toDouble(),
+            // color: isTouched ? widget.touchedBarColor : barColor,
+            width: 20,
+            // borderSide: isTouched
+            //     ? BorderSide(color: widget.touchedBarColor.darken(80))
+            //     : const BorderSide(color: Colors.white, width: 0),
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              toY: 20,
+              // color: widget.barBackgroundColor,
+            ),
+          ),
+        ],
       );
     }).toList();
   }
