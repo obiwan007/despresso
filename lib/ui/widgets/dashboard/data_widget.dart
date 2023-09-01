@@ -13,6 +13,7 @@ import 'package:dashboard/dashboard.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 const Color blue = Color(0xFF4285F4);
@@ -774,10 +775,11 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   }
 
   void calcData() {
-    var fromTo = DateTimeRange(end: time, start: time.subtract(Duration(days: _selectedTimeRange)));
+    var fromTo =
+        DateTimeRange(end: time.add(Duration(seconds: 1)), start: time.subtract(Duration(days: _selectedTimeRange)));
     sortedMap.clear();
     if (_selectedTimeRange > 1) {
-      for (var i = 0; i < _selectedTimeRange; i++) {
+      for (var i = 1; i < _selectedTimeRange; i++) {
         var d = time.subtract(Duration(days: i));
         var key = "${d.day}_${d.month}_${d.year}";
         sortedMap[key] = 0;
@@ -944,32 +946,29 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
         x: i,
         barRods: [
           BarChartRodData(
-            toY: isTouched ? e.value + 1 : e.value.toDouble(),
-            // color: isTouched ? widget.touchedBarColor : barColor,
-            width: 10,
-            color: Colors.green,
-            // borderSide: isTouched
-            //     ? BorderSide(color: widget.touchedBarColor.darken(80))
-            //     : const BorderSide(color: Colors.white, width: 0),
-            // backDrawRodData: BackgroundBarChartRodData(
-            //   show: true,
-            //   toY: 10,
-            //   // color: widget.barBackgroundColor,
-            // ),
-          ),
-          // BarChartRodData(
-          //   toY: isTouched ? e.value + 1 : e.value.toDouble(),
-          //   color: Colors.amber,
-          //   width: 10,
-          //   // borderSide: isTouched
-          //   //     ? BorderSide(color: widget.touchedBarColor.darken(80))
-          //   //     : const BorderSide(color: Colors.white, width: 0),
-          //   backDrawRodData: BackgroundBarChartRodData(
-          //     show: true,
-          //     toY: 20,
-          //     // color: widget.barBackgroundColor,
-          //   ),
-          // ),
+              toY: isTouched ? e.value + 1 : e.value.toDouble() * 2,
+              // color: isTouched ? widget.touchedBarColor : barColor,
+              //width: 10,
+              color: Colors.green,
+              // borderSide: isTouched
+              //     ? BorderSide(color: widget.touchedBarColor.darken(80))
+              //     : const BorderSide(color: Colors.white, width: 0),
+              // backDrawRodData: BackgroundBarChartRodData(
+              //   show: true,
+              //   toY: 10,
+              //   // color: widget.barBackgroundColor,
+              // ),
+              rodStackItems: [
+                BarChartRodStackItem(
+                  0,
+                  e.value.toDouble(),
+                  Colors.white,
+                  BorderSide(
+                    color: Colors.white,
+                    width: isTouched ? 2 : 0,
+                  ),
+                ),
+              ]),
         ],
       );
     }).toList();
@@ -977,38 +976,29 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
 
   SideTitles get _bottomTitles => SideTitles(
         showTitles: true,
+        reservedSize: 55, //+ _selectedTimeRange == 7 ? 25 : 25,
         getTitlesWidget: (value, meta) {
           String text = '';
+          String text2 = '';
           switch (_selectedTimeRange) {
             case 7:
-              switch (value.toInt()) {
-                case 0:
-                  text = 'Mon';
-                  break;
-                case 1:
-                  text = 'Tue';
-                  break;
-                case 2:
-                  text = 'Wed';
-                  break;
-                case 3:
-                  text = 'Thu';
-                  break;
-                case 4:
-                  text = 'Fri';
-                  break;
-                case 5:
-                  text = 'Sat';
-                  break;
-                case 6:
-                  text = 'Sun';
-                  break;
-              }
+              final DateFormat formatter = DateFormat('EEE');
+              final DateFormat formatter2 = DateFormat('dd MMM');
+
+              var d = time.subtract(Duration(days: 7 - value.toInt()));
+              text = formatter.format(d);
+              text2 = formatter2.format(d);
+
               break;
             case 30:
+              final DateFormat formatter = DateFormat('dd');
+              final DateFormat formatter2 = DateFormat('MMM');
+
               if (value.toInt() % 2 == 0) {
                 var d = time.subtract(Duration(days: 30 - value.toInt()));
-                text = d.day.toString();
+                text = formatter.format(d);
+                if (value.toInt() % 10 == 0) text2 = formatter2.format(d);
+                // text = d.day.toString();
               }
 
               break;
@@ -1020,28 +1010,13 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
 
               break;
           }
-          // switch (value.toInt()) {
-          //   case 0:
-          //     text = 'Jan';
-          //     break;
-          //   case 2:
-          //     text = 'Mar';
-          //     break;
-          //   case 4:
-          //     text = 'May';
-          //     break;
-          //   case 6:
-          //     text = 'Jul';
-          //     break;
-          //   case 8:
-          //     text = 'Sep';
-          //     break;
-          //   case 10:
-          //     text = 'Nov';
-          //     break;
-          // }
 
-          return Text(text);
+          return Column(
+            children: [
+              Text(text),
+              Text(text2, style: Theme.of(context).textTheme.labelSmall),
+            ],
+          );
         },
       );
 }
