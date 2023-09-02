@@ -6,6 +6,9 @@ import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/screens/coffee_selection.dart';
+import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
+import 'package:despresso/ui/widgets/dashboard/colorlist.dart';
+import 'package:despresso/ui/widgets/dashboard/shots_per_time.dart';
 import 'package:despresso/ui/widgets/legend_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
@@ -15,90 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-
-const Color blue = Color(0xFF4285F4);
-const Color red = Color(0xFFEA4335);
-const Color yellow = Color(0xFFFBBC05);
-const Color green = Color(0xFF34A853);
-
-const List<Color> colorList = [
-  blue,
-  red,
-  yellow,
-  green,
-  Color.fromARGB(255, 244, 66, 155),
-  Color.fromARGB(255, 244, 66, 119),
-  Color.fromARGB(255, 66, 244, 110),
-  Color.fromARGB(255, 244, 66, 173),
-  Color.fromARGB(255, 232, 244, 66),
-  Color.fromARGB(255, 244, 66, 78),
-  Color.fromARGB(255, 158, 66, 244),
-  Color.fromARGB(255, 244, 122, 66),
-  Color.fromARGB(255, 66, 188, 244),
-  Color.fromARGB(255, 66, 244, 99),
-  Color.fromARGB(255, 66, 244, 93),
-  Color.fromARGB(255, 244, 167, 66),
-];
-
-class ColoredDashboardItem extends DashboardItem {
-  ColoredDashboardItem(
-      {this.color,
-      required int width,
-      required int height,
-      required String identifier,
-      this.data,
-      this.dataFooter,
-      this.dataHeader,
-      this.title,
-      this.subTitle,
-      this.footer,
-      this.subFooter,
-      this.value,
-      int minWidth = 1,
-      int minHeight = 1,
-      int? maxHeight,
-      int? maxWidth,
-      int? startX,
-      int? startY})
-      : super(
-            startX: startX,
-            startY: startY,
-            width: width,
-            height: height,
-            identifier: identifier,
-            maxHeight: maxHeight,
-            maxWidth: maxWidth,
-            minWidth: minWidth,
-            minHeight: minHeight);
-
-  ColoredDashboardItem.fromMap(Map<String, dynamic> map)
-      : color = map["color"] != null ? Color(map["color"]) : null,
-        data = map["data"],
-        super.withLayout(map["item_id"], ItemLayout.fromMap(map["layout"]));
-
-  Color? color;
-
-  String? dataHeader;
-  String? dataFooter;
-  String? data;
-  String? title;
-  String? subTitle;
-  String? footer;
-  String? subFooter;
-  String? value;
-
-  @override
-  Map<String, dynamic> toMap() {
-    var sup = super.toMap();
-    if (color != null) {
-      sup["color"] = color?.value;
-    }
-    if (data != null) {
-      sup["data"] = data;
-    }
-    return sup;
-  }
-}
 
 class DataWidget extends StatelessWidget {
   DataWidget({Key? key, required this.item}) : super(key: key);
@@ -315,10 +234,10 @@ class DefaultAdvice extends StatelessWidget {
         // color: yellow,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
+          children: [
             Icon(
               Icons.refresh,
               size: 30,
@@ -346,10 +265,10 @@ class ClearAdvice extends StatelessWidget {
         color: green,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
+          children: [
             Icon(
               Icons.delete,
               size: 30,
@@ -374,10 +293,10 @@ class AddAdvice extends StatelessWidget {
         color: blue,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
+          children: [
             Icon(
               Icons.add,
               size: 30,
@@ -402,22 +321,22 @@ class TransformAdvice extends StatelessWidget {
         color: red,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               "Users can move widgets.",
               style: TextStyle(color: Colors.white, fontSize: 13),
               textAlign: TextAlign.center,
             ),
-            const Text(
+            Text(
               "To try moving, hold (or long press) the widget and move.",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 13),
             ),
             Row(
-              children: const [
+              children: [
                 Expanded(
                   child: Text(
                     "While moving, it shrinks if possible according to the "
@@ -687,7 +606,7 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
                     );
                   }),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
@@ -729,334 +648,4 @@ class TimeEntry {
   const TimeEntry({required this.count, required this.time});
   final int count;
   final String time;
-}
-
-class ShotsPerTime extends StatefulWidget {
-  const ShotsPerTime({Key? key, required this.data}) : super(key: key);
-  final ColoredDashboardItem data;
-  @override
-  State<ShotsPerTime> createState() => _ShotsPerTimeState();
-}
-
-class _ShotsPerTimeState extends State<ShotsPerTime> {
-  late CoffeeService _coffeeService;
-  late List<Shot> allShots;
-
-  late LinkedHashMap<String, int> sortedMap = LinkedHashMap();
-
-  int touchedIndex = -1;
-  int _selectedTimeRange = 30;
-  DateTime time = DateTime.now();
-  var timeRanges = [
-    DropdownMenuItem(
-      value: 1,
-      child: Text("Day"),
-    ),
-    DropdownMenuItem(
-      value: 7,
-      child: Text("Week"),
-    ),
-    DropdownMenuItem(
-      value: 30,
-      child: Text("Month"),
-    )
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _coffeeService = getIt<CoffeeService>();
-    allShots = _coffeeService.shotBox.getAll();
-    time = allShots.last.date;
-    calcData();
-    // var sortedKeys = counts.keys.toList(growable: false)..sort((k1, k2) => counts[k2]!.compareTo(counts[k1]!));
-    // sortedMap = counts; // LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => counts[k]!);
-    // print(sortedMap);
-  }
-
-  void calcData() {
-    var fromTo =
-        DateTimeRange(end: time.add(Duration(seconds: 1)), start: time.subtract(Duration(days: _selectedTimeRange)));
-    sortedMap.clear();
-    if (_selectedTimeRange > 1) {
-      for (var i = 1; i < _selectedTimeRange; i++) {
-        var d = time.subtract(Duration(days: i));
-        var key = "${d.day}_${d.month}_${d.year}";
-        sortedMap[key] = 0;
-      }
-    }
-    if (_selectedTimeRange == 1) {
-      for (var i = 0; i < 24; i++) {
-        var d = time.subtract(Duration(hours: i));
-        var key = "${d.hour}";
-        sortedMap[key] = 0;
-      }
-    }
-    for (var element in allShots) {
-      try {
-        var d = element.date;
-        if (d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
-          var key = _selectedTimeRange == 1 ? "${d.hour}" : "${d.day}_${d.month}_${d.year}";
-
-          if (sortedMap[key] == null) {
-            sortedMap[key] = 0;
-          }
-          sortedMap[key] = sortedMap[key]! + 1;
-        }
-      } catch (e) {
-        debugPrint("Error");
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var legends = sortedMap.entries
-        .mapIndexed((i, e) => Legend(
-              e.key,
-              colorList[i % colorList.length],
-              e.value.toString(),
-            ))
-        .toList();
-
-    return Container(
-      color: Theme.of(context).focusColor,
-      // color: yellow,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: Column(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  if (widget.data.title != null)
-                    Text(
-                      widget.data.title!,
-                      textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ElevatedButton(
-                      onPressed: () {
-                        time = time.subtract(Duration(days: _selectedTimeRange));
-                        calcData();
-                        setState(() {});
-                      },
-                      child: Text("<")),
-                  DropdownButton(
-                    isExpanded: false,
-                    alignment: Alignment.centerLeft,
-                    value: _selectedTimeRange,
-                    items: timeRanges,
-                    onChanged: (value) {
-                      if (value != 0) {
-                        _selectedTimeRange = value!;
-                        calcData();
-                      }
-                      setState(() {});
-                    },
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        time = time.subtract(Duration(days: -_selectedTimeRange));
-                        calcData();
-                        setState(() {});
-                      },
-                      child: Text(">")),
-                  Text(time.toLocal().toString()),
-                ],
-              ),
-              if (widget.data.subTitle != null)
-                Row(
-                  children: [
-                    Text(
-                      widget.data.subTitle!,
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ],
-                ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: LayoutBuilder(builder: (context, constrains) {
-                    var r = min(constrains.maxWidth, constrains.maxHeight) / 2;
-                    return BarChart(
-                      BarChartData(
-                        // pieTouchData: PieTouchData(
-                        //   touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        //     setState(() {
-                        //       if (!event.isInterestedForInteractions ||
-                        //           pieTouchResponse == null ||
-                        //           pieTouchResponse.touchedSection == null) {
-                        //         touchedIndex = -1;
-                        //         return;
-                        //       }
-                        //       touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                        //       print(touchedIndex);
-                        //     });
-                        //   },
-                        // ),
-                        borderData: FlBorderData(
-                          show: false,
-                        ),
-                        barGroups: showingSections(10),
-                        maxY: 10,
-                        titlesData: FlTitlesData(
-                          bottomTitles: AxisTitles(sideTitles: _bottomTitles),
-                          leftTitles: AxisTitles(sideTitles: SideTitles(reservedSize: 30, showTitles: true)),
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                // Expanded(
-                //   child: LegendsListWidget(legends: legends, touchIndex: touchedIndex),
-                // )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<BarChartGroupData> showingSections(double radius) {
-    // const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-    return sortedMap.entries.mapIndexed((i, e) {
-      final isTouched = i == touchedIndex;
-      var color = colorList[i % colorList.length];
-      // var actCol = Color.fromRGBO(color.red, color.green, color.blue, isTouched || touchedIndex == -1 ? 1 : 0.5);
-      var actCol = color.withOpacity(isTouched || touchedIndex == -1 ? 1 : 0.5);
-      return BarChartGroupData(
-        x: i,
-        barRods: [
-          BarChartRodData(
-              toY: isTouched ? e.value + 1 : e.value.toDouble() * 2,
-              // color: isTouched ? widget.touchedBarColor : barColor,
-              //width: 10,
-              color: Colors.green,
-              // borderSide: isTouched
-              //     ? BorderSide(color: widget.touchedBarColor.darken(80))
-              //     : const BorderSide(color: Colors.white, width: 0),
-              // backDrawRodData: BackgroundBarChartRodData(
-              //   show: true,
-              //   toY: 10,
-              //   // color: widget.barBackgroundColor,
-              // ),
-              rodStackItems: [
-                BarChartRodStackItem(
-                  0,
-                  e.value.toDouble(),
-                  Colors.white,
-                  BorderSide(
-                    color: Colors.white,
-                    width: isTouched ? 2 : 0,
-                  ),
-                ),
-              ]),
-        ],
-      );
-    }).toList();
-  }
-
-  SideTitles get _bottomTitles => SideTitles(
-        showTitles: true,
-        reservedSize: 55, //+ _selectedTimeRange == 7 ? 25 : 25,
-        getTitlesWidget: (value, meta) {
-          String text = '';
-          String text2 = '';
-          switch (_selectedTimeRange) {
-            case 7:
-              final DateFormat formatter = DateFormat('EEE');
-              final DateFormat formatter2 = DateFormat('dd MMM');
-
-              var d = time.subtract(Duration(days: 7 - value.toInt()));
-              text = formatter.format(d);
-              text2 = formatter2.format(d);
-
-              break;
-            case 30:
-              final DateFormat formatter = DateFormat('dd');
-              final DateFormat formatter2 = DateFormat('MMM');
-
-              if (value.toInt() % 2 == 0) {
-                var d = time.subtract(Duration(days: 30 - value.toInt()));
-                text = formatter.format(d);
-                if (value.toInt() % 10 == 0) text2 = formatter2.format(d);
-                // text = d.day.toString();
-              }
-
-              break;
-            case 1:
-              if (value.toInt() % 1 == 0) {
-                var d = time.subtract(Duration(hours: 23 - value.toInt()));
-                text = d.hour.toString();
-              }
-
-              break;
-          }
-
-          return Column(
-            children: [
-              Text(text),
-              Text(text2, style: Theme.of(context).textTheme.labelSmall),
-            ],
-          );
-        },
-      );
-}
-
-class AdviceResize extends StatelessWidget {
-  const AdviceResize({Key? key, required this.size}) : super(key: key);
-
-  final int size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        color: green,
-        alignment: Alignment.center,
-        child: Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(left: 5),
-              height: double.infinity,
-              width: 1,
-              color: Colors.white,
-            ),
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                Text("Users can resize widgets.",
-                    maxLines: 2, style: TextStyle(color: Colors.white, fontSize: 13), textAlign: TextAlign.center),
-                Text(
-                    "To try resizing, hold (or long press) the line on the left"
-                    " and drag it to the left.",
-                    maxLines: 5,
-                    style: TextStyle(color: Colors.white, fontSize: 13),
-                    textAlign: TextAlign.center),
-                Text("Don't forget switch to edit mode.",
-                    maxLines: 3, style: TextStyle(color: Colors.white, fontSize: 13), textAlign: TextAlign.center),
-              ],
-            ))
-          ],
-        ));
-  }
 }

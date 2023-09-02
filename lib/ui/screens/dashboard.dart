@@ -5,6 +5,7 @@ import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
 import 'package:despresso/ui/widgets/start_stop_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
