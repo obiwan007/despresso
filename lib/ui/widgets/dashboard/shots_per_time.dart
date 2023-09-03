@@ -118,7 +118,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
               e.value.toString(),
             ))
         .toList();
-
+    final DateFormat formatter = DateFormat('yMMMd');
     return Container(
       color: Theme.of(context).focusColor,
       // color: yellow,
@@ -138,13 +138,13 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                       textAlign: TextAlign.left,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
-                  ElevatedButton(
+                  IconButton(
                       onPressed: () {
                         time = time.subtract(Duration(days: _selectedTimeRange));
                         calcData();
                         setState(() {});
                       },
-                      child: const Text("<")),
+                      icon: const Icon(Icons.chevron_left)),
                   DropdownButton(
                     isExpanded: false,
                     alignment: Alignment.centerLeft,
@@ -158,14 +158,14 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                       setState(() {});
                     },
                   ),
-                  ElevatedButton(
+                  IconButton(
                       onPressed: () {
                         time = time.subtract(Duration(days: -_selectedTimeRange));
                         calcData();
                         setState(() {});
                       },
-                      child: const Text(">")),
-                  Text(time.toLocal().toString()),
+                      icon: const Icon(Icons.chevron_right)),
+                  Text(formatter.format(time)),
                 ],
               ),
               if (widget.data.subTitle != null)
