@@ -234,6 +234,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                     if (item.data != null) {
                       return DataWidget(
                         item: item,
+                        controller: itemController,
                       );
                     }
                     return Text(item.identifier);
@@ -251,12 +252,12 @@ class DashboardScreenState extends State<DashboardScreen> {
               color: Colors.red,
               width: 1,
               height: 1,
-              title: "My Beans",
+              title: "",
               subTitle: "",
-              dataHeader: "#",
-              dataFooter: "beans",
-              footer: "test",
-              subFooter: "foot",
+              dataHeader: "",
+              dataFooter: "",
+              footer: "",
+              subFooter: "",
               startX: 1,
               startY: 3,
               data: "kpi",
@@ -270,28 +271,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         });
 
     if (res != null) {
-      print(res);
-      itemController.add(res,
-          // ColoredDashboardItem(
-          //     widgetDataSource: res[9],
-          //     color: Colors.red,
-          //     width: res[0],
-          //     height: res[1],
-          //     title: res[6],
-          //     subTitle: res[7],
-          //     dataHeader: res[10],
-          //     dataFooter: res[11],
-          //     footer: res[12],
-          //     subFooter: res[13],
-          //     startX: 1,
-          //     startY: 3,
-          //     data: res[8],
-          //     identifier: (Random().nextInt(100000) + 4).toString(),
-          //     minWidth: res[2],
-          //     minHeight: res[3],
-          //     maxWidth: res[4] == 0 ? null : res[4],
-          //     maxHeight: res[5] == 0 ? null : res[5]),
-          mountToTop: false);
+      itemController.add(res, mountToTop: true);
     }
   }
 }

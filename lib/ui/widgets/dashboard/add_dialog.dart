@@ -18,23 +18,6 @@ class _AddDialogState extends State<AddDialog> {
 
   int? maxW, maxH;
 
-  List values = [
-    1, //w 0
-    1, //h 1
-    1, //minW 2
-    1, //minH 3
-    0, //maxW 4
-    0, //maxH 5
-    "title", // 6
-    "subtitle", // 7
-    "kpi", // 8
-    WidgetDataSource.shotsSum, // 9
-    "valueheader", // 10
-    "valuefooter", // 11
-    "header", // 12
-    "footer", // 13
-  ];
-
   Color color = Colors.red;
   var types = [
     const DropdownMenuItem(
@@ -66,8 +49,6 @@ class _AddDialogState extends State<AddDialog> {
     ),
   ];
 
-  String _selectedType = "kpi";
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -91,7 +72,10 @@ class _AddDialogState extends State<AddDialog> {
                         setState(() {});
                       },
                     ),
-                    if (values[8] == "kpi")
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    if (widget.data.data == "kpi")
                       DropdownButton(
                         isExpanded: false,
                         alignment: Alignment.centerLeft,
@@ -154,7 +138,6 @@ class _AddDialogState extends State<AddDialog> {
                   inputFormatters: [],
                   initialValue: widget.data.footer,
                   onChanged: (v) {
-                    values[12] = v;
                     widget.data.footer = v;
                   },
                   decoration: const InputDecoration(hintText: 'Footer'),
@@ -191,7 +174,7 @@ class _AddDialogState extends State<AddDialog> {
                         width: double.infinity,
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         child: BlockPicker(
-                            pickerColor: widget.data.color!,
+                            pickerColor: widget.data.color == null ? Colors.white : widget.data.color!,
                             onColorChanged: (c) {
                               setState(() {
                                 widget.data.color = c;
@@ -206,32 +189,32 @@ class _AddDialogState extends State<AddDialog> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      if (values[0] < values[2]) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("width >= minWidth is not true.")));
-                        return;
-                      }
-                      if (values[1] < values[3]) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("height >= minHeight is not true.")));
-                        return;
-                      }
-                      if (values[4] != 0 && values[0] > values[4]) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("width <= maxWidth is not true.")));
-                        return;
-                      }
-                      if (values[5] != 0 && values[1] > values[5]) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("height <= maxHeight is not true.")));
-                        return;
-                      }
+                      // if (values[0] < values[2]) {
+                      //   ScaffoldMessenger.of(context)
+                      //       .showSnackBar(const SnackBar(content: Text("width >= minWidth is not true.")));
+                      //   return;
+                      // }
+                      // if (values[1] < values[3]) {
+                      //   ScaffoldMessenger.of(context)
+                      //       .showSnackBar(const SnackBar(content: Text("height >= minHeight is not true.")));
+                      //   return;
+                      // }
+                      // if (values[4] != 0 && values[0] > values[4]) {
+                      //   ScaffoldMessenger.of(context)
+                      //       .showSnackBar(const SnackBar(content: Text("width <= maxWidth is not true.")));
+                      //   return;
+                      // }
+                      // if (values[5] != 0 && values[1] > values[5]) {
+                      //   ScaffoldMessenger.of(context)
+                      //       .showSnackBar(const SnackBar(content: Text("height <= maxHeight is not true.")));
+                      //   return;
+                      // }
 
                       Navigator.pop(context, widget.data);
                     },
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
-                      child: Text("Add"),
+                      child: Text("Save"),
                     )),
                 const SizedBox(
                   height: 20,
@@ -244,40 +227,40 @@ class _AddDialogState extends State<AddDialog> {
     );
   }
 
-  Widget drop(String name, bool nullable, int index, bool bounded) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("$name: "),
-        SizedBox(
-          width: 100,
-          child: DropdownButton<int>(
-              underline: const SizedBox(),
-              alignment: Alignment.centerRight,
-              items: [
-                if (nullable) 0,
-                1,
-                2,
-                3,
-                4,
-                if (!bounded) ...[5, 6, 7, 8, 9]
-              ]
-                  .map((e) => DropdownMenuItem<int>(
-                      alignment: Alignment.centerRight,
-                      value: e,
-                      child: Text(
-                        (e == 0 ? "null" : e).toString(),
-                        textAlign: TextAlign.right,
-                      )))
-                  .toList(),
-              value: values[index],
-              onChanged: (v) {
-                setState(() {
-                  values[index] = v ?? 1;
-                });
-              }),
-        ),
-      ],
-    );
-  }
+  // Widget drop(String name, bool nullable, int index, bool bounded) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       Text("$name: "),
+  //       SizedBox(
+  //         width: 100,
+  //         child: DropdownButton<int>(
+  //             underline: const SizedBox(),
+  //             alignment: Alignment.centerRight,
+  //             items: [
+  //               if (nullable) 0,
+  //               1,
+  //               2,
+  //               3,
+  //               4,
+  //               if (!bounded) ...[5, 6, 7, 8, 9]
+  //             ]
+  //                 .map((e) => DropdownMenuItem<int>(
+  //                     alignment: Alignment.centerRight,
+  //                     value: e,
+  //                     child: Text(
+  //                       (e == 0 ? "null" : e).toString(),
+  //                       textAlign: TextAlign.right,
+  //                     )))
+  //                 .toList(),
+  //             value: values[index],
+  //             onChanged: (v) {
+  //               setState(() {
+  //                 values[index] = v ?? 1;
+  //               });
+  //             }),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

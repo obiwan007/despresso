@@ -21,30 +21,36 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+enum SelectedWidgetMenu {
+  edit,
+  delete,
+}
+
 class DataWidget extends StatelessWidget {
-  DataWidget({Key? key, required this.item}) : super(key: key);
+  DataWidget({Key? key, required this.item, required this.controller}) : super(key: key);
 
   final ColoredDashboardItem item;
-
-  final Map<String, Widget Function(ColoredDashboardItem i)> _map = {
-    "welcome": (l) => const WelcomeWidget(),
-    "shotsperrecipe": (l) => ShotsPerRecipe(data: l),
-    "shotspertime": (l) => ShotsPerTime(data: l),
-    "kpi": (l) => KPI(data: l),
-    "transform": (l) => const TransformAdvice(),
-    "add": (l) => const AddAdvice(),
-    "buy_mee": (l) => const BuyMee(),
-    "delete": (l) => const ClearAdvice(),
-    "refresh": (l) => const DefaultAdvice(),
-    "info": (l) => InfoAdvice(layout: l.layoutData),
-    "github": (l) => const Github(),
-    "twitter": (l) => const Twitter(),
-    "linkedin": (l) => const LinkedIn(),
-    "pub": (l) => const Pub(),
-  };
+  final DashboardItemController<ColoredDashboardItem> controller;
 
   @override
   Widget build(BuildContext context) {
+    Map<String, Widget Function(ColoredDashboardItem i)> _map = {
+      "welcome": (l) => const WelcomeWidget(),
+      "shotsperrecipe": (l) => ShotsPerRecipe(data: l, controller: controller),
+      "shotspertime": (l) => ShotsPerTime(data: l, controller: controller),
+      "kpi": (l) => KPI(data: l, controller: controller),
+      "transform": (l) => const TransformAdvice(),
+      "add": (l) => const AddAdvice(),
+      "buy_mee": (l) => const BuyMee(),
+      "delete": (l) => const ClearAdvice(),
+      "refresh": (l) => const DefaultAdvice(),
+      "info": (l) => InfoAdvice(layout: l.layoutData),
+      "github": (l) => const Github(),
+      "twitter": (l) => const Twitter(),
+      "linkedin": (l) => const LinkedIn(),
+      "pub": (l) => const Pub(),
+    };
+
     return _map[item.data]!(item);
   }
 }

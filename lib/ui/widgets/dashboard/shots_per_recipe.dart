@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:dashboard/src/dashboard_base.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/service_locator.dart';
@@ -10,11 +11,14 @@ import 'package:despresso/ui/widgets/legend_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+import 'add_dialog.dart';
 import 'colorlist.dart';
+import 'data_widget.dart';
 
 class ShotsPerRecipe extends StatefulWidget {
-  const ShotsPerRecipe({Key? key, required this.data}) : super(key: key);
+  const ShotsPerRecipe({Key? key, required this.data, required this.controller}) : super(key: key);
   final ColoredDashboardItem data;
+  final DashboardItemController<ColoredDashboardItem> controller;
   @override
   State<ShotsPerRecipe> createState() => _ShotsPerRecipeState();
 }
@@ -78,11 +82,46 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
               if (widget.data.title != null)
                 Row(
                   children: [
-                    Text(
-                      widget.data.title!,
-                      textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.titleSmall,
+                    Expanded(
+                      child: Text(
+                        widget.data.title!,
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                     ),
+                    if (widget.controller.isEditing)
+                      PopupMenuButton<SelectedWidgetMenu>(
+                        initialValue: null,
+                        // Callback that sets the selected popup menu item.
+                        onSelected: (SelectedWidgetMenu item) async {
+                          switch (item) {
+                            case SelectedWidgetMenu.edit:
+                              var res = await showDialog(
+                                  context: context,
+                                  builder: (c) {
+                                    return AddDialog(data: widget.data);
+                                  });
+                              if (res != null) {
+                                widget.controller.delete(widget.data.identifier);
+                                widget.controller.add(res, mountToTop: false);
+                              }
+                              break;
+                            case SelectedWidgetMenu.delete:
+                              widget.controller.delete(widget.data.identifier);
+                              break;
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<SelectedWidgetMenu>>[
+                          const PopupMenuItem<SelectedWidgetMenu>(
+                            value: SelectedWidgetMenu.edit,
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem<SelectedWidgetMenu>(
+                            value: SelectedWidgetMenu.delete,
+                            child: Text('Delete'),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               if (widget.data.subTitle != null)

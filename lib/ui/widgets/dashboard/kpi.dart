@@ -1,11 +1,16 @@
+import 'package:dashboard/dashboard.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
+import 'package:despresso/ui/widgets/dashboard/add_dialog.dart';
 import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
 import 'package:flutter/material.dart';
 
+import 'data_widget.dart';
+
 class KPI extends StatefulWidget {
   final ColoredDashboardItem data;
-  const KPI({Key? key, required this.data}) : super(key: key);
+  final DashboardItemController<ColoredDashboardItem> controller;
+  const KPI({Key? key, required this.data, required this.controller}) : super(key: key);
 
   @override
   State<KPI> createState() => _KPIState();
@@ -16,7 +21,9 @@ class _KPIState extends State<KPI> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    widget.controller.addListener(() {
+      print("LISTEN");
+    });
     switch (widget.data.widgetDataSource) {
       case WidgetDataSource.beansSum:
         widget.data.value = getIt<CoffeeService>().coffeeBox.count().toString();
@@ -45,16 +52,50 @@ class _KPIState extends State<KPI> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.data.title != null)
-                    Row(
-                      children: [
-                        Text(
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
                           widget.data.title!,
                           textAlign: TextAlign.left,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                      ],
-                    ),
+                      ),
+                      if (widget.controller.isEditing)
+                        PopupMenuButton<SelectedWidgetMenu>(
+                          initialValue: null,
+                          // Callback that sets the selected popup menu item.
+                          onSelected: (SelectedWidgetMenu item) async {
+                            switch (item) {
+                              case SelectedWidgetMenu.edit:
+                                var res = await showDialog(
+                                    context: context,
+                                    builder: (c) {
+                                      return AddDialog(data: widget.data);
+                                    });
+                                if (res != null) {
+                                  widget.controller.delete(widget.data.identifier);
+                                  widget.controller.add(res, mountToTop: false);
+                                }
+                                break;
+                              case SelectedWidgetMenu.delete:
+                                widget.controller.delete(widget.data.identifier);
+                                break;
+                            }
+                          },
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<SelectedWidgetMenu>>[
+                            const PopupMenuItem<SelectedWidgetMenu>(
+                              value: SelectedWidgetMenu.edit,
+                              child: Text('Edit'),
+                            ),
+                            const PopupMenuItem<SelectedWidgetMenu>(
+                              value: SelectedWidgetMenu.delete,
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                   if (widget.data.subTitle != null)
                     Row(
                       children: [

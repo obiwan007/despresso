@@ -2,19 +2,23 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:dashboard/dashboard.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/service_locator.dart';
+import 'package:despresso/ui/widgets/dashboard/add_dialog.dart';
 import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
 import 'package:despresso/ui/widgets/dashboard/colorlist.dart';
+import 'package:despresso/ui/widgets/dashboard/data_widget.dart';
 import 'package:despresso/ui/widgets/legend_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ShotsPerTime extends StatefulWidget {
-  const ShotsPerTime({Key? key, required this.data}) : super(key: key);
+  const ShotsPerTime({Key? key, required this.data, required this.controller}) : super(key: key);
   final ColoredDashboardItem data;
+  final DashboardItemController<ColoredDashboardItem> controller;
   @override
   State<ShotsPerTime> createState() => _ShotsPerTimeState();
 }
@@ -132,40 +136,78 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
             children: [
               Row(
                 children: [
-                  if (widget.data.title != null)
-                    Text(
-                      widget.data.title!,
-                      textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.titleSmall,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.data.title!,
+                          textAlign: TextAlign.left,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              time = time.subtract(Duration(days: _selectedTimeRange));
+                              calcData();
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.chevron_left)),
+                        DropdownButton(
+                          isExpanded: false,
+                          alignment: Alignment.centerLeft,
+                          value: _selectedTimeRange,
+                          items: timeRanges,
+                          onChanged: (value) {
+                            if (value != 0) {
+                              _selectedTimeRange = value!;
+                              calcData();
+                            }
+                            setState(() {});
+                          },
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              time = time.subtract(Duration(days: -_selectedTimeRange));
+                              calcData();
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.chevron_right)),
+                        Text(formatter.format(time)),
+                      ],
                     ),
-                  IconButton(
-                      onPressed: () {
-                        time = time.subtract(Duration(days: _selectedTimeRange));
-                        calcData();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.chevron_left)),
-                  DropdownButton(
-                    isExpanded: false,
-                    alignment: Alignment.centerLeft,
-                    value: _selectedTimeRange,
-                    items: timeRanges,
-                    onChanged: (value) {
-                      if (value != 0) {
-                        _selectedTimeRange = value!;
-                        calcData();
-                      }
-                      setState(() {});
-                    },
                   ),
-                  IconButton(
-                      onPressed: () {
-                        time = time.subtract(Duration(days: -_selectedTimeRange));
-                        calcData();
-                        setState(() {});
+                  if (widget.controller.isEditing)
+                    PopupMenuButton<SelectedWidgetMenu>(
+                      initialValue: null,
+                      // Callback that sets the selected popup menu item.
+                      onSelected: (SelectedWidgetMenu item) async {
+                        switch (item) {
+                          case SelectedWidgetMenu.edit:
+                            var res = await showDialog(
+                                context: context,
+                                builder: (c) {
+                                  return AddDialog(data: widget.data);
+                                });
+                            if (res != null) {
+                              widget.controller.delete(widget.data.identifier);
+                              widget.controller.add(res, mountToTop: false);
+                            }
+                            break;
+                          case SelectedWidgetMenu.delete:
+                            widget.controller.delete(widget.data.identifier);
+                            break;
+                        }
                       },
-                      icon: const Icon(Icons.chevron_right)),
-                  Text(formatter.format(time)),
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry<SelectedWidgetMenu>>[
+                        const PopupMenuItem<SelectedWidgetMenu>(
+                          value: SelectedWidgetMenu.edit,
+                          child: Text('Edit'),
+                        ),
+                        const PopupMenuItem<SelectedWidgetMenu>(
+                          value: SelectedWidgetMenu.delete,
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
                 ],
               ),
               if (widget.data.subTitle != null)
