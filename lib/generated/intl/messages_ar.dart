@@ -72,6 +72,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "mainMenuEspressoDiary":
             MessageLookupByLibrary.simpleMessage("يوميات اسبريسو"),
         "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("تعليق"),
+        "mainMenuMaintenance":
+            MessageLookupByLibrary.simpleMessage("Maintenance"),
+        "mainMenuStatistics":
+            MessageLookupByLibrary.simpleMessage("Statistics"),
         "no": MessageLookupByLibrary.simpleMessage("لا"),
         "off": MessageLookupByLibrary.simpleMessage("إغلاق"),
         "ok": MessageLookupByLibrary.simpleMessage("نعم"),
@@ -343,6 +347,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsPasswordCantBeSmallerThan7Letters":
             MessageLookupByLibrary.simpleMessage(
                 "لا يمكن أن تكون كلمة المرور أصغر من 7 أحرف"),
+        "screenSettingsPowermode":
+            MessageLookupByLibrary.simpleMessage("Powermode"),
         "screenSettingsPrivacySettings":
             MessageLookupByLibrary.simpleMessage("إعدادات الخصوصية"),
         "screenSettingsReduceBrightnessToLevel":
@@ -360,6 +366,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("نسخة احتياطية محفوظة"),
         "screenSettingsScaleSupport":
             MessageLookupByLibrary.simpleMessage("دعم النطاق"),
+        "screenSettingsScalesFound":
+            MessageLookupByLibrary.simpleMessage("Scales"),
         "screenSettingsScreenAndBrightness":
             MessageLookupByLibrary.simpleMessage("الشاشة والسطوع"),
         "screenSettingsSecondFlushTimerS":
@@ -414,6 +422,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("الجهاز اللوحي الافتراضي"),
         "screenSettingsTabletGroup":
             MessageLookupByLibrary.simpleMessage("لوح"),
+        "screenSettingsTare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "screenSettingsTesting":
+            MessageLookupByLibrary.simpleMessage("Testing"),
+        "screenSettingsTestingScales":
+            MessageLookupByLibrary.simpleMessage("Testing features of scales"),
         "screenSettingsThemeSelection":
             MessageLookupByLibrary.simpleMessage("اختيار اللغة والموضوع"),
         "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
@@ -435,6 +448,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff":
             MessageLookupByLibrary.simpleMessage(
                 "استيقظ de1 إذا تم النقر على الشاشة (إذا كانت الشاشة مغلقة)"),
+        "screenSettingsWeightOfOneContainers":
+            MessageLookupByLibrary.simpleMessage("Weight of containers"),
+        "screenSettingsWeightedContainer":
+            MessageLookupByLibrary.simpleMessage("Weighted container"),
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "لقد قمت بتغيير الإعدادات الحرجة. تحتاج إلى إعادة تشغيل التطبيق لتنشيط الإعدادات."),
@@ -495,6 +512,31 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenWaterWeightG": m9,
         "screenWaterWeightVolume": m10,
         "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
+        "settingsAutostartTimerOnScaleDuringPuring":
+            MessageLookupByLibrary.simpleMessage(
+                "Autostart timer on scale during puring"),
+        "settingsContainerAutotare":
+            MessageLookupByLibrary.simpleMessage("Tare if weight was detected"),
+        "settingsContainerCurrentWeight":
+            MessageLookupByLibrary.simpleMessage("Current Weight"),
+        "settingsRefillWatertankAtLimit":
+            MessageLookupByLibrary.simpleMessage("Refill watertank at limit"),
+        "settingsSleepAllowTabletSleepDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Allow tablet sleep during screensaver"),
+        "settingsSleepAllowTabletSleepWhenMachineIsSleepingOrDisconnected":
+            MessageLookupByLibrary.simpleMessage(
+                "Allow tablet sleep when machine is sleeping or disconnected"),
+        "settingsSleepMinutesToSpendInScreensaverBeforeAllowingSleep":
+            MessageLookupByLibrary.simpleMessage(
+                "Minutes to spend in screensaver before allowing sleep"),
+        "settingsSleepWarning": MessageLookupByLibrary.simpleMessage(
+            "Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
+        "settingsSleepWhenMachineIsInSleepSwitchOffScaleDisplayIf":
+            MessageLookupByLibrary.simpleMessage(
+                "When machine is in sleep, switch off scale display if possible"),
+        "settingsTabletSleep":
+            MessageLookupByLibrary.simpleMessage("Tablet sleep"),
         "show": MessageLookupByLibrary.simpleMessage("عرض"),
         "start": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "stateDisconnected":

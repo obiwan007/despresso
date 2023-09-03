@@ -296,6 +296,21 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
               },
             ),
             ListTile(
+              leading: const Icon(Icons.graphic_eq),
+              title: Text(S.of(context).mainMenuStatistics),
+              onTap: () {
+                _screensaver.pause();
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                ).then((value) {
+                  _screensaver.resume();
+                });
+                // Then close the drawer
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.settings),
               title: Text(S.of(context).settings),
               onTap: () {
@@ -313,7 +328,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.build),
-              title: const Text("Maintenance"),
+              title: Text(S.of(context).mainMenuMaintenance),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -327,21 +342,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 // Then close the drawer
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.graphic_eq),
-              title: const Text("Statistics"),
-              onTap: () {
-                _screensaver.pause();
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                ).then((value) {
-                  _screensaver.resume();
-                });
-                // Then close the drawer
-              },
-            ),
+
             ListTile(
               leading: const Icon(Icons.feedback),
               title: Text(S.of(context).mainMenuFeedback),

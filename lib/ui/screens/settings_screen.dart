@@ -170,11 +170,11 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     ],
                   ),
                   SettingsGroup(
-                    title: "Scales",
+                    title: S.of(context).screenSettingsScalesFound,
                     children: [
                       ExpandableSettingsTile(
-                        title: "Testing",
-                        subtitle: "Testing features of scales",
+                        title: S.of(context).screenSettingsTesting,
+                        subtitle: S.of(context).screenSettingsTestingScales,
                         expanded: false,
                         children: [
                           SettingsContainer(
@@ -232,7 +232,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                   ),
                                   Row(
                                     children: [
-                                      const SizedBox(width: 150, child: Text("Powermode")),
+                                      SizedBox(width: 150, child: Text(S.of(context).screenSettingsPowermode)),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -259,7 +259,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                   ),
                                   Row(
                                     children: [
-                                      const SizedBox(width: 150, child: Text("Tare")),
+                                      SizedBox(width: 150, child: Text(S.of(context).screenSettingsTare)),
                                       Row(
                                         children: [
                                           ElevatedButton(
@@ -267,7 +267,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                                                 var scaleService = getIt<ScaleService>();
                                                 scaleService.tare();
                                               },
-                                              child: const Text("Tare")),
+                                              child: Text(S.of(context).screenSettingsTare)),
                                         ],
                                       ),
                                     ],
@@ -301,18 +301,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
           ],
         ),
         SettingsGroup(
-          title: "Weighted container",
+          title: S.of(context).screenSettingsWeightedContainer,
           children: [
             SimpleSettingsTile(
-              title: 'Weight of containers',
+              title: S.of(context).screenSettingsWeightedContainer,
               leading: const Icon(Icons.bluetooth),
               child: SettingsScreen(
-                title: 'Weight of containers',
+                title: S.of(context).screenSettingsWeightedContainer,
                 children: [
                   SwitchSettingsTile(
                     settingKey: SettingKeys.tareOnDetectedWeight.name,
                     defaultValue: settingsService.tareOnDetectedWeight,
-                    title: "Tare if weight was detected",
+                    title: S.of(context).settingsContainerAutotare,
                     enabledLabel: S.of(context).enabled,
                     disabledLabel: S.of(context).disabled,
                     onChange: (value) {},
@@ -327,7 +327,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             if (snapshot.hasData)
                               Row(
                                 children: [
-                                  Text("CurrentWeight", style: Theme.of(context).textTheme.labelLarge),
+                                  Text(S.of(context).settingsContainerCurrentWeight,
+                                      style: Theme.of(context).textTheme.labelLarge),
                                   Text("  ${(snapshot.data as WeightMeassurement).weight} g"),
                                 ],
                               ),
@@ -467,7 +468,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     leading: const Icon(Icons.timer),
                     settingKey: SettingKeys.scaleStartTimer.name,
                     defaultValue: settingsService.scaleStartTimer,
-                    title: "Autostart timer on scale during puring",
+                    title: S.of(context).settingsAutostartTimerOnScaleDuringPuring,
                   ),
                   SwitchSettingsTile(
                     settingKey: SettingKeys.steamHeaterOff.name,
@@ -534,7 +535,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     },
                   ),
                   SliderSettingsTile(
-                    title: "Refill watertank at limit",
+                    title: S.of(context).settingsRefillWatertankAtLimit,
                     settingKey: SettingKeys.targetWaterlevel.name,
                     defaultValue: settingsService.targetWaterlevel.toInt().toDouble(),
                     min: 20,
@@ -642,7 +643,6 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       _resetBrightness = Timer(
                         const Duration(seconds: 2),
                         () async {
-                          log.info("Release");
                           await ScreenBrightness().resetScreenBrightness();
                         },
                       );
@@ -684,14 +684,14 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     ),
                   ],
                 ),
-                SettingsGroup(title: "Tablet sleep", children: [
+                SettingsGroup(title: S.of(context).settingsTabletSleep, children: [
                   SwitchSettingsTile(
-                    title: "Allow tablet sleep during screensaver",
+                    title: S.of(context).settingsSleepAllowTabletSleepDuringScreensaver,
                     settingKey: SettingKeys.tabletSleepDuringScreensaver.name,
                     defaultValue: settingsService.tabletSleepDuringScreensaver,
                     childrenIfEnabled: [
                       SliderSettingsTile(
-                        title: "Minutes to spend in screensaver before allowing sleep",
+                        title: S.of(context).settingsSleepMinutesToSpendInScreensaverBeforeAllowingSleep,
                         settingKey: SettingKeys.tabletSleepDuringScreensaverTimeout.name,
                         defaultValue: settingsService.tabletSleepDuringScreensaverTimeout,
                         min: 0,
@@ -702,14 +702,13 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                     ],
                   ),
                   SwitchSettingsTile(
-                    title: "Allow tablet sleep when machine is sleeping or disconnected",
+                    title: S.of(context).settingsSleepAllowTabletSleepWhenMachineIsSleepingOrDisconnected,
                     settingKey: SettingKeys.tabletSleepWhenMachineOff.name,
                     defaultValue: settingsService.tabletSleepWhenMachineOff,
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 16, bottom: 32, left: 16, right: 16),
-                    child: Text(
-                        "Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
+                    child: Text(S.of(context).settingsSleepWarning),
                   )
                 ]),
               ]),
@@ -758,7 +757,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   onChange: (value) async {},
                 ),
                 SwitchSettingsTile(
-                  title: "When machine is in sleep, switch off scale display if possible",
+                  title: S.of(context).settingsSleepWhenMachineIsInSleepSwitchOffScaleDisplayIf,
                   settingKey: SettingKeys.scaleDisplayOffOnSleep.name,
                   defaultValue: settingsService.scaleDisplayOffOnSleep,
                   leading: const Icon(Icons.watch),
