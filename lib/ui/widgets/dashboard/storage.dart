@@ -245,7 +245,6 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
         _preferences = await SharedPreferences.getInstance();
 
         var init = _preferences.getBool("init") ?? false;
-        init = false;
         if (!init) {
           _localItems = {
             for (var s in _slotCounts) s: _default[s]!.asMap().map((key, value) => MapEntry(value.identifier, value))

@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:dashboard/dashboard.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/ui/widgets/dashboard/add_dialog.dart';
 import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
 import 'package:despresso/ui/widgets/dashboard/storage.dart';
 import 'package:despresso/ui/widgets/start_stop_button.dart';
@@ -184,7 +186,7 @@ class DashboardScreenState extends State<DashboardScreen> {
               icon: const Icon(Icons.delete)),
           IconButton(
               onPressed: () {
-                // add(context);
+                add(context);
               },
               icon: const Icon(Icons.add)),
           IconButton(
@@ -238,5 +240,58 @@ class DashboardScreenState extends State<DashboardScreen> {
                   },
                 )),
     );
+  }
+
+  Future<void> add(BuildContext context) async {
+    var res = await showDialog(
+        context: context,
+        builder: (c) {
+          var sample = ColoredDashboardItem(
+              widgetDataSource: WidgetDataSource.beansSum,
+              color: Colors.red,
+              width: 1,
+              height: 1,
+              title: "My Beans",
+              subTitle: "",
+              dataHeader: "#",
+              dataFooter: "beans",
+              footer: "test",
+              subFooter: "foot",
+              startX: 1,
+              startY: 3,
+              data: "kpi",
+              identifier: (Random().nextInt(100000) + 4).toString(),
+              minWidth: 1,
+              minHeight: 1,
+              maxWidth: null,
+              maxHeight: null);
+
+          return AddDialog(data: sample);
+        });
+
+    if (res != null) {
+      print(res);
+      itemController.add(res,
+          // ColoredDashboardItem(
+          //     widgetDataSource: res[9],
+          //     color: Colors.red,
+          //     width: res[0],
+          //     height: res[1],
+          //     title: res[6],
+          //     subTitle: res[7],
+          //     dataHeader: res[10],
+          //     dataFooter: res[11],
+          //     footer: res[12],
+          //     subFooter: res[13],
+          //     startX: 1,
+          //     startY: 3,
+          //     data: res[8],
+          //     identifier: (Random().nextInt(100000) + 4).toString(),
+          //     minWidth: res[2],
+          //     minHeight: res[3],
+          //     maxWidth: res[4] == 0 ? null : res[4],
+          //     maxHeight: res[5] == 0 ? null : res[5]),
+          mountToTop: false);
+    }
   }
 }
