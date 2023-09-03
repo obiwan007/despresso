@@ -916,9 +916,8 @@ class EspressoMachineService extends ChangeNotifier {
       var cs = Shot();
       cs.coffee.targetId = coffeeService.selectedCoffeeId;
       cs.recipe.targetId = coffeeService.selectedRecipeId;
-      var save = settingsService.savePrePouring;
       cs.shotstates.addAll(
-          shotList.entries.where((element) => (element.isPouring == true || save) && element.isInterpolated == false));
+          shotList.entries.where((element) => element.isInterpolated == false));
 
       cs.pourTime = lastPourTime;
       cs.profileId = profileService.currentProfile?.id ?? "";
