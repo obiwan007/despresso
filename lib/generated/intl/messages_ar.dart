@@ -34,7 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(temp) => "درجة حرارة البخار ${temp}";
 
-  static String m7(t) => "الموقت ${t} بالثانية";
+  static String m7(t) => "الموقت ${t}";
 
   static String m8(watertemp) => "درجة حرارة الماء ${watertemp}";
 
@@ -70,8 +70,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "mainMenuDespressoFeedback":
             MessageLookupByLibrary.simpleMessage("ملاحظات ديسبريسو"),
         "mainMenuEspressoDiary":
-            MessageLookupByLibrary.simpleMessage("يوميات اسبريسو"),
+            MessageLookupByLibrary.simpleMessage("سجل الاسبريسو"),
         "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("تعليق"),
+        "mainMenuMaintenance": MessageLookupByLibrary.simpleMessage("صيانة"),
+        "mainMenuStatistics": MessageLookupByLibrary.simpleMessage("إحصائيات"),
         "no": MessageLookupByLibrary.simpleMessage("لا"),
         "off": MessageLookupByLibrary.simpleMessage("إغلاق"),
         "ok": MessageLookupByLibrary.simpleMessage("نعم"),
@@ -90,7 +92,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenBeanSelectAddressOfRoaster":
             MessageLookupByLibrary.simpleMessage("عنوان"),
         "screenBeanSelectDaysAgo":
-            MessageLookupByLibrary.simpleMessage("أيام مضت"),
+            MessageLookupByLibrary.simpleMessage("منذ أيام"),
         "screenBeanSelectDescriptionOfBean":
             MessageLookupByLibrary.simpleMessage("وصف"),
         "screenBeanSelectDescriptionOfRoaster":
@@ -98,35 +100,37 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenBeanSelectHomepageOfRoaster":
             MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية"),
         "screenBeanSelectIntensity":
-            MessageLookupByLibrary.simpleMessage("شدة"),
+            MessageLookupByLibrary.simpleMessage("مذاق القهوة"),
         "screenBeanSelectNameOfBean":
             MessageLookupByLibrary.simpleMessage("اسم"),
         "screenBeanSelectNameOfRoaster":
             MessageLookupByLibrary.simpleMessage("اسم"),
         "screenBeanSelectRoastLevel":
-            MessageLookupByLibrary.simpleMessage("مستوى التحميص"),
+            MessageLookupByLibrary.simpleMessage("درجة حمص القهوة"),
         "screenBeanSelectRoastingDate":
-            MessageLookupByLibrary.simpleMessage("تاريخ التحميص"),
+            MessageLookupByLibrary.simpleMessage("تاريخ الحمص"),
         "screenBeanSelectSelectBeans":
             MessageLookupByLibrary.simpleMessage("اختيار البُن"),
         "screenBeanSelectSelectRoaster":
             MessageLookupByLibrary.simpleMessage("اختيار الحمص"),
-        "screenBeanSelectTasting": MessageLookupByLibrary.simpleMessage("تذوق"),
+        "screenBeanSelectTasting":
+            MessageLookupByLibrary.simpleMessage("المذاق"),
         "screenBeanSelectTitle":
             MessageLookupByLibrary.simpleMessage("البُن والتحميص"),
         "screenBeanSelectTypeOfBeans":
             MessageLookupByLibrary.simpleMessage("نوع البُن"),
-        "screenDiaryErrorUploadingShots":
-            MessageLookupByLibrary.simpleMessage("خطأ في تحميل اللقطات"),
+        "screenDiaryErrorUploadingShots": MessageLookupByLibrary.simpleMessage(
+            "خطأ في تحميل جرعات الاسبريسو"),
         "screenDiaryNoShotsToUploadSelected":
-            MessageLookupByLibrary.simpleMessage("لم يتم تحديد لقطات للتحميل"),
+            MessageLookupByLibrary.simpleMessage(
+                "لم يتم تحديد جرعات الاسبريسو للتحميل"),
         "screenDiaryNothingSelected":
-            MessageLookupByLibrary.simpleMessage("لا شيء محدد"),
+            MessageLookupByLibrary.simpleMessage("لم تحدد شيء"),
         "screenDiaryOverlaymode":
-            MessageLookupByLibrary.simpleMessage("وضع التراكب:"),
+            MessageLookupByLibrary.simpleMessage("تغيير الرسم البياني"),
         "screenDiarySuccessUploadingYourShots":
             MessageLookupByLibrary.simpleMessage(
-                "تم بنجاح تحميل اللقطات الخاصة بك"),
+                "تم تحميل جرعات الاسبريسو الخاصة بك بنجاح"),
         "screenEspressoBean": MessageLookupByLibrary.simpleMessage("قهوة"),
         "screenEspressoDiary":
             MessageLookupByLibrary.simpleMessage("سجل الاسبريسو"),
@@ -192,12 +196,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeEditWeightOut":
             MessageLookupByLibrary.simpleMessage("خارج الوزن"),
         "screenRecipeGrindSettings":
-            MessageLookupByLibrary.simpleMessage("إعدادات الطحن:"),
+            MessageLookupByLibrary.simpleMessage("إعدادات الطحن"),
         "screenRecipeInitialTemp":
-            MessageLookupByLibrary.simpleMessage("درجة الحرارة الأولية:"),
+            MessageLookupByLibrary.simpleMessage("درجة الحرارة الأولية"),
         "screenRecipeProfileDetails":
             MessageLookupByLibrary.simpleMessage("تفاصيل الملف الشخصي"),
-        "screenRecipeRatio": MessageLookupByLibrary.simpleMessage("نسبة:"),
+        "screenRecipeRatio": MessageLookupByLibrary.simpleMessage("نسبة"),
         "screenRecipeRecipeDetails":
             MessageLookupByLibrary.simpleMessage("تفاصيل الوصفة"),
         "screenRecipeSelectedBean":
@@ -213,7 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeWeightinBeansG":
             MessageLookupByLibrary.simpleMessage("حبوب البُن بالوزن [جم]"),
         "screenRecipehotWater":
-            MessageLookupByLibrary.simpleMessage("الماء الساخن:"),
+            MessageLookupByLibrary.simpleMessage("الماء الساخن"),
         "screenRecipesteamMilk":
             MessageLookupByLibrary.simpleMessage("تبخير الحليب"),
         "screenRoasterEditAddress":
@@ -231,13 +235,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsApplicationSettingsHardwareAndConnections":
             MessageLookupByLibrary.simpleMessage("الأجهزة والتوصيلات"),
         "screenSettingsApplicationSettingsScanForDevices":
-            MessageLookupByLibrary.simpleMessage("مسح للأجهزة"),
+            MessageLookupByLibrary.simpleMessage("البحث عن الأجهزة"),
         "screenSettingsApplicationSettingsScanStart":
             MessageLookupByLibrary.simpleMessage(
-                "البحث عن DE1 والمقاييس (Lunar ، Skale2 ، Eureka ، لائق)"),
+                "البحث عن الديسنت والميزان (لونار، Skale2 ، يوريكا، ديسنت)"),
         "screenSettingsArabic": MessageLookupByLibrary.simpleMessage("عربي"),
         "screenSettingsAutoTare":
-            MessageLookupByLibrary.simpleMessage("الفارغة السيارات"),
+            MessageLookupByLibrary.simpleMessage("تصفير تلقائي للميزان"),
         "screenSettingsBackup": MessageLookupByLibrary.simpleMessage("دعم"),
         "screenSettingsBackupAndMaintenance":
             MessageLookupByLibrary.simpleMessage("النسخ الاحتياطي والصيانة"),
@@ -252,10 +256,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("البهائية"),
         "screenSettingsBehaviour": MessageLookupByLibrary.simpleMessage("سلوك"),
         "screenSettingsBrightnessSleepAndScreensaver":
-            MessageLookupByLibrary.simpleMessage("السطوع والنوم وشاشة التوقف"),
+            MessageLookupByLibrary.simpleMessage("السطوع والسكون وشاشة التوقف"),
         "screenSettingsChangeHowTheAppIsChangingScreenBrightnessIfNot":
             MessageLookupByLibrary.simpleMessage(
-                "قم بتغيير كيفية تغيير التطبيق لسطوع الشاشة إذا لم يكن قيد الاستخدام ، قم بتشغيل de1 وأوقف تشغيله إذا لم يتم استخدامه بعد فترة."),
+                "قم بتغيير كيفية تغيير التطبيق لسطوع الشاشة إذا لم تستخدم، قم بتشغيل الديسنت وأوقف تشغيلها إذا لم يتم استخدامها لفترة معينة."),
         "screenSettingsChangeHowTheAppIsHandlingTheDe1InCase":
             MessageLookupByLibrary.simpleMessage(
                 "غيّر طريقة تعامل التطبيق مع de1 في حالة الاستيقاظ والنوم."),
@@ -305,10 +309,10 @@ class MessageLookup extends MessageLookupByLibrary {
                 "التعامل مع الاتصالات بأنظمة خارجية أخرى مثل MQTT و Visualizer."),
         "screenSettingsIfAShotIsStartingAutotareTheScale":
             MessageLookupByLibrary.simpleMessage(
-                "إذا بدأت إحدى اللقطات ، فقم بإجراء فرز تلقائي للمقياس"),
+                "تشغيل الميزان تلقائيا إذا بدأ الاستخلاص"),
         "screenSettingsIfTheScaleIsConnectedItIsUsedToStop":
             MessageLookupByLibrary.simpleMessage(
-                "إذا كان المقياس متصلاً ، فسيتم استخدامه لإيقاف اللقطة إذا كان للملف الشخصي حد معين."),
+                "إذا كان الميزان متصلًا، سيتم استخدامه لإيقاف الاستخلاص إذا كانت خطوات سيرالاستخلاص لها حد معين."),
         "screenSettingsIfYouHaveNoGhcInstalledYouWouldNeedThe":
             MessageLookupByLibrary.simpleMessage(
                 "إذا لم يكن لديك GHC مثبتًا ، فستحتاج إلى شاشة التدفق"),
@@ -318,14 +322,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsKorean": MessageLookupByLibrary.simpleMessage("الكورية"),
         "screenSettingsLanguage": MessageLookupByLibrary.simpleMessage("لغة"),
         "screenSettingsLightTheme":
-            MessageLookupByLibrary.simpleMessage("مظهر خفيف"),
+            MessageLookupByLibrary.simpleMessage("مظهر فاتح"),
         "screenSettingsLoadScreensaverFiles":
             MessageLookupByLibrary.simpleMessage("تحميل ملفات شاشة التوقف"),
         "screenSettingsMessageQueueBroadcastMqttClient":
             MessageLookupByLibrary.simpleMessage(
                 "عميل بث قائمة انتظار الرسائل (MQTT)"),
         "screenSettingsMilkSteamingThermometerSupport":
-            MessageLookupByLibrary.simpleMessage("دعم ترمومتر تبخير الحليب"),
+            MessageLookupByLibrary.simpleMessage(
+                "دعم مقياس حرارة تبخير الحليب"),
         "screenSettingsMiniWebsite":
             MessageLookupByLibrary.simpleMessage("موقع صغير"),
         "screenSettingsMqttPassword":
@@ -343,6 +348,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsPasswordCantBeSmallerThan7Letters":
             MessageLookupByLibrary.simpleMessage(
                 "لا يمكن أن تكون كلمة المرور أصغر من 7 أحرف"),
+        "screenSettingsPowermode":
+            MessageLookupByLibrary.simpleMessage("وضع الطاقة"),
         "screenSettingsPrivacySettings":
             MessageLookupByLibrary.simpleMessage("إعدادات الخصوصية"),
         "screenSettingsReduceBrightnessToLevel":
@@ -359,7 +366,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("نسخة احتياطية محفوظة"),
         "screenSettingsScaleSupport":
-            MessageLookupByLibrary.simpleMessage("دعم النطاق"),
+            MessageLookupByLibrary.simpleMessage("دعم الميزان"),
+        "screenSettingsScalesFound":
+            MessageLookupByLibrary.simpleMessage("مقاييس"),
         "screenSettingsScreenAndBrightness":
             MessageLookupByLibrary.simpleMessage("الشاشة والسطوع"),
         "screenSettingsSecondFlushTimerS":
@@ -396,12 +405,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsSpanish":
             MessageLookupByLibrary.simpleMessage("الأسبانية"),
         "screenSettingsSpecialBluetoothDevices":
-            MessageLookupByLibrary.simpleMessage("أجهزة بلوتوث خاصة"),
+            MessageLookupByLibrary.simpleMessage("أجهزة البلوتوث الخاصة"),
         "screenSettingsStopBeforeWeightWasReachedS":
-            MessageLookupByLibrary.simpleMessage("توقف قبل بلوغ الوزن"),
+            MessageLookupByLibrary.simpleMessage("التوقف قبل الوصول للوزن"),
         "screenSettingsStopOnWeightIfScaleDetected":
             MessageLookupByLibrary.simpleMessage(
-                "توقف عن الوزن إذا تم اكتشاف مقياس"),
+                "التوقف على الوزن عند توصيل الميزان"),
         "screenSettingsSwitchDe1ToSleepModeIfItIsIdleFor":
             MessageLookupByLibrary.simpleMessage(
                 "بدّل de1 إلى وضع السكون إذا كان خاملاً لبعض الوقت [دقيقة]"),
@@ -413,7 +422,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsTabletDefault":
             MessageLookupByLibrary.simpleMessage("الجهاز اللوحي الافتراضي"),
         "screenSettingsTabletGroup":
-            MessageLookupByLibrary.simpleMessage("لوح"),
+            MessageLookupByLibrary.simpleMessage("جهاز التابلت"),
+        "screenSettingsTare": MessageLookupByLibrary.simpleMessage("الفارغة"),
+        "screenSettingsTesting":
+            MessageLookupByLibrary.simpleMessage("اختبارات"),
+        "screenSettingsTestingScales":
+            MessageLookupByLibrary.simpleMessage("ميزات اختبار المقاييس"),
         "screenSettingsThemeSelection":
             MessageLookupByLibrary.simpleMessage("اختيار اللغة والموضوع"),
         "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
@@ -435,6 +449,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff":
             MessageLookupByLibrary.simpleMessage(
                 "استيقظ de1 إذا تم النقر على الشاشة (إذا كانت الشاشة مغلقة)"),
+        "screenSettingsWeightOfOneContainers":
+            MessageLookupByLibrary.simpleMessage("وزن الحاويات"),
+        "screenSettingsWeightedContainer":
+            MessageLookupByLibrary.simpleMessage("حاوية مرجحة"),
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "لقد قمت بتغيير الإعدادات الحرجة. تحتاج إلى إعادة تشغيل التطبيق لتنشيط الإعدادات."),
@@ -472,29 +490,55 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenShowGraphDataBeforePouringPhaseStarts":
             MessageLookupByLibrary.simpleMessage(
                 "عرض بيانات الرسم البياني قبل بدء مرحلة الصب."),
-        "screenSteamAmbient": MessageLookupByLibrary.simpleMessage("محيط ب"),
+        "screenSteamAmbient":
+            MessageLookupByLibrary.simpleMessage("الجو المحيط"),
         "screenSteamFlowrate": m4,
         "screenSteamOffNormalPurgeAfterStop":
             MessageLookupByLibrary.simpleMessage(
-                "متوقف (التطهير العادي بعد التوقف)"),
+                "متوقف (التنظيف العادي بعد التوقف)"),
         "screenSteamOnSlowPurgeOn1stStop": MessageLookupByLibrary.simpleMessage(
             "قيد التشغيل (التنظيف البطيء عند التوقف الأول)"),
         "screenSteamReset": MessageLookupByLibrary.simpleMessage("إعادة الضبط"),
         "screenSteamStopAtTemperatur": m5,
         "screenSteamTempTip":
-            MessageLookupByLibrary.simpleMessage("نصيحة درجة الحرارة"),
+            MessageLookupByLibrary.simpleMessage("إرشادات درجة الحرارة"),
         "screenSteamTemperaturs": m6,
         "screenSteamTimeS":
             MessageLookupByLibrary.simpleMessage("الوقت / ثانية"),
         "screenSteamTimerS": m7,
         "screenSteamTwotapMode":
-            MessageLookupByLibrary.simpleMessage("وضع البخار بنقرتين:"),
+            MessageLookupByLibrary.simpleMessage("وضع البخار بنقرتين"),
         "screenWaterTemp":
             MessageLookupByLibrary.simpleMessage("درجة حرارة الماء"),
         "screenWaterTemperatureWatertemp": m8,
         "screenWaterWeightG": m9,
         "screenWaterWeightVolume": m10,
         "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
+        "settingsAutostartTimerOnScaleDuringPuring":
+            MessageLookupByLibrary.simpleMessage(
+                "مؤقت التشغيل التلقائي على نطاق واسع أثناء عملية التطهير"),
+        "settingsContainerAutotare": MessageLookupByLibrary.simpleMessage(
+            "الفارغة إذا تم الكشف عن الوزن"),
+        "settingsContainerCurrentWeight":
+            MessageLookupByLibrary.simpleMessage("الوزن الحالي"),
+        "settingsRefillWatertankAtLimit": MessageLookupByLibrary.simpleMessage(
+            "أعد ملء خزان المياه عند الحد الأقصى"),
+        "settingsSleepAllowTabletSleepDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "السماح للكمبيوتر اللوحي بوضع السكون أثناء شاشة التوقف"),
+        "settingsSleepAllowTabletSleepWhenMachineIsSleepingOrDisconnected":
+            MessageLookupByLibrary.simpleMessage(
+                "اسمح للكمبيوتر اللوحي بالنوم عندما يكون الجهاز في وضع السكون أو غير متصل"),
+        "settingsSleepMinutesToSpendInScreensaverBeforeAllowingSleep":
+            MessageLookupByLibrary.simpleMessage(
+                "دقائق تقضيها في شاشة التوقف قبل السماح بالنوم"),
+        "settingsSleepWarning": MessageLookupByLibrary.simpleMessage(
+            "تحذير: وفقًا لإعدادات جهازك اللوحي ونظام التشغيل، قد يؤدي السماح لجهازك اللوحي بالدخول إلى وضع السكون إلى انقطاع اتصال Bluetooth بجهازك أو ملحقاته."),
+        "settingsSleepWhenMachineIsInSleepSwitchOffScaleDisplayIf":
+            MessageLookupByLibrary.simpleMessage(
+                "عندما يكون الجهاز في وضع السكون، قم بإيقاف تشغيل عرض المقياس إن أمكن"),
+        "settingsTabletSleep":
+            MessageLookupByLibrary.simpleMessage("النوم اللوحي"),
         "show": MessageLookupByLibrary.simpleMessage("عرض"),
         "start": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "stateDisconnected":
@@ -509,7 +553,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "subStateHeatWaterHeater":
             MessageLookupByLibrary.simpleMessage("تسخين المياه"),
         "subStateHeatWaterTank":
-            MessageLookupByLibrary.simpleMessage("خزان تدفئة"),
+            MessageLookupByLibrary.simpleMessage("خزان الحرارة"),
         "switchOn": MessageLookupByLibrary.simpleMessage("مفتاح التشغيل"),
         "tabHomeEspresso": MessageLookupByLibrary.simpleMessage("إسبرسو"),
         "tabHomeFlush": MessageLookupByLibrary.simpleMessage("تنظيف"),

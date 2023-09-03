@@ -88,6 +88,8 @@ dependencies:
   web_socket_channel: ^2.4.0
   flutter_keyboard_visibility: ^5.4.1
   wakelock_plus: ^1.1.1
+  dashboard: ^0.0.3+1
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

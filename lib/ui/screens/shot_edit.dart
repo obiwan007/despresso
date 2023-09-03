@@ -338,30 +338,40 @@ class ShotEditState extends State<ShotEdit> {
           child: Card(
               child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ReactiveTextField<double>(
-                  formControlName: 'totalDissolvedSolids',
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: S.of(context).screenShotEditTotalDissolvedSolidssTds,
+                Expanded(
+                  child: Column(
+                    children: [
+                      ReactiveTextField<double>(
+                        formControlName: 'totalDissolvedSolids',
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          labelText: S.of(context).screenShotEditTotalDissolvedSolidssTds,
+                        ),
+                        onChanged: (control) => {
+                          currentForm?.controls['extractionYield']?.value =
+                              (_editedShot.pourWeight * (control.value ?? 0.0)) / _editedShot.doseWeight
+                        },
+                      ),
+                      ReactiveTextField<double>(
+                        formControlName: 'extractionYield',
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          labelText: S.of(context).screenShotEditExtractionYield,
+                        ),
+                      ),
+                      // eventually check also for && refractometerService.state == RefractometerState.connected
+                    ],
                   ),
-                  onChanged: (control) => {
-                    currentForm?.controls['extractionYield']?.value =
-                        (_editedShot.pourWeight * (control.value ?? 0.0)) / _editedShot.doseWeight
-                  },
                 ),
-                ReactiveTextField<double>(
-                  formControlName: 'extractionYield',
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    labelText: S.of(context).screenShotEditExtractionYield,
-                  ),
-                ),
-                // eventually check also for && refractometerService.state == RefractometerState.connected
                 if (settingsService.hasRefractometer && refractometerService.state == RefractometerState.connected)
-                  ElevatedButton(
-                      onPressed: () => {getRefractometerData()}, child: const Text('Read TDS from Refractometer'))
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: OutlinedButton(
+                        onPressed: () => {getRefractometerData()}, child: const Text('Read TDS from Refractometer')),
+                  )
               ],
             ),
           )),

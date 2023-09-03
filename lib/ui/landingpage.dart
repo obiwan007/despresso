@@ -6,6 +6,7 @@ import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/screen_saver.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
+import 'package:despresso/ui/screens/dashboard.dart';
 import 'package:despresso/ui/screens/maintenance.dart';
 import 'package:despresso/ui/screens/recipe_screen.dart';
 import 'package:despresso/ui/screens/settings_screen.dart';
@@ -295,6 +296,21 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
               },
             ),
             ListTile(
+              leading: const Icon(Icons.graphic_eq),
+              title: Text(S.of(context).mainMenuStatistics),
+              onTap: () {
+                _screensaver.pause();
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                ).then((value) {
+                  _screensaver.resume();
+                });
+                // Then close the drawer
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.settings),
               title: Text(S.of(context).settings),
               onTap: () {
@@ -312,7 +328,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             ),
             ListTile(
               leading: const Icon(Icons.build),
-              title: const Text("Maintenance"),
+              title: Text(S.of(context).mainMenuMaintenance),
               onTap: () {
                 _screensaver.pause();
                 Navigator.pop(context);
@@ -326,6 +342,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 // Then close the drawer
               },
             ),
+
             ListTile(
               leading: const Icon(Icons.feedback),
               title: Text(S.of(context).mainMenuFeedback),

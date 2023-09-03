@@ -36,7 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m7(t) => "Timer ${t} s";
 
-  static String m8(watertemp) => "Water Temperature ${watertemp}";
+  static String m8(watertemp) => "Water Temperature ${watertemp} °C";
 
   static String m9(w) => "Weight ${w} g";
 
@@ -72,6 +72,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "mainMenuEspressoDiary":
             MessageLookupByLibrary.simpleMessage("Espresso Diary"),
         "mainMenuFeedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+        "mainMenuMaintenance":
+            MessageLookupByLibrary.simpleMessage("Maintenance"),
+        "mainMenuStatistics":
+            MessageLookupByLibrary.simpleMessage("Statistics"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "off": MessageLookupByLibrary.simpleMessage("Off"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
@@ -248,7 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsBackuprestoreDatabase":
             MessageLookupByLibrary.simpleMessage("Backup/Restore database"),
         "screenSettingsBahaviour":
-            MessageLookupByLibrary.simpleMessage("Bahaviour"),
+            MessageLookupByLibrary.simpleMessage("Behaviour"),
         "screenSettingsBehaviour":
             MessageLookupByLibrary.simpleMessage("Behaviour"),
         "screenSettingsBrightnessSleepAndScreensaver":
@@ -347,6 +351,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsPasswordCantBeSmallerThan7Letters":
             MessageLookupByLibrary.simpleMessage(
                 "Password can\'t be smaller than 7 letters"),
+        "screenSettingsPowermode":
+            MessageLookupByLibrary.simpleMessage("Powermode"),
         "screenSettingsPrivacySettings":
             MessageLookupByLibrary.simpleMessage("Privacy Settings"),
         "screenSettingsReduceBrightnessToLevel":
@@ -360,11 +366,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Restored backup"),
         "screenSettingsSaveShotGraphDataEvenForPrePouringStates":
             MessageLookupByLibrary.simpleMessage(
-                "Save shot graph data even for pre pouring states"),
+                "Include heating phase in saved shot graph data"),
         "screenSettingsSavedBackup":
             MessageLookupByLibrary.simpleMessage("Saved backup"),
         "screenSettingsScaleSupport":
             MessageLookupByLibrary.simpleMessage("Scale support"),
+        "screenSettingsScalesFound":
+            MessageLookupByLibrary.simpleMessage("Scales"),
         "screenSettingsScreenAndBrightness":
             MessageLookupByLibrary.simpleMessage("Screen and Brightness"),
         "screenSettingsSecondFlushTimerS":
@@ -421,6 +429,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Tablet default"),
         "screenSettingsTabletGroup":
             MessageLookupByLibrary.simpleMessage("Tablet"),
+        "screenSettingsTare": MessageLookupByLibrary.simpleMessage("Tare"),
+        "screenSettingsTesting":
+            MessageLookupByLibrary.simpleMessage("Testing"),
+        "screenSettingsTestingScales":
+            MessageLookupByLibrary.simpleMessage("Testing features of scales"),
         "screenSettingsThemeSelection": MessageLookupByLibrary.simpleMessage(
             "Language and Theme selection"),
         "screenSettingsThisCanLeadToAHigherLoadOnYourMqtt":
@@ -442,6 +455,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff":
             MessageLookupByLibrary.simpleMessage(
                 "Wake up de1 if screen tapped (if screen was off)"),
+        "screenSettingsWeightOfOneContainers":
+            MessageLookupByLibrary.simpleMessage("Weight of containers"),
+        "screenSettingsWeightedContainer":
+            MessageLookupByLibrary.simpleMessage("Weighted container"),
         "screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp":
             MessageLookupByLibrary.simpleMessage(
                 "You changed critical settings. You need to restart the app to make the settings active."),
@@ -502,6 +519,31 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenWaterWeightG": m9,
         "screenWaterWeightVolume": m10,
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "settingsAutostartTimerOnScaleDuringPuring":
+            MessageLookupByLibrary.simpleMessage(
+                "Autostart timer on scale during puring"),
+        "settingsContainerAutotare":
+            MessageLookupByLibrary.simpleMessage("Tare if weight was detected"),
+        "settingsContainerCurrentWeight":
+            MessageLookupByLibrary.simpleMessage("Current Weight"),
+        "settingsRefillWatertankAtLimit":
+            MessageLookupByLibrary.simpleMessage("Refill watertank at limit"),
+        "settingsSleepAllowTabletSleepDuringScreensaver":
+            MessageLookupByLibrary.simpleMessage(
+                "Allow tablet sleep during screensaver"),
+        "settingsSleepAllowTabletSleepWhenMachineIsSleepingOrDisconnected":
+            MessageLookupByLibrary.simpleMessage(
+                "Allow tablet sleep when machine is sleeping or disconnected"),
+        "settingsSleepMinutesToSpendInScreensaverBeforeAllowingSleep":
+            MessageLookupByLibrary.simpleMessage(
+                "Minutes to spend in screensaver before allowing sleep"),
+        "settingsSleepWarning": MessageLookupByLibrary.simpleMessage(
+            "Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories."),
+        "settingsSleepWhenMachineIsInSleepSwitchOffScaleDisplayIf":
+            MessageLookupByLibrary.simpleMessage(
+                "When machine is in sleep, switch off scale display if possible"),
+        "settingsTabletSleep":
+            MessageLookupByLibrary.simpleMessage("Tablet sleep"),
         "show": MessageLookupByLibrary.simpleMessage("Show"),
         "start": MessageLookupByLibrary.simpleMessage("Start"),
         "stateDisconnected":

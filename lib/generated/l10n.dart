@@ -290,6 +290,26 @@ class S {
     );
   }
 
+  /// `Maintenance`
+  String get mainMenuMaintenance {
+    return Intl.message(
+      'Maintenance',
+      name: 'mainMenuMaintenance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Statistics`
+  String get mainMenuStatistics {
+    return Intl.message(
+      'Statistics',
+      name: 'mainMenuStatistics',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No`
   String get no {
     return Intl.message(
@@ -1726,6 +1746,16 @@ class S {
     );
   }
 
+  /// `Powermode`
+  String get screenSettingsPowermode {
+    return Intl.message(
+      'Powermode',
+      name: 'screenSettingsPowermode',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Privacy Settings`
   String get screenSettingsPrivacySettings {
     return Intl.message(
@@ -1786,11 +1816,21 @@ class S {
     );
   }
 
-  /// `Save shot graph data even for pre pouring states`
+  /// `Include heating phase in saved shot graph data`
   String get screenSettingsSaveShotGraphDataEvenForPrePouringStates {
     return Intl.message(
-      'Save shot graph data even for pre pouring states',
+      'Include heating phase in saved shot graph data',
       name: 'screenSettingsSaveShotGraphDataEvenForPrePouringStates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scales`
+  String get screenSettingsScalesFound {
+    return Intl.message(
+      'Scales',
+      name: 'screenSettingsScalesFound',
       desc: '',
       args: [],
     );
@@ -2036,6 +2076,36 @@ class S {
     );
   }
 
+  /// `Tare`
+  String get screenSettingsTare {
+    return Intl.message(
+      'Tare',
+      name: 'screenSettingsTare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing`
+  String get screenSettingsTesting {
+    return Intl.message(
+      'Testing',
+      name: 'screenSettingsTesting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing features of scales`
+  String get screenSettingsTestingScales {
+    return Intl.message(
+      'Testing features of scales',
+      name: 'screenSettingsTestingScales',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Language and Theme selection`
   String get screenSettingsThemeSelection {
     return Intl.message(
@@ -2111,6 +2181,26 @@ class S {
     return Intl.message(
       'Wake up de1 if screen tapped (if screen was off)',
       name: 'screenSettingsWakeUpDe1IfScreenTappedIfScreenWasOff',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weighted container`
+  String get screenSettingsWeightedContainer {
+    return Intl.message(
+      'Weighted container',
+      name: 'screenSettingsWeightedContainer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight of containers`
+  String get screenSettingsWeightOfOneContainers {
+    return Intl.message(
+      'Weight of containers',
+      name: 'screenSettingsWeightOfOneContainers',
       desc: '',
       args: [],
     );
@@ -2441,6 +2531,106 @@ class S {
     return Intl.message(
       'Settings',
       name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Autostart timer on scale during puring`
+  String get settingsAutostartTimerOnScaleDuringPuring {
+    return Intl.message(
+      'Autostart timer on scale during puring',
+      name: 'settingsAutostartTimerOnScaleDuringPuring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare if weight was detected`
+  String get settingsContainerAutotare {
+    return Intl.message(
+      'Tare if weight was detected',
+      name: 'settingsContainerAutotare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Weight`
+  String get settingsContainerCurrentWeight {
+    return Intl.message(
+      'Current Weight',
+      name: 'settingsContainerCurrentWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refill watertank at limit`
+  String get settingsRefillWatertankAtLimit {
+    return Intl.message(
+      'Refill watertank at limit',
+      name: 'settingsRefillWatertankAtLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow tablet sleep during screensaver`
+  String get settingsSleepAllowTabletSleepDuringScreensaver {
+    return Intl.message(
+      'Allow tablet sleep during screensaver',
+      name: 'settingsSleepAllowTabletSleepDuringScreensaver',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow tablet sleep when machine is sleeping or disconnected`
+  String get settingsSleepAllowTabletSleepWhenMachineIsSleepingOrDisconnected {
+    return Intl.message(
+      'Allow tablet sleep when machine is sleeping or disconnected',
+      name: 'settingsSleepAllowTabletSleepWhenMachineIsSleepingOrDisconnected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minutes to spend in screensaver before allowing sleep`
+  String get settingsSleepMinutesToSpendInScreensaverBeforeAllowingSleep {
+    return Intl.message(
+      'Minutes to spend in screensaver before allowing sleep',
+      name: 'settingsSleepMinutesToSpendInScreensaverBeforeAllowingSleep',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories.`
+  String get settingsSleepWarning {
+    return Intl.message(
+      'Warning: depending on your tablet and operating system settings, letting your tablet go to sleep might cause interruptions to the Bluetooth connection to your machine or accessories.',
+      name: 'settingsSleepWarning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When machine is in sleep, switch off scale display if possible`
+  String get settingsSleepWhenMachineIsInSleepSwitchOffScaleDisplayIf {
+    return Intl.message(
+      'When machine is in sleep, switch off scale display if possible',
+      name: 'settingsSleepWhenMachineIsInSleepSwitchOffScaleDisplayIf',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tablet sleep`
+  String get settingsTabletSleep {
+    return Intl.message(
+      'Tablet sleep',
+      name: 'settingsTabletSleep',
       desc: '',
       args: [],
     );
