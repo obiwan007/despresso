@@ -1,5 +1,7 @@
 import 'package:dashboard/dashboard.dart';
+import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/widgets/dashboard/add_dialog.dart';
 import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
@@ -24,15 +26,58 @@ class _KPIState extends State<KPI> {
     widget.controller.addListener(() {
       print("LISTEN");
     });
+
+    calcData();
+  }
+
+  void calcData() {
+    var fromTo = widget.data.range!.getFrame();
+    final builder = getIt<CoffeeService>()
+        .shotBox
+        .query(Shot_.date.between(fromTo.start.millisecondsSinceEpoch, fromTo.end.millisecondsSinceEpoch))
+        .build();
+
+    var allShots = builder.find();
+
+    Map<String, int> data = {};
+
     switch (widget.data.widgetDataSource) {
       case WidgetDataSource.beansSum:
-        widget.data.value = getIt<CoffeeService>().coffeeBox.count().toString();
+        var count = 0;
+        allShots.forEach((element) {
+          var key = element.coffee.target?.name;
+          if (key != null) {
+            if (!data.containsKey(key)) {
+              data[key] = 0;
+              count++;
+            }
+          }
+        });
+
+        widget.data.value = count.toString();
+
         break;
       case WidgetDataSource.shotsSum:
-        widget.data.value = getIt<CoffeeService>().shotBox.count().toString();
+        widget.data.value = builder.count().toString(); //  getIt<CoffeeService>().shotBox.count().toString();
         break;
       case WidgetDataSource.recipeSum:
-        widget.data.value = getIt<CoffeeService>().recipeBox.count().toString();
+        var count = 0;
+        allShots.forEach((element) {
+          var key = element.recipe.target?.name;
+          if (key != null) {
+            if (!data.containsKey(key)) {
+              data[key] = 0;
+              count++;
+            }
+          }
+        });
+
+        widget.data.value = count.toString();
+
+        break;
+      case WidgetDataSource.recipeDist:
+        break;
+      case WidgetDataSource.shotsOverTime:
         break;
     }
   }
@@ -71,11 +116,15 @@ class _KPIState extends State<KPI> {
                                 var res = await showDialog(
                                     context: context,
                                     builder: (c) {
-                                      return AddDialog(data: widget.data);
+                                      return AddDialog(
+                                        data: widget.data,
+                                        controller: widget.controller,
+                                      );
                                     });
                                 if (res != null) {
                                   widget.controller.delete(widget.data.identifier);
                                   widget.controller.add(res, mountToTop: false);
+                                  calcData();
                                 }
                                 break;
                               case SelectedWidgetMenu.delete:

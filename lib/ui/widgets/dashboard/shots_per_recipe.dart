@@ -38,19 +38,47 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
     super.initState();
     _coffeeService = getIt<CoffeeService>();
     allShots = _coffeeService.shotBox.getAll();
+    calcData();
+  }
+
+  void calcData() {
+    var from = widget.data.range!.from;
+    var to = widget.data.range!.to;
+
+    var time = to; // allShots.last.date;
+    var _selectedTimeRange = widget.data.range!.range;
+    var fromTo = widget.data.range!.getFrame();
+
+    // if (_selectedTimeRange > 1) {
+    //   for (var i = 1; i < _selectedTimeRange; i++) {
+    //     var d = time.subtract(Duration(days: i));
+    //     var key = "${d.day}_${d.month}_${d.year}";
+    //     sortedMap[key] = 0;
+    //   }
+    // }
+    // if (_selectedTimeRange == 1) {
+    //   for (var i = 0; i < 24; i++) {
+    //     var d = time.subtract(Duration(hours: i));
+    //     var key = "${d.hour}";
+    //     sortedMap[key] = 0;
+    //   }
+    // }
 
     for (var element in allShots) {
-      try {
-        if (element.recipe.target != null) {
-          var key = element.recipe.target?.name;
-          if (key == null) continue;
-          if (counts[key] == null) {
-            counts[key] = 0;
+      var d = element.date;
+      if (d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
+        try {
+          if (element.recipe.target != null) {
+            var key = element.recipe.target?.name;
+            if (key == null) continue;
+            if (counts[key] == null) {
+              counts[key] = 0;
+            }
+            counts[key] = counts[key]! + 1;
           }
-          counts[key] = counts[key]! + 1;
+        } catch (e) {
+          debugPrint("Error");
         }
-      } catch (e) {
-        debugPrint("Error");
       }
     }
     var sortedKeys = counts.keys.toList(growable: false)..sort((k1, k2) => counts[k2]!.compareTo(counts[k1]!));
@@ -99,11 +127,15 @@ class _ShotsPerRecipeState extends State<ShotsPerRecipe> {
                               var res = await showDialog(
                                   context: context,
                                   builder: (c) {
-                                    return AddDialog(data: widget.data);
+                                    return AddDialog(
+                                      data: widget.data,
+                                      controller: widget.controller,
+                                    );
                                   });
                               if (res != null) {
                                 widget.controller.delete(widget.data.identifier);
                                 widget.controller.add(res, mountToTop: false);
+                                calcData();
                               }
                               break;
                             case SelectedWidgetMenu.delete:
