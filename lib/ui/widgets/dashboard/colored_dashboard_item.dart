@@ -82,49 +82,50 @@ class TimeRange {
     switch (range) {
       case TimeRanges.today:
         to = DateTime.now();
-        from = to.subtract(Duration(days: 1));
+        from = to.subtract(const Duration(days: 1));
         break;
       case TimeRanges.dateRange:
         // TODO: Handle this case.
         break;
       case TimeRanges.thisWeek:
         to = DateTime.now();
-        from = to.subtract(Duration(days: 7));
+        from = to.subtract(const Duration(days: 7));
         break;
       case TimeRanges.lastWeek:
-        to = DateTime.now().subtract(Duration(days: 7));
-        from = to.subtract(Duration(days: 7));
+        to = DateTime.now().subtract(const Duration(days: 7));
+        from = to.subtract(const Duration(days: 7));
         break;
       case TimeRanges.lastMonth:
-        to = DateTime.now().subtract(Duration(days: 30));
-        from = to.subtract(Duration(days: 30));
+        to = DateTime.now().subtract(const Duration(days: 30));
+        from = to.subtract(const Duration(days: 30));
         break;
       case TimeRanges.last3Month:
         to = DateTime.now();
-        from = to.subtract(Duration(days: 30 * 3));
+        from = to.subtract(const Duration(days: 30 * 3));
         break;
       case TimeRanges.lastYear:
-        to = DateTime.now().subtract(Duration(days: 365));
-        from = to.subtract(Duration(days: 365));
+        to = DateTime.now().subtract(const Duration(days: 365));
+        from = to.subtract(const Duration(days: 365));
 
         break;
       case TimeRanges.allData:
         to = DateTime.now();
-        from = to.subtract(Duration(days: 100 * 365));
+        from = to.subtract(const Duration(days: 100 * 365));
 
         break;
       case TimeRanges.thisMonth:
         to = DateTime.now();
-        from = to.subtract(Duration(days: 30));
+        from = to.subtract(const Duration(days: 30));
         break;
 
       case TimeRanges.thisYear:
         to = DateTime.now();
-        from = to.subtract(Duration(days: 365));
+        from = to.subtract(const Duration(days: 365));
         break;
     }
 
-    var fromTo = DateTimeRange(end: to.add(const Duration(seconds: 1)), start: from);
+    var fromTo =
+        DateTimeRange(end: to.add(const Duration(seconds: 1)), start: from.subtract(const Duration(seconds: 1)));
     return fromTo;
   }
 }

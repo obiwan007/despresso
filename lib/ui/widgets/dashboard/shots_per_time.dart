@@ -188,9 +188,9 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                         //       setState(() {});
                         //     },
                         //     icon: const Icon(Icons.chevron_right)),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text(TimeRange.getLabels()[widget.data.range!.range]!),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text("until ${formatter.format(time)}"),
                       ],
                     ),
