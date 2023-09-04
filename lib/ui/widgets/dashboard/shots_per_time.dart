@@ -30,7 +30,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   late LinkedHashMap<String, LinkedHashMap<String, int>> sortedMap = LinkedHashMap();
   late LinkedHashMap<String, int> colormap = LinkedHashMap();
   int touchedIndex = -1;
-  int _selectedTimeRange = 30;
+  TimeRanges _selectedTimeRange = TimeRanges.allData;
   DateTime time = DateTime.now();
   var timeRanges = [
     const DropdownMenuItem(
@@ -51,6 +51,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   void initState() {
     super.initState();
     _coffeeService = getIt<CoffeeService>();
+    _selectedTimeRange = widget.data.range!.range;
     allShots = _coffeeService.shotBox.getAll();
     time = allShots.last.date;
     calcData();
@@ -60,23 +61,29 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   }
 
   void calcData() {
-    var fromTo = DateTimeRange(
-        end: time.add(const Duration(seconds: 1)), start: time.subtract(Duration(days: _selectedTimeRange)));
+    var from = widget.data.range!.from;
+    var to = widget.data.range!.to;
+
+    time = to; // allShots.last.date;
+    _selectedTimeRange = widget.data.range!.range;
+
+    var fromTo = widget.data.range!.getFrame();
+
     sortedMap.clear();
-    if (_selectedTimeRange > 1) {
-      for (var i = 1; i < _selectedTimeRange; i++) {
-        var d = time.subtract(Duration(days: i));
-        var key = "${d.day}_${d.month}_${d.year}";
-        sortedMap[key] = LinkedHashMap();
-      }
-    }
-    if (_selectedTimeRange == 1) {
-      for (var i = 0; i < 24; i++) {
-        var d = time.subtract(Duration(hours: i));
-        var key = "${d.hour}";
-        sortedMap[key] = LinkedHashMap();
-      }
-    }
+    // if (_selectedTimeRange != TimeRanges.today) {
+    //   for (var i = 1; i < _selectedTimeRange; i++) {
+    //     var d = time.subtract(Duration(days: i));
+    //     var key = "${d.day}_${d.month}_${d.year}";
+    //     sortedMap[key] = LinkedHashMap();
+    //   }
+    // }
+    // if (_selectedTimeRange == 1) {
+    //   for (var i = 0; i < 24; i++) {
+    //     var d = time.subtract(Duration(hours: i));
+    //     var key = "${d.hour}";
+    //     sortedMap[key] = LinkedHashMap();
+    //   }
+    // }
     for (var element in allShots) {
       try {
         var d = element.date;
@@ -144,34 +151,47 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                           textAlign: TextAlign.left,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        IconButton(
-                            onPressed: () {
-                              time = time.subtract(Duration(days: _selectedTimeRange));
-                              calcData();
-                              setState(() {});
-                            },
-                            icon: const Icon(Icons.chevron_left)),
-                        DropdownButton(
-                          isExpanded: false,
-                          alignment: Alignment.centerLeft,
-                          value: _selectedTimeRange,
-                          items: timeRanges,
-                          onChanged: (value) {
-                            if (value != 0) {
-                              _selectedTimeRange = value!;
-                              calcData();
-                            }
-                            setState(() {});
-                          },
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              time = time.subtract(Duration(days: -_selectedTimeRange));
-                              calcData();
-                              setState(() {});
-                            },
-                            icon: const Icon(Icons.chevron_right)),
-                        Text(formatter.format(time)),
+                        // IconButton(
+                        //     onPressed: () {
+                        //       time = time.subtract(Duration(days: _selectedTimeRange));
+                        //       widget.data.range!.to = time;
+                        //       widget.controller.delete(widget.data.identifier);
+                        //       widget.controller.add(widget.data, mountToTop: false);
+                        //       calcData();
+                        //       setState(() {});
+                        //     },
+                        //     icon: const Icon(Icons.chevron_left)),
+                        // DropdownButton(
+                        //   isExpanded: false,
+                        //   alignment: Alignment.centerLeft,
+                        //   value: _selectedTimeRange,
+                        //   items: timeRanges,
+                        //   onChanged: (value) {
+                        //     if (value != 0) {
+                        //       _selectedTimeRange = value!;
+                        //       widget.data.range!.range = _selectedTimeRange;
+                        //       widget.controller.delete(widget.data.identifier);
+                        //       widget.controller.add(widget.data, mountToTop: false);
+
+                        //       calcData();
+                        //     }
+                        //     setState(() {});
+                        //   },
+                        // ),
+                        // IconButton(
+                        //     onPressed: () {
+                        //       time = time.subtract(Duration(days: -_selectedTimeRange));
+                        //       widget.data.range!.to = time;
+                        //       widget.controller.delete(widget.data.identifier);
+                        //       widget.controller.add(widget.data, mountToTop: false);
+                        //       calcData();
+                        //       setState(() {});
+                        //     },
+                        //     icon: const Icon(Icons.chevron_right)),
+                        SizedBox(width: 10),
+                        Text(TimeRange.getLabels()[widget.data.range!.range]!),
+                        SizedBox(width: 10),
+                        Text("until ${formatter.format(time)}"),
                       ],
                     ),
                   ),
@@ -185,11 +205,15 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
                             var res = await showDialog(
                                 context: context,
                                 builder: (c) {
-                                  return AddDialog(data: widget.data);
+                                  return AddDialog(
+                                    data: widget.data,
+                                    controller: widget.controller,
+                                  );
                                 });
                             if (res != null) {
                               widget.controller.delete(widget.data.identifier);
                               widget.controller.add(res, mountToTop: false);
+                              calcData();
                             }
                             break;
                           case SelectedWidgetMenu.delete:
@@ -334,7 +358,8 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
           String text = '';
           String text2 = '';
           switch (_selectedTimeRange) {
-            case 7:
+            case TimeRanges.thisWeek:
+            case TimeRanges.lastWeek:
               final DateFormat formatter = DateFormat('EEE');
               final DateFormat formatter2 = DateFormat('dd MMM');
 
@@ -343,7 +368,9 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
               text2 = formatter2.format(d);
 
               break;
-            case 30:
+            case TimeRanges.lastMonth:
+            case TimeRanges.last3Month:
+            case TimeRanges.thisMonth:
               final DateFormat formatter = DateFormat('dd');
               final DateFormat formatter2 = DateFormat('MMM');
 
@@ -355,7 +382,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
               }
 
               break;
-            case 1:
+            case TimeRanges.today:
               if (value.toInt() % 1 == 0) {
                 var d = time.subtract(Duration(hours: 23 - value.toInt()));
                 text = d.hour.toString();

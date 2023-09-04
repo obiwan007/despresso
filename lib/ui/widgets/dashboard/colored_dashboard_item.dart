@@ -27,10 +27,109 @@ class ColorConverter extends JsonConverter<Color, String> {
   }
 }
 
-class ColoredDashboardItem extends DashboardItem {
-  @Id()
-  int id = 0;
+enum TimeRanges {
+  today,
+  dateRange,
+  thisWeek,
+  thisMonth,
+  lastMonth,
+  last3Month,
+  thisYear,
+  lastYear,
+  allData,
+  lastWeek,
+}
 
+class TimeRange {
+  DateTime to;
+  DateTime from;
+  TimeRanges range;
+
+  TimeRange({required this.from, required this.to, required this.range});
+
+  Map<String, dynamic> toMap() {
+    var sup = Map<String, dynamic>();
+
+    sup["to"] = to.toIso8601String();
+    sup["from"] = from.toIso8601String();
+    sup["range"] = range.name;
+
+    return sup;
+  }
+
+  TimeRange.fromMap(Map<String, dynamic> map)
+      : to = DateTime.parse(map["to"]),
+        from = DateTime.parse(map["from"]),
+        range = TimeRanges.values.byName(map["range"]);
+
+  static Map<TimeRanges, String> getLabels() {
+    Map<TimeRanges, String> m = {
+      TimeRanges.today: "Today",
+      TimeRanges.dateRange: "Range",
+      TimeRanges.thisWeek: "Week",
+      TimeRanges.lastWeek: "last Week",
+      TimeRanges.thisMonth: "Month",
+      TimeRanges.lastMonth: "last Month",
+      TimeRanges.last3Month: "last 3 Month",
+      TimeRanges.thisYear: "Year",
+      TimeRanges.lastYear: "last Year",
+      TimeRanges.allData: "All recorded data",
+    };
+    return m;
+  }
+
+  DateTimeRange getFrame() {
+    switch (range) {
+      case TimeRanges.today:
+        to = DateTime.now();
+        from = to.subtract(Duration(days: 1));
+        break;
+      case TimeRanges.dateRange:
+        // TODO: Handle this case.
+        break;
+      case TimeRanges.thisWeek:
+        to = DateTime.now();
+        from = to.subtract(Duration(days: 7));
+        break;
+      case TimeRanges.lastWeek:
+        to = DateTime.now().subtract(Duration(days: 7));
+        from = to.subtract(Duration(days: 7));
+        break;
+      case TimeRanges.lastMonth:
+        to = DateTime.now().subtract(Duration(days: 30));
+        from = to.subtract(Duration(days: 30));
+        break;
+      case TimeRanges.last3Month:
+        to = DateTime.now();
+        from = to.subtract(Duration(days: 30 * 3));
+        break;
+      case TimeRanges.lastYear:
+        to = DateTime.now().subtract(Duration(days: 365));
+        from = to.subtract(Duration(days: 365));
+
+        break;
+      case TimeRanges.allData:
+        to = DateTime.now();
+        from = to.subtract(Duration(days: 100 * 365));
+
+        break;
+      case TimeRanges.thisMonth:
+        to = DateTime.now();
+        from = to.subtract(Duration(days: 30));
+        break;
+
+      case TimeRanges.thisYear:
+        to = DateTime.now();
+        from = to.subtract(Duration(days: 365));
+        break;
+    }
+
+    var fromTo = DateTimeRange(end: to.add(const Duration(seconds: 1)), start: from);
+    return fromTo;
+  }
+}
+
+class ColoredDashboardItem extends DashboardItem {
   ColoredDashboardItem(
       {this.color,
       required this.width,
@@ -45,6 +144,7 @@ class ColoredDashboardItem extends DashboardItem {
       this.subFooter,
       this.value,
       required this.widgetDataSource,
+      this.range,
       int minWidth = 1,
       int minHeight = 1,
       int? maxHeight,
@@ -75,8 +175,10 @@ class ColoredDashboardItem extends DashboardItem {
         subFooter = map["subFooter"],
         value = map["value"],
         widgetDataSource = WidgetDataSource.values.byName(map["widgetDataSource"]),
+        range = map["range"] != null ? TimeRange.fromMap(map["range"]) : null,
         super.withLayout(map["item_id"], ItemLayout.fromMap(map["layout"]));
 
+  TimeRange? range;
   Color? color;
   int height;
   int width;
@@ -93,6 +195,9 @@ class ColoredDashboardItem extends DashboardItem {
   @override
   Map<String, dynamic> toMap() {
     var sup = super.toMap();
+    if (range != null) {
+      sup["range"] = range!.toMap();
+    }
     if (color != null) {
       sup["color"] = color?.value;
     }

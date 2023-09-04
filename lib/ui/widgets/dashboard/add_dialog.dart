@@ -1,13 +1,20 @@
+import 'package:dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:intl/intl.dart';
 
 import 'colored_dashboard_item.dart';
 
 class AddDialog extends StatefulWidget {
   ColoredDashboardItem data;
+  final DashboardItemController<ColoredDashboardItem> controller;
 
-  AddDialog({Key? key, required this.data}) : super(key: key);
+  AddDialog({
+    Key? key,
+    required this.data,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<AddDialog> createState() => _AddDialogState();
@@ -17,7 +24,38 @@ class _AddDialogState extends State<AddDialog> {
   int minW = 1, minH = 1, w = 1, h = 1;
 
   int? maxW, maxH;
-
+  final DateFormat formatter = DateFormat('yMMMd');
+  List<DropdownMenuItem<TimeRanges>> timeRanges = [];
+  //    [
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.today,
+  //     child: Text("Today"),
+  //   ),
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.thisWeek,
+  //     child: Text("This Week"),
+  //   ),
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.thisMonth,
+  //     child: Text("This Month"),
+  //   ),
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.lastWeek,
+  //     child: Text("Last week"),
+  //   ),
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.lastMonth,
+  //     child: Text("last Month"),
+  //   ),
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.thisYear,
+  //     child: Text("This year"),
+  //   ),
+  //   const DropdownMenuItem(
+  //     value: TimeRanges.allData,
+  //     child: Text("All recorded data"),
+  //   ),
+  // ];
   Color color = Colors.red;
   var types = [
     const DropdownMenuItem(
@@ -48,6 +86,19 @@ class _AddDialogState extends State<AddDialog> {
       child: Text("Sum Shots"),
     ),
   ];
+  DateTime time = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    TimeRange.getLabels().forEach((k, v) {
+      timeRanges.add(DropdownMenuItem(
+        value: k,
+        child: Text(v),
+      ));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +139,38 @@ class _AddDialogState extends State<AddDialog> {
                       ),
                   ],
                 ),
+                Row(
+                  children: [
+                    // IconButton(
+                    //     onPressed: () {
+                    //       // time = time.subtract(Duration(days: widget.data.range!.range));
+                    //       widget.data.range!.to = time;
+                    //       setState(() {});
+                    //     },
+                    //     icon: const Icon(Icons.chevron_left)),
+                    DropdownButton(
+                      isExpanded: false,
+                      alignment: Alignment.centerLeft,
+                      value: widget.data.range!.range,
+                      items: timeRanges,
+                      onChanged: (value) {
+                        if (value != 0) {
+                          widget.data.range!.range = value!;
+                        }
+                        setState(() {});
+                      },
+                    ),
+                    // IconButton(
+                    //     onPressed: () {
+                    //       time = time.subtract(Duration(days: -widget.data.range!.range));
+                    //       widget.data.range!.to = time;
+                    //       setState(() {});
+                    //     },
+                    //     icon: const Icon(Icons.chevron_right)),
+                    Text(formatter.format(time)),
+                  ],
+                ),
+
                 TextFormField(
                   autofocus: true,
                   controller: null,

@@ -267,7 +267,10 @@ class DashboardScreenState extends State<DashboardScreen> {
               maxWidth: null,
               maxHeight: null);
 
-          return AddDialog(data: sample);
+          return AddDialog(
+            data: sample,
+            controller: itemController,
+          );
         });
 
     if (res != null) {

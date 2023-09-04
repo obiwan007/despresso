@@ -15,6 +15,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
     4: <ColoredDashboardItem>[
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.shotsSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 0,
         height: 1,
         width: 1,
@@ -31,6 +32,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.recipeSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 1,
         height: 1,
         width: 1,
@@ -47,6 +49,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.beansSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 2,
         startY: 0,
         height: 1,
@@ -64,6 +67,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
           widgetDataSource: WidgetDataSource.recipeDist,
+          range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.thisMonth),
           title: "Recipe Distribution",
           subTitle: "Show shots per recipe",
           startX: 0,
@@ -75,6 +79,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
           data: "shotsperrecipe"),
       ColoredDashboardItem(
           widgetDataSource: WidgetDataSource.shotsOverTime,
+          range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.thisMonth),
           title: "Shots Distribution",
           subTitle: "Show shots over time",
           startX: 4,
@@ -90,6 +95,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
     6: <ColoredDashboardItem>[
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.shotsSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 0,
         height: 1,
         width: 1,
@@ -106,6 +112,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.recipeSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 1,
         height: 1,
         width: 1,
@@ -122,6 +129,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.beansSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 2,
         startY: 0,
         height: 1,
@@ -139,6 +147,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
           widgetDataSource: WidgetDataSource.recipeDist,
+          range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.thisMonth),
           title: "Recipe Distribution",
           subTitle: "Show shots per recipe",
           startX: 0,
@@ -150,6 +159,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
           data: "shotsperrecipe"),
       ColoredDashboardItem(
           widgetDataSource: WidgetDataSource.shotsOverTime,
+          range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.thisMonth),
           title: "Shots Distribution",
           subTitle: "Show shots over time",
           startX: 0,
@@ -163,6 +173,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
     8: <ColoredDashboardItem>[
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.shotsSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 0,
         height: 1,
         width: 1,
@@ -176,6 +187,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.recipeSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 1,
         height: 1,
         width: 1,
@@ -192,6 +204,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
       ),
       ColoredDashboardItem(
         widgetDataSource: WidgetDataSource.beansSum,
+        range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.allData),
         startX: 2,
         startY: 0,
         height: 1,
@@ -211,6 +224,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
           widgetDataSource: WidgetDataSource.recipeDist,
           title: "Recipe Distribution",
           subTitle: "Show shots per recipe",
+          range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.thisMonth),
           startX: 0,
           startY: 1,
           height: 2,
@@ -222,6 +236,7 @@ class MyItemStorage extends DashboardItemStorageDelegate<ColoredDashboardItem> {
           widgetDataSource: WidgetDataSource.shotsOverTime,
           title: "Shots Distribution",
           subTitle: "Show shots over time",
+          range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.thisMonth),
           startX: 4,
           startY: 1,
           height: 2,
