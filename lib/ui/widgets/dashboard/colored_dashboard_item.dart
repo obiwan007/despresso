@@ -125,7 +125,7 @@ class TimeRange {
     }
 
     var fromTo =
-        DateTimeRange(end: to.add(const Duration(seconds: 1)), start: from.subtract(const Duration(seconds: 1)));
+        DateTimeRange(end: to.add(const Duration(seconds: 10)), start: from.subtract(const Duration(seconds: 10)));
     return fromTo;
   }
 }

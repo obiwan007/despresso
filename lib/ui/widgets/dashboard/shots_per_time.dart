@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:dashboard/dashboard.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/model/shot.dart';
+import 'package:despresso/objectbox.g.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/widgets/dashboard/add_dialog.dart';
 import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
@@ -52,8 +53,8 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
     super.initState();
     _coffeeService = getIt<CoffeeService>();
     _selectedTimeRange = widget.data.range!.range;
-    allShots = _coffeeService.shotBox.getAll();
-    time = allShots.last.date;
+    //allShots = _coffeeService.shotBox.getAll();
+    // time = allShots.last.date;
     calcData();
     // var sortedKeys = counts.keys.toList(growable: false)..sort((k1, k2) => counts[k2]!.compareTo(counts[k1]!));
     // sortedMap = counts; // LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => counts[k]!);
@@ -61,34 +62,44 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   }
 
   void calcData() {
-    var from = widget.data.range!.from;
-    var to = widget.data.range!.to;
-
-    time = to; // allShots.last.date;
     _selectedTimeRange = widget.data.range!.range;
-
+    time = widget.data.range!.from;
     var fromTo = widget.data.range!.getFrame();
 
     sortedMap.clear();
-    // if (_selectedTimeRange != TimeRanges.today) {
-    //   for (var i = 1; i < _selectedTimeRange; i++) {
-    //     var d = time.subtract(Duration(days: i));
-    //     var key = "${d.day}_${d.month}_${d.year}";
-    //     sortedMap[key] = LinkedHashMap();
-    //   }
-    // }
-    // if (_selectedTimeRange == 1) {
-    //   for (var i = 0; i < 24; i++) {
-    //     var d = time.subtract(Duration(hours: i));
-    //     var key = "${d.hour}";
-    //     sortedMap[key] = LinkedHashMap();
-    //   }
-    // }
+    if (_selectedTimeRange != TimeRanges.today) {
+      var f = fromTo.start;
+      while (f.isBefore(fromTo.end)) {
+        var key = "${f.day}_${f.month}_${f.year}";
+        f = f.add(Duration(days: 1));
+
+        sortedMap[key] = LinkedHashMap();
+      }
+      // for (var i = 1; i < _selectedTimeRange; i++) {
+      //   var d = time.subtract(Duration(days: i));
+      //   var key = "${d.day}_${d.month}_${d.year}";
+      //   sortedMap[key] = LinkedHashMap();
+      // }
+    }
+    if (_selectedTimeRange == TimeRanges.today) {
+      for (var i = 0; i < 24; i++) {
+        var d = time.subtract(Duration(hours: i));
+        var key = "${d.hour}";
+        sortedMap[key] = LinkedHashMap();
+      }
+    }
+
+    final builder = getIt<CoffeeService>()
+        .shotBox
+        .query(Shot_.date.between(fromTo.start.millisecondsSinceEpoch, fromTo.end.millisecondsSinceEpoch))
+        .build();
+    allShots = builder.find();
     for (var element in allShots) {
       try {
         var d = element.date;
-        if (d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
-          var key = _selectedTimeRange == 1 ? "${d.hour}" : "${d.day}_${d.month}_${d.year}";
+        if (true || d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
+          var key = _selectedTimeRange == TimeRanges.today ? "${d.hour}" : "${d.day}_${d.month}_${d.year}";
+          print(key);
           var key2 = element.recipe.target?.name;
           if (key2 != null) {
             if (sortedMap[key] == null) {
@@ -304,17 +315,16 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   List<BarChartGroupData> showingSections(double radius) {
     // const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
     return sortedMap.entries.mapIndexed((i, e) {
+      print("Section $i");
       final isTouched = i == touchedIndex;
       var color = colorList[i % colorList.length];
-      // var actCol = Color.fromRGBO(color.red, color.green, color.blue, isTouched || touchedIndex == -1 ? 1 : 0.5);
-      var actCol = color.withOpacity(isTouched || touchedIndex == -1 ? 1 : 0.5);
 
       double sum = 0;
       e.value.entries.forEach((element) {
         sum = sum + element.value;
       });
       double currentY = 0;
-      print("New");
+
       return BarChartGroupData(
         x: i,
         barRods: [
@@ -332,7 +342,6 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
             //   // color: widget.barBackgroundColor,
             // ),
             rodStackItems: e.value.entries.mapIndexed((index, element) {
-              print("${currentY} ${element.value.toDouble()} ${colormap[element.key]}");
               var bar = BarChartRodStackItem(
                 currentY,
                 currentY + element.value.toDouble(),
@@ -355,6 +364,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
         showTitles: true,
         reservedSize: 55, //+ _selectedTimeRange == 7 ? 25 : 25,
         getTitlesWidget: (value, meta) {
+          print("Bottom: $value");
           String text = '';
           String text2 = '';
           switch (_selectedTimeRange) {
@@ -383,11 +393,23 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
 
               break;
             case TimeRanges.today:
-              if (value.toInt() % 1 == 0) {
+              if (value.toInt() % 2 == 0) {
                 var d = time.subtract(Duration(hours: 23 - value.toInt()));
                 text = d.hour.toString();
               }
 
+              break;
+            case TimeRanges.dateRange:
+              // TODO: Handle this case.
+              break;
+            case TimeRanges.thisYear:
+              // TODO: Handle this case.
+              break;
+            case TimeRanges.lastYear:
+              // TODO: Handle this case.
+              break;
+            case TimeRanges.allData:
+              // TODO: Handle this case.
               break;
           }
 

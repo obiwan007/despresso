@@ -174,7 +174,7 @@ class _AddDialogState extends State<AddDialog> {
                 TextFormField(
                   autofocus: true,
                   controller: null,
-                  inputFormatters: [],
+                  inputFormatters: const [],
                   initialValue: widget.data.title,
                   onChanged: (v) {
                     widget.data.title = v;
@@ -185,7 +185,7 @@ class _AddDialogState extends State<AddDialog> {
                 TextFormField(
                   autofocus: true,
                   controller: null,
-                  inputFormatters: [],
+                  inputFormatters: const [],
                   initialValue: widget.data.subTitle,
                   onChanged: (v) {
                     widget.data.subTitle = v;
@@ -196,7 +196,7 @@ class _AddDialogState extends State<AddDialog> {
                 TextFormField(
                   autofocus: true,
                   controller: null,
-                  inputFormatters: [],
+                  inputFormatters: const [],
                   initialValue: widget.data.dataHeader,
                   onChanged: (v) {
                     widget.data.dataHeader = v;
@@ -207,7 +207,7 @@ class _AddDialogState extends State<AddDialog> {
                 TextFormField(
                   autofocus: true,
                   controller: null,
-                  inputFormatters: [],
+                  inputFormatters: const [],
                   initialValue: widget.data.dataFooter,
                   onChanged: (v) {
                     widget.data.dataFooter = v;
@@ -218,7 +218,7 @@ class _AddDialogState extends State<AddDialog> {
                 TextFormField(
                   autofocus: true,
                   controller: null,
-                  inputFormatters: [],
+                  inputFormatters: const [],
                   initialValue: widget.data.footer,
                   onChanged: (v) {
                     widget.data.footer = v;
@@ -229,7 +229,7 @@ class _AddDialogState extends State<AddDialog> {
                 TextFormField(
                   autofocus: true,
                   controller: null,
-                  inputFormatters: [],
+                  inputFormatters: const [],
                   initialValue: widget.data.subFooter,
                   onChanged: (v) {
                     widget.data.subFooter = v;
