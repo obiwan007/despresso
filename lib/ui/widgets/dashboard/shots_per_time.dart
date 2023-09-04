@@ -70,8 +70,8 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
     if (_selectedTimeRange != TimeRanges.today) {
       var f = fromTo.start;
       while (f.isBefore(fromTo.end)) {
-        var key = "${f.day}_${f.month}_${f.year}";
-        f = f.add(Duration(days: 1));
+        var key = _selectedTimeRange != TimeRanges.thisYear ? "${f.month}_${f.year}" : "${f.day}_${f.month}_${f.year}";
+        f = f.add(_selectedTimeRange != TimeRanges.thisYear ? Duration(days: 1) : Duration(days: 30));
 
         sortedMap[key] = LinkedHashMap();
       }
@@ -98,8 +98,12 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
       try {
         var d = element.date;
         if (true || d.isBefore(fromTo.end) && d.isAfter(fromTo.start)) {
-          var key = _selectedTimeRange == TimeRanges.today ? "${d.hour}" : "${d.day}_${d.month}_${d.year}";
-          print(key);
+          var key = _selectedTimeRange == TimeRanges.today
+              ? "${d.hour}"
+              : _selectedTimeRange == TimeRanges.thisYear
+                  ? "${d.month}_${d.year}"
+                  : "${d.day}_${d.month}_${d.year}";
+          if (_selectedTimeRange == TimeRanges.thisYear) print("KEY: $key");
           var key2 = element.recipe.target?.name;
           if (key2 != null) {
             if (sortedMap[key] == null) {
@@ -129,6 +133,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
         },
       );
     });
+    if (_selectedTimeRange == TimeRanges.thisYear) print(sortedMap);
   }
 
   @override
@@ -291,8 +296,7 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
 
                         titlesData: FlTitlesData(
                           bottomTitles: AxisTitles(sideTitles: _bottomTitles),
-                          leftTitles:
-                              const AxisTitles(sideTitles: SideTitles(reservedSize: 30, showTitles: true, interval: 1)),
+                          leftTitles: const AxisTitles(sideTitles: SideTitles(reservedSize: 40, showTitles: true)),
                           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         ),
@@ -315,7 +319,6 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
   List<BarChartGroupData> showingSections(double radius) {
     // const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
     return sortedMap.entries.mapIndexed((i, e) {
-      print("Section $i");
       final isTouched = i == touchedIndex;
       var color = colorList[i % colorList.length];
 
@@ -364,7 +367,6 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
         showTitles: true,
         reservedSize: 55, //+ _selectedTimeRange == 7 ? 25 : 25,
         getTitlesWidget: (value, meta) {
-          print("Bottom: $value");
           String text = '';
           String text2 = '';
           switch (_selectedTimeRange) {
@@ -404,6 +406,14 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
               break;
             case TimeRanges.thisYear:
               // TODO: Handle this case.
+              final DateFormat formatter = DateFormat('MMM');
+
+              if (value.toInt() % 2 == 0) {
+                var d = time.subtract(Duration(days: 30 * (32 - value.toInt())));
+                text = formatter.format(d);
+
+                // text = d.day.toString();
+              }
               break;
             case TimeRanges.lastYear:
               // TODO: Handle this case.

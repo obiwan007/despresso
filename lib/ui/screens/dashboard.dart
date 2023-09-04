@@ -248,6 +248,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         context: context,
         builder: (c) {
           var sample = ColoredDashboardItem(
+              range: TimeRange(from: DateTime.now(), to: DateTime.now(), range: TimeRanges.lastWeek),
               widgetDataSource: WidgetDataSource.beansSum,
               color: Colors.red,
               width: 1,
