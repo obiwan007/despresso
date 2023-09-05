@@ -1,24 +1,12 @@
-import 'dart:collection';
-import 'dart:math';
-
-import 'package:collection/collection.dart';
-import 'package:despresso/model/services/state/coffee_service.dart';
-import 'package:despresso/model/shot.dart';
-import 'package:despresso/service_locator.dart';
-import 'package:despresso/ui/screens/coffee_selection.dart';
 import 'package:despresso/ui/widgets/dashboard/colored_dashboard_item.dart';
 import 'package:despresso/ui/widgets/dashboard/colorlist.dart';
 import 'package:despresso/ui/widgets/dashboard/kpi.dart';
 import 'package:despresso/ui/widgets/dashboard/shots_per_recipe.dart';
 import 'package:despresso/ui/widgets/dashboard/shots_per_time.dart';
-import 'package:despresso/ui/widgets/legend_widget.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
 import 'package:dashboard/dashboard.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 enum SelectedWidgetMenu {
