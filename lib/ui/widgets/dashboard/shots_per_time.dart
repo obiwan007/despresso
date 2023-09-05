@@ -70,8 +70,8 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
     if (_selectedTimeRange != TimeRanges.today) {
       var f = fromTo.start;
       while (f.isBefore(fromTo.end)) {
-        var key = _selectedTimeRange != TimeRanges.thisYear ? "${f.month}_${f.year}" : "${f.day}_${f.month}_${f.year}";
-        f = f.add(_selectedTimeRange != TimeRanges.thisYear ? Duration(days: 1) : Duration(days: 30));
+        var key = _selectedTimeRange == TimeRanges.thisYear ? "${f.month}_${f.year}" : "${f.day}_${f.month}_${f.year}";
+        f = f.add(_selectedTimeRange == TimeRanges.thisYear ? Duration(days: 30) : Duration(days: 1));
 
         sortedMap[key] = LinkedHashMap();
       }
@@ -402,21 +402,15 @@ class _ShotsPerTimeState extends State<ShotsPerTime> {
 
               break;
             case TimeRanges.dateRange:
-              // TODO: Handle this case.
-              break;
-            case TimeRanges.thisYear:
-              // TODO: Handle this case.
-              final DateFormat formatter = DateFormat('MMM');
-
-              if (value.toInt() % 2 == 0) {
-                var d = time.subtract(Duration(days: 30 * (32 - value.toInt())));
-                text = formatter.format(d);
-
-                // text = d.day.toString();
-              }
               break;
             case TimeRanges.lastYear:
-              // TODO: Handle this case.
+            case TimeRanges.thisYear:
+              final DateFormat formatter = DateFormat('MMM');
+
+              if (value.toInt() % 1 == 0) {
+                var d = time.subtract(Duration(days: 30 * (12 - value.toInt())));
+                text = formatter.format(d);
+              }
               break;
             case TimeRanges.allData:
               // TODO: Handle this case.
