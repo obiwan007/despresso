@@ -667,7 +667,7 @@ class EspressoScreenState extends State<EspressoScreen> {
               width: width,
               label: S.of(context).screenEspressoTarget,
               value:
-                  '${settingsService.targetEspressoWeight.toStringAsFixed(1)} g / ${machineService.currentShot.shotstates.last.weight.toStringAsFixed(1)} g'),
+                  '${settingsService.targetEspressoWeight.toStringAsFixed(1)} g / ${machineService.currentShot.shotstates.isEmpty ? "?" : machineService.currentShot.shotstates.last.weight.toStringAsFixed(1)} g'),
         if (machineService.lastPourTime > 0)
           const Divider(
             height: 20,
