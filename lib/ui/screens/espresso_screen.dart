@@ -666,7 +666,8 @@ class EspressoScreenState extends State<EspressoScreen> {
           KeyValueWidget(
               width: width,
               label: S.of(context).screenEspressoTarget,
-              value: '${settingsService.targetEspressoWeight.toStringAsFixed(1)} g'),
+              value:
+                  '${settingsService.targetEspressoWeight.toStringAsFixed(1)} g / ${machineService.currentShot.shotstates.last.weight.toStringAsFixed(1)} g'),
         if (machineService.lastPourTime > 0)
           const Divider(
             height: 20,
