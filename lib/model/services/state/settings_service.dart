@@ -315,8 +315,8 @@ class SettingsService extends ChangeNotifier {
   bool get recordPrePouring => Settings.getValue<bool>(SettingKeys.recordPrePouring.name) ?? true;
   set recordPrePouring(bool value) => Settings.setValue<bool>(SettingKeys.recordPrePouring.name, value);
 
-  /// save the shot including pre pouring states.
-  bool get savePrePouring => Settings.getValue<bool>(SettingKeys.savePrePouring.name) ?? true;
+  /// save heating phase of shots
+  bool get savePrePouring => Settings.getValue<bool>(SettingKeys.savePrePouring.name) ?? false;
   set savePrePouring(bool value) => Settings.setValue<bool>(SettingKeys.savePrePouring.name, value);
 
   bool get scaleStartTimer => Settings.getValue<bool>(SettingKeys.scaleStartTimer.name) ?? true;
