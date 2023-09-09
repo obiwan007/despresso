@@ -719,26 +719,19 @@ class EspressoMachineService extends ChangeNotifier {
 
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
-          if (lastPourTime > 5 &&
-              scaleService.state[0] == ScaleState.connected) {
+          if (lastPourTime > 5 && scaleService.state[0] == ScaleState.connected) {
             var weight = settingsService.targetEspressoWeight;
             if (weight < 1) {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
             }
 
-            if (isPouring &&
-                settingsService.shotStopOnWeight &&
-                weight > 1 &&
-                _delayedStopActive == false) {
+            if (isPouring && settingsService.shotStopOnWeight && weight > 1 && _delayedStopActive == false) {
               var valuesCount = calcWeightReachedEstimation();
               if (valuesCount > 0) {
-                var timeToWeight = currentShot.estimatedWeightReachedTime -
-                    shot.sampleTimeCorrected;
+                var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
                 // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
-                shot.timeToWeight =
-                    timeToWeight > 0 && timeToWeight < 100 ? timeToWeight : 0;
-                log.info(
-                    "Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
+                shot.timeToWeight = timeToWeight > 0 && timeToWeight < 100 ? timeToWeight : 0;
+                log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
                 if (timeToWeight > 0 &&
                     timeToWeight < 2.5 &&
                     (settingsService.targetEspressoWeight - shot.weight < 5)) {
@@ -746,14 +739,9 @@ class EspressoMachineService extends ChangeNotifier {
                   log.info("Shot weight reached soon, starting delayed stop");
                   Future.delayed(
                     Duration(
-                        milliseconds: ((timeToWeight -
-                                    settingsService
-                                        .targetEspressoWeightTimeAdjust) *
-                                1000)
-                            .toInt()),
+                        milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
                     () {
-                      log.info(
-                          "Shot weight reached now!, stopping ${state.shot!.weight}");
+                      log.info("Shot weight reached now!, stopping ${state.shot!.weight}");
                       triggerEndOfShot();
                     },
                   );
@@ -962,9 +950,6 @@ class EspressoMachineService extends ChangeNotifier {
         profileService.currentProfile?.shotFrames[shot.frameNumber];
     var stepWeightLimit = frame?.maxWeight ?? 0.0;
 
-log.info(
-        "DEBUG $isPouring ${shot.subState} $stepWeightLimit ${shot.weight} $_delayedStopActive");
-
     if ((isPouring || state.subState == "pre_infuse") &&
         stepWeightLimit > 0.0 &&
         flowRateForecast > 0.0 &&
@@ -975,11 +960,9 @@ log.info(
               (DateTime.now().difference(currentWeight.time)).inMilliseconds;
       var timeToWeight = (stepWeightLimit - forecastWeight) / flowRateForecast;
 
-      log.info("TIME TO WEIGHT $timeToWeight");
-      log.info("adjust ${settingsService.stepLimitWeightTimeAdjust}");
-
       if (timeToWeight <= (settingsService.stepLimitWeightTimeAdjust * 1000)) {
         _weightMoveOnFrames.add(shot.frameNumber);
+        log.info("Frame weight reached now, moving on");
         moveToNextFrame();
       }
     }
@@ -1192,8 +1175,6 @@ log.info(
     var interpolatedSampleTimeEpochs =
         List.generate(samples.length, (i) => samples.first.time.add(timestep * i).millisecondsSinceEpoch.toDouble());
 
-    log.info("hmmmm $actualSampleWindow $timestep $interpolatedSampleTimes $selectedSampleTimes");
-
     var interpolatedSampleWeights = interp(
         interpolatedSampleTimeEpochs, selectedSampleTimeEpochs, selectedSampleWeights);
 
@@ -1217,13 +1198,6 @@ log.info(
     fudgeFactor = fudgeFactor.isFinite ? fudgeFactor : 1;
 
     var flow = gradient * fudgeFactor;
-
-    log.info("weight samples $selectedSampleWeights");
-    log.info("time samples $selectedSampleTimeEpochs");
-    log.info("interpolated weight samples $interpolatedSampleWeights");
-    log.info("interpolated time samples $interpolatedSampleTimeEpochs");
-    log.info("exp smooth result $smoothed");
-    log.info("flow rate forecast $flow");
 
     return flow;
   }
@@ -1258,7 +1232,7 @@ class LineEq {
 
   getY(double x) {
     double y = (m) * (x - x1) + b;
-    // log.info("lin: $y = ($m * $x + $b");
+    log.info("lin: $y = ($m * $x + $b");
     return y;
   }
 }
