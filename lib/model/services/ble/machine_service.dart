@@ -1106,15 +1106,32 @@ class EspressoMachineService extends ChangeNotifier {
     for (int i = 0; i < xpNew.length; i++) {
       double x = xpNew[i];
 
-      int j = 0;
-      while (j < xp.length - 1 && xp[j + 1] < x) {
-        j++;
-      }
+      double x0;
+      double x1;
+      double f0;
+      double f1;
 
-      double x0 = xp[j];
-      double x1 = xp[j + 1];
-      double f0 = fp[j];
-      double f1 = fp[j + 1];
+      if (x <= xp.first) {
+        x0 = xp.first;
+        x1 = xp[1];
+        f0 = fp.first;
+        f1 = fp[1];
+      } else if (x >= xp.last) {
+        x0 = xp[xp.length - 2];
+        x1 = xp.last;
+        f0 = fp[fp.length - 2];
+        f1 = fp.last;
+      } else {
+        int j = 0;
+        while (j < xp.length - 1 && xp[j + 1] < x) {
+          j++;
+        }
+
+        x0 = xp[j];
+        x1 = xp[j + 1];
+        f0 = fp[j];
+        f1 = fp[j + 1];
+      }
 
       double interpolatedValue = f0 + (f1 - f0) * (x - x0) / (x1 - x0);
       results.add(interpolatedValue);
