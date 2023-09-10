@@ -94,6 +94,11 @@ enum SettingKeys {
   tabletSleepDuringScreensaver,
   tabletSleepDuringScreensaverTimeout,
   tabletSleepWhenMachineOff,
+  visualizerUploadExtended,
+  visualizerExtendedUser,
+  visualizerExtendedPwd,
+  visualizerExtendedUrl,
+  visualizerExtendedUpload,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -131,9 +136,16 @@ class SettingsService extends ChangeNotifier {
   String get visualizerUser => Settings.getValue(SettingKeys.visualizerUser.name) ?? "";
   String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
 
+  bool get visualizerExtendedUpload => Settings.getValue(SettingKeys.visualizerExtendedUpload.name) ?? false;
+  String get visualizerExtendedUser => Settings.getValue(SettingKeys.visualizerExtendedUser.name) ?? "";
+  String get visualizerExtendedPwd => Settings.getValue(SettingKeys.visualizerExtendedPwd.name) ?? "";
+  String get visualizerExtendedUrl => Settings.getValue(SettingKeys.visualizerExtendedUrl.name) ?? "";
+
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
-  bool get tabletSleepDuringScreensaver => Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
-  double get tabletSleepDuringScreensaverTimeout => Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
+  bool get tabletSleepDuringScreensaver =>
+      Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
+  double get tabletSleepDuringScreensaverTimeout =>
+      Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
   bool get tabletSleepWhenMachineOff => Settings.getValue<bool>(SettingKeys.tabletSleepWhenMachineOff.name) ?? false;
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
