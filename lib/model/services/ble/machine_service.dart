@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/gestures.dart';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
@@ -1024,26 +1025,56 @@ class EspressoMachineService extends ChangeNotifier {
         .map(
             (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
         .toList();
+
+    var offsetWeightTimes = weightTimes.map((time) => time - weightTimes.first).toList();
     var weightValues = weightMeasurements
         .map((measurement) => measurement.weight.weight)
         .toList();
 
     var interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
-    var interpolatedFlowWeights = List.generate(
-        interpolatedWeights.length - 1,
-        (i) =>
-            (interpolatedWeights[i + 1] - interpolatedWeights[i]) /
-            (sampleTimes[i + 1] - sampleTimes[i]) *
-            1000);
-    interpolatedFlowWeights.add(interpolatedFlowWeights.last);
-    var smoothedFlowWeights =
-        doubleExponentialSmoothing(interpolatedFlowWeights, 0.2, 0.5)
-            .map((element) => element.first)
-            .toList();
+    //var interpolatedFlowWeights = List.generate(
+    //    interpolatedWeights.length - 1,
+    //    (i) =>
+    //        (interpolatedWeights[i + 1] - interpolatedWeights[i]) /
+    //        (sampleTimes[i + 1] - sampleTimes[i]) *
+    //        1000);
+    //interpolatedFlowWeights.add(interpolatedFlowWeights.last);
+
+    final solver = LeastSquaresSolver(offsetWeightTimes, weightValues, weightTimes.map((_) => 1.0).toList());
+    final fit = solver.solve(10);
+    final coefficients = fit!.coefficients;
+
+    log.info("COEFFICIENTS $coefficients");
+
+    final derivativeCoefficients = List.generate(
+        coefficients.length - 1,
+        (i) => coefficients[i + 1] * (i + 1),
+        );
+
+    log.info("DERIVATIVE COEFFICIENTS $derivativeCoefficients");
+
+    final flowWeights = sampleTimes.map(
+    (t) => derivativeCoefficients.asMap().entries.fold(0.0, (flowWeight, c) => flowWeight + c.value * pow(t - weightTimes.first, c.key)) * 1000
+    ).toList();
+
+    log.info("WEIGHT VALUES");
+    weightValues.forEach(log.info);
+
+    log.info("WEIGHT TIMES");
+    weightTimes.forEach(log.info);
+
+    log.info("FLOW WEIGHTS");
+    flowWeights.forEach(log.info);
+
+
+    //var smoothedFlowWeights =
+    //    doubleExponentialSmoothing(interpolatedFlowWeights, 0.2, 0.5)
+    //        .map((element) => element.first)
+    //        .toList();
 
     cs.shotstates.asMap().forEach((index, state) {
       state.weight = (interpolatedWeights[index] * 10).round() / 10;
-      state.flowWeight = (smoothedFlowWeights[index] * 10).round() / 10;
+      state.flowWeight = (flowWeights[index] * 10).round() / 10;
     });
 
     cs.pourTime = lastPourTime;
