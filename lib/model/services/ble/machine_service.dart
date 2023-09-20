@@ -928,7 +928,9 @@ class EspressoMachineService extends ChangeNotifier {
       cs.ratio1 = coffeeService.currentRecipe?.ratio1 ?? 1;
       cs.ratio2 = coffeeService.currentRecipe?.ratio2 ?? 1;
 
+      cs.grinderName = coffeeService.currentRecipe?.grinderModel ?? "";
       cs.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
+
       cs.estimatedWeightReachedTime = currentShot.estimatedWeightReachedTime;
       cs.estimatedWeight_b = currentShot.estimatedWeight_b;
       cs.estimatedWeight_m = currentShot.estimatedWeight_m;
