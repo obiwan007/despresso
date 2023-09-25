@@ -101,6 +101,13 @@ const waterMap = [
   2058,
 ];
 
+class TimedWeightMeasurement {
+  TimedWeightMeasurement(this.weight, this.time);
+
+  WeightMeassurement weight;
+  DateTime time;
+}
+
 class WaterLevel {
   WaterLevel(this.waterLevel, this.waterLimit);
 
@@ -195,6 +202,13 @@ class EspressoMachineService extends ChangeNotifier {
   late ScaleService scaleService;
   late CoffeeService coffeeService;
   late SettingsService settingsService;
+
+  // Keeps track of events from ScaleService (cleared at start of shot).
+  // Useful if you need weight samples that aren't quantized to ShotList
+  // elements
+  List<TimedWeightMeasurement> weightMeasurementsDuringShot = [];
+  double flowRateForecast = 0.0;
+  Set<int> _weightMoveOnFrames = {};
 
   ShotList shotList = ShotList([]);
   double baseTime = 0;
@@ -293,6 +307,16 @@ class EspressoMachineService extends ChangeNotifier {
     profileService.addListener(updateProfile);
     scaleService = getIt<ScaleService>();
     coffeeService = getIt<CoffeeService>();
+
+    scaleService.stream0.listen((measurement) {
+      if (state.subState == "pour" ||
+          state.subState == "pre_infuse" ||
+          state.subState == "heat_water_heater") {
+        weightMeasurementsDuringShot
+            .add(TimedWeightMeasurement(measurement, DateTime.now()));
+        flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
+      }
+    });
 
     log.fine('Preferences loaded');
 
@@ -594,11 +618,16 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
 
       _delayedStopActive = false;
+      _weightMoveOnFrames = {};
       isPouring = false;
       shotList.clear();
+      weightMeasurementsDuringShot.clear();
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
       log.info("basetime $baseTime");
       lastPourTime = 0;
+
+      Timer.periodic(const Duration(milliseconds: 50),
+          (timer) => checkMoveOnAtWeight(timer));
     }
     if (state.coffeeState == EspressoMachineState.espresso && shot.frameNumber != _lastFrameNumber) {
       if (profileService.currentProfile != null &&
@@ -897,6 +926,49 @@ class EspressoMachineService extends ChangeNotifier {
     }
   }
 
+  void checkMoveOnAtWeight(Timer timer) {
+    if (state.coffeeState != EspressoMachineState.espresso ||
+        (state.subState != "pour" &&
+            state.subState != "pre_infuse" &&
+            state.subState != "heat_water_heater")) {
+      // we're no longer pulling a shot, so stop checking
+      log.info("Stopping weight move-on checks");
+      timer.cancel();
+      return;
+    }
+
+    var shot = state.shot;
+
+    if (shot == null) {
+      return;
+    }
+
+    if (_weightMoveOnFrames.contains(shot.frameNumber)) {
+    return;
+    }
+
+    var frame =
+        profileService.currentProfile?.shotFrames[shot.frameNumber];
+    var stepWeightLimit = frame?.maxWeight ?? 0.0;
+
+    if ((isPouring || state.subState == "pre_infuse") &&
+        stepWeightLimit > 0.0 &&
+        flowRateForecast > 0.0 &&
+        _delayedStopActive == false) {
+      var currentWeight = weightMeasurementsDuringShot.last;
+      var forecastWeight = currentWeight.weight.weight +
+          flowRateForecast *
+              (DateTime.now().difference(currentWeight.time)).inMilliseconds;
+      var timeToWeight = (stepWeightLimit - forecastWeight) / flowRateForecast;
+
+      if (timeToWeight <= (settingsService.stepLimitWeightTimeAdjust * 1000)) {
+        _weightMoveOnFrames.add(shot.frameNumber);
+        log.info("Frame weight reached now, moving on");
+        moveToNextFrame();
+      }
+    }
+  }
+
   void triggerEndOfShot() {
     log.info("Idle mode initiated because of goal reached");
 
@@ -908,6 +980,11 @@ class EspressoMachineService extends ChangeNotifier {
     // log.info("Idle mode initiated finished", error: {DateTime.now()});
     //   stopTriggered = false;
     // });
+  }
+
+  void moveToNextFrame() {
+    log.info("Skipping to next frame");
+    de1?.requestState(De1StateEnum.skipToNext);
   }
 
   shotFinished() async {
@@ -1015,6 +1092,132 @@ class EspressoMachineService extends ChangeNotifier {
     } else {
       return 0;
     }
+  }
+
+  // Linear interpolation
+  // xpNew: the new x-coordinates to interpolate values to
+  // xp: x-coordinates of the original data
+  // fp: y-coordinates of the original data
+  List<double> interp(List<double> xpNew, List<double> xp, List<double> fp) {
+    if (xp.length != fp.length) {
+      throw ArgumentError(
+          "Input lists 'xp' and 'fp' must have the same length.");
+    }
+
+    List<double> results = [];
+
+    for (int i = 0; i < xpNew.length; i++) {
+      double x = xpNew[i];
+
+      double x0;
+      double x1;
+      double f0;
+      double f1;
+
+      if (x <= xp.first) {
+        x0 = xp.first;
+        x1 = xp[1];
+        f0 = fp.first;
+        f1 = fp[1];
+      } else if (x >= xp.last) {
+        x0 = xp[xp.length - 2];
+        x1 = xp.last;
+        f0 = fp[fp.length - 2];
+        f1 = fp.last;
+      } else {
+        int j = 0;
+        while (j < xp.length - 1 && xp[j + 1] < x) {
+          j++;
+        }
+
+        x0 = xp[j];
+        x1 = xp[j + 1];
+        f0 = fp[j];
+        f1 = fp[j + 1];
+      }
+
+      double interpolatedValue = f0 + (f1 - f0) * (x - x0) / (x1 - x0);
+      results.add(interpolatedValue);
+    }
+
+    return results;
+  }
+
+  // Double exponential smoothing over the given data. Data points are assumed
+  // to have equal temporal spacing. Returns the values of s, b at each point.
+  // TODO: check if we can upgrade to Flutter 3 and return a list of records
+  List<List<double>> doubleExponentialSmoothing(List<double> input,
+      double dataSmoothingFactor, double trendSmoothingFactor) {
+    var s = input[0];
+    var b = input[1] - input[0];
+
+    List<List<double>> result = [[s, b]];
+
+    input.sublist(1).forEach((x) {
+      var s_1 = s;
+      var b_1 = b;
+      s = x * dataSmoothingFactor + (1 - dataSmoothingFactor) * (s_1 + b_1);
+      b = trendSmoothingFactor * (s - s_1) + (1 - trendSmoothingFactor) * b_1;
+      result.add([s, b]);
+    });
+
+    return result;
+  }
+
+  // Get forecast flow rate using double exponential smoothing.
+  double getFlowRateForecast(Duration window) {
+    var sampleWindowStart = DateTime.now().subtract(window);
+    var samples = weightMeasurementsDuringShot
+        .where((m) => m.time.isAfter(sampleWindowStart) || m.time.isAtSameMomentAs(sampleWindowStart));
+
+    if (samples.isEmpty) {
+      return 0.0;
+    }
+
+    if (samples.length == 1) {
+      return samples.first.weight.flow;
+    }
+
+    var selectedSampleWeights = samples.map((m) => m.weight.weight).toList();
+    var selectedSampleTimeEpochs = samples.map((m) => m.time.millisecondsSinceEpoch.toDouble()).toList();
+
+    // this will probably be slightly different than the requested sample window
+    var actualSampleWindow = samples.last.time.difference(samples.first.time);
+
+    // get a list of equally spaced sample times between the start and end
+    // of the sample window
+    // This might be a bad approach depending on the variance in the
+    // scale's reporting - investigate better solutions?
+    var timestep = actualSampleWindow ~/ (samples.length - 1);
+
+    var interpolatedSampleTimeEpochs =
+        List.generate(samples.length, (i) => samples.first.time.add(timestep * i).millisecondsSinceEpoch.toDouble());
+
+    var interpolatedSampleWeights = interp(
+        interpolatedSampleTimeEpochs, selectedSampleTimeEpochs, selectedSampleWeights);
+
+    // These values for data smoothing, trend smoothing factors were found by
+    // minimizing square error of forecast weights on real shot data
+    var smoothed =
+        doubleExponentialSmoothing(interpolatedSampleWeights, 0.6, 0.5);
+
+    // double exponential forecast is given by adding b * m to the last smoothed
+    // value, where "m" is a discrete number of time steps.
+    // Therefore the gradient is b divided by the time step size
+    // (and weight gradient == flow rate)
+    var b = smoothed.last[1];
+    var gradient = b / timestep.inMilliseconds;
+
+    // multiplying by the ratio of current : previous flow rate slightly
+    // improves fit IME, using b alone under-estimates increase/decreases in
+    // flow rate
+    var b_2 = smoothed[smoothed.length - 2][1];
+    var fudgeFactor = b / b_2;
+    fudgeFactor = fudgeFactor.isFinite ? fudgeFactor : 1;
+
+    var flow = gradient * fudgeFactor;
+
+    return flow;
   }
 
   void notify() {
