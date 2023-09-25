@@ -626,7 +626,8 @@ class EspressoMachineService extends ChangeNotifier {
       log.info("basetime $baseTime");
       lastPourTime = 0;
 
-      Timer.periodic(const Duration(milliseconds: 50), checkMoveOnAtWeight);
+      Timer.periodic(const Duration(milliseconds: 50),
+          (timer) => checkMoveOnAtWeight(timer));
     }
     if (state.coffeeState == EspressoMachineState.espresso && shot.frameNumber != _lastFrameNumber) {
       if (profileService.currentProfile != null &&
