@@ -41,21 +41,21 @@ dependencies:
   path: null
   flat_buffers: null
   flutter_typeahead: ^4.1.1
-  cached_network_image: ^3.2.3
-  flutter_reactive_ble: ^5.0.3
+  cached_network_image: ^3.3.0
+  flutter_reactive_ble: ^5.2.0
   json_annotation: ^4.8.0
   build_runner: ^2.3.3
   json_serializable: ^6.5.4
   path_provider: ^2.0.11
-  community_charts_flutter: ^1.0.0
+  community_charts_flutter: ^1.0.1
   syncfusion_flutter_sliders: ^22.1.37
   copy_with_extension: ^5.0.0
   copy_with_extension_gen: ^5.0.0
   uuid: ^3.0.7
   reactive_forms: ^16.0.1
   reactive_flutter_rating_bar: ^2.0.0
-  objectbox: ^2.0.0
-  objectbox_flutter_libs: any
+  objectbox: 2.2.0
+  objectbox_flutter_libs: 2.2.0
   flutter_settings_screens: ^0.3.3-null-safety+2
   permission_handler: ^10.2.0
   shared_preferences: ">=2.2.0"
@@ -70,9 +70,9 @@ dependencies:
   file_picker: ^5.2.5
   share_plus: ^7.0.2
   document_file_save_plus: ^1.0.9
-  sentry_flutter: ^7.9.0
+  sentry_flutter: ^7.10.0
   feedback_sentry: ^2.4.0
-  package_info_plus: ^4.0.2
+  package_info_plus: ^4.1.0
   intl: ^0.18.0
   csv: ^5.0.1
   flutter_spinbox: ^0.13.1
@@ -105,7 +105,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  objectbox_generator: ^2.0.0
+  objectbox_generator: 2.2.0
 
 # objectbox_generator:generator:
 #     generate_for:
