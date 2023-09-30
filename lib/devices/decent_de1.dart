@@ -731,6 +731,18 @@ class DE1 extends ChangeNotifier implements IDe1 {
     return data;
   }
 
+  Future<int> getExternalFlash() async {
+    var data = _getInt(await _mmrRead(mmrAddrLookup[MMRAddrEnum.ExternalFlash]!, 0));
+    log.info("getExternalFlash: $data ${toHexString(data)}");
+    return data;
+  }
+
+  Future<int> getMaxShotPres() async {
+    var data = _getInt(await _mmrRead(mmrAddrLookup[MMRAddrEnum.MaxShotPres]!, 0));
+    log.info("getMaxShotPres: $data ${toHexString(data)}");
+    return data;
+  }
+
   @override
   Future<void> setUsbChargerMode(int t) {
     ByteData bytes = ByteData(4);
@@ -874,6 +886,7 @@ class DE1 extends ChangeNotifier implements IDe1 {
           ghcMode = await getGhcMode();
           service.setSubState("30%");
           machineSerial = await getSerialNumber();
+          log.info("Serial Number $machineSerial");
           service.setSubState("40%");
           firmware = await getFirmwareBuild();
           service.setSubState("50%");

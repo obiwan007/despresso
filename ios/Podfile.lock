@@ -71,13 +71,13 @@ PODS:
   - SDWebImage (5.15.5):
     - SDWebImage/Core (= 5.15.5)
   - SDWebImage/Core (5.15.5)
-  - Sentry/HybridSDK (8.9.1):
-    - SentryPrivate (= 8.9.1)
+  - Sentry/HybridSDK (8.11.0):
+    - SentryPrivate (= 8.11.0)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.9.1)
-  - SentryPrivate (8.9.1)
+    - Sentry/HybridSDK (= 8.11.0)
+  - SentryPrivate (8.11.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -193,9 +193,9 @@ SPEC CHECKSUMS:
   reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
   screen_brightness_ios: 715ca807df953bf676d339f11464e438143ee625
   SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
-  Sentry: e3203780941722a1fcfee99e351de14244c7f806
-  sentry_flutter: 8f0ffd53088e6a4d50c095852c5cad9e4405025c
-  SentryPrivate: 5e3683390f66611fc7c6215e27645873adb55d13
+  Sentry: 39d57e691e311bdb73bc1ab5bbebbd6bc890050d
+  sentry_flutter: b2feefdad5b0f06602347172bc7257e8e9da5562
+  SentryPrivate: 48712023cdfd523735c2edb6b06bedf26c4730a3
   share_plus: 599aa54e4ea31d4b4c0e9c911bcc26c55e791028
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
