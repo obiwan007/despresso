@@ -91,10 +91,11 @@ class CoffeeService extends ChangeNotifier {
   }
 
   addCoffee(Coffee newCoffee) async {
-    coffeeBox.put(newCoffee);
+    var id = coffeeBox.put(newCoffee);
 
     await save();
     notifyListeners();
+    return id;
   }
 
   deleteCoffee(Coffee r) async {
@@ -309,9 +310,15 @@ class CoffeeService extends ChangeNotifier {
     return id;
   }
 
+  int addRecipeFromRecipe(Recipe r) {
+    var id = recipeBox.put(r);
+    return id;
+  }
+
   List<Recipe> getRecipes() {
     final builder = recipeBox
-        .query(Recipe_.isDeleted.isNull() | Recipe_.isDeleted.equals(false))
+        .query((Recipe_.isDeleted.isNull() | Recipe_.isDeleted.equals(false)) &
+            (Recipe_.isShot.equals(false) | Recipe_.isShot.isNull()))
         .order(Recipe_.isFavorite, flags: Order.descending)
         .order(Recipe_.name)
         .build();

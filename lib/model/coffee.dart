@@ -26,6 +26,8 @@ class Coffee {
   @Property(type: PropertyType.date)
   DateTime cropyear = DateTime.now();
   String process = "";
+  // only used in shot database if true. So we can filter out this copy in list of beans
+  bool isShot = false;
 }
 
 @Entity()

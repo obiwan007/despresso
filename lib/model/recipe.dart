@@ -22,6 +22,8 @@ class Recipe {
 
   bool isDeleted = false;
   bool isFavorite = false;
+  // This Recipe is only used in shot database and should be not visible if true
+  bool isShot = false;
 
   String name = "Espresso";
   String description = "";
