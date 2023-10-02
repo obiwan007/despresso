@@ -27,7 +27,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 5050282589413394899),
       name: 'Shot',
-      lastPropertyId: const IdUid(29, 7092783304172893944),
+      lastPropertyId: const IdUid(30, 8373679791166864541),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -185,7 +185,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(5, 6166132089796684361),
       name: 'Coffee',
-      lastPropertyId: const IdUid(22, 6473077172521626198),
+      lastPropertyId: const IdUid(23, 3789630866646903516),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -289,6 +289,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(22, 6473077172521626198),
             name: 'elevation',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(23, 3789630866646903516),
+            name: 'isShot',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -452,7 +457,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 7693652674048295668),
       name: 'Recipe',
-      lastPropertyId: const IdUid(27, 5975506820285440095),
+      lastPropertyId: const IdUid(28, 488663740228280711),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -581,6 +586,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(27, 5975506820285440095),
             name: 'disableStopOnWeight',
             type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 488663740228280711),
+            name: 'isShot',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -632,7 +642,13 @@ final _entities = <ModelEntity>[
       backlinks: <ModelBacklink>[])
 ];
 
-/// Open an ObjectBox store with the model declared in this file.
+/// Shortcut for [Store.new] that passes [getObjectBoxModel] and for Flutter
+/// apps by default a [directory] using `defaultStoreDirectory()` from the
+/// ObjectBox Flutter library.
+///
+/// Note: for desktop apps it is recommended to specify a unique [directory].
+///
+/// See [Store.new] for an explanation of all parameters.
 Future<Store> openStore(
         {String? directory,
         int? maxDBSizeInKB,
@@ -648,7 +664,8 @@ Future<Store> openStore(
         queriesCaseSensitiveDefault: queriesCaseSensitiveDefault,
         macosApplicationGroup: macosApplicationGroup);
 
-/// ObjectBox model definition, pass it to [Store] - Store(getObjectBoxModel())
+/// Returns the ObjectBox model definition for this project for use with
+/// [Store.new].
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
@@ -697,7 +714,8 @@ ModelDefinition getObjectBoxModel() {
         1973948115627604173,
         7066844979841951108,
         1831677913184358060,
-        9066171640428561255
+        9066171640428561255,
+        8373679791166864541
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -721,7 +739,7 @@ ModelDefinition getObjectBoxModel() {
           final barristaOffset = fbb.writeString(object.barrista);
           final drinkerOffset = fbb.writeString(object.drinker);
           final visualizerIdOffset = fbb.writeString(object.visualizerId);
-          fbb.startTable(30);
+          fbb.startTable(31);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.date.millisecondsSinceEpoch);
           fbb.addInt64(2, object.coffee.targetId);
@@ -838,7 +856,7 @@ ModelDefinition getObjectBoxModel() {
           final regionOffset = fbb.writeString(object.region);
           final farmOffset = fbb.writeString(object.farm);
           final processOffset = fbb.writeString(object.process);
-          fbb.startTable(23);
+          fbb.startTable(24);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addInt64(2, object.roaster.targetId);
@@ -859,6 +877,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addInt64(19, object.cropyear.millisecondsSinceEpoch);
           fbb.addOffset(20, processOffset);
           fbb.addInt64(21, object.elevation);
+          fbb.addBool(22, object.isShot);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -903,7 +922,9 @@ ModelDefinition getObjectBoxModel() {
             ..process = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 44, '')
             ..elevation =
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 46, 0);
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 46, 0)
+            ..isShot =
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false);
           object.roaster.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
           object.roaster.attach(store);
@@ -994,23 +1015,49 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final sampleTimeParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final sampleTimeCorrectedParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          final groupPressureParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          final groupFlowParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0);
+          final mixTempParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          final headTempParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0);
+          final setMixTempParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0);
+          final setHeadTempParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0);
+          final setGroupPressureParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
+          final setGroupFlowParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
+          final frameNumberParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 34, 0);
+          final steamTempParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0);
+          final weightParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          final subStateParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
           final object = ShotState(
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0),
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 34, 0),
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0),
-              const fb.Float64Reader().vTableGet(buffer, rootOffset, 8, 0),
-              const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''))
+              sampleTimeParam,
+              sampleTimeCorrectedParam,
+              groupPressureParam,
+              groupFlowParam,
+              mixTempParam,
+              headTempParam,
+              setMixTempParam,
+              setHeadTempParam,
+              setGroupPressureParam,
+              setGroupFlowParam,
+              frameNumberParam,
+              steamTempParam,
+              weightParam,
+              subStateParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..pourTime =
                 const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0)
@@ -1058,7 +1105,7 @@ ModelDefinition getObjectBoxModel() {
           final profileIdOffset = fbb.writeString(object.profileId);
           final descriptionOffset = fbb.writeString(object.description);
           final grinderModelOffset = fbb.writeString(object.grinderModel);
-          fbb.startTable(28);
+          fbb.startTable(29);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.coffee.targetId);
           fbb.addFloat64(2, object.adjustedWeight);
@@ -1084,6 +1131,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(23, descriptionOffset);
           fbb.addOffset(24, grinderModelOffset);
           fbb.addBool(26, object.disableStopOnWeight);
+          fbb.addBool(27, object.isShot);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1138,7 +1186,9 @@ ModelDefinition getObjectBoxModel() {
             ..grinderModel = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 52, '')
             ..disableStopOnWeight =
-                const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false);
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false)
+            ..isShot =
+                const fb.BoolReader().vTableGet(buffer, rootOffset, 58, false);
           object.coffee.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
           object.coffee.attach(store);
@@ -1380,6 +1430,10 @@ class Coffee_ {
   /// see [Coffee.elevation]
   static final elevation =
       QueryIntegerProperty<Coffee>(_entities[1].properties[19]);
+
+  /// see [Coffee.isShot]
+  static final isShot =
+      QueryBooleanProperty<Coffee>(_entities[1].properties[20]);
 }
 
 /// [Roaster] entity fields to define ObjectBox queries.
@@ -1586,6 +1640,10 @@ class Recipe_ {
   /// see [Recipe.disableStopOnWeight]
   static final disableStopOnWeight =
       QueryBooleanProperty<Recipe>(_entities[5].properties[24]);
+
+  /// see [Recipe.isShot]
+  static final isShot =
+      QueryBooleanProperty<Recipe>(_entities[5].properties[25]);
 }
 
 /// [SettingsEntry] entity fields to define ObjectBox queries.

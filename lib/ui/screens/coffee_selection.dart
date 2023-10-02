@@ -236,7 +236,10 @@ class CoffeeSelectionTabState extends State<CoffeeSelectionTab> {
   List<DropdownMenuItem<int>> loadCoffees() {
     // Build and watch the query,
     // set triggerImmediately to emit the query immediately on listen.
-    final builder = coffeeService.coffeeBox.query().order(Coffee_.name).build();
+    final builder = coffeeService.coffeeBox
+        .query(Coffee_.isShot.isNull() | Coffee_.isShot.equals(false))
+        .order(Coffee_.name)
+        .build();
     var found = builder.find();
 
     var coffees = found

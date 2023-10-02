@@ -252,9 +252,7 @@ class ShotEditState extends State<ShotEdit> {
                 KeyValueWidget(
                     width: width,
                     label: S.of(context).beans,
-                    value: (_editedShot.recipe.target?.coffee.targetId ?? 0) > 0
-                        ? _editedShot.recipe.target?.coffee.target?.name ?? ""
-                        : "No Beans"),
+                    value: (_editedShot.coffee.targetId ?? 0) > 0 ? _editedShot.coffee.target?.name ?? "" : "No Beans"),
                 if (_editedShot.visualizerId.isNotEmpty)
                   KeyValueWidget(
                     width: width,
