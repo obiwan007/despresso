@@ -309,11 +309,8 @@ class EspressoMachineService extends ChangeNotifier {
     coffeeService = getIt<CoffeeService>();
 
     scaleService.stream0.listen((measurement) {
-      if (state.subState == "pour" ||
-          state.subState == "pre_infuse" ||
-          state.subState == "heat_water_heater") {
-        weightMeasurementsDuringShot
-            .add(TimedWeightMeasurement(measurement, DateTime.now()));
+      if (state.subState == "pour" || state.subState == "pre_infuse" || state.subState == "heat_water_heater") {
+        weightMeasurementsDuringShot.add(TimedWeightMeasurement(measurement, DateTime.now()));
         flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
       }
     });
@@ -626,8 +623,7 @@ class EspressoMachineService extends ChangeNotifier {
       log.info("basetime $baseTime");
       lastPourTime = 0;
 
-      Timer.periodic(const Duration(milliseconds: 50),
-          (timer) => checkMoveOnAtWeight(timer));
+      Timer.periodic(const Duration(milliseconds: 50), (timer) => checkMoveOnAtWeight(timer));
     }
     if (state.coffeeState == EspressoMachineState.espresso && shot.frameNumber != _lastFrameNumber) {
       if (profileService.currentProfile != null &&
@@ -928,9 +924,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   void checkMoveOnAtWeight(Timer timer) {
     if (state.coffeeState != EspressoMachineState.espresso ||
-        (state.subState != "pour" &&
-            state.subState != "pre_infuse" &&
-            state.subState != "heat_water_heater")) {
+        (state.subState != "pour" && state.subState != "pre_infuse" && state.subState != "heat_water_heater")) {
       // we're no longer pulling a shot, so stop checking
       log.info("Stopping weight move-on checks");
       timer.cancel();
@@ -944,11 +938,10 @@ class EspressoMachineService extends ChangeNotifier {
     }
 
     if (_weightMoveOnFrames.contains(shot.frameNumber)) {
-    return;
+      return;
     }
 
-    var frame =
-        profileService.currentProfile?.shotFrames[shot.frameNumber];
+    var frame = profileService.currentProfile?.shotFrames[shot.frameNumber];
     var stepWeightLimit = frame?.maxWeight ?? 0.0;
 
     if ((isPouring || state.subState == "pre_infuse") &&
@@ -957,8 +950,7 @@ class EspressoMachineService extends ChangeNotifier {
         _delayedStopActive == false) {
       var currentWeight = weightMeasurementsDuringShot.last;
       var forecastWeight = currentWeight.weight.weight +
-          flowRateForecast *
-              (DateTime.now().difference(currentWeight.time)).inMilliseconds;
+          flowRateForecast * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
       var timeToWeight = (stepWeightLimit - forecastWeight) / flowRateForecast;
 
       if (timeToWeight <= (settingsService.stepLimitWeightTimeAdjust * 1000)) {
@@ -993,8 +985,18 @@ class EspressoMachineService extends ChangeNotifier {
       var cs = Shot();
       cs.coffee.targetId = coffeeService.selectedCoffeeId;
       cs.recipe.targetId = coffeeService.selectedRecipeId;
-      cs.shotstates.addAll(
-          shotList.entries.where((element) => element.isInterpolated == false));
+
+      var currentRecipe = coffeeService.currentRecipe!;
+      currentRecipe.id = 0;
+      currentRecipe.isShot = true;
+
+      cs.recipe.targetId = coffeeService.addRecipeFromRecipe(currentRecipe);
+      var currentCoffee = coffeeService.currentCoffee!;
+      currentCoffee.id = 0;
+      currentCoffee.isShot = true;
+      cs.coffee.targetId = await coffeeService.addCoffee(currentCoffee);
+
+      cs.shotstates.addAll(shotList.entries.where((element) => element.isInterpolated == false));
 
       cs.pourTime = lastPourTime;
       cs.profileId = profileService.currentProfile?.id ?? "";
@@ -1100,8 +1102,7 @@ class EspressoMachineService extends ChangeNotifier {
   // fp: y-coordinates of the original data
   List<double> interp(List<double> xpNew, List<double> xp, List<double> fp) {
     if (xp.length != fp.length) {
-      throw ArgumentError(
-          "Input lists 'xp' and 'fp' must have the same length.");
+      throw ArgumentError("Input lists 'xp' and 'fp' must have the same length.");
     }
 
     List<double> results = [];
@@ -1146,12 +1147,14 @@ class EspressoMachineService extends ChangeNotifier {
   // Double exponential smoothing over the given data. Data points are assumed
   // to have equal temporal spacing. Returns the values of s, b at each point.
   // TODO: check if we can upgrade to Flutter 3 and return a list of records
-  List<List<double>> doubleExponentialSmoothing(List<double> input,
-      double dataSmoothingFactor, double trendSmoothingFactor) {
+  List<List<double>> doubleExponentialSmoothing(
+      List<double> input, double dataSmoothingFactor, double trendSmoothingFactor) {
     var s = input[0];
     var b = input[1] - input[0];
 
-    List<List<double>> result = [[s, b]];
+    List<List<double>> result = [
+      [s, b]
+    ];
 
     input.sublist(1).forEach((x) {
       var s_1 = s;
@@ -1193,13 +1196,12 @@ class EspressoMachineService extends ChangeNotifier {
     var interpolatedSampleTimeEpochs =
         List.generate(samples.length, (i) => samples.first.time.add(timestep * i).millisecondsSinceEpoch.toDouble());
 
-    var interpolatedSampleWeights = interp(
-        interpolatedSampleTimeEpochs, selectedSampleTimeEpochs, selectedSampleWeights);
+    var interpolatedSampleWeights =
+        interp(interpolatedSampleTimeEpochs, selectedSampleTimeEpochs, selectedSampleWeights);
 
     // These values for data smoothing, trend smoothing factors were found by
     // minimizing square error of forecast weights on real shot data
-    var smoothed =
-        doubleExponentialSmoothing(interpolatedSampleWeights, 0.6, 0.5);
+    var smoothed = doubleExponentialSmoothing(interpolatedSampleWeights, 0.6, 0.5);
 
     // double exponential forecast is given by adding b * m to the last smoothed
     // value, where "m" is a discrete number of time steps.
