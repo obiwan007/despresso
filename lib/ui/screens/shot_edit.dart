@@ -99,7 +99,8 @@ class ShotEditState extends State<ShotEdit> {
     coffeeService.addListener(updateCoffee);
     roasters = loadRoasters();
 
-    if (settingsService.hasRefractometer && refractometerService.state != RefractometerState.connected) {
+    if (settingsService.hasRefractometer &&
+        refractometerService.state != RefractometerState.connected) {
       getIt<BLEService>().startScan();
       refractometerService.addListener(updateRefractometer);
     }
@@ -172,15 +173,23 @@ class ShotEditState extends State<ShotEdit> {
                     setState(() {
                       _busyProgress += 1 / selectedShots.length;
                     });
-                    var id = await visualizerService.sendShotToVisualizer(_editedShot);
+                    var id = await visualizerService
+                        .sendShotToVisualizer(_editedShot);
                     _editedShot.visualizerId = id;
                     coffeeService.updateShot(_editedShot);
+                    if (id.isNotEmpty) {
+                      getIt<SnackbarService>()
+                          // ignore: use_build_context_synchronously
+                          .notify(
+                              S
+                                  .of(context)
+                                  .screenShotEditSuccessUploadingYourShot,
+                              SnackbarNotificationType.ok);
+                    }
                   }
-                  getIt<SnackbarService>()
-                      // ignore: use_build_context_synchronously
-                      .notify(S.of(context).screenShotEditSuccessUploadingYourShot, SnackbarNotificationType.ok);
                 } catch (e) {
-                  getIt<SnackbarService>().notify("Error uploading shot: $e", SnackbarNotificationType.severe);
+                  getIt<SnackbarService>().notify("Error uploading shot: $e",
+                      SnackbarNotificationType.severe);
                   log.severe("Error uploading shot $e");
                 }
                 setState(() {
@@ -247,22 +256,32 @@ class ShotEditState extends State<ShotEdit> {
               padding: const EdgeInsets.all(8.0),
               child: Column(children: [
                 KeyValueWidget(
-                    width: width, label: S.of(context).recipe, value: _editedShot.recipe.target?.name ?? "No Recipe"),
-                KeyValueWidget(width: width, label: S.of(context).profile, value: _editedShot.profileId),
+                    width: width,
+                    label: S.of(context).recipe,
+                    value: _editedShot.recipe.target?.name ?? "No Recipe"),
+                KeyValueWidget(
+                    width: width,
+                    label: S.of(context).profile,
+                    value: _editedShot.profileId),
                 KeyValueWidget(
                     width: width,
                     label: S.of(context).beans,
-                    value: (_editedShot.coffee.targetId ?? 0) > 0 ? _editedShot.coffee.target?.name ?? "" : "No Beans"),
+                    value: (_editedShot.coffee.targetId ?? 0) > 0
+                        ? _editedShot.coffee.target?.name ?? ""
+                        : "No Beans"),
                 if (_editedShot.visualizerId.isNotEmpty)
                   KeyValueWidget(
                     width: width,
                     label: "Visualizer",
                     value: "",
                     widget: InkWell(
-                      onTap: () => launchUrl(Uri.parse('https://visualizer.coffee/shots/${_editedShot.visualizerId}')),
+                      onTap: () => launchUrl(Uri.parse(
+                          'https://visualizer.coffee/shots/${_editedShot.visualizerId}')),
                       child: Text(
                         S.of(context).screenShotEditOpenInVisualizercoffee,
-                        style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                        style: const TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue),
                       ),
                     ),
                   ),
@@ -281,14 +300,17 @@ class ShotEditState extends State<ShotEdit> {
                   formControlName: 'description',
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    labelText: S.of(context).screenShotEditDescribeYourExperience,
+                    labelText:
+                        S.of(context).screenShotEditDescribeYourExperience,
                   ),
                   validationMessages: {
-                    ValidationMessage.required: (_) => S.of(context).validatorNotBeEmpty,
+                    ValidationMessage.required: (_) =>
+                        S.of(context).validatorNotBeEmpty,
                   },
                 ),
                 const HeightWidget(height: 20),
-                KeyValueWidget(label: S.of(context).screenShotEditEnjoyment, value: ""),
+                KeyValueWidget(
+                    label: S.of(context).screenShotEditEnjoyment, value: ""),
                 ReactiveRatingBarBuilder<double>(
                   formControlName: 'enjoyment',
                   minRating: 1,
@@ -346,29 +368,36 @@ class ShotEditState extends State<ShotEdit> {
                         formControlName: 'totalDissolvedSolids',
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          labelText: S.of(context).screenShotEditTotalDissolvedSolidssTds,
+                          labelText: S
+                              .of(context)
+                              .screenShotEditTotalDissolvedSolidssTds,
                         ),
                         onChanged: (control) => {
                           currentForm?.controls['extractionYield']?.value =
-                              (_editedShot.pourWeight * (control.value ?? 0.0)) / _editedShot.doseWeight
+                              (_editedShot.pourWeight *
+                                      (control.value ?? 0.0)) /
+                                  _editedShot.doseWeight
                         },
                       ),
                       ReactiveTextField<double>(
                         formControlName: 'extractionYield',
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                          labelText: S.of(context).screenShotEditExtractionYield,
+                          labelText:
+                              S.of(context).screenShotEditExtractionYield,
                         ),
                       ),
                       // eventually check also for && refractometerService.state == RefractometerState.connected
                     ],
                   ),
                 ),
-                if (settingsService.hasRefractometer && refractometerService.state == RefractometerState.connected)
+                if (settingsService.hasRefractometer &&
+                    refractometerService.state == RefractometerState.connected)
                   Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: OutlinedButton(
-                        onPressed: () => {getRefractometerData()}, child: const Text('Read TDS from Refractometer')),
+                        onPressed: () => {getRefractometerData()},
+                        child: const Text('Read TDS from Refractometer')),
                   )
               ],
             ),
@@ -466,13 +495,17 @@ class ShotEditState extends State<ShotEdit> {
     _editedShot.drinker = form.value["drinker"] as String;
     _editedShot.enjoyment = form.value["enjoyment"] as double;
 
-    _editedShot.extractionYield = form.value["extractionYield"] as double? ?? 0.0;
+    _editedShot.extractionYield =
+        form.value["extractionYield"] as double? ?? 0.0;
     _editedShot.grinderName = form.value["grinderName"] as String;
-    _editedShot.grinderSettings = form.value["grinderSettings"] as double? ?? 0.0;
+    _editedShot.grinderSettings =
+        form.value["grinderSettings"] as double? ?? 0.0;
     _editedShot.pourTime = form.value["pourTime"] as double? ?? 0.0;
     _editedShot.pourWeight = form.value["pourWeight"] as double? ?? 0.0;
-    _editedShot.targetEspressoWeight = form.value["targetEspressoWeight"] as double? ?? 0.0;
-    _editedShot.totalDissolvedSolids = form.value["totalDissolvedSolids"] as double? ?? 0.0;
+    _editedShot.targetEspressoWeight =
+        form.value["targetEspressoWeight"] as double? ?? 0.0;
+    _editedShot.totalDissolvedSolids =
+        form.value["totalDissolvedSolids"] as double? ?? 0.0;
 
     coffeeService.updateShot(_editedShot);
   }
@@ -499,8 +532,10 @@ class ShotEditState extends State<ShotEdit> {
     var tds = 0.0;
     await refractometerService.read();
     tds = refractometerService.tds;
-    var pouringWeight = currentForm?.controls['pourWeight']?.value as double? ?? 0.0;
-    var doseWeight = currentForm?.controls['doseWeight']?.value as double? ?? 0.0;
+    var pouringWeight =
+        currentForm?.controls['pourWeight']?.value as double? ?? 0.0;
+    var doseWeight =
+        currentForm?.controls['doseWeight']?.value as double? ?? 0.0;
     var extractionYield = (pouringWeight * tds) / doseWeight;
     currentForm?.controls['totalDissolvedSolids']?.value = tds;
     currentForm?.controls['extractionYield']?.value = extractionYield;
