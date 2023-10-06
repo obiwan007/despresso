@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/shot.dart';
@@ -27,42 +28,75 @@ class VisualizerService extends ChangeNotifier {
     profileService = getIt<ProfileService>();
   }
   Future<String> sendShotToVisualizer(Shot shot) async {
-    if (settingsService.visualizerUser.isNotEmpty && settingsService.visualizerPwd.isNotEmpty) {
-      String username = settingsService.visualizerUser;
-      String password = settingsService.visualizerPwd;
-      String basicAuth = 'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-
-      var headers = <String, String>{
-        'authorization': basicAuth,
-        'Content-Type': 'text/plain',
-      };
-
-      var body = createShotJson(shot);
-
-      var request = http.MultipartRequest("POST", Uri.parse('https://visualizer.coffee/api/shots/upload'));
-      request.files.add(http.MultipartFile.fromString("file", body, filename: "shot.tcl"));
-      request.headers.addAll(headers);
-
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode != 200) {
-        var resBody = await response.stream.bytesToString();
-        if (resBody.isNotEmpty && response.statusCode != 404) {
-          var err = jsonDecode(resBody);
-          throw ("Error in uploading: ${err['error']}");
-        } else {
-          throw ("Error in uploading: ${response.statusCode}");
+    String id = '';
+    try {
+      if (settingsService.visualizerUpload &&
+          settingsService.visualizerUser.isNotEmpty &&
+          settingsService.visualizerPwd.isNotEmpty) {
+        String url = 'https://visualizer.coffee/api/shots/upload';
+        String username = settingsService.visualizerUser;
+        String password = settingsService.visualizerPwd;
+        id = await uploadShot(url, username, password, shot);
+        getIt<SnackbarService>()
+            .notify("Uploaded shot to Visualizer", SnackbarNotificationType.ok);
+      } else {
+        throw ("No username and/or password configured in settings");
+      }
+    } catch (e) {
+      getIt<SnackbarService>().notify("Error uploading shot to Visualizer: $e",
+          SnackbarNotificationType.severe);
+    }
+    try {
+      if (settingsService.visualizerExtendedUpload) {
+        String url = settingsService.visualizerExtendedUrl;
+        String username = settingsService.visualizerExtendedUser;
+        String password = settingsService.visualizerExtendedPwd;
+        var id2 = await uploadShot(url, username, password, shot);
+        if (id.isEmpty) {
+          id = id2;
         }
       }
-      var resBody = await response.stream.bytesToString();
-      if (resBody.isNotEmpty) {
-        var ret = jsonDecode(resBody);
-        return ret["id"];
-      }
-      return "";
-    } else {
-      throw ("No username and/or password configured in settings");
+    } catch (e) {
+      getIt<SnackbarService>().notify("Error uploading shot to custom site: $e",
+          SnackbarNotificationType.severe);
     }
+
+    return id;
+  }
+
+  Future<dynamic> uploadShot(
+      String url, String username, String password, Shot shot) async {
+    String basicAuth =
+        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+    var headers = <String, String>{
+      'authorization': basicAuth,
+      'Content-Type': 'text/plain',
+    };
+
+    var body = createShotJson(shot);
+
+    var request = http.MultipartRequest("POST", Uri.parse(url));
+    request.files
+        .add(http.MultipartFile.fromString("file", body, filename: "shot.tcl"));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode != 200) {
+      var resBody = await response.stream.bytesToString();
+      if (resBody.isNotEmpty && response.statusCode != 404) {
+        var err = jsonDecode(resBody);
+        throw ("Error in uploading: ${err['error']}");
+      } else {
+        throw ("Error in uploading: ${response.statusCode}");
+      }
+    }
+    var resBody = await response.stream.bytesToString();
+    if (resBody.isNotEmpty) {
+      var ret = jsonDecode(resBody);
+      return ret["id"];
+    }
+    return "";
   }
 
   // get espresso_state_change list for Visualizer
@@ -73,14 +107,17 @@ class VisualizerService extends ChangeNotifier {
     int currentFrameNumber = states.isEmpty ? 0 : states.first.frameNumber;
     bool isPositive = true;
 
-    return [0.0, ...states.skip(1).map((instance) {
-      if (instance.frameNumber != currentFrameNumber) {
-        isPositive = !isPositive;
-        currentFrameNumber = instance.frameNumber;
-      }
+    return [
+      0.0,
+      ...states.skip(1).map((instance) {
+        if (instance.frameNumber != currentFrameNumber) {
+          isPositive = !isPositive;
+          currentFrameNumber = instance.frameNumber;
+        }
 
-      return isPositive ? sentinelValue : sentinelValue * -1;
-    })];
+        return isPositive ? sentinelValue : sentinelValue * -1;
+      })
+    ];
   }
 
   String createShotJson(Shot shot) {
@@ -104,7 +141,9 @@ class VisualizerService extends ChangeNotifier {
     //   "start_time": shot.date.toIso8601String(),
     //   "duration": shot.shotstates.last.sampleTimeCorrected,
     // };
-    var times = shot.shotstates.map((e) => e.sampleTimeCorrected.toStringAsFixed(4)).join(" ");
+    var times = shot.shotstates
+        .map((e) => e.sampleTimeCorrected.toStringAsFixed(4))
+        .join(" ");
     var stateChanges = getStateChanges(shot.shotstates).join(" ");
     // var espressoFlow = shot.shotstates.map(
     //   (element) => element.groupFlow,
@@ -132,16 +171,22 @@ class VisualizerService extends ChangeNotifier {
     // buffer.writeln("local_time {Thu Jun 23 16:57:46 CST 2022}");
     buffer.writeln("espresso_elapsed {$times}");
     buffer.writeln("espresso_state_change {$stateChanges}");
-    buffer.writeln("espresso_pressure {${shot.shotstates.map((e) => e.groupPressure.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_pressure {${shot.shotstates.map((e) => e.groupPressure.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln(
         "espresso_pressure_goal {${shot.shotstates.map((e) => e.setGroupPressure.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_weight {${shot.shotstates.map((e) => e.weight.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_flow {${shot.shotstates.map((e) => e.groupFlow.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_flow_goal {${shot.shotstates.map((e) => e.setGroupFlow.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_flow_weight {${shot.shotstates.map((e) => e.flowWeight.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_weight {${shot.shotstates.map((e) => e.weight.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_flow {${shot.shotstates.map((e) => e.groupFlow.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_flow_goal {${shot.shotstates.map((e) => e.setGroupFlow.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_flow_weight {${shot.shotstates.map((e) => e.flowWeight.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln(
         "espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_temperature_mix {${shot.shotstates.map((e) => e.mixTemp.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_temperature_mix {${shot.shotstates.map((e) => e.mixTemp.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln(
         "espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln(
@@ -166,7 +211,8 @@ class VisualizerService extends ChangeNotifier {
     buffer.writeln("drinker_name ${shot.drinker}");
     buffer.writeln("my_name ${shot.barrista}");
 
-    buffer.writeln("bean_brand {${shot.coffee.target?.roaster.target?.name ?? "unknown"}}");
+    buffer.writeln(
+        "bean_brand {${shot.coffee.target?.roaster.target?.name ?? "unknown"}}");
     buffer.writeln("bean_notes {${shot.coffee.target?.description ?? ""}}");
     buffer.writeln("bean_type {${shot.coffee.target?.name ?? "unknown"}}");
 

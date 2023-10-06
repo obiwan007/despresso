@@ -876,46 +876,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       ),
                     ],
                   ),
-                  ExpandableSettingsTile(
-                      title: 'Visualizer',
-                      subtitle: S.of(context).screenSettingsCloudShotUpload,
-                      expanded: false,
-                      children: <Widget>[
-                        SwitchSettingsTile(
-                          leading: const Icon(Icons.cloud_upload),
-                          settingKey: SettingKeys.visualizerUpload.name,
-                          defaultValue: settingsService.visualizerUpload,
-                          title: S.of(context).screenSettingsUploadShotsToVisualizer,
-                          onChange: (value) {},
-                        ),
-                        TextInputSettingsTile(
-                          title: S.of(context).screenSettingsUserNameemail,
-                          settingKey: SettingKeys.visualizerUser.name,
-                          initialValue: settingsService.visualizerUser,
-                          validator: (String? username) {
-                            if (username != null && username.length > 3) {
-                              return null;
-                            }
-                            return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-                          },
-                          borderColor: Colors.blueAccent,
-                          errorColor: Colors.deepOrangeAccent,
-                        ),
-                        TextInputSettingsTile(
-                          title: S.of(context).screenSettingsPassword,
-                          initialValue: settingsService.visualizerPwd,
-                          settingKey: SettingKeys.visualizerPwd.name,
-                          obscureText: true,
-                          validator: (String? password) {
-                            if (password != null && password.length > 6) {
-                              return null;
-                            }
-                            return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
-                          },
-                          borderColor: Colors.blueAccent,
-                          errorColor: Colors.deepOrangeAccent,
-                        ),
-                      ]),
+                  SettingsVisualizer(settingsService: settingsService),
                   ExpandableSettingsTile(
                     title: S.of(context).screenSettingsMiniWebsite,
                     children: [
@@ -925,7 +886,7 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         settingKey: SettingKeys.webServer.name,
                         title: S.of(context).screenSettingsEnableMiniWebsiteWithPort8888,
                         subtitle:
-                            "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen}http://$ownIpAdress:8888",
+                            "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen} http://$ownIpAdress:8888",
                         onChange: (value) {
                           settingsService.notifyDelayed();
                         },
@@ -1163,6 +1124,104 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
   void updateView() {
     _controllerRefresh.add(0);
+  }
+}
+
+class SettingsVisualizer extends StatelessWidget {
+  const SettingsVisualizer({
+    super.key,
+    required this.settingsService,
+  });
+
+  final SettingsService settingsService;
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpandableSettingsTile(
+        title: 'Visualizer',
+        subtitle: S.of(context).screenSettingsCloudShotUpload,
+        expanded: false,
+        children: <Widget>[
+          SwitchSettingsTile(
+            leading: const Icon(Icons.cloud_upload),
+            settingKey: SettingKeys.visualizerUpload.name,
+            defaultValue: settingsService.visualizerUpload,
+            title: S.of(context).screenSettingsUploadShotsToVisualizer,
+            onChange: (value) {},
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsUserNameemail,
+            settingKey: SettingKeys.visualizerUser.name,
+            initialValue: settingsService.visualizerUser,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsPassword,
+            initialValue: settingsService.visualizerPwd,
+            settingKey: SettingKeys.visualizerPwd.name,
+            obscureText: true,
+            validator: (String? password) {
+              if (password != null && password.length > 6) {
+                return null;
+              }
+              return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          SwitchSettingsTile(
+            leading: const Icon(Icons.cloud_upload),
+            settingKey: SettingKeys.visualizerExtendedUpload.name,
+            defaultValue: settingsService.visualizerExtendedUpload,
+            title: "Upload shots to custom Visualizer",
+            onChange: (value) {},
+          ),
+          TextInputSettingsTile(
+            title: "Custom Upload URL",
+            settingKey: SettingKeys.visualizerExtendedUrl.name,
+            initialValue: settingsService.visualizerExtendedUrl,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsUserNameemail,
+            settingKey: SettingKeys.visualizerExtendedUser.name,
+            initialValue: settingsService.visualizerExtendedUser,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsPassword,
+            initialValue: settingsService.visualizerExtendedPwd,
+            settingKey: SettingKeys.visualizerExtendedPwd.name,
+            obscureText: true,
+            validator: (String? password) {
+              if (password != null && password.length > 6) {
+                return null;
+              }
+              return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+        ]);
   }
 }
 
