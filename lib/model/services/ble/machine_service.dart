@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/gestures.dart';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
@@ -17,6 +17,7 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_savgol/flutter_savgol.dart';
 
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1028,6 +1029,48 @@ class EspressoMachineService extends ChangeNotifier {
     de1?.requestState(De1StateEnum.skipToNext);
   }
 
+  Future<List<double>> calculateFlowWeightsForVisualizer(
+      List<TimedWeightMeasurement> weightMeasurements) async {
+    if (weightMeasurements.length < 2) {
+      return [];
+    }
+
+    final weightTimes = weightMeasurements
+        .map(
+            (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
+        .toList();
+
+    final weightValues = weightMeasurements
+        .map((measurement) => measurement.weight.weight)
+        .toList();
+
+    // First, interpolate weight measurements so they're equally spaced
+    final linearTimestep =
+        (weightTimes.last - weightTimes.first) / (weightTimes.length - 1);
+    final linearWeightTimes = List.generate(
+        weightTimes.length, (i) => weightTimes.first + (linearTimestep * i));
+    final linearlyInterpolatedWeights =
+        interp(linearWeightTimes, weightTimes, weightValues);
+
+    try {
+    // Savitzky-Golay filter to get the derivative (relative to index)
+    final weightValuesDerivative = await savgolFilter(
+        x: Float64List.fromList(linearlyInterpolatedWeights),
+        windowLength: 11,
+        polyOrder: 3,
+        derivative: 1);
+
+    // Then divide by timestep to convert to flow rate
+    // (and convert from g/ms to g/s)
+    return weightValuesDerivative
+        .map((d) => d / linearTimestep * 1000)
+        .toList();
+    } catch (err) {
+      log.info("TODO $err");
+      return [];
+    }
+  }
+
   shotFinished(List<TimedWeightMeasurement> weightMeasurements) async {
     log.info("Save last shot");
     var cs = Shot();
@@ -1049,39 +1092,22 @@ class EspressoMachineService extends ChangeNotifier {
         shotList.entries.where((element) => element.isInterpolated == false));
     cs.shotstates.retainWhere((el) => seenSampleTimes.add(el.sampleTime));
 
-    var sampleTimes =
+    final sampleTimes =
         cs.shotstates.map((state) => state.sampleTime * 1000).toList();
-    var weightTimes = weightMeasurements
+
+    final weightTimes = weightMeasurements
         .map(
             (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
         .toList();
 
-    var offsetWeightTimes = weightTimes.map((time) => time - weightTimes.first).toList();
-    var weightValues = weightMeasurements
+    final weightValues = weightMeasurements
         .map((measurement) => measurement.weight.weight)
         .toList();
 
-    var interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
+    final interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
 
-    // final filter = SavitzkyGolayFilter( windowLength : 9, polyOrder:2, derivative :1  );
-    // final flowWeights = filter.smooth(interpolatedWeights);
-
-    final solver = LeastSquaresSolver(offsetWeightTimes, weightValues, weightTimes.map((_) => 1.0).toList());
-    final fit = solver.solve(10);
-    final coefficients = fit!.coefficients;
-
-    log.info("COEFFICIENTS $coefficients");
-
-    final derivativeCoefficients = List.generate(
-        coefficients.length - 1,
-        (i) => coefficients[i + 1] * (i + 1),
-        );
-
-    log.info("DERIVATIVE COEFFICIENTS $derivativeCoefficients");
-
-    final flowWeights = sampleTimes.map(
-    (t) => derivativeCoefficients.asMap().entries.fold(0.0, (flowWeight, c) => flowWeight + c.value * pow(t - weightTimes.first, c.key)) * 1000
-    ).toList();
+    final flowWeights = interp(sampleTimes, weightTimes,
+        await calculateFlowWeightsForVisualizer(weightMeasurements));
 
     log.info("WEIGHT VALUES");
     weightValues.forEach(log.info);
@@ -1092,12 +1118,7 @@ class EspressoMachineService extends ChangeNotifier {
     log.info("FLOW WEIGHTS");
     flowWeights.forEach(log.info);
 
-
-    //var smoothedFlowWeights =
-    //    doubleExponentialSmoothing(interpolatedFlowWeights, 0.2, 0.5)
-    //        .map((element) => element.first)
-    //        .toList();
-
+    // apply weights & flowWeights to 1 decimal place
     cs.shotstates.asMap().forEach((index, state) {
       state.weight = (interpolatedWeights[index] * 10).round() / 10;
       state.flowWeight = (flowWeights[index] * 10).round() / 10;
