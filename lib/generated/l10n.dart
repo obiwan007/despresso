@@ -2835,6 +2835,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Move-on-at-weight threshold [s]`
+  String get settingsMoveonatweightThresholdS {
+    return Intl.message(
+      'Move-on-at-weight threshold [s]',
+      name: 'settingsMoveonatweightThresholdS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next step will be triggered at this duration from reaching target weight`
+  String get settingsNextStepWillBeTriggeredAtThisDurationFromReaching {
+    return Intl.message(
+      'Next step will be triggered at this duration from reaching target weight',
+      name: 'settingsNextStepWillBeTriggeredAtThisDurationFromReaching',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tare on wakeup of de1`
+  String get settingsTareOnWakeupOfDe1 {
+    return Intl.message(
+      'Tare on wakeup of de1',
+      name: 'settingsTareOnWakeupOfDe1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If the scale is already connected, tare is called if machine woke up from sleep.`
+  String get settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf {
+    return Intl.message(
+      'If the scale is already connected, tare is called if machine woke up from sleep.',
+      name: 'settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Container 1 (i.E. weight cup):`
+  String get settingsWeightcontainer1IeWeightCup {
+    return Intl.message(
+      'Container 1 (i.E. weight cup):',
+      name: 'settingsWeightcontainer1IeWeightCup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Container 2 (i.E. Espresso Cup):`
+  String get settingsWeightcontainer2IeEspressoCup {
+    return Intl.message(
+      'Container 2 (i.E. Espresso Cup):',
+      name: 'settingsWeightcontainer2IeEspressoCup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Container 3 (i.E. Steam Mug):`
+  String get settingsWeightcontainer3IeSteamMug {
+    return Intl.message(
+      'Container 3 (i.E. Steam Mug):',
+      name: 'settingsWeightcontainer3IeSteamMug',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Container 4 (i.E. Steam Mug):`
+  String get settingsWeightcontainer4IeSteamMug {
+    return Intl.message(
+      'Container 4 (i.E. Steam Mug):',
+      name: 'settingsWeightcontainer4IeSteamMug',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

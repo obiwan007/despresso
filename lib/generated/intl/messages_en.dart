@@ -526,6 +526,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Tare if weight was detected"),
         "settingsContainerCurrentWeight":
             MessageLookupByLibrary.simpleMessage("Current Weight"),
+        "settingsMoveonatweightThresholdS":
+            MessageLookupByLibrary.simpleMessage(
+                "Move-on-at-weight threshold [s]"),
+        "settingsNextStepWillBeTriggeredAtThisDurationFromReaching":
+            MessageLookupByLibrary.simpleMessage(
+                "Next step will be triggered at this duration from reaching target weight"),
         "settingsRefillWatertankAtLimit":
             MessageLookupByLibrary.simpleMessage("Refill watertank at limit"),
         "settingsSleepAllowTabletSleepDuringScreensaver":
@@ -544,6 +550,23 @@ class MessageLookup extends MessageLookupByLibrary {
                 "When machine is in sleep, switch off scale display if possible"),
         "settingsTabletSleep":
             MessageLookupByLibrary.simpleMessage("Tablet sleep"),
+        "settingsTareOnWakeupOfDe1":
+            MessageLookupByLibrary.simpleMessage("Tare on wakeup of de1"),
+        "settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf":
+            MessageLookupByLibrary.simpleMessage(
+                "If the scale is already connected, tare is called if machine woke up from sleep."),
+        "settingsWeightcontainer1IeWeightCup":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 1 (i.E. weight cup):"),
+        "settingsWeightcontainer2IeEspressoCup":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 2 (i.E. Espresso Cup):"),
+        "settingsWeightcontainer3IeSteamMug":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 3 (i.E. Steam Mug):"),
+        "settingsWeightcontainer4IeSteamMug":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 4 (i.E. Steam Mug):"),
         "show": MessageLookupByLibrary.simpleMessage("Show"),
         "start": MessageLookupByLibrary.simpleMessage("Start"),
         "stateDisconnected":
