@@ -555,5 +555,13 @@
   "wait": "Warten",
   "@wait": {},
   "weight": "Gewicht",
-  "@weight": {}
+  "@weight": {},
+  "settingsMoveonatweightThresholdS": "Move-on-at-weight threshold [s]",
+  "settingsNextStepWillBeTriggeredAtThisDurationFromReaching": "Next step will be triggered at this duration from reaching target weight",
+  "settingsTareOnWakeupOfDe1": "Tare on wakeup of de1",
+  "settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf": "If the scale is already connected, tare is called if machine woke up from sleep.",
+  "settingsWeightcontainer1IeWeightCup": "Container 1 (i.E. weight cup):",
+  "settingsWeightcontainer2IeEspressoCup": "Container 2 (i.E. Espresso Cup):",
+  "settingsWeightcontainer3IeSteamMug": "Container 3 (i.E. Steam Mug):",
+  "settingsWeightcontainer4IeSteamMug": "Container 4 (i.E. Steam Mug):"
 }

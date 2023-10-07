@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:screen_brightness/screen_brightness.dart';
@@ -15,6 +16,7 @@ class ScreensaverService extends ChangeNotifier {
   late Timer _timer;
   late SettingsService _settings;
   late EspressoMachineService machine;
+
   int _screenSaverTimer = 0;
   bool screenSaverOn = false;
 
@@ -79,7 +81,8 @@ class ScreensaverService extends ChangeNotifier {
 
   bool shouldBeWakelocked() {
     if (_settings.tabletSleepDuringScreensaver && screenSaverOn) {
-      if (_screenSaverTimer >= _settings.tabletSleepDuringScreensaverTimeout * 60) {
+      if (_screenSaverTimer >=
+          _settings.tabletSleepDuringScreensaverTimeout * 60) {
         return false;
       }
     }
@@ -138,7 +141,8 @@ class ScreensaverService extends ChangeNotifier {
     if (_settings.screenBrightnessTimer > 0 &&
         _screenSaverTimer > _settings.screenBrightnessTimer * 60 &&
         screenSaverOn == false) {
-      await ScreenBrightness().setScreenBrightness(_settings.screenBrightnessValue);
+      await ScreenBrightness()
+          .setScreenBrightness(_settings.screenBrightnessValue);
       screenSaverOn = true;
       notifyListeners();
     }
@@ -161,6 +165,7 @@ class ScreensaverService extends ChangeNotifier {
 
       if (_settings.screenTapWake) {
         machine.de1?.switchOn();
+        getIt<ScaleService>().tare();
       }
       notifyListeners();
     }

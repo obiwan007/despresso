@@ -527,6 +527,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "Tara, wenn Gewicht erkannt wurde"),
         "settingsContainerCurrentWeight":
             MessageLookupByLibrary.simpleMessage("Aktuelles Gewicht"),
+        "settingsMoveonatweightThresholdS":
+            MessageLookupByLibrary.simpleMessage(
+                "Move-on-at-weight threshold [s]"),
+        "settingsNextStepWillBeTriggeredAtThisDurationFromReaching":
+            MessageLookupByLibrary.simpleMessage(
+                "Next step will be triggered at this duration from reaching target weight"),
         "settingsRefillWatertankAtLimit": MessageLookupByLibrary.simpleMessage(
             " Wassertank Füllstands-Limit"),
         "settingsSleepAllowTabletSleepDuringScreensaver":
@@ -545,6 +551,23 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Wenn sich die Maschine im Ruhezustand befindet, wird die Waagenanzeige nach Möglichkeit ausgeschaltet."),
         "settingsTabletSleep":
             MessageLookupByLibrary.simpleMessage("Tablet-Schlaf"),
+        "settingsTareOnWakeupOfDe1":
+            MessageLookupByLibrary.simpleMessage("Tare on wakeup of de1"),
+        "settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf":
+            MessageLookupByLibrary.simpleMessage(
+                "If the scale is already connected, tare is called if machine woke up from sleep."),
+        "settingsWeightcontainer1IeWeightCup":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 1 (i.E. weight cup):"),
+        "settingsWeightcontainer2IeEspressoCup":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 2 (i.E. Espresso Cup):"),
+        "settingsWeightcontainer3IeSteamMug":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 3 (i.E. Steam Mug):"),
+        "settingsWeightcontainer4IeSteamMug":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 4 (i.E. Steam Mug):"),
         "show": MessageLookupByLibrary.simpleMessage("Anzeigen"),
         "start": MessageLookupByLibrary.simpleMessage("Start"),
         "stateDisconnected": MessageLookupByLibrary.simpleMessage("GETRENNT"),

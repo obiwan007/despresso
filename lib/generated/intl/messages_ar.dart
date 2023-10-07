@@ -521,6 +521,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "الفارغة إذا تم الكشف عن الوزن"),
         "settingsContainerCurrentWeight":
             MessageLookupByLibrary.simpleMessage("الوزن الحالي"),
+        "settingsMoveonatweightThresholdS":
+            MessageLookupByLibrary.simpleMessage(
+                "Move-on-at-weight threshold [s]"),
+        "settingsNextStepWillBeTriggeredAtThisDurationFromReaching":
+            MessageLookupByLibrary.simpleMessage(
+                "Next step will be triggered at this duration from reaching target weight"),
         "settingsRefillWatertankAtLimit": MessageLookupByLibrary.simpleMessage(
             "أعد ملء خزان المياه عند الحد الأقصى"),
         "settingsSleepAllowTabletSleepDuringScreensaver":
@@ -539,6 +545,23 @@ class MessageLookup extends MessageLookupByLibrary {
                 "عندما يكون الجهاز في وضع السكون، قم بإيقاف تشغيل عرض المقياس إن أمكن"),
         "settingsTabletSleep":
             MessageLookupByLibrary.simpleMessage("النوم اللوحي"),
+        "settingsTareOnWakeupOfDe1":
+            MessageLookupByLibrary.simpleMessage("Tare on wakeup of de1"),
+        "settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf":
+            MessageLookupByLibrary.simpleMessage(
+                "If the scale is already connected, tare is called if machine woke up from sleep."),
+        "settingsWeightcontainer1IeWeightCup":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 1 (i.E. weight cup):"),
+        "settingsWeightcontainer2IeEspressoCup":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 2 (i.E. Espresso Cup):"),
+        "settingsWeightcontainer3IeSteamMug":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 3 (i.E. Steam Mug):"),
+        "settingsWeightcontainer4IeSteamMug":
+            MessageLookupByLibrary.simpleMessage(
+                "Container 4 (i.E. Steam Mug):"),
         "show": MessageLookupByLibrary.simpleMessage("عرض"),
         "start": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "stateDisconnected":
