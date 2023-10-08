@@ -1073,77 +1073,77 @@ class EspressoMachineService extends ChangeNotifier {
 
   shotFinished(List<TimedWeightMeasurement> weightMeasurements) async {
     log.info("Save last shot");
-    var cs = Shot();
-
-    var currentRecipe = coffeeService.currentRecipe!;
-    currentRecipe.id = 0;
-    currentRecipe.isShot = true;
-
-    cs.recipe.targetId = coffeeService.addRecipeFromRecipe(currentRecipe);
-    var currentCoffee = coffeeService.currentCoffee!;
-    currentCoffee.id = 0;
-    currentCoffee.isShot = true;
-    cs.coffee.targetId = await coffeeService.addCoffee(currentCoffee);
-
-    // sometimes shotstates get duplicated, so filter those out
-    // TODO: figure out why they're being duplicated
-    final Set<double> seenSampleTimes = {};
-    cs.shotstates.addAll(
-        shotList.entries.where((element) => element.isInterpolated == false));
-    cs.shotstates.retainWhere((el) => seenSampleTimes.add(el.sampleTime));
-
-    final sampleTimes =
-        cs.shotstates.map((state) => state.sampleTime * 1000).toList();
-
-    final weightTimes = weightMeasurements
-        .map(
-            (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
-        .toList();
-
-    final weightValues = weightMeasurements
-        .map((measurement) => measurement.weight.weight)
-        .toList();
-
-    final interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
-
-    final flowWeights = interp(sampleTimes, weightTimes,
-        await calculateFlowWeightsForVisualizer(weightMeasurements));
-
-    log.info("WEIGHT VALUES");
-    weightValues.forEach(log.info);
-
-    log.info("WEIGHT TIMES");
-    weightTimes.forEach(log.info);
-
-    log.info("FLOW WEIGHTS");
-    flowWeights.forEach(log.info);
-
-    // apply weights & flowWeights to 1 decimal place
-    cs.shotstates.asMap().forEach((index, state) {
-      state.weight = (interpolatedWeights[index] * 10).round() / 10;
-      state.flowWeight = (flowWeights[index] * 10).round() / 10;
-    });
-
-    cs.pourTime = lastPourTime;
-    cs.profileId = profileService.currentProfile?.id ?? "";
-    cs.targetEspressoWeight = settingsService.targetEspressoWeight;
-    cs.targetTempCorrection = settingsService.targetTempCorrection;
-    cs.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
-    cs.pourWeight = shotList.entries.last.weight;
-    cs.ratio1 = coffeeService.currentRecipe?.ratio1 ?? 1;
-    cs.ratio2 = coffeeService.currentRecipe?.ratio2 ?? 1;
-
-    cs.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
-    cs.grinderName = coffeeService.currentRecipe?.grinderModel ?? "";
-
-    cs.estimatedWeightReachedTime = currentShot.estimatedWeightReachedTime;
-    cs.estimatedWeight_b = currentShot.estimatedWeight_b;
-    cs.estimatedWeight_m = currentShot.estimatedWeight_m;
-    cs.estimatedWeight_tEnd = currentShot.estimatedWeight_tEnd;
-    cs.estimatedWeight_tStart = currentShot.estimatedWeight_tStart;
-
     try {
+      var cs = Shot();
+
+      var currentRecipe = coffeeService.currentRecipe!;
+      currentRecipe.id = 0;
+      currentRecipe.isShot = true;
+
+      cs.recipe.targetId = coffeeService.addRecipeFromRecipe(currentRecipe);
+      var currentCoffee = coffeeService.currentCoffee!;
+      currentCoffee.id = 0;
+      currentCoffee.isShot = true;
+      cs.coffee.targetId = await coffeeService.addCoffee(currentCoffee);
+
+      // sometimes shotstates get duplicated, so filter those out
+      // TODO: figure out why they're being duplicated
+      final Set<double> seenSampleTimes = {};
+      cs.shotstates.addAll(
+          shotList.entries.where((element) => element.isInterpolated == false));
+      cs.shotstates.retainWhere((el) => seenSampleTimes.add(el.sampleTime));
+
+      final sampleTimes =
+          cs.shotstates.map((state) => state.sampleTime * 1000).toList();
+
+      final weightTimes = weightMeasurements
+          .map(
+              (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
+          .toList();
+
+      final weightValues = weightMeasurements
+          .map((measurement) => measurement.weight.weight)
+          .toList();
+
+      final interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
+
+      final flowWeights = interp(sampleTimes, weightTimes,
+          await calculateFlowWeightsForVisualizer(weightMeasurements));
+
+      log.info("WEIGHT VALUES");
+      weightValues.forEach(log.info);
+
+      log.info("WEIGHT TIMES");
+      weightTimes.forEach(log.info);
+
+      log.info("FLOW WEIGHTS");
+      flowWeights.forEach(log.info);
+
+      // apply weights & flowWeights to 1 decimal place
+      cs.shotstates.asMap().forEach((index, state) {
+        state.weight = (interpolatedWeights[index] * 10).round() / 10;
+        state.flowWeight = (flowWeights[index] * 10).round() / 10;
+      });
+
+      cs.pourTime = lastPourTime;
+      cs.profileId = profileService.currentProfile?.id ?? "";
+      cs.targetEspressoWeight = settingsService.targetEspressoWeight;
+      cs.targetTempCorrection = settingsService.targetTempCorrection;
+      cs.doseWeight = coffeeService.currentRecipe?.grinderDoseWeight ?? 0;
+      cs.pourWeight = shotList.entries.last.weight;
+      cs.ratio1 = coffeeService.currentRecipe?.ratio1 ?? 1;
+      cs.ratio2 = coffeeService.currentRecipe?.ratio2 ?? 1;
+
+      cs.grinderName = coffeeService.currentRecipe?.grinderModel ?? "";
+      cs.grinderSettings = coffeeService.currentRecipe?.grinderSettings ?? 0;
+
+      cs.estimatedWeightReachedTime = currentShot.estimatedWeightReachedTime;
+      cs.estimatedWeight_b = currentShot.estimatedWeight_b;
+      cs.estimatedWeight_m = currentShot.estimatedWeight_m;
+      cs.estimatedWeight_tEnd = currentShot.estimatedWeight_tEnd;
+      cs.estimatedWeight_tStart = currentShot.estimatedWeight_tStart;
       await coffeeService.addNewShot(cs);
+
       shotList.saveData();
 
       currentShot = cs;
