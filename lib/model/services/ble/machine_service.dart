@@ -319,9 +319,10 @@ class EspressoMachineService extends ChangeNotifier {
       return Future.value(weightMeasurementsDuringShot);
     }
 
-    // wait up to 1 second to get a last weight measurement, so we have data
-    // over the entire shot
-    final fallback = Future.delayed(const Duration(seconds: 1));
+    // wait up to 2 seconds for flow rate to drop to near-zero, so our weight data
+    // captures any additional weight flow after the machine goes into the idle
+    // state.
+    final fallback = Future.delayed(const Duration(seconds: 2));
     await Future.any([weightCompleter.future, fallback]);
 
     // resolve a new list holding the shot's weights
@@ -331,20 +332,18 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   void weightListener(WeightMeassurement measurement) {
-        final timedMeasurement = TimedWeightMeasurement(measurement, DateTime.now());
-        weightMeasurementsDuringShot
-            .add(timedMeasurement);
+    final timedMeasurement =
+        TimedWeightMeasurement(measurement, DateTime.now());
+    weightMeasurementsDuringShot.add(timedMeasurement);
 
+    flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
 
-        if (weightSubscriptionShouldCancel) {
-        weightSubscription?.cancel();
-        weightCompleter.complete(timedMeasurement);
-        return;
-        }
-          
-
-        flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
-      }
+    if (weightSubscriptionShouldCancel && flowRateForecast < 0.1) {
+      weightSubscription?.cancel();
+      weightCompleter.complete(timedMeasurement);
+      return;
+    }
+  }
 
   void init() async {
     profileService = getIt<ProfileService>();
