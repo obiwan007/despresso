@@ -575,10 +575,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_savgol
-      sha256: "0742b45bb7e40ddb01ca47fdbd2ed778b675287c39c9928bf2dff08d9d6a23db"
+      sha256: "853e9f5232c9c296428a08bd7630d652b40b9309b24e75d5767a29b0b1a39d99"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1+6"
+    version: "0.0.1+7"
   flutter_settings_screens:
     dependency: "direct main"
     description:

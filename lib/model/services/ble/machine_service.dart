@@ -103,7 +103,6 @@ const waterMap = [
   2058,
 ];
 
-
 class TimedWeightMeasurement {
   TimedWeightMeasurement(this.weight, this.time);
 
@@ -315,7 +314,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     if (weightMeasurementsDuringShot.isEmpty) {
       // we probably won't receive any more weight measurements if we didn't
-      // any during the shot
+      // get any during the shot
       return Future.value(weightMeasurementsDuringShot);
     }
 
@@ -991,8 +990,6 @@ class EspressoMachineService extends ChangeNotifier {
     var frame = profileService.currentProfile?.shotFrames[shot.frameNumber];
     var stepWeightLimit = frame?.maxWeight ?? 0.0;
 
-    log.info("DEBUG $flowRateForecast $stepWeightLimit");
-
     if ((isPouring || state.subState == "pre_infuse") &&
         stepWeightLimit > 0.0 &&
         flowRateForecast > 0.0 &&
@@ -1028,10 +1025,17 @@ class EspressoMachineService extends ChangeNotifier {
     de1?.requestState(De1StateEnum.skipToNext);
   }
 
-  Future<List<double>> calculateFlowWeightsForVisualizer(
+  // Attempt Savitzky-Golay filter to derive flow weights from given weight
+  // measurements.
+  // If there's not enough data, or if the Sav-Gol filter fails, returns null.
+  // Otherwise returns a list of length 2.
+  // The first element is a list of flow weights in g/s, the second element
+  // is the time since eoch for that flow weight value.
+  // TODO: check if we can upgrade to Flutter 3 and return a list of records
+  Future<List<List<double>>?> calculateFlowWeightsForVisualizer(
       List<TimedWeightMeasurement> weightMeasurements) async {
     if (weightMeasurements.length < 2) {
-      return [];
+      return null;
     }
 
     final weightTimes = weightMeasurements
@@ -1056,17 +1060,17 @@ class EspressoMachineService extends ChangeNotifier {
     final weightValuesDerivative = await savgolFilter(
         x: Float64List.fromList(linearlyInterpolatedWeights),
         windowLength: 11,
-        polyOrder: 3,
+        polyOrder: 2,
         derivative: 1);
 
     // Then divide by timestep to convert to flow rate
     // (and convert from g/ms to g/s)
-    return weightValuesDerivative
+    return [weightValuesDerivative
         .map((d) => d / linearTimestep * 1000)
-        .toList();
+        .toList(), linearWeightTimes];
     } catch (err) {
-      log.info("TODO $err");
-      return [];
+      log.info("Sav-Gol filter failed: $err");
+      return null;
     }
   }
 
@@ -1096,32 +1100,40 @@ class EspressoMachineService extends ChangeNotifier {
           cs.shotstates.map((state) => state.sampleTime * 1000).toList();
 
       final weightTimes = weightMeasurements
-          .map(
-              (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
+          .map((measurement) =>
+              measurement.time.millisecondsSinceEpoch.toDouble())
           .toList();
 
       final weightValues = weightMeasurements
           .map((measurement) => measurement.weight.weight)
           .toList();
 
-      final interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
+      final interpolatedWeights =
+          interp(sampleTimes, weightTimes, weightValues);
 
-      final flowWeights = interp(sampleTimes, weightTimes,
-          await calculateFlowWeightsForVisualizer(weightMeasurements));
+      final linearFlowWeightsAndTimes =
+          await calculateFlowWeightsForVisualizer(weightMeasurements);
+      final List<double>? flowWeights;
+      if (linearFlowWeightsAndTimes == null) {
+        flowWeights = null;
+      } else {
+        // interpolate back to DE1 sample times
+        final linearFlowWeightValues = linearFlowWeightsAndTimes.first;
+        final linearFlowWeightTimes = linearFlowWeightsAndTimes[1];
+        flowWeights =
+            interp(sampleTimes, linearFlowWeightTimes, linearFlowWeightValues);
+      }
 
-      log.info("WEIGHT VALUES");
-      weightValues.forEach(log.info);
-
-      log.info("WEIGHT TIMES");
-      weightTimes.forEach(log.info);
-
-      log.info("FLOW WEIGHTS");
-      flowWeights.forEach(log.info);
-
-      // apply weights & flowWeights to 1 decimal place
+      // apply weights & flowWeights to 1 decimal place and 2 decimal places
+      // respectively
       cs.shotstates.asMap().forEach((index, state) {
         state.weight = (interpolatedWeights[index] * 10).round() / 10;
-        state.flowWeight = (flowWeights[index] * 10).round() / 10;
+
+        // if we failed to get nice smooth flow weights, don't do anything,
+        // and the moving sample flowWeight property will be saved instead
+        if (flowWeights != null) {
+          state.flowWeight = (flowWeights[index] * 100).round() / 100;
+        }
       });
 
       cs.pourTime = lastPourTime;
