@@ -306,17 +306,21 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   Future<List<TimedWeightMeasurement>> detachWeightListener ( )async {
-    weightSubscriptionShouldCancel = true;
-
     if (weightSubscription == null) {
       return Future.value(weightMeasurementsDuringShot);
     }
 
     if (weightMeasurementsDuringShot.isEmpty) {
       // we probably won't receive any more weight measurements if we didn't
-      // get any during the shot
+      // get any during the shot, so just clean up the subscription now.
+      weightSubscription?.cancel();
+      weightSubscription = null;
       return Future.value(weightMeasurementsDuringShot);
     }
+
+    // otherwise, setting this flag lets the subscription know to wait for flow
+    // rate to drop off before canceling
+    weightSubscriptionShouldCancel = true;
 
     // wait up to 2 seconds for flow rate to drop to near-zero, so our weight data
     // captures any additional weight flow after the machine goes into the idle
@@ -337,8 +341,11 @@ class EspressoMachineService extends ChangeNotifier {
 
     flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
 
-    if (weightSubscriptionShouldCancel && flowRateForecast < 0.1) {
+    if (weightSubscriptionShouldCancel &&
+        flowRateForecast < 0.1 &&
+        !weightCompleter.isCompleted) {
       weightSubscription?.cancel();
+      weightSubscription = null;
       weightCompleter.complete(timedMeasurement);
       return;
     }
