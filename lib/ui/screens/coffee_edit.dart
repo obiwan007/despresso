@@ -82,7 +82,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
       'intensityRating': [_editedCoffee.intensityRating],
       'acidRating': [_editedCoffee.acidRating],
       'roastLevel': [_editedCoffee.roastLevel],
-      'roastDate': [DateTime.now()],
+      'roastDate': [_editedCoffee.roastDate],
       "region": [_editedCoffee.region],
       "farm": [_editedCoffee.farm],
       "cropyear": [_editedCoffee.cropyear],
