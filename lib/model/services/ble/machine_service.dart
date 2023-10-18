@@ -16,8 +16,8 @@ import 'package:despresso/model/services/state/settings_service.dart';
 
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
+import 'package:despresso/utils/saw_gol_filter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_savgol/flutter_savgol.dart';
 
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -165,19 +165,7 @@ class MachineState {
   String subState = "";
 }
 
-enum EspressoMachineState {
-  idle,
-  espresso,
-  water,
-  steam,
-  sleep,
-  disconnected,
-  connecting,
-  refill,
-  flush,
-  descale,
-  clean
-}
+enum EspressoMachineState { idle, espresso, water, steam, sleep, disconnected, connecting, refill, flush, descale, clean }
 
 class EspressoMachineFullState {
   EspressoMachineState state = EspressoMachineState.disconnected;
@@ -299,13 +287,13 @@ class EspressoMachineService extends ChangeNotifier {
     _controllerEspressoMachineState.add(currentFullState);
   }
 
-  void attachWeightListener () {
+  void attachWeightListener() {
     weightSubscriptionShouldCancel = false;
     weightCompleter = Completer();
     weightSubscription = scaleService.stream0.listen(weightListener);
   }
 
-  Future<List<TimedWeightMeasurement>> detachWeightListener ( )async {
+  Future<List<TimedWeightMeasurement>> detachWeightListener() async {
     if (weightSubscription == null) {
       return Future.value(weightMeasurementsDuringShot);
     }
@@ -335,15 +323,12 @@ class EspressoMachineService extends ChangeNotifier {
   }
 
   void weightListener(WeightMeassurement measurement) {
-    final timedMeasurement =
-        TimedWeightMeasurement(measurement, DateTime.now());
+    final timedMeasurement = TimedWeightMeasurement(measurement, DateTime.now());
     weightMeasurementsDuringShot.add(timedMeasurement);
 
     flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
 
-    if (weightSubscriptionShouldCancel &&
-        flowRateForecast < 0.1 &&
-        !weightCompleter.isCompleted) {
+    if (weightSubscriptionShouldCancel && flowRateForecast < 0.1 && !weightCompleter.isCompleted) {
       weightSubscription?.cancel();
       weightSubscription = null;
       weightCompleter.complete(timedMeasurement);
@@ -515,8 +500,7 @@ class EspressoMachineService extends ChangeNotifier {
   Future<void> setState(EspressoMachineState state) async {
     _state.coffeeState = state;
 
-    if (lastState != state &&
-        (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water)) {
+    if (lastState != state && (_state.coffeeState == EspressoMachineState.espresso || _state.coffeeState == EspressoMachineState.water)) {
       if (settingsService.shotAutoTare) {
         await scaleService.tare();
       }
@@ -650,10 +634,7 @@ class EspressoMachineService extends ChangeNotifier {
       inShot = false;
       _controllerFrameName.add("");
       _lastFrameNumber = -1;
-      if (shotList.saved == false &&
-          shotList.entries.isNotEmpty &&
-          shotList.saving == false &&
-          shotList.saved == false) {
+      if (shotList.saved == false && shotList.entries.isNotEmpty && shotList.saving == false && shotList.saved == false) {
         final weights = await detachWeightListener();
         shotFinished(weights);
       }
@@ -679,17 +660,14 @@ class EspressoMachineService extends ChangeNotifier {
       Timer.periodic(const Duration(milliseconds: 50), (timer) => checkMoveOnAtWeight(timer));
     }
     if (state.coffeeState == EspressoMachineState.espresso && shot.frameNumber != _lastFrameNumber) {
-      if (profileService.currentProfile != null &&
-          shot.frameNumber <= profileService.currentProfile!.shotFrames.length) {
+      if (profileService.currentProfile != null && shot.frameNumber <= profileService.currentProfile!.shotFrames.length) {
         var frame = profileService.currentProfile!.shotFrames[shot.frameNumber];
         _controllerFrameName.add(frame.name);
       }
 
       _lastFrameNumber = shot.frameNumber;
     }
-    if (state.coffeeState == EspressoMachineState.espresso &&
-        lastSubstate != state.subState &&
-        lastSubstate == "heat_water_heater") {
+    if (state.coffeeState == EspressoMachineState.espresso && lastSubstate != state.subState && lastSubstate == "heat_water_heater") {
       log.info('Heating phase over');
 
       baseTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -706,9 +684,7 @@ class EspressoMachineService extends ChangeNotifier {
       lastPourTime = 0;
     }
 
-    if (state.coffeeState == EspressoMachineState.espresso &&
-        lastSubstate != state.subState &&
-        state.subState == "pour") {
+    if (state.coffeeState == EspressoMachineState.espresso && lastSubstate != state.subState && state.subState == "pour") {
       pourTimeStart = DateTime.now().millisecondsSinceEpoch / 1000.0;
       isPouring = true;
       _previousShot = null;
@@ -717,9 +693,7 @@ class EspressoMachineService extends ChangeNotifier {
       if (settingsService.scaleStartTimer) {
         scaleService.timer(TimerMode.start);
       }
-    } else if (state.coffeeState == EspressoMachineState.espresso &&
-        lastSubstate != state.subState &&
-        state.subState != "pour") {
+    } else if (state.coffeeState == EspressoMachineState.espresso && lastSubstate != state.subState && state.subState != "pour") {
       isPouring = false;
     }
 
@@ -782,14 +756,11 @@ class EspressoMachineService extends ChangeNotifier {
                 // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
                 shot.timeToWeight = timeToWeight > 0 && timeToWeight < 100 ? timeToWeight : 0;
                 log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
-                if (timeToWeight > 0 &&
-                    timeToWeight < 2.5 &&
-                    (settingsService.targetEspressoWeight - shot.weight < 5)) {
+                if (timeToWeight > 0 && timeToWeight < 2.5 && (settingsService.targetEspressoWeight - shot.weight < 5)) {
                   _delayedStopActive = true;
                   log.info("Shot weight reached soon, starting delayed stop");
                   Future.delayed(
-                    Duration(
-                        milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
+                    Duration(milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
                     () {
                       log.info("Shot weight reached now!, stopping ${state.shot!.weight}");
                       triggerEndOfShot();
@@ -809,9 +780,7 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.water:
           if (scaleService.state[0] == ScaleState.connected) {
-            if (state.subState == "pour" &&
-                settingsService.targetHotWaterWeight > 1 &&
-                scaleService.weight[0] + 1 > settingsService.targetHotWaterWeight) {
+            if (state.subState == "pour" && settingsService.targetHotWaterWeight > 1 && scaleService.weight[0] + 1 > settingsService.targetHotWaterWeight) {
               log.info("Water Weight reached ${shot.weight} > ${settingsService.targetHotWaterWeight}");
 
               if (settingsService.shotStopOnWeight) {
@@ -819,9 +788,7 @@ class EspressoMachineService extends ChangeNotifier {
               }
             }
           }
-          if (state.subState == "pour" &&
-              settingsService.targetHotWaterLength > 1 &&
-              timer.inSeconds > settingsService.targetHotWaterLength) {
+          if (state.subState == "pour" && settingsService.targetHotWaterLength > 1 && timer.inSeconds > settingsService.targetHotWaterLength) {
             log.info("Water Timer reached ${timer.inSeconds} > ${settingsService.targetHotWaterLength}");
 
             triggerEndOfShot();
@@ -829,9 +796,7 @@ class EspressoMachineService extends ChangeNotifier {
 
           break;
         case EspressoMachineState.steam:
-          if (state.subState == "pour" &&
-              settingsService.targetSteamLength > 1 &&
-              timer.inSeconds > settingsService.targetSteamLength) {
+          if (state.subState == "pour" && settingsService.targetSteamLength > 1 && timer.inSeconds > settingsService.targetSteamLength) {
             log.info("Steam Timer reached ${timer.inSeconds} > ${settingsService.targetSteamLength}");
 
             // triggerEndOfShot(); - not needed the machine automatically ends steaming after the timer ends
@@ -900,20 +865,20 @@ class EspressoMachineService extends ChangeNotifier {
               // shotList.add(_floatingShot!);
             }
 
-            var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.groupPressure, _previousShot!.groupPressure);
+            var linGP = LineEq.calcLinearEquation(
+                _newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected, _newestShot!.groupPressure, _previousShot!.groupPressure);
 
-            var lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
+            var lingpS = LineEq.calcLinearEquation(
+                _newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected, _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
 
-            var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.groupFlow, _previousShot!.groupFlow);
+            var linGF = LineEq.calcLinearEquation(
+                _newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected, _newestShot!.groupFlow, _previousShot!.groupFlow);
 
-            var lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
+            var lingfS = LineEq.calcLinearEquation(
+                _newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected, _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
 
-            var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.flowWeight, _previousShot!.flowWeight);
+            var linWF = LineEq.calcLinearEquation(
+                _newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected, _newestShot!.flowWeight, _previousShot!.flowWeight);
 
             // var newShot = ShotState.fromJson(_previousShot!.toJson());
             // shotList.add(newShot);
@@ -997,13 +962,9 @@ class EspressoMachineService extends ChangeNotifier {
     var frame = profileService.currentProfile?.shotFrames[shot.frameNumber];
     var stepWeightLimit = frame?.maxWeight ?? 0.0;
 
-    if ((isPouring || state.subState == "pre_infuse") &&
-        stepWeightLimit > 0.0 &&
-        flowRateForecast > 0.0 &&
-        _delayedStopActive == false) {
+    if ((isPouring || state.subState == "pre_infuse") && stepWeightLimit > 0.0 && flowRateForecast > 0.0 && _delayedStopActive == false) {
       var currentWeight = weightMeasurementsDuringShot.last;
-      var forecastWeight = currentWeight.weight.weight +
-          flowRateForecast * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
+      var forecastWeight = currentWeight.weight.weight + flowRateForecast * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
       var timeToWeight = (stepWeightLimit - forecastWeight) / flowRateForecast;
 
       if (timeToWeight <= (settingsService.stepLimitWeightTimeAdjust * 1000)) {
@@ -1039,42 +1000,27 @@ class EspressoMachineService extends ChangeNotifier {
   // The first element is a list of flow weights in g/s, the second element
   // is the time since eoch for that flow weight value.
   // TODO: check if we can upgrade to Flutter 3 and return a list of records
-  Future<List<List<double>>?> calculateFlowWeightsForVisualizer(
-      List<TimedWeightMeasurement> weightMeasurements) async {
+  Future<List<List<double>>?> calculateFlowWeightsForVisualizer(List<TimedWeightMeasurement> weightMeasurements) async {
     if (weightMeasurements.length < 2) {
       return null;
     }
 
-    final weightTimes = weightMeasurements
-        .map(
-            (measurement) => measurement.time.millisecondsSinceEpoch.toDouble())
-        .toList();
+    final weightTimes = weightMeasurements.map((measurement) => measurement.time.millisecondsSinceEpoch.toDouble()).toList();
 
-    final weightValues = weightMeasurements
-        .map((measurement) => measurement.weight.weight)
-        .toList();
+    final weightValues = weightMeasurements.map((measurement) => measurement.weight.weight).toList();
 
     // First, interpolate weight measurements so they're equally spaced
-    final linearTimestep =
-        (weightTimes.last - weightTimes.first) / (weightTimes.length - 1);
-    final linearWeightTimes = List.generate(
-        weightTimes.length, (i) => weightTimes.first + (linearTimestep * i));
-    final linearlyInterpolatedWeights =
-        interp(linearWeightTimes, weightTimes, weightValues);
+    final linearTimestep = (weightTimes.last - weightTimes.first) / (weightTimes.length - 1);
+    final linearWeightTimes = List.generate(weightTimes.length, (i) => weightTimes.first + (linearTimestep * i));
+    final linearlyInterpolatedWeights = interp(linearWeightTimes, weightTimes, weightValues);
 
     try {
-    // Savitzky-Golay filter to get the derivative (relative to index)
-    final weightValuesDerivative = await savgolFilter(
-        x: Float64List.fromList(linearlyInterpolatedWeights),
-        windowLength: 11,
-        polyOrder: 2,
-        derivative: 1);
+      // Savitzky-Golay filter to get the derivative (relative to index)
+      final weightValuesDerivative = savitzkyGolay(Float64List.fromList(linearlyInterpolatedWeights), 11, 2, derivativeOrder: 1);
 
-    // Then divide by timestep to convert to flow rate
-    // (and convert from g/ms to g/s)
-    return [weightValuesDerivative
-        .map((d) => d / linearTimestep * 1000)
-        .toList(), linearWeightTimes];
+      // Then divide by timestep to convert to flow rate
+      // (and convert from g/ms to g/s)
+      return [weightValuesDerivative.map((d) => d / linearTimestep * 1000).toList(), linearWeightTimes];
     } catch (err) {
       log.info("Sav-Gol filter failed: $err");
       return null;
@@ -1099,27 +1045,18 @@ class EspressoMachineService extends ChangeNotifier {
       // sometimes shotstates get duplicated, so filter those out
       // TODO: figure out why they're being duplicated
       final Set<double> seenSampleTimes = {};
-      cs.shotstates.addAll(
-          shotList.entries.where((element) => element.isInterpolated == false));
+      cs.shotstates.addAll(shotList.entries.where((element) => element.isInterpolated == false));
       cs.shotstates.retainWhere((el) => seenSampleTimes.add(el.sampleTime));
 
-      final sampleTimes =
-          cs.shotstates.map((state) => state.sampleTime * 1000).toList();
+      final sampleTimes = cs.shotstates.map((state) => state.sampleTime * 1000).toList();
 
-      final weightTimes = weightMeasurements
-          .map((measurement) =>
-              measurement.time.millisecondsSinceEpoch.toDouble())
-          .toList();
+      final weightTimes = weightMeasurements.map((measurement) => measurement.time.millisecondsSinceEpoch.toDouble()).toList();
 
-      final weightValues = weightMeasurements
-          .map((measurement) => measurement.weight.weight)
-          .toList();
+      final weightValues = weightMeasurements.map((measurement) => measurement.weight.weight).toList();
 
-      final interpolatedWeights =
-          interp(sampleTimes, weightTimes, weightValues);
+      final interpolatedWeights = interp(sampleTimes, weightTimes, weightValues);
 
-      final linearFlowWeightsAndTimes =
-          await calculateFlowWeightsForVisualizer(weightMeasurements);
+      final linearFlowWeightsAndTimes = await calculateFlowWeightsForVisualizer(weightMeasurements);
       final List<double>? flowWeights;
       if (linearFlowWeightsAndTimes == null) {
         flowWeights = null;
@@ -1127,8 +1064,7 @@ class EspressoMachineService extends ChangeNotifier {
         // interpolate back to DE1 sample times
         final linearFlowWeightValues = linearFlowWeightsAndTimes.first;
         final linearFlowWeightTimes = linearFlowWeightsAndTimes[1];
-        flowWeights =
-            interp(sampleTimes, linearFlowWeightTimes, linearFlowWeightValues);
+        flowWeights = interp(sampleTimes, linearFlowWeightTimes, linearFlowWeightValues);
       }
 
       // apply weights & flowWeights to 1 decimal place and 2 decimal places
@@ -1221,9 +1157,7 @@ class EspressoMachineService extends ChangeNotifier {
     }
 
     var weightData = raw
-        .where((element) =>
-            element.sampleTimeCorrected > currentShot.estimatedWeight_tStart &&
-            element.sampleTimeCorrected < currentShot.estimatedWeight_tEnd)
+        .where((element) => element.sampleTimeCorrected > currentShot.estimatedWeight_tStart && element.sampleTimeCorrected < currentShot.estimatedWeight_tEnd)
         .map(
       (e) {
         return DataPoint(e.sampleTimeCorrected, e.weight);
@@ -1292,8 +1226,7 @@ class EspressoMachineService extends ChangeNotifier {
   // Double exponential smoothing over the given data. Data points are assumed
   // to have equal temporal spacing. Returns the values of s, b at each point.
   // TODO: check if we can upgrade to Flutter 3 and return a list of records
-  List<List<double>> doubleExponentialSmoothing(
-      List<double> input, double dataSmoothingFactor, double trendSmoothingFactor) {
+  List<List<double>> doubleExponentialSmoothing(List<double> input, double dataSmoothingFactor, double trendSmoothingFactor) {
     var s = input[0];
     var b = input[1] - input[0];
 
@@ -1315,8 +1248,7 @@ class EspressoMachineService extends ChangeNotifier {
   // Get forecast flow rate using double exponential smoothing.
   double getFlowRateForecast(Duration window) {
     var sampleWindowStart = DateTime.now().subtract(window);
-    var samples = weightMeasurementsDuringShot
-        .where((m) => m.time.isAfter(sampleWindowStart) || m.time.isAtSameMomentAs(sampleWindowStart));
+    var samples = weightMeasurementsDuringShot.where((m) => m.time.isAfter(sampleWindowStart) || m.time.isAtSameMomentAs(sampleWindowStart));
 
     if (samples.isEmpty) {
       return 0.0;
@@ -1338,11 +1270,9 @@ class EspressoMachineService extends ChangeNotifier {
     // scale's reporting - investigate better solutions?
     var timestep = actualSampleWindow ~/ (samples.length - 1);
 
-    var interpolatedSampleTimeEpochs =
-        List.generate(samples.length, (i) => samples.first.time.add(timestep * i).millisecondsSinceEpoch.toDouble());
+    var interpolatedSampleTimeEpochs = List.generate(samples.length, (i) => samples.first.time.add(timestep * i).millisecondsSinceEpoch.toDouble());
 
-    var interpolatedSampleWeights =
-        interp(interpolatedSampleTimeEpochs, selectedSampleTimeEpochs, selectedSampleWeights);
+    var interpolatedSampleWeights = interp(interpolatedSampleTimeEpochs, selectedSampleTimeEpochs, selectedSampleWeights);
 
     // These values for data smoothing, trend smoothing factors were found by
     // minimizing square error of forecast weights on real shot data
