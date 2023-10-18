@@ -33,16 +33,17 @@ List<double> savitzkyGolay(List<double> data, int windowSize, int polynomialOrde
   if (derivativeOrder == 0) {
     return smoothedData;
   } else if (derivativeOrder == 1) {
-    List<double> derivativeData = List.filled(dataSize, 0.0);
+    return calculateFirstDerivative(smoothedData, 1);
 
-    for (int i = halfWindow; i < dataSize - halfWindow; i++) {
-      derivativeData[i] = 0.0;
-      for (int j = -halfWindow; j <= halfWindow; j++) {
-        derivativeData[i] += _calculateDerivativeWeight(j, polynomialOrder) * smoothedData[i + j];
-      }
-    }
+    // List<double> derivativeData = List.filled(dataSize, 0.0);
 
-    return derivativeData;
+    // for (int i = halfWindow; i < dataSize - halfWindow; i++) {
+    //   for (int j = -halfWindow; j <= halfWindow; j++) {
+    //     derivativeData[i] += j * _calculateWeight(j, polynomialOrder, halfWindow) * smoothedData[i + j];
+    //   }
+    // }
+
+    // return derivativeData;
   } else {
     throw ArgumentError("Unsupported derivative order");
   }
@@ -63,16 +64,17 @@ double _calculateWeight(int position, int polynomialOrder, int halfWindow) {
   }
 }
 
-double _calculateDerivativeWeight(int position, int polynomialOrder) {
-  return (factorial(polynomialOrder) * pow(-1, polynomialOrder)) / factorial(position);
-}
+List<double> calculateFirstDerivative(List<double> data, double step) {
+  int dataSize = data.length;
+  List<double> derivativeData = List.filled(dataSize, 0.0);
 
-int factorial(int n) {
-  int result = 1;
-  for (int i = 1; i <= n; i++) {
-    result *= i;
+  for (int i = 0; i < dataSize - 1; i++) {
+    derivativeData[i] = (data[i + 1] - data[i]) / step;
   }
-  return result;
+
+  derivativeData[dataSize - 1] = derivativeData[dataSize - 2]; // Use forward difference for the last point
+
+  return derivativeData;
 }
 
 // void main() {

@@ -1016,7 +1016,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     try {
       // Savitzky-Golay filter to get the derivative (relative to index)
-      final weightValuesDerivative = savitzkyGolay(Float64List.fromList(linearlyInterpolatedWeights), 11, 2, derivativeOrder: 1);
+      final weightValuesDerivative = savitzkyGolay(linearlyInterpolatedWeights, 11, 2, derivativeOrder: 1);
 
       // Then divide by timestep to convert to flow rate
       // (and convert from g/ms to g/s)
