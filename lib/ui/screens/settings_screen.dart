@@ -1028,10 +1028,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
       var dateStr = DateTime.now().toLocal();
       // var doc = DocumentFileSavePlus();
-      await DocumentFileSavePlus.saveMultipleFiles(data, [
+      await DocumentFileSavePlus().saveMultipleFiles(dataList: data, fileNameList: [
         "despresso_backup_$dateStr.bak",
         "logs_$dateStr.zip"
-      ], [
+      ], mimeTypeList: [
         "application/octet-stream",
         "application/zip",
       ]);
