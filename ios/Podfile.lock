@@ -50,10 +50,10 @@ PODS:
   - FMDB/standard (2.7.5)
   - network_info_plus (0.0.1):
     - Flutter
-  - ObjectBox (1.8.1)
+  - ObjectBox (1.9.0)
   - objectbox_flutter_libs (0.0.1):
     - Flutter
-    - ObjectBox (= 1.8.1)
+    - ObjectBox (= 1.9.0)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -61,23 +61,23 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.1.1):
     - Flutter
-  - Protobuf (3.22.1)
+  - Protobuf (3.24.4)
   - reactive_ble_mobile (0.0.1):
     - Flutter
     - Protobuf (~> 3.5)
     - SwiftProtobuf (~> 1.0)
   - screen_brightness_ios (0.1.0):
     - Flutter
-  - SDWebImage (5.15.5):
-    - SDWebImage/Core (= 5.15.5)
-  - SDWebImage/Core (5.15.5)
-  - Sentry/HybridSDK (8.11.0):
-    - SentryPrivate (= 8.11.0)
+  - SDWebImage (5.18.3):
+    - SDWebImage/Core (= 5.18.3)
+  - SDWebImage/Core (5.18.3)
+  - Sentry/HybridSDK (8.14.2):
+    - SentryPrivate (= 8.14.2)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.11.0)
-  - SentryPrivate (8.11.0)
+    - Sentry/HybridSDK (= 8.14.2)
+  - SentryPrivate (8.14.2)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -86,7 +86,7 @@ PODS:
   - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftProtobuf (1.21.0)
+  - SwiftProtobuf (1.25.0)
   - SwiftyGif (5.4.4)
   - url_launcher_ios (0.0.1):
     - Flutter
@@ -173,33 +173,33 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
 SPEC CHECKSUMS:
-  battery_plus: 9bff772a7e5e4d5381ca3ca92a97373a3d8b2738
+  battery_plus: 091633b7f01cb33dfc4aeedb450816f4d33818fa
   DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
-  document_file_save_plus: 4ee6d2721c4904010bb43b5fa85b83394c1b1fc7
-  file_picker: ce3938a0df3cc1ef404671531facef740d03f920
+  document_file_save_plus: 913d440d8b611ae19add4522ed578e3ed1483a2f
+  file_picker: 15fd9539e4eb735dc54bae8c0534a7a9511a03de
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_archive: 1805fdd3a695fd284b43edb53dc35ca843fb761c
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  network_info_plus: 122280582fe2fa2bbb8681a4269745cd5c3a9b32
-  ObjectBox: a7900d5335218cd437cbc080b7ccc38a5211f7b4
-  objectbox_flutter_libs: 61d74196d924fbc773da5f5757d1e9fab7b3cc78
-  package_info_plus: fd030dabf36271f146f1f3beacd48f564b0f17f7
+  network_info_plus: 6d0c3eb8367b8164fa3fb0c19875e3f59d49697f
+  ObjectBox: e7ff611291a0663380e0736b46786bcd077294ff
+  objectbox_flutter_libs: 0948d6feb7de4f7edaebc7a898b9e85b7fc2bc89
+  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
+  Protobuf: 351e9022fe13a6e2af00e9aefc22077cb88520f8
   reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
   screen_brightness_ios: 715ca807df953bf676d339f11464e438143ee625
-  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
-  Sentry: 39d57e691e311bdb73bc1ab5bbebbd6bc890050d
-  sentry_flutter: b2feefdad5b0f06602347172bc7257e8e9da5562
-  SentryPrivate: 48712023cdfd523735c2edb6b06bedf26c4730a3
-  share_plus: 599aa54e4ea31d4b4c0e9c911bcc26c55e791028
+  SDWebImage: 96e0c18ef14010b7485210e92fac888587ebb958
+  Sentry: e0ea366f95ebb68f26d6030d8c22d6b2e6d23dd0
+  sentry_flutter: 9a04c51c373d76ee22167bf1e65bc468c0a91fed
+  SentryPrivate: 949a21fa59872427edc73b524c3ec8456761d97f
+  share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
-  SwiftProtobuf: afced68785854575756db965e9da52bbf3dc45e7
+  SwiftProtobuf: ab8e4d54c91403cb783626446e2e0061e872f0dc
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
