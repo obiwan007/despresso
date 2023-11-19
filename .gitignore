@@ -23,6 +23,8 @@ keys/
 android/app/debug
 android/app/profile
 android/app/release
+android/.idea
+
 
 # See https://www.dartlang.org/guides/libraries/private-files
 minipage/build/
