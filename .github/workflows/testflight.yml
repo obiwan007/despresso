@@ -37,10 +37,10 @@ jobs:
           
       - name: Update pods
         run: pod repo update
-      - name: Bundle install
-        run: cd ./ios && bundle install && pod install
       - name: Pub get
         run: flutter pub get          
+      - name: Bundle install
+        run: cd ./ios && bundle install && pod install
       - uses: maierj/fastlane-action@v3.0.0        
         env:            
             MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
