@@ -25,6 +25,10 @@ Future<void> initLogger() async {
     // ignore: avoid_print
     print("Error creating logfiles");
   }
+  if (dir == null) {
+    dir = Directory(".");
+  }
+
   var dateStr = DateTime.now().toUtc();
   final log = Logger("logger");
   var filepath = "${dir!.path}/logs_${dateStr.day}_${dateStr.month}_${dateStr.year}.txt";

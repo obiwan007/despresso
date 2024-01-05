@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   # charts_flutter: ^0.12.0
   # flutter_ble_lib: ^2.3.2
-  http: ^0.13.5
+  http: ^1.1.0
   path: null
   flat_buffers: null
   flutter_typeahead: ^4.1.1
@@ -48,22 +48,22 @@ dependencies:
   json_serializable: ^6.7.1
   path_provider: ^2.0.11
   community_charts_flutter: ^1.0.2
-  syncfusion_flutter_sliders: ^22.2.12
+  syncfusion_flutter_sliders: ^23.1.44
   copy_with_extension: ^5.0.0
   copy_with_extension_gen: ^5.0.4
-  uuid: ^3.0.7
-  reactive_forms: ^16.0.1
+  uuid: ^4.2.1
+  reactive_forms: ^16.1.1
   reactive_flutter_rating_bar: ^2.0.0
   objectbox: 2.3.1
   objectbox_flutter_libs: 2.3.1
   flutter_settings_screens: ^0.3.3-null-safety+2
-  permission_handler: ^10.2.0
+  permission_handler: ^11.0.1
   shared_preferences: ">=2.2.0"
   get_it: ^7.6.0
   url_launcher: ^6.1.12
   fl_chart: ^0.64.0
   mqtt_client: ^10.0.0
-  collection: 1.17.2
+  collection: 1.18.0
   battery_plus: ^4.1.0
   logging_appenders: ^1.2.0
   logging: ^1.2.0
@@ -98,13 +98,13 @@ dev_dependencies:
   transparent_image: ^2.0.0
   bubble_tab_indicator: ">=0.1.4"
   flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.1
+  flutter_native_splash: ^2.3.5
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.3
+  flutter_lints: ^3.0.1
   objectbox_generator: 2.3.1
 
 # objectbox_generator:generator:
