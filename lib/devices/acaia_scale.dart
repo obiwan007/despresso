@@ -53,7 +53,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   static const int header1 = 0xef;
   static const int header2 = 0xdd;
-
+  double _weight = 0.0;
   final DiscoveredDevice device;
 
   late DeviceConnectionState _state;
@@ -121,6 +121,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
         switch (subType) {
           case 5: // weight
             double weight = decodeWeight(payload);
+            _weight = weight;
             scaleService.setWeight(weight, index);
             break;
           case 8: // Tara done
@@ -135,6 +136,7 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
             if (payload[3] == 5) {
               weight = decodeWeight(payload.sublist(3));
+              _weight = weight;
 //             if (payload[3] == 7) time = decodeTime(payload.sublist(3));
               scaleService.setWeight(weight, index);
             }
@@ -249,6 +251,29 @@ class AcaiaScale extends ChangeNotifier implements AbstractScale {
 
   @override
   writeTare() async {
+    // tare command
+    bool exit = false;
+    _weight = 100;
+    for (var i = 0; i < 3; i++) {
+      await sendTare();
+      await Future.delayed(
+        const Duration(milliseconds: 200),
+        () {
+          if (_weight < 0.1 && _weight > -0.1) {
+            exit = true;
+          }
+        },
+      );
+      if (exit == true) {
+        log.fine("Tare finished without repeat $i");
+        return;
+      }
+      log.fine("Tare repeat $_weight");
+    }
+  }
+
+  @override
+  sendTare() async {
     // tare command
     var list = [0x00];
 
