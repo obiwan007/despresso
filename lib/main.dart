@@ -59,7 +59,14 @@ Future<void> main() async {
           // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
           // We recommend adjusting this value in production.
           options.tracesSampleRate = 1.0;
+          options.profilesSampleRate = 1.0;
           options.enableUserInteractionTracing = true;
+          options.enableAutoNativeBreadcrumbs = true;
+          options.enableAutoSessionTracking = true;
+          options.attachViewHierarchy = true;
+          options.enableAutoPerformanceTracing = true;
+          options.enableUserInteractionBreadcrumbs = true;
+          options.enableTracing = true;
           options.attachScreenshot = true;
           options.addIntegration(LoggingIntegration());
         },

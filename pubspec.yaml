@@ -70,7 +70,7 @@ dependencies:
   file_picker: ^6.0.0
   share_plus: ^7.2.1
   document_file_save_plus: ^2.0.0
-  sentry_flutter: ^7.11.0
+  sentry_flutter: ^7.14.0
   feedback_sentry: ^3.0.0
   package_info_plus: ^4.2.0
   intl: ^0.18.0
