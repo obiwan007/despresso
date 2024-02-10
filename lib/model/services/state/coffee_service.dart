@@ -235,6 +235,7 @@ class CoffeeService extends ChangeNotifier {
     var profileService = getIt<ProfileService>();
     var machineService = getIt<EspressoMachineService>();
     settings.targetEspressoWeight = recipe.adjustedWeight;
+    settings.targetTempCorrection = recipe.adjustedTemp;
     settings.targetHotWaterWeight = recipe.weightWater.toInt();
     settings.targetHotWaterVol = recipe.weightWater.toInt();
     settings.useSteam = recipe.useSteam;
