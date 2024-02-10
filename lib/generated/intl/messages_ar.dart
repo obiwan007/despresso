@@ -522,11 +522,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsContainerCurrentWeight":
             MessageLookupByLibrary.simpleMessage("الوزن الحالي"),
         "settingsMoveonatweightThresholdS":
-            MessageLookupByLibrary.simpleMessage(
-                "Move-on-at-weight threshold [s]"),
+            MessageLookupByLibrary.simpleMessage("عتبة الحركة على الوزن [s]"),
         "settingsNextStepWillBeTriggeredAtThisDurationFromReaching":
             MessageLookupByLibrary.simpleMessage(
-                "Next step will be triggered at this duration from reaching target weight"),
+                "سيتم تشغيل الخطوة التالية في هذه المدة من الوصول إلى الوزن المستهدف"),
         "settingsRefillWatertankAtLimit": MessageLookupByLibrary.simpleMessage(
             "أعد ملء خزان المياه عند الحد الأقصى"),
         "settingsSleepAllowTabletSleepDuringScreensaver":
@@ -545,23 +544,20 @@ class MessageLookup extends MessageLookupByLibrary {
                 "عندما يكون الجهاز في وضع السكون، قم بإيقاف تشغيل عرض المقياس إن أمكن"),
         "settingsTabletSleep":
             MessageLookupByLibrary.simpleMessage("النوم اللوحي"),
-        "settingsTareOnWakeupOfDe1":
-            MessageLookupByLibrary.simpleMessage("Tare on wakeup of de1"),
+        "settingsTareOnWakeupOfDe1": MessageLookupByLibrary.simpleMessage(
+            "الفارغة على الاستيقاظ من de1"),
         "settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf":
             MessageLookupByLibrary.simpleMessage(
-                "If the scale is already connected, tare is called if machine woke up from sleep."),
+                "إذا كان الميزان متصلاً بالفعل، فسيتم استدعاء الفارغة إذا استيقظت الآلة من النوم."),
         "settingsWeightcontainer1IeWeightCup":
-            MessageLookupByLibrary.simpleMessage(
-                "Container 1 (i.E. weight cup):"),
+            MessageLookupByLibrary.simpleMessage("الحاوية 1 (أي كوب الوزن):"),
         "settingsWeightcontainer2IeEspressoCup":
             MessageLookupByLibrary.simpleMessage(
-                "Container 2 (i.E. Espresso Cup):"),
+                "الحاوية 2 (أي كوب الإسبريسو):"),
         "settingsWeightcontainer3IeSteamMug":
-            MessageLookupByLibrary.simpleMessage(
-                "Container 3 (i.E. Steam Mug):"),
+            MessageLookupByLibrary.simpleMessage("الحاوية 3 (أي كوب البخار):"),
         "settingsWeightcontainer4IeSteamMug":
-            MessageLookupByLibrary.simpleMessage(
-                "Container 4 (i.E. Steam Mug):"),
+            MessageLookupByLibrary.simpleMessage("الحاوية 4 (أي كوب البخار):"),
         "show": MessageLookupByLibrary.simpleMessage("عرض"),
         "start": MessageLookupByLibrary.simpleMessage("ابدأ"),
         "stateDisconnected":

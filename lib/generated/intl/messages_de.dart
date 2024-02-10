@@ -529,10 +529,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Aktuelles Gewicht"),
         "settingsMoveonatweightThresholdS":
             MessageLookupByLibrary.simpleMessage(
-                "Move-on-at-weight threshold [s]"),
+                "Weitergehen bei Gewichtsschwelle [s]"),
         "settingsNextStepWillBeTriggeredAtThisDurationFromReaching":
             MessageLookupByLibrary.simpleMessage(
-                "Next step will be triggered at this duration from reaching target weight"),
+                "Der nächste Schritt wird in dieser Zeit nach Erreichen des Zielgewichts ausgelöst"),
         "settingsRefillWatertankAtLimit": MessageLookupByLibrary.simpleMessage(
             " Wassertank Füllstands-Limit"),
         "settingsSleepAllowTabletSleepDuringScreensaver":
@@ -551,23 +551,23 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Wenn sich die Maschine im Ruhezustand befindet, wird die Waagenanzeige nach Möglichkeit ausgeschaltet."),
         "settingsTabletSleep":
             MessageLookupByLibrary.simpleMessage("Tablet-Schlaf"),
-        "settingsTareOnWakeupOfDe1":
-            MessageLookupByLibrary.simpleMessage("Tare on wakeup of de1"),
+        "settingsTareOnWakeupOfDe1": MessageLookupByLibrary.simpleMessage(
+            "Tarieren Sie beim Aufwachen von de1"),
         "settingsTareifTheScaleIsAlreadyConnectedTareIsCalledIf":
             MessageLookupByLibrary.simpleMessage(
-                "If the scale is already connected, tare is called if machine woke up from sleep."),
+                "Wenn die Waage bereits angeschlossen ist, wird Tara aufgerufen, wenn die Maschine aus dem Ruhezustand erwacht."),
         "settingsWeightcontainer1IeWeightCup":
             MessageLookupByLibrary.simpleMessage(
-                "Container 1 (i.E. weight cup):"),
+                "Behälter 1 (d. h. Gewichtsbecher):"),
         "settingsWeightcontainer2IeEspressoCup":
             MessageLookupByLibrary.simpleMessage(
-                "Container 2 (i.E. Espresso Cup):"),
+                "Behälter 2 (d. h. Espressotasse):"),
         "settingsWeightcontainer3IeSteamMug":
             MessageLookupByLibrary.simpleMessage(
-                "Container 3 (i.E. Steam Mug):"),
+                "Behälter 3 (z. B. Dampfbecher):"),
         "settingsWeightcontainer4IeSteamMug":
             MessageLookupByLibrary.simpleMessage(
-                "Container 4 (i.E. Steam Mug):"),
+                "Behälter 4 (z. B. Dampfbecher):"),
         "show": MessageLookupByLibrary.simpleMessage("Anzeigen"),
         "start": MessageLookupByLibrary.simpleMessage("Start"),
         "stateDisconnected": MessageLookupByLibrary.simpleMessage("GETRENNT"),
