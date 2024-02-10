@@ -188,7 +188,7 @@ class SettingsService extends ChangeNotifier {
   int get steamSettings => Settings.getValue<int>(SettingKeys.steamSettings.name) ?? 0;
   set steamSettings(int value) => Settings.setValue<int>(SettingKeys.steamSettings.name, value);
 
-  int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 120;
+  int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 135;
   set targetSteamTemp(int value) => Settings.setValue<int>(SettingKeys.targetSteamTemp.name, value);
 
   bool get steamHeaterOff => Settings.getValue<bool>(SettingKeys.steamHeaterOff.name) ?? false;
