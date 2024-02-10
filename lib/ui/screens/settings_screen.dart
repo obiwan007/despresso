@@ -327,7 +327,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             if (snapshot.hasData)
                               Row(
                                 children: [
-                                  Text(S.of(context).settingsContainerCurrentWeight, style: Theme.of(context).textTheme.labelLarge),
+                                  Text(S.of(context).settingsContainerCurrentWeight,
+                                      style: Theme.of(context).textTheme.labelLarge),
                                   Text("  ${(snapshot.data as WeightMeassurement).weight} g"),
                                 ],
                               ),
@@ -571,16 +572,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   stream: _streamRefresh,
                   builder: (context, snapshot) {
                     return SettingsScreen(children: [
-                      SwitchSettingsTile(
-                        title: settingsService.screenDarkTheme ? S.of(context).screenSettingsDarkTheme : S.of(context).screenSettingsLightTheme,
-                        settingKey: SettingKeys.screenDarkTheme.name,
-                        defaultValue: settingsService.screenDarkTheme,
-                        leading: const Icon(Icons.smart_screen),
-                        onChange: (value) {
-                          settingsService.notifyDelayed();
-                          updateView();
-                        },
-                      ),
+                      DropDownSettingsTile(
+                          title: "Theme mode",
+                          settingKey: SettingKeys.screenThemeMode.name,
+                          selected: settingsService.screenThemeMode,
+                          values: const {
+                            0: "System",
+                            2: "Light",
+                            1: "Dark",
+                          },
+                          onChange: (value) {
+                            settingsService.notifyDelayed();
+                          }),
                       DropDownSettingsTile(
                           title: S.of(context).screenSettingsThemeSelection,
                           settingKey: SettingKeys.screenThemeIndex.name,
@@ -830,7 +833,9 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         initialValue: settingsService.mqttServer,
                       ),
                       TextInputSettingsTile(
-                          title: S.of(context).screenSettingsMqttPort, settingKey: SettingKeys.mqttPort.name, initialValue: settingsService.mqttPort),
+                          title: S.of(context).screenSettingsMqttPort,
+                          settingKey: SettingKeys.mqttPort.name,
+                          initialValue: settingsService.mqttPort),
                       TextInputSettingsTile(
                         title: S.of(context).screenSettingsMqttUser,
                         settingKey: SettingKeys.mqttUser.name,
@@ -890,7 +895,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         leading: const Icon(Icons.settings_remote),
                         settingKey: SettingKeys.webServer.name,
                         title: S.of(context).screenSettingsEnableMiniWebsiteWithPort8888,
-                        subtitle: "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen} http://$ownIpAdress:8888",
+                        subtitle:
+                            "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen} http://$ownIpAdress:8888",
                         onChange: (value) {
                           settingsService.notifyDelayed();
                         },
@@ -1011,7 +1017,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   }
 
   void showSnackbar(BuildContext context) {
-    getIt<SnackbarService>().notify(S.of(context).screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp, SnackbarNotificationType.info);
+    getIt<SnackbarService>().notify(
+        S.of(context).screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp, SnackbarNotificationType.info);
   }
 
   void settingsServiceListener() {
@@ -1066,7 +1073,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   }
 
   Future<void> pickScreensaver() async {
-    var filePickerResult = await FilePicker.platform.pickFiles(allowMultiple: true, lockParentWindow: true, type: FileType.image);
+    var filePickerResult =
+        await FilePicker.platform.pickFiles(allowMultiple: true, lockParentWindow: true, type: FileType.image);
 
     final Directory saver = await ScreenSaver.getDirectory();
 
@@ -1102,7 +1110,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
             Expanded(
               flex: 5,
-              child: Text(S.of(context).screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart, style: Theme.of(context).textTheme.bodyLarge),
+              child: Text(S.of(context).screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart,
+                  style: Theme.of(context).textTheme.bodyLarge),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -1138,87 +1147,91 @@ class SettingsVisualizer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpandableSettingsTile(title: 'Visualizer', subtitle: S.of(context).screenSettingsCloudShotUpload, expanded: false, children: <Widget>[
-      SwitchSettingsTile(
-        leading: const Icon(Icons.cloud_upload),
-        settingKey: SettingKeys.visualizerUpload.name,
-        defaultValue: settingsService.visualizerUpload,
-        title: S.of(context).screenSettingsUploadShotsToVisualizer,
-        onChange: (value) {},
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsUserNameemail,
-        settingKey: SettingKeys.visualizerUser.name,
-        initialValue: settingsService.visualizerUser,
-        validator: (String? username) {
-          if (username != null && username.length > 3) {
-            return null;
-          }
-          return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsPassword,
-        initialValue: settingsService.visualizerPwd,
-        settingKey: SettingKeys.visualizerPwd.name,
-        obscureText: true,
-        validator: (String? password) {
-          if (password != null && password.length > 6) {
-            return null;
-          }
-          return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-      SwitchSettingsTile(
-        leading: const Icon(Icons.cloud_upload),
-        settingKey: SettingKeys.visualizerExtendedUpload.name,
-        defaultValue: settingsService.visualizerExtendedUpload,
-        title: "Upload shots to custom Visualizer",
-        onChange: (value) {},
-      ),
-      TextInputSettingsTile(
-        title: "Custom Upload URL",
-        settingKey: SettingKeys.visualizerExtendedUrl.name,
-        initialValue: settingsService.visualizerExtendedUrl,
-        validator: (String? username) {
-          if (username != null && username.length > 3) {
-            return null;
-          }
-          return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-        },
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsUserNameemail,
-        settingKey: SettingKeys.visualizerExtendedUser.name,
-        initialValue: settingsService.visualizerExtendedUser,
-        validator: (String? username) {
-          if (username != null && username.length > 3) {
-            return null;
-          }
-          return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsPassword,
-        initialValue: settingsService.visualizerExtendedPwd,
-        settingKey: SettingKeys.visualizerExtendedPwd.name,
-        obscureText: true,
-        validator: (String? password) {
-          if (password != null && password.length > 6) {
-            return null;
-          }
-          return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-    ]);
+    return ExpandableSettingsTile(
+        title: 'Visualizer',
+        subtitle: S.of(context).screenSettingsCloudShotUpload,
+        expanded: false,
+        children: <Widget>[
+          SwitchSettingsTile(
+            leading: const Icon(Icons.cloud_upload),
+            settingKey: SettingKeys.visualizerUpload.name,
+            defaultValue: settingsService.visualizerUpload,
+            title: S.of(context).screenSettingsUploadShotsToVisualizer,
+            onChange: (value) {},
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsUserNameemail,
+            settingKey: SettingKeys.visualizerUser.name,
+            initialValue: settingsService.visualizerUser,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsPassword,
+            initialValue: settingsService.visualizerPwd,
+            settingKey: SettingKeys.visualizerPwd.name,
+            obscureText: true,
+            validator: (String? password) {
+              if (password != null && password.length > 6) {
+                return null;
+              }
+              return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          SwitchSettingsTile(
+            leading: const Icon(Icons.cloud_upload),
+            settingKey: SettingKeys.visualizerExtendedUpload.name,
+            defaultValue: settingsService.visualizerExtendedUpload,
+            title: "Upload shots to custom Visualizer",
+            onChange: (value) {},
+          ),
+          TextInputSettingsTile(
+            title: "Custom Upload URL",
+            settingKey: SettingKeys.visualizerExtendedUrl.name,
+            initialValue: settingsService.visualizerExtendedUrl,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsUserNameemail,
+            settingKey: SettingKeys.visualizerExtendedUser.name,
+            initialValue: settingsService.visualizerExtendedUser,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsPassword,
+            initialValue: settingsService.visualizerExtendedPwd,
+            settingKey: SettingKeys.visualizerExtendedPwd.name,
+            obscureText: true,
+            validator: (String? password) {
+              if (password != null && password.length > 6) {
+                return null;
+              }
+              return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+        ]);
   }
 }
 
@@ -1244,10 +1257,13 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // scanned scales list
-        ...widget.bleService.devices.where((element) => widget.bleService.scales.firstWhereOrNull((scale) => scale.id == element.id) == null).map((e) {
+        ...widget.bleService.devices
+            .where((element) => widget.bleService.scales.firstWhereOrNull((scale) => scale.id == element.id) == null)
+            .map((e) {
           return deviceRow(e);
         }).toList(),
-        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scalePrimary) == null)
+        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scalePrimary) ==
+            null)
           deviceRow(bledevice.DiscoveredDevice(
             id: widget.settingsService.scalePrimary,
             name: "Scale 1",
@@ -1256,7 +1272,9 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             serviceUuids: const [],
             serviceData: const <ble.Uuid, Uint8List>{},
           )),
-        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) == null)
+        if (widget.bleService.scales
+                .firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) ==
+            null)
           deviceRow(bledevice.DiscoveredDevice(
             id: widget.settingsService.scaleSecondary,
             name: "Scale 2",
@@ -1281,7 +1299,8 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             child: Row(
               children: [
                 Text(e.name),
-                if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null) const Icon(Icons.bluetooth_connected),
+                if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
+                  const Icon(Icons.bluetooth_connected),
               ],
             )),
         SizedBox(width: 200, child: Text("(${e.id})")),

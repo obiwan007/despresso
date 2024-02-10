@@ -101,6 +101,7 @@ enum SettingKeys {
   visualizerExtendedUrl,
   visualizerExtendedUpload,
   tareOnWakeUp,
+  screenThemeMode,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -144,8 +145,10 @@ class SettingsService extends ChangeNotifier {
   String get visualizerExtendedUrl => Settings.getValue(SettingKeys.visualizerExtendedUrl.name) ?? "";
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
-  bool get tabletSleepDuringScreensaver => Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
-  double get tabletSleepDuringScreensaverTimeout => Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
+  bool get tabletSleepDuringScreensaver =>
+      Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
+  double get tabletSleepDuringScreensaverTimeout =>
+      Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
   bool get tabletSleepWhenMachineOff => Settings.getValue<bool>(SettingKeys.tabletSleepWhenMachineOff.name) ?? false;
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
@@ -227,8 +230,10 @@ class SettingsService extends ChangeNotifier {
   double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 36;
   set targetEspressoWeight(double value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
 
-  double get targetEspressoWeightTimeAdjust => Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
-  set targetEspressoWeightTimeAdjust(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
+  double get targetEspressoWeightTimeAdjust =>
+      Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
+  set targetEspressoWeightTimeAdjust(value) =>
+      Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
   double get stepLimitWeightTimeAdjust => Settings.getValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name) ?? 0.20;
   set stepLimitWeightTimeAdjust(value) => Settings.setValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name, value);
@@ -270,6 +275,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get screenDarkTheme => Settings.getValue<bool>(SettingKeys.screenDarkTheme.name) ?? true;
   set screenDarkTheme(bool value) => Settings.setValue<bool>(SettingKeys.screenDarkTheme.name, value);
+
+  int get screenThemeMode => Settings.getValue<int>(SettingKeys.screenThemeMode.name) ?? 0;
+  set screenThemeMode(int value) => Settings.setValue<int>(SettingKeys.screenThemeMode.name, value);
 
   String get screenThemeIndex => Settings.getValue<String>(SettingKeys.screenThemeIndex.name) ?? "0";
   set screenThemeIndex(String value) => Settings.setValue<String>(SettingKeys.screenThemeIndex.name, value);
