@@ -32,7 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m5(temp) => "Stop at Temperature ${temp} °C";
 
-  static String m6(temp) => "Steam Temperaturs ${temp} °C";
+  static String m6(temp) => "Steam Temperature ${temp} °C";
 
   static String m7(t) => "Timer ${t} s";
 
@@ -159,7 +159,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeAddRecipe":
             MessageLookupByLibrary.simpleMessage("Add recipe"),
         "screenRecipeAdjustTempC":
-            MessageLookupByLibrary.simpleMessage("Adjust temp [°C]"),
+            MessageLookupByLibrary.simpleMessage("Adjust Temp [°C]"),
         "screenRecipeCoffeeNotes":
             MessageLookupByLibrary.simpleMessage("Coffee notes"),
         "screenRecipeEditAdjustments":
@@ -196,7 +196,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeEditWeightOut":
             MessageLookupByLibrary.simpleMessage("Weight out"),
         "screenRecipeGrindSettings":
-            MessageLookupByLibrary.simpleMessage("Grind Settings:"),
+            MessageLookupByLibrary.simpleMessage("Grind Setting:"),
         "screenRecipeInitialTemp":
             MessageLookupByLibrary.simpleMessage("Initial temperature:"),
         "screenRecipeProfileDetails":
@@ -217,7 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "screenRecipeWeightinBeansG":
             MessageLookupByLibrary.simpleMessage("Weight-in beans [g]"),
         "screenRecipehotWater":
-            MessageLookupByLibrary.simpleMessage("Hot water:"),
+            MessageLookupByLibrary.simpleMessage("Hot water: "),
         "screenRecipesteamMilk":
             MessageLookupByLibrary.simpleMessage("Steam milk:"),
         "screenRoasterEditAddress":

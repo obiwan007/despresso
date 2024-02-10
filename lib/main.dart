@@ -159,7 +159,11 @@ class _MyAppState extends State<MyApp> {
         //   //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         //   //     ),
         // ),
-        themeMode: _settings.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
+        themeMode: _settings.screenThemeMode == 0
+            ? ThemeMode.system
+            : _settings.screenThemeMode == 1
+                ? ThemeMode.dark
+                : ThemeMode.light,
 
         // theme: ThemeData(
         //   useMaterial3: true,
