@@ -555,6 +555,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_markdown:
+    dependency: transitive
+    description:
+      name: flutter_markdown
+      sha256: "21b085a1c185e46701373866144ced56cfb7a0c33f63c916bb8fe2d0c1491278"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.19"
   flutter_native_splash:
     dependency: "direct dev"
     description:
@@ -621,6 +629,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_whatsnew:
+    dependency: "direct main"
+    description:
+      name: flutter_whatsnew
+      sha256: "5d4b8c4aa4f4371905328ce1cd4b7128197bd28c581f9fe72b7152e3cc1ef6af"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5+2"
   frontend_server_client:
     dependency: transitive
     description:
@@ -797,6 +813,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0+1"
+  markdown:
+    dependency: transitive
+    description:
+      name: markdown
+      sha256: "1b134d9f8ff2da15cb298efe6cd8b7d2a78958c1b00384ebcbdf13fe340a6c90"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.2.1"
   matcher:
     dependency: transitive
     description:

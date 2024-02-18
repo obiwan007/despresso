@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -166,6 +167,18 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
     });
+
+    Future.delayed(
+      const Duration(seconds: 1),
+      () async {
+        var info = await PackageInfo.fromPlatform();
+        if (info.buildNumber == _settings.currentVersion) {
+          return;
+        }
+        openWhatsNew();
+        _settings.currentVersion = info.buildNumber;
+      },
+    );
   }
 
   @override
@@ -183,13 +196,35 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
-      child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            _screensaver.handleTap();
-          },
-          child: scaffoldNewLayout(context)),
+        length: 4,
+        child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              _screensaver.handleTap();
+            },
+            child: scaffoldNewLayout(context)));
+  }
+
+  openWhatsNew() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const WhatsNewPage.changelog(
+          title: Text(
+            "despresso What's New",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              // Text Style Needed to Look like iOS 11
+              fontSize: 22.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          buttonText: Text(
+            'Continue',
+          ),
+        ),
+        fullscreenDialog: true,
+      ),
     );
   }
 
@@ -388,13 +423,20 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                 switch (snapshot.connectionState) {
                   case ConnectionState.done:
                     return AboutListTile(
-                      icon: const Icon(Icons.info),
-                      applicationIcon: Image.asset("assets/iconStore.png", height: 80),
-                      applicationName: 'despresso',
-                      applicationVersion: "Version ${snapshot.data!.version} (${snapshot.data!.buildNumber})",
-                      applicationLegalese: '\u{a9} 2023 MMMedia Markus Miertschink',
-                      // aboutBoxChildren: aboutBoxChildren,
-                    );
+                        icon: const Icon(Icons.info),
+                        applicationIcon: Image.asset("assets/iconStore.png", height: 80),
+                        applicationName: 'despresso',
+                        applicationVersion: "Version ${snapshot.data!.version} (${snapshot.data!.buildNumber})",
+                        applicationLegalese: '\u{a9} 2024 MMMedia Markus Miertschink',
+                        aboutBoxChildren: [
+                          TextButton(
+                              onPressed: () {
+                                openWhatsNew();
+                              },
+                              child: const Text("Show Changelog"))
+                        ]
+                        // aboutBoxChildren: aboutBoxChildren,
+                        );
                   default:
                     return const SizedBox();
                 }

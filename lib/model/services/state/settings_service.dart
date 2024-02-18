@@ -105,6 +105,7 @@ enum SettingKeys {
   visualizerAccessToken,
   visualizerRefreshToken,
   visualizerExpiring,
+  currentVersion,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -184,6 +185,9 @@ class SettingsService extends ChangeNotifier {
 
   String get currentProfile => Settings.getValue<String>(SettingKeys.currentProfile.name) ?? "Default";
   set currentProfile(String value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
+
+  String get currentVersion => Settings.getValue<String>(SettingKeys.currentVersion.name) ?? "";
+  set currentVersion(String value) => Settings.setValue<String>(SettingKeys.currentVersion.name, value);
 
   int get selectedRoaster => Settings.getValue<int>(SettingKeys.selectedRoaster.name) ?? 0;
   set selectedRoaster(int value) => Settings.setValue<int>(SettingKeys.selectedRoaster.name, value);
