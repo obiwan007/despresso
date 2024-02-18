@@ -102,6 +102,9 @@ enum SettingKeys {
   visualizerExtendedUpload,
   tareOnWakeUp,
   screenThemeMode,
+  visualizerAccessToken,
+  visualizerRefreshToken,
+  visualizerExpiring,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -138,6 +141,15 @@ class SettingsService extends ChangeNotifier {
   bool get visualizerUpload => Settings.getValue(SettingKeys.visualizerUpload.name) ?? false;
   String get visualizerUser => Settings.getValue(SettingKeys.visualizerUser.name) ?? "";
   String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
+
+  String get visualizerAccessToken => Settings.getValue(SettingKeys.visualizerAccessToken.name) ?? "";
+  set visualizerAccessToken(String value) => Settings.setValue<String>(SettingKeys.visualizerAccessToken.name, value);
+
+  String get visualizerRefreshToken => Settings.getValue(SettingKeys.visualizerRefreshToken.name) ?? "";
+  set visualizerRefreshToken(String value) => Settings.setValue<String>(SettingKeys.visualizerRefreshToken.name, value);
+
+  String get visualizerExpiring => Settings.getValue<String>(SettingKeys.visualizerExpiring.name) ?? "";
+  set visualizerExpiring(String value) => Settings.setValue<String>(SettingKeys.visualizerExpiring.name, value);
 
   bool get visualizerExtendedUpload => Settings.getValue(SettingKeys.visualizerExtendedUpload.name) ?? false;
   String get visualizerExtendedUser => Settings.getValue(SettingKeys.visualizerExtendedUser.name) ?? "";

@@ -56,9 +56,14 @@ jobs:
       - name: replace sentry key
         env: 
           SENTRY_KEY: ${{ secrets.SENTRY_KEY }} 
+          VIS_CLIENT: ${{ secrets.VIS_CLIENT }} 
+          VIS_SECRET: ${{ secrets.VIS_SECRET }} 
         run: |
           export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
-          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart          
+          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart    
+          sed -i -e "s/<VIS_SECRET>/$VIS_SECRET/g" ./lib/model/services/state/visualizer_service.dart
+          sed -i -e "s/<VIS_CLIENT>/$VIS_CLIENT/g" ./lib/model/services/state/visualizer_service.dart
+      
 
       - name: Build APK  
         run: | 

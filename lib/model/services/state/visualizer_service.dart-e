@@ -48,8 +48,8 @@ class VisualizerService extends ChangeNotifier {
 // OAuth2 API.
   final authorizationEndpoint = 'https://visualizer.coffee/oauth/authorize';
   final tokenEndpoint = 'https://visualizer.coffee/oauth/token';
-  final identifier = '<VIS_CLIENT>';
-  final secret = '<VIS_SECRET>';
+  final identifier = '<VIS_CLIENT> gnT6AjFCzWtORsN_r-4hmcrRrb3NVhFf23gu1TddqmQ';
+  final secret = '<VIS_SECRET> eyiQrUJCWOzENC-6omkTgNRuf9HjtqQTUF0sN96eekU';
 // This is a URL on your application's server. The authorization server
 // will redirect the resource owner here once they've authorized the
 // client. The redirection will include the authorization code in the
@@ -113,8 +113,7 @@ class VisualizerService extends ChangeNotifier {
         setRefreshTimer();
       }
     } catch (e) {
-      // getIt<SnackbarService>().notify("Error Authenticating to Visualizer: $e", SnackbarNotificationType.severe);
-      rethrow;
+      getIt<SnackbarService>().notify("Error Authenticating to Visualizer: $e", SnackbarNotificationType.severe);
     }
 
     return;

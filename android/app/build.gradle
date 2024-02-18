@@ -60,6 +60,9 @@ android {
         targetSdkVersion localProperties.getProperty('flutter.targetSdkVersion').toInteger()
         versionCode 9
         versionName flutterVersionName
+        manifestPlaceholders += [
+                'appAuthRedirectScheme': 'com.mmmedia.despresso'
+        ]
     }
     signingConfigs {
         release {
