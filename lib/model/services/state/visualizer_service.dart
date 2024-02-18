@@ -15,7 +15,6 @@ import '../../../service_locator.dart';
 import 'package:http/http.dart' as http;
 
 import '../ble/machine_service.dart';
-import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:flutter_appauth/flutter_appauth.dart';
 
 class VisualizerService extends ChangeNotifier {
