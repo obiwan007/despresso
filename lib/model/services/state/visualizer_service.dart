@@ -141,14 +141,12 @@ class VisualizerService extends ChangeNotifier {
   Future<String> sendShotToVisualizer(Shot shot) async {
     String id = '';
     try {
-      if (settingsService.visualizerUpload &&
-          settingsService.visualizerUser.isNotEmpty &&
-          settingsService.visualizerPwd.isNotEmpty) {
+      if (settingsService.visualizerUpload && settingsService.visualizerAccessToken.isNotEmpty) {
         String url = 'https://visualizer.coffee/api/shots/upload';
         id = await uploadShot(url, null, null, shot);
         getIt<SnackbarService>().notify("Uploaded shot to Visualizer", SnackbarNotificationType.ok);
       } else {
-        throw ("No username and/or password configured in settings");
+        throw ("No visualizer access configured configured in settings");
       }
     } catch (e) {
       getIt<SnackbarService>().notify("Error uploading shot to Visualizer: $e", SnackbarNotificationType.severe);
