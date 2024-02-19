@@ -145,7 +145,7 @@ class VisualizerService extends ChangeNotifier {
           settingsService.visualizerUser.isNotEmpty &&
           settingsService.visualizerPwd.isNotEmpty) {
         String url = 'https://visualizer.coffee/api/shots/upload';
-        id = await uploadShot(url, shot);
+        id = await uploadShot(url, null, null, shot);
         getIt<SnackbarService>().notify("Uploaded shot to Visualizer", SnackbarNotificationType.ok);
       } else {
         throw ("No username and/or password configured in settings");
@@ -153,12 +153,29 @@ class VisualizerService extends ChangeNotifier {
     } catch (e) {
       getIt<SnackbarService>().notify("Error uploading shot to Visualizer: $e", SnackbarNotificationType.severe);
     }
+
+    try {
+      if (settingsService.visualizerExtendedUpload) {
+        String url = settingsService.visualizerExtendedUrl;
+        String username = settingsService.visualizerExtendedUser;
+        String password = settingsService.visualizerExtendedPwd;
+        var id2 = await uploadShot(url, username, password, shot);
+        if (id.isEmpty) {
+          id = id2;
+        }
+      }
+    } catch (e) {
+      getIt<SnackbarService>().notify("Error uploading shot to custom site: $e", SnackbarNotificationType.severe);
+    }
+
     return id;
   }
 
-  Future<dynamic> uploadShot(String url, Shot shot) async {
-    // String auth = 'Bearer ${base64.encode(utf8.encode(settingsService.visualizerAccessToken))}';
-    String auth = 'Bearer ${settingsService.visualizerAccessToken}';
+  Future<dynamic> uploadShot(String url, String? username, String? password, Shot shot) async {
+    String auth = username != null
+        ? 'Basic ${base64.encode(utf8.encode('$username:$password'))}'
+        : 'Bearer ${settingsService.visualizerAccessToken}';
+
     var headers = <String, String>{
       'authorization': auth,
       'Content-Type': 'text/plain',
