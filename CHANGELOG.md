@@ -4,6 +4,7 @@
 
 - visualizer.coffee integration now supports only OAuth2 authentication. 
 - Added Filter 3.0 profile 3 to the list of profiles to support the new filter portafilter.
+- Skip step in profile now possible (name inside a profile step starts with "pause")
 - Library updates/Flutter version update
 
 ### Visualizer changes
