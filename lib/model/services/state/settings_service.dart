@@ -102,6 +102,10 @@ enum SettingKeys {
   visualizerExtendedUpload,
   tareOnWakeUp,
   screenThemeMode,
+  visualizerAccessToken,
+  visualizerRefreshToken,
+  visualizerExpiring,
+  currentVersion,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -139,6 +143,15 @@ class SettingsService extends ChangeNotifier {
   String get visualizerUser => Settings.getValue(SettingKeys.visualizerUser.name) ?? "";
   String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
 
+  String get visualizerAccessToken => Settings.getValue(SettingKeys.visualizerAccessToken.name) ?? "";
+  set visualizerAccessToken(String value) => Settings.setValue<String>(SettingKeys.visualizerAccessToken.name, value);
+
+  String get visualizerRefreshToken => Settings.getValue(SettingKeys.visualizerRefreshToken.name) ?? "";
+  set visualizerRefreshToken(String value) => Settings.setValue<String>(SettingKeys.visualizerRefreshToken.name, value);
+
+  String get visualizerExpiring => Settings.getValue<String>(SettingKeys.visualizerExpiring.name) ?? "";
+  set visualizerExpiring(String value) => Settings.setValue<String>(SettingKeys.visualizerExpiring.name, value);
+
   bool get visualizerExtendedUpload => Settings.getValue(SettingKeys.visualizerExtendedUpload.name) ?? false;
   String get visualizerExtendedUser => Settings.getValue(SettingKeys.visualizerExtendedUser.name) ?? "";
   String get visualizerExtendedPwd => Settings.getValue(SettingKeys.visualizerExtendedPwd.name) ?? "";
@@ -172,6 +185,9 @@ class SettingsService extends ChangeNotifier {
 
   String get currentProfile => Settings.getValue<String>(SettingKeys.currentProfile.name) ?? "Default";
   set currentProfile(String value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
+
+  String get currentVersion => Settings.getValue<String>(SettingKeys.currentVersion.name) ?? "";
+  set currentVersion(String value) => Settings.setValue<String>(SettingKeys.currentVersion.name, value);
 
   int get selectedRoaster => Settings.getValue<int>(SettingKeys.selectedRoaster.name) ?? 0;
   set selectedRoaster(int value) => Settings.setValue<int>(SettingKeys.selectedRoaster.name, value);

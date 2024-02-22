@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:despresso/model/services/state/notification_service.dart';
 import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
@@ -14,6 +15,7 @@ import '../../../service_locator.dart';
 import 'package:http/http.dart' as http;
 
 import '../ble/machine_service.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 
 class VisualizerService extends ChangeNotifier {
   late SettingsService settingsService;
@@ -23,26 +25,133 @@ class VisualizerService extends ChangeNotifier {
 
   final log = Logger('VisualizerAuthService');
 
+  String _accessToken = "";
+
+  String _idToken = "";
+
+  String _refreshToken = "";
+
+  String _accessTokenExpiration = "";
+
+  Timer? _timer = null;
+
   VisualizerService() {
     log.info('VisualizerAuth:start');
     settingsService = getIt<SettingsService>();
     profileService = getIt<ProfileService>();
+    setRefreshTimer();
   }
+
+// These URLs are endpoints that are provided by the authorization
+// server. They're usually included in the server's documentation of its
+// OAuth2 API.
+  final authorizationEndpoint = 'https://visualizer.coffee/oauth/authorize';
+  final tokenEndpoint = 'https://visualizer.coffee/oauth/token';
+  final identifier = '<VIS_CLIENT>';
+  final secret = '<VIS_SECRET>';
+// This is a URL on your application's server. The authorization server
+// will redirect the resource owner here once they've authorized the
+// client. The redirection will include the authorization code in the
+// query parameters.
+  final redirectUrl = 'com.mmmedia.despresso:/oauthredirect';
+
+  /// A file in which the users credentials are stored persistently. If the server
+  /// issues a refresh token allowing the client to refresh outdated credentials,
+  /// these may be valid indefinitely, meaning the user never has to
+  /// re-authenticate.
+  final credentialsFile = File('credentials.json');
+  final FlutterAppAuth appAuth = FlutterAppAuth();
+
+  final AuthorizationServiceConfiguration _serviceConfiguration = const AuthorizationServiceConfiguration(
+      authorizationEndpoint: 'https://visualizer.coffee/oauth/authorize',
+      tokenEndpoint: 'https://visualizer.coffee/oauth/token',
+      endSessionEndpoint: null);
+
+  setRefreshTimer() {
+    if (settingsService.visualizerRefreshToken.isEmpty) {
+      return;
+    }
+    if (_timer != null) {
+      _timer?.cancel();
+      _timer = null;
+    }
+    if (settingsService.visualizerExpiring.isEmpty) return;
+
+    DateTime tExpire = DateTime.parse(settingsService.visualizerExpiring);
+
+    var t = tExpire.subtract(Duration(minutes: 15)).difference(DateTime.now());
+    log.info("Refreshing in $t");
+    _timer = Timer(
+      t,
+      () {
+        refreshToken();
+      },
+    );
+  }
+
+  Future<void> createClient(String username, String password) async {
+    var exists = await credentialsFile.exists();
+    try {
+      final AuthorizationTokenResponse? response = await appAuth.authorizeAndExchangeCode(
+        AuthorizationTokenRequest(
+          identifier,
+          redirectUrl,
+          clientSecret: secret,
+          serviceConfiguration: _serviceConfiguration,
+          scopes: ['write', 'upload', 'read'],
+        ),
+      );
+      if (response != null) {
+        _accessToken = response.accessToken!;
+        _refreshToken = response.refreshToken!;
+        _accessTokenExpiration = response.accessTokenExpirationDateTime!.toIso8601String();
+        settingsService.visualizerAccessToken = _accessToken;
+        settingsService.visualizerRefreshToken = response.refreshToken!;
+        settingsService.visualizerExpiring = response.accessTokenExpirationDateTime!.toIso8601String();
+
+        setRefreshTimer();
+      }
+    } catch (e) {
+      // getIt<SnackbarService>().notify("Error Authenticating to Visualizer: $e", SnackbarNotificationType.severe);
+      rethrow;
+    }
+
+    return;
+  }
+
+  refreshToken() async {
+    log.info("Requesting visualizer refresh token");
+    final TokenResponse? response = await appAuth.token(TokenRequest(identifier, redirectUrl,
+        clientSecret: secret,
+        serviceConfiguration: _serviceConfiguration,
+        refreshToken: settingsService.visualizerRefreshToken,
+        scopes: ['write', 'upload', 'read']));
+
+    if (response != null) {
+      _accessToken = response.accessToken!;
+      _refreshToken = response.refreshToken!;
+      _accessTokenExpiration = response.accessTokenExpirationDateTime!.toIso8601String();
+      settingsService.visualizerAccessToken = _accessToken;
+      settingsService.visualizerRefreshToken = response.refreshToken!;
+      settingsService.visualizerExpiring = response.accessTokenExpirationDateTime!.toIso8601String();
+      setRefreshTimer();
+    }
+  }
+
   Future<String> sendShotToVisualizer(Shot shot) async {
     String id = '';
     try {
-      if (settingsService.visualizerUpload && settingsService.visualizerUser.isNotEmpty && settingsService.visualizerPwd.isNotEmpty) {
+      if (settingsService.visualizerUpload && settingsService.visualizerAccessToken.isNotEmpty) {
         String url = 'https://visualizer.coffee/api/shots/upload';
-        String username = settingsService.visualizerUser;
-        String password = settingsService.visualizerPwd;
-        id = await uploadShot(url, username, password, shot);
+        id = await uploadShot(url, null, null, shot);
         getIt<SnackbarService>().notify("Uploaded shot to Visualizer", SnackbarNotificationType.ok);
       } else {
-        throw ("No username and/or password configured in settings");
+        throw ("No visualizer access configured configured in settings");
       }
     } catch (e) {
       getIt<SnackbarService>().notify("Error uploading shot to Visualizer: $e", SnackbarNotificationType.severe);
     }
+
     try {
       if (settingsService.visualizerExtendedUpload) {
         String url = settingsService.visualizerExtendedUrl;
@@ -60,10 +169,13 @@ class VisualizerService extends ChangeNotifier {
     return id;
   }
 
-  Future<dynamic> uploadShot(String url, String username, String password, Shot shot) async {
-    String basicAuth = 'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+  Future<dynamic> uploadShot(String url, String? username, String? password, Shot shot) async {
+    String auth = username != null
+        ? 'Basic ${base64.encode(utf8.encode('$username:$password'))}'
+        : 'Bearer ${settingsService.visualizerAccessToken}';
+
     var headers = <String, String>{
-      'authorization': basicAuth,
+      'authorization': auth,
       'Content-Type': 'text/plain',
     };
 
@@ -163,17 +275,23 @@ class VisualizerService extends ChangeNotifier {
     buffer.writeln("espresso_elapsed {$times}");
     buffer.writeln("espresso_state_change {$stateChanges}");
     buffer.writeln("espresso_pressure {${shot.shotstates.map((e) => e.groupPressure.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_pressure_goal {${shot.shotstates.map((e) => e.setGroupPressure.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_pressure_goal {${shot.shotstates.map((e) => e.setGroupPressure.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln("espresso_weight {${shot.shotstates.map((e) => e.weight.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln("espresso_flow {${shot.shotstates.map((e) => e.groupFlow.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln("espresso_flow_goal {${shot.shotstates.map((e) => e.setGroupFlow.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln("espresso_flow_weight {${shot.shotstates.map((e) => e.flowWeight.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
     buffer.writeln("espresso_temperature_mix {${shot.shotstates.map((e) => e.mixTemp.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
-    buffer.writeln("espresso_temperature_goal {${shot.shotstates.map((e) => e.setHeadTemp.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_temperature_basket {${shot.shotstates.map((e) => e.headTemp.toStringAsFixed(4)).join(" ")}}");
+    buffer.writeln(
+        "espresso_temperature_goal {${shot.shotstates.map((e) => e.setHeadTemp.toStringAsFixed(4)).join(" ")}}");
 
     // buffer.writeln("timers(espresso_stop) 1655974708631");
     // buffer.writeln("timers(espresso_start) 1655974677760");

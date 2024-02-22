@@ -695,10 +695,22 @@ class EspressoScreenState extends State<EspressoScreen> {
             stream: machineService.streamFrameName,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data != "") {
-                return Text(
-                  snapshot.data!,
-                  style:
-                      Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
+                return Column(
+                  children: [
+                    Text(
+                      snapshot.data!,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium
+                          ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                    ),
+                    if (snapshot.data!.toLowerCase().startsWith("pause"))
+                      ElevatedButton(
+                          onPressed: () {
+                            machineService.moveToNextFrame();
+                          },
+                          child: const Text("Skip"))
+                  ],
                 );
               }
               return const SizedBox.shrink();

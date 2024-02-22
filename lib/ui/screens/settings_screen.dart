@@ -886,7 +886,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       ),
                     ],
                   ),
-                  SettingsVisualizer(settingsService: settingsService),
+                  SettingsVisualizer(
+                    settingsService: settingsService,
+                    visualizerService: visualizerService,
+                  ),
                   ExpandableSettingsTile(
                     title: S.of(context).screenSettingsMiniWebsite,
                     children: [
@@ -1141,9 +1144,11 @@ class SettingsVisualizer extends StatelessWidget {
   const SettingsVisualizer({
     super.key,
     required this.settingsService,
+    required this.visualizerService,
   });
 
   final SettingsService settingsService;
+  final VisualizerService visualizerService;
 
   @override
   Widget build(BuildContext context) {
@@ -1159,33 +1164,43 @@ class SettingsVisualizer extends StatelessWidget {
             title: S.of(context).screenSettingsUploadShotsToVisualizer,
             onChange: (value) {},
           ),
-          TextInputSettingsTile(
-            title: S.of(context).screenSettingsUserNameemail,
-            settingKey: SettingKeys.visualizerUser.name,
-            initialValue: settingsService.visualizerUser,
-            validator: (String? username) {
-              if (username != null && username.length > 3) {
-                return null;
-              }
-              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-            },
-            borderColor: Colors.blueAccent,
-            errorColor: Colors.deepOrangeAccent,
-          ),
-          TextInputSettingsTile(
-            title: S.of(context).screenSettingsPassword,
-            initialValue: settingsService.visualizerPwd,
-            settingKey: SettingKeys.visualizerPwd.name,
-            obscureText: true,
-            validator: (String? password) {
-              if (password != null && password.length > 6) {
-                return null;
-              }
-              return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
-            },
-            borderColor: Colors.blueAccent,
-            errorColor: Colors.deepOrangeAccent,
-          ),
+          // TextInputSettingsTile(
+          //   title: S.of(context).screenSettingsUserNameemail,
+          //   settingKey: SettingKeys.visualizerUser.name,
+          //   initialValue: settingsService.visualizerUser,
+          //   validator: (String? username) {
+          //     if (username != null && username.length > 3) {
+          //       return null;
+          //     }
+          //     return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+          //   },
+          //   borderColor: Colors.blueAccent,
+          //   errorColor: Colors.deepOrangeAccent,
+          // ),
+          // TextInputSettingsTile(
+          //   title: S.of(context).screenSettingsPassword,
+          //   initialValue: settingsService.visualizerPwd,
+          //   settingKey: SettingKeys.visualizerPwd.name,
+          //   obscureText: true,
+          //   validator: (String? password) {
+          //     if (password != null && password.length > 6) {
+          //       return null;
+          //     }
+          //     return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+          //   },
+          //   borderColor: Colors.blueAccent,
+          //   errorColor: Colors.deepOrangeAccent,
+          // ),
+          ElevatedButton(
+              onPressed: () async {
+                try {
+                  await visualizerService.createClient(settingsService.visualizerUser, settingsService.visualizerPwd);
+                  getIt<SnackbarService>().notify("Connection to visualizer established", SnackbarNotificationType.ok);
+                } catch (ex, _) {
+                  getIt<SnackbarService>().notify("Error: $ex", SnackbarNotificationType.severe);
+                }
+              },
+              child: const Text("Login to Visualizer")),
           SwitchSettingsTile(
             leading: const Icon(Icons.cloud_upload),
             settingKey: SettingKeys.visualizerExtendedUpload.name,
