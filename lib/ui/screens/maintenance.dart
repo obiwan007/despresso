@@ -135,7 +135,8 @@ class _DescaleWidgetState extends State<DescaleWidget> with TickerProviderStateM
         _controllerRefresh.add(0);
         // setState(() {});
       });
-    _animController.repeat();
+
+    _animController.stop();
   }
 
   @override
@@ -256,7 +257,7 @@ class _CleanWidgetState extends State<CleanWidget> with TickerProviderStateMixin
         _controllerRefresh.add(0);
         // setState(() {});
       });
-    _animController.repeat();
+    _animController.stop();
   }
 
   @override
@@ -377,7 +378,7 @@ class _TransportWidgetState extends State<TransportWidget> with TickerProviderSt
         _controllerRefresh.add(0);
         // setState(() {});
       });
-    _animController.repeat();
+    _animController.stop();
   }
 
   @override
@@ -406,11 +407,12 @@ class _TransportWidgetState extends State<TransportWidget> with TickerProviderSt
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      Text("Remove the trip tray and it's cover. Make it empty",
+                      Text("Remove the trip tray and it's cover. Make it empty.",
                           style: Theme.of(context).textTheme.labelLarge),
-                      Text("Move the water tank forward under the portafilter.",
+                      Text("Move the water tank halfway forward under the portafilter/water screen.",
                           style: Theme.of(context).textTheme.labelLarge),
                       Text("Remove portafilter.", style: Theme.of(context).textTheme.labelLarge),
+                      Text("Press Start if you are ready to go.", style: Theme.of(context).textTheme.labelLarge),
                     ],
                   ),
                 ),
@@ -443,9 +445,8 @@ class _TransportWidgetState extends State<TransportWidget> with TickerProviderSt
   }
 
   void handleAnimationState(EspressoMachineState state) {
-    if (state == EspressoMachineState.clean) {
+    if (state == EspressoMachineState.airPurge) {
       if (_animController.isAnimating == false) {
-        log.info("Trigger start of animation");
         _animController.forward(from: 0.0);
       }
     }

@@ -174,7 +174,8 @@ enum EspressoMachineState {
   refill,
   flush,
   descale,
-  clean
+  clean,
+  airPurge
 }
 
 class EspressoMachineFullState {

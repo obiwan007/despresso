@@ -475,6 +475,9 @@ class DE1 extends ChangeNotifier implements IDe1 {
       case 0x0f: // flush water in grouphead
         service.setState(EspressoMachineState.flush);
         break;
+      case 0x14: // pump out water from system
+        service.setState(EspressoMachineState.airPurge);
+        break;
       default:
         service.setState(EspressoMachineState.idle);
         break;
