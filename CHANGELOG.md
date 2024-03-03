@@ -6,6 +6,7 @@
 - Added Filter 3.0 profile 3 to the list of profiles to support the new filter portafilter.
 - Skip step in profile now possible (name inside a profile step starts with "pause")
 - Library updates/Flutter version update
+- fixing interpolation issues during puring
 
 ### Visualizer changes
 You need to go to Settings/Cloud and Network/Visualizer and click on the *Login to Visualizer* button to get redirected to the Visualizer page.
