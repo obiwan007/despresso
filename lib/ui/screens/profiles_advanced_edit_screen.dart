@@ -291,31 +291,29 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  children: [
-                    Text(
-                      (frame.pump != "pressure"
-                          ? frame.setVal.toStringAsFixed(1)
-                          : "<${frame.triggerVal.toStringAsFixed(1)}"),
-                      style: style3,
-                    ),
-                    Text("ml/s", style: style3),
-                  ],
-                ),
+                if (frame.pump == "flow")
+                  Column(
+                    children: [
+                      Text(
+                        frame.setVal.toStringAsFixed(1),
+                        style: style3,
+                      ),
+                      Text("ml/s", style: style3),
+                    ],
+                  ),
                 const SizedBox(
                   width: 10,
                 ),
-                Column(
-                  children: [
-                    Text(
-                      (frame.pump == "pressure"
-                          ? frame.setVal.toStringAsFixed(1)
-                          : "<${frame.triggerVal.toStringAsFixed(1)}"),
-                      style: style3,
-                    ),
-                    Text("bar", style: style3),
-                  ],
-                ),
+                if (frame.pump == "pressure")
+                  Column(
+                    children: [
+                      Text(
+                        frame.setVal.toStringAsFixed(1),
+                        style: style3,
+                      ),
+                      Text("bar", style: style3),
+                    ],
+                  ),
               ],
             ),
           ],
@@ -780,52 +778,51 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 155,
-                  child: changeValueRow(
-                      unit: "bar",
-                      title: frame.pump == "pressure" ? "Pressure" : "limit Press.",
-                      min: 0,
-                      max: 16,
-                      interval: 1,
-                      frame,
-                      frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value) {
-                    var v = (value * 10).round() / 10;
-                    if (frame.pump == "pressure") {
+                if (frame.pump == "pressure")
+                  SizedBox(
+                    height: 155,
+                    child: changeValueRow(
+                        unit: "bar",
+                        title: frame.pump == "pressure" ? "Pressure" : "limit Press.",
+                        min: 0,
+                        max: 16,
+                        interval: 1,
+                        frame,
+                        frame.setVal, (value) {
+                      var v = (value * 10).round() / 10;
                       frame.setVal = v;
-                    } else {
-                      frame.triggerVal = v;
-                    }
-                    // frame.transition = isFast ? "fast" : "smooth";
-                    // var mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
-                    // if (isFast) {
-                    //   frame.flag &= mask;
-                    // } else {
-                    //   frame.flag |= De1ShotFrameClass.Interpolate;
-                    // }
-                    setState(() {});
-                    log.info("Changed");
-                  }),
-                ),
-                SizedBox(
-                  height: 160,
-                  child: changeValueRow(
-                      unit: "ml/s",
-                      title: frame.pump == "pressure" ? "limit Flow" : "Flow",
-                      min: 0,
-                      max: 16,
-                      interval: 1,
-                      frame,
-                      frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
-                    if (frame.pump == "flow") {
-                      frame.setVal = value;
-                    } else {
-                      frame.triggerVal = value;
-                    }
-                    setState(() {});
-                    log.info("Changed");
-                  }),
-                ),
+
+                      // frame.transition = isFast ? "fast" : "smooth";
+                      // var mask = frame.flag & (255 - De1ShotFrameClass.Interpolate);
+                      // if (isFast) {
+                      //   frame.flag &= mask;
+                      // } else {
+                      //   frame.flag |= De1ShotFrameClass.Interpolate;
+                      // }
+                      setState(() {});
+                      log.info("Changed");
+                    }),
+                  ),
+                if (frame.pump == "flow")
+                  SizedBox(
+                    height: 160,
+                    child: changeValueRow(
+                        unit: "ml/s",
+                        title: frame.pump == "pressure" ? "limit Flow" : "Flow",
+                        min: 0,
+                        max: 16,
+                        interval: 1,
+                        frame,
+                        frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
+                      if (frame.pump == "flow") {
+                        frame.setVal = value;
+                      } else {
+                        frame.triggerVal = value;
+                      }
+                      setState(() {});
+                      log.info("Changed");
+                    }),
+                  ),
               ],
             ),
           ),
