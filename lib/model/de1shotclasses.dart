@@ -246,8 +246,6 @@ class De1ShotFrameClass // proc spec_shotframe
   @Uint8ListConverter()
   Uint8List bytes = Uint8List(8);
 
-  double exitVal = 0;
-
   De1ShotFrameClass();
 
   static int ctrlF = 0x01; // Are we in Pressure or Flow priority mode?
@@ -286,7 +284,6 @@ class De1ShotFrameClass // proc spec_shotframe
     copy.transition = transition;
     copy.triggerVal = triggerVal;
     copy.maxWeight = maxWeight;
-    copy.exitVal = exitVal;
     return copy;
   }
 

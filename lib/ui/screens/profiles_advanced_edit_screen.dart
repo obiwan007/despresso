@@ -1171,8 +1171,8 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                       max: 16,
                       interval: 1,
                       frame,
-                      frame.exitVal, (value) {
-                    frame.exitVal = value;
+                      frame.triggerVal, (value) {
+                    frame.triggerVal = value;
 
                     setState(() {});
                     log.info("Changed");

@@ -90,8 +90,7 @@ De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
       ..pump = json['pump'] as String
       ..sensor = json['sensor'] as String
       ..transition = json['transition'] as String
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List)
-      ..exitVal = (json['exitVal'] as num).toDouble();
+      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List);
 
 Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
     <String, dynamic>{
@@ -108,7 +107,6 @@ Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
       'sensor': instance.sensor,
       'transition': instance.transition,
       'bytes': const Uint8ListConverter().toJson(instance.bytes),
-      'exitVal': instance.exitVal,
     };
 
 De1ShotExtFrameClass _$De1ShotExtFrameClassFromJson(
