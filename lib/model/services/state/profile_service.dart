@@ -517,21 +517,21 @@ class ProfileService extends ChangeNotifier {
 
         if (exitType == "pressure" && exitCondition == "under") {
           features |= DoCompare;
-          frame.triggerVal = exitValue;
+          frame.exitVal = exitValue;
         } else if (exitType == "pressure" && exitCondition == "over") {
           features |= DoCompare | DC_GT;
-          frame.triggerVal = exitValue;
+          frame.exitVal = exitValue;
         } else if (exitType == "flow" && exitCondition == "under") {
           features |= DoCompare | DC_CompF;
-          frame.triggerVal = exitValue;
+          frame.exitVal = exitValue;
         } else if (exitType == "flow" && exitCondition == "over") {
           features |= DoCompare | DC_GT | DC_CompF;
-          frame.triggerVal = exitValue;
+          frame.exitVal = exitValue;
         } else {
           return false;
         }
       } else {
-        frame.triggerVal = 0;
+        frame.exitVal = 0;
       } // no exit condition was checked
 
       // "limiter"

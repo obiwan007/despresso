@@ -1080,13 +1080,8 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
     );
   }
 
-  Widget changeMoveOnIf(De1ShotFrameClass frame, double value,
-      Function(De1ShotFrameClass value) valueChanged,
-      {required String unit,
-      required double maxValue,
-      required double min,
-      double? interval,
-      String? title}) {
+  Widget changeMoveOnIf(De1ShotFrameClass frame, double value, Function(De1ShotFrameClass value) valueChanged,
+      {required String unit, required double maxValue, required double min, double? interval, String? title}) {
     bool isComparing = ((frame.flag & De1ShotFrameClass.doCompare) > 0);
     bool isComparingWeight = frame.maxWeight > 0.0;
     bool isGt = (frame.flag & De1ShotFrameClass.dcGT) > 0;
@@ -1105,15 +1100,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     Row(
                       children: [
                         SizedBox(
-                            width: 75,
-                            child: Text("Do\ncompare:",
-                                style:
-                                    Theme.of(context).textTheme.labelMedium)),
+                            width: 75, child: Text("Do\ncompare:", style: Theme.of(context).textTheme.labelMedium)),
                         Switch(
                           value: isComparing,
                           onChanged: (value) {
-                            var mask = frame.flag &
-                                (255 - De1ShotFrameClass.doCompare);
+                            var mask = frame.flag & (255 - De1ShotFrameClass.doCompare);
                             if (!value) {
                               frame.flag &= mask;
                             } else {
@@ -1128,16 +1119,11 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     if (isComparing)
                       Row(
                         children: [
-                          SizedBox(
-                              width: 55,
-                              child: Text("If:",
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium)),
+                          SizedBox(width: 55, child: Text("If:", style: Theme.of(context).textTheme.labelMedium)),
                           ToggleButtons(
                             isSelected: [!isFlow, isFlow],
                             onPressed: (index) {
-                              var mask = frame.flag &
-                                  (255 - De1ShotFrameClass.dcCompF);
+                              var mask = frame.flag & (255 - De1ShotFrameClass.dcCompF);
                               if (index == 0) {
                                 frame.flag &= mask;
                               } else {
@@ -1153,17 +1139,12 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     if (isComparing)
                       Row(
                         children: [
-                          SizedBox(
-                              width: 55,
-                              child: Text("is:",
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium)),
+                          SizedBox(width: 55, child: Text("is:", style: Theme.of(context).textTheme.labelMedium)),
                           ToggleButtons(
                             isSelected: [isGt, !isGt],
                             onPressed: (index) {
                               // DC_GT
-                              var mask =
-                                  frame.flag & (255 - De1ShotFrameClass.dcGT);
+                              var mask = frame.flag & (255 - De1ShotFrameClass.dcGT);
                               if (index == 1) {
                                 frame.flag &= mask;
                               } else {
@@ -1185,15 +1166,13 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                   visible: isComparing,
                   child: changeValueRow(
                       unit: isFlow ? "ml/s" : "bar",
-                      title: isFlow
-                          ? "${isGt ? ">" : "<"} Flow"
-                          : "${isGt ? ">" : "<"} Pressure",
+                      title: isFlow ? "${isGt ? ">" : "<"} Flow" : "${isGt ? ">" : "<"} Pressure",
                       min: 0,
                       max: 16,
                       interval: 1,
                       frame,
-                      frame.triggerVal, (value) {
-                    frame.triggerVal = value;
+                      frame.exitVal, (value) {
+                    frame.exitVal = value;
 
                     setState(() {});
                     log.info("Changed");
@@ -1214,10 +1193,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                     Row(
                       children: [
                         SizedBox(
-                            width: 75,
-                            child: Text("Compare weight",
-                                style:
-                                    Theme.of(context).textTheme.labelMedium)),
+                            width: 75, child: Text("Compare weight", style: Theme.of(context).textTheme.labelMedium)),
                         Switch(
                           value: isComparingWeight,
                           onChanged: (value) {
@@ -1240,13 +1216,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
                 child: Visibility(
                   visible: isComparingWeight,
                   child: changeValueRow(
-                      unit: "g",
-                      title: "> Weight",
-                      min: 0,
-                      max: 50,
-                      interval: 5,
-                      frame,
-                      frame.maxWeight, (value) {
+                      unit: "g", title: "> Weight", min: 0, max: 50, interval: 5, frame, frame.maxWeight, (value) {
                     frame.maxWeight = max(value, 0.1);
 
                     setState(() {});
@@ -1315,53 +1285,52 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen> 
   Widget changeValueRow(De1ShotFrameClass frame, double value, Function(double value) valueChanged,
       {required String unit, required double max, required double min, double? interval, String? title}) {
     return Column(
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                if (title != null)
-                  SizedBox(width: 120, child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
-                SizedBox(
-                  // height: 50,
-                  width: 200,
-                  child: SpinBox(
-                    keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                    textInputAction: TextInputAction.done,
-                    onChanged: (value) {
-                      valueChanged(value);
-                    },
-                    min: min,
-                    max: max,
-                    value: value,
-                    decimals: 1,
-                    step: 0.1,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
-                      suffix: Text(unit),
-                    ),
-                  ),
+            if (title != null) SizedBox(width: 120, child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
+            SizedBox(
+              // height: 50,
+              width: 200,
+              child: SpinBox(
+                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                textInputAction: TextInputAction.done,
+                onChanged: (value) {
+                  valueChanged(value);
+                },
+                min: min,
+                max: max,
+                value: value,
+                decimals: 1,
+                step: 0.1,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: const EdgeInsets.only(left: 15, bottom: 24, top: 24, right: 15),
+                  suffix: Text(unit),
                 ),
-              ],
-            ),
-            SfSlider(
-              min: min,
-              max: max,
-              value: value,
-              interval: interval ?? max / 10,
-              showTicks: false,
-              showLabels: true,
-              enableTooltip: true,
-              stepSize: 0.1,
-              minorTicksPerInterval: 2,
-              onChanged: (dynamic value) {
-                valueChanged(value);
-              },
+              ),
             ),
           ],
-        );
+        ),
+        SfSlider(
+          min: min,
+          max: max,
+          value: value,
+          interval: interval ?? max / 10,
+          showTicks: false,
+          showLabels: true,
+          enableTooltip: true,
+          stepSize: 0.1,
+          minorTicksPerInterval: 2,
+          onChanged: (dynamic value) {
+            valueChanged(value);
+          },
+        ),
+      ],
+    );
   }
 }
