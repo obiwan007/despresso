@@ -59,7 +59,7 @@ class VisualizerService extends ChangeNotifier {
   /// issues a refresh token allowing the client to refresh outdated credentials,
   /// these may be valid indefinitely, meaning the user never has to
   /// re-authenticate.
-  final credentialsFile = File('credentials.json');
+
   final FlutterAppAuth appAuth = FlutterAppAuth();
 
   final AuthorizationServiceConfiguration _serviceConfiguration = const AuthorizationServiceConfiguration(
@@ -81,16 +81,21 @@ class VisualizerService extends ChangeNotifier {
 
     var t = tExpire.subtract(Duration(minutes: 15)).difference(DateTime.now());
     log.info("Refreshing in $t");
-    _timer = Timer(
-      t,
-      () {
-        refreshToken();
-      },
-    );
+
+    if (t.inSeconds < 0) {
+      log.info("Refreshing immediately");
+      refreshToken();
+    } else {
+      _timer = Timer(
+        t,
+        () {
+          refreshToken();
+        },
+      );
+    }
   }
 
   Future<void> createClient(String username, String password) async {
-    var exists = await credentialsFile.exists();
     try {
       final AuthorizationTokenResponse? response = await appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
@@ -112,7 +117,6 @@ class VisualizerService extends ChangeNotifier {
         setRefreshTimer();
       }
     } catch (e) {
-      // getIt<SnackbarService>().notify("Error Authenticating to Visualizer: $e", SnackbarNotificationType.severe);
       rethrow;
     }
 

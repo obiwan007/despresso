@@ -52,6 +52,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late StreamController<int> _controllerRefresh;
   late Stream<int> _streamRefresh;
 
+  bool isBusy = false;
+
   @override
   initState() {
     super.initState();
@@ -920,33 +922,66 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               child: SettingsScreen(
                 title: S.of(context).screenSettingsBackuprestore,
                 children: <Widget>[
-                  SettingsContainer(
-                    leftPadding: 16,
-                    children: [
-                      Text(S.of(context).screenSettingsBackuprestoreDatabase),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  backupDatabase();
-                                },
-                                child: Text(S.of(context).screenSettingsBackup)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                restoreDatabase();
-                              },
-                              child: Text(S.of(context).screenSettingsRestore),
+                  StreamBuilder<int>(
+                      stream: _streamRefresh,
+                      builder: (context, snapshot) {
+                        return SettingsContainer(
+                          leftPadding: 16,
+                          children: [
+                            Text(S.of(context).screenSettingsBackuprestoreDatabase),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                      onPressed: isBusy
+                                          ? null
+                                          : () async {
+                                              setState(() {
+                                                isBusy = true;
+                                                _controllerRefresh.add(0);
+                                              });
+                                              await backupDatabase();
+                                              Future.delayed(
+                                                Duration(seconds: 5),
+                                                () {
+                                                  setState(() {
+                                                    isBusy = false;
+                                                    _controllerRefresh.add(0);
+                                                  });
+                                                },
+                                              );
+                                            },
+                                      child: Text(S.of(context).screenSettingsBackup)),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    onPressed: isBusy
+                                        ? null
+                                        : () {
+                                            restoreDatabase();
+                                          },
+                                    child: Text(S.of(context).screenSettingsRestore),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                            if (isBusy)
+                              const Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        );
+                      }),
                 ],
               ),
             ),

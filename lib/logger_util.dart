@@ -85,7 +85,8 @@ Future<Uint8List> getLoggerBackupData() async {
   var store = await getDirectory();
 
   try {
-    final appDataDir = Directory.systemTemp;
+    // final appDataDir = Directory.systemTemp;
+    Directory appDataDir = await getTemporaryDirectory();
     final zipFile = File("${appDataDir.path}/logs.zip");
     await appDataDir.create(recursive: true);
     await ZipFile.createFromDirectory(sourceDir: store!, zipFile: zipFile, recurseSubDirs: true);
