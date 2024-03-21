@@ -101,6 +101,11 @@ enum SettingKeys {
   visualizerExtendedUrl,
   visualizerExtendedUpload,
   tareOnWakeUp,
+  screenThemeMode,
+  visualizerAccessToken,
+  visualizerRefreshToken,
+  visualizerExpiring,
+  currentVersion,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -138,14 +143,25 @@ class SettingsService extends ChangeNotifier {
   String get visualizerUser => Settings.getValue(SettingKeys.visualizerUser.name) ?? "";
   String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
 
+  String get visualizerAccessToken => Settings.getValue(SettingKeys.visualizerAccessToken.name) ?? "";
+  set visualizerAccessToken(String value) => Settings.setValue<String>(SettingKeys.visualizerAccessToken.name, value);
+
+  String get visualizerRefreshToken => Settings.getValue(SettingKeys.visualizerRefreshToken.name) ?? "";
+  set visualizerRefreshToken(String value) => Settings.setValue<String>(SettingKeys.visualizerRefreshToken.name, value);
+
+  String get visualizerExpiring => Settings.getValue<String>(SettingKeys.visualizerExpiring.name) ?? "";
+  set visualizerExpiring(String value) => Settings.setValue<String>(SettingKeys.visualizerExpiring.name, value);
+
   bool get visualizerExtendedUpload => Settings.getValue(SettingKeys.visualizerExtendedUpload.name) ?? false;
   String get visualizerExtendedUser => Settings.getValue(SettingKeys.visualizerExtendedUser.name) ?? "";
   String get visualizerExtendedPwd => Settings.getValue(SettingKeys.visualizerExtendedPwd.name) ?? "";
   String get visualizerExtendedUrl => Settings.getValue(SettingKeys.visualizerExtendedUrl.name) ?? "";
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
-  bool get tabletSleepDuringScreensaver => Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
-  double get tabletSleepDuringScreensaverTimeout => Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
+  bool get tabletSleepDuringScreensaver =>
+      Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
+  double get tabletSleepDuringScreensaverTimeout =>
+      Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
   bool get tabletSleepWhenMachineOff => Settings.getValue<bool>(SettingKeys.tabletSleepWhenMachineOff.name) ?? false;
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
@@ -170,6 +186,9 @@ class SettingsService extends ChangeNotifier {
   String get currentProfile => Settings.getValue<String>(SettingKeys.currentProfile.name) ?? "Default";
   set currentProfile(String value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
 
+  String get currentVersion => Settings.getValue<String>(SettingKeys.currentVersion.name) ?? "";
+  set currentVersion(String value) => Settings.setValue<String>(SettingKeys.currentVersion.name, value);
+
   int get selectedRoaster => Settings.getValue<int>(SettingKeys.selectedRoaster.name) ?? 0;
   set selectedRoaster(int value) => Settings.setValue<int>(SettingKeys.selectedRoaster.name, value);
 
@@ -185,7 +204,7 @@ class SettingsService extends ChangeNotifier {
   int get steamSettings => Settings.getValue<int>(SettingKeys.steamSettings.name) ?? 0;
   set steamSettings(int value) => Settings.setValue<int>(SettingKeys.steamSettings.name, value);
 
-  int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 120;
+  int get targetSteamTemp => Settings.getValue<int>(SettingKeys.targetSteamTemp.name) ?? 135;
   set targetSteamTemp(int value) => Settings.setValue<int>(SettingKeys.targetSteamTemp.name, value);
 
   bool get steamHeaterOff => Settings.getValue<bool>(SettingKeys.steamHeaterOff.name) ?? false;
@@ -227,8 +246,10 @@ class SettingsService extends ChangeNotifier {
   double get targetEspressoWeight => Settings.getValue<double>(SettingKeys.targetEspressoWeight.name) ?? 36;
   set targetEspressoWeight(double value) => Settings.setValue<double>(SettingKeys.targetEspressoWeight.name, value);
 
-  double get targetEspressoWeightTimeAdjust => Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
-  set targetEspressoWeightTimeAdjust(value) => Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
+  double get targetEspressoWeightTimeAdjust =>
+      Settings.getValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name) ?? 0.5;
+  set targetEspressoWeightTimeAdjust(value) =>
+      Settings.setValue<double>(SettingKeys.targetEspressoWeightTimeAdjust.name, value);
 
   double get stepLimitWeightTimeAdjust => Settings.getValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name) ?? 0.20;
   set stepLimitWeightTimeAdjust(value) => Settings.setValue<double>(SettingKeys.stepLimitWeightTimeAdjust.name, value);
@@ -270,6 +291,9 @@ class SettingsService extends ChangeNotifier {
 
   bool get screenDarkTheme => Settings.getValue<bool>(SettingKeys.screenDarkTheme.name) ?? true;
   set screenDarkTheme(bool value) => Settings.setValue<bool>(SettingKeys.screenDarkTheme.name, value);
+
+  int get screenThemeMode => Settings.getValue<int>(SettingKeys.screenThemeMode.name) ?? 0;
+  set screenThemeMode(int value) => Settings.setValue<int>(SettingKeys.screenThemeMode.name, value);
 
   String get screenThemeIndex => Settings.getValue<String>(SettingKeys.screenThemeIndex.name) ?? "0";
   set screenThemeIndex(String value) => Settings.setValue<String>(SettingKeys.screenThemeIndex.name, value);

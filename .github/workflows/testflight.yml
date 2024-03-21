@@ -30,15 +30,21 @@ jobs:
 
       - name: replace sentry key
         env: 
-          SENTRY_KEY: ${{ secrets.SENTRY_KEY }} 
+          SENTRY_KEY: ${{ secrets.SENTRY_KEY }}
+          VIS_CLIENT: ${{ secrets.VIS_CLIENT }} 
+          VIS_SECRET: ${{ secrets.VIS_SECRET }} 
         run: |
           export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
           sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart
-          
+          sed -i -e "s/<VIS_SECRET>/$VIS_SECRET/g" ./lib/model/services/state/visualizer_service.dart
+          sed -i -e "s/<VIS_CLIENT>/$VIS_CLIENT/g" ./lib/model/services/state/visualizer_service.dart
+
       - name: Update pods
         run: pod repo update
+      - name: Pub get
+        run: flutter pub get          
       - name: Bundle install
-        run: cd ./ios && bundle install && flutter pub get && pod install
+        run: cd ./ios && bundle install && pod install
       - uses: maierj/fastlane-action@v3.0.0        
         env:            
             MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}

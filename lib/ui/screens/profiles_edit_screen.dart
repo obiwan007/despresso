@@ -61,7 +61,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     declineObject.frameToWrite = _profile.shotFrames.length;
     declineObject.temp = _profile.shotFrames.first.temp;
     try {
-      var pre = _profile.shotFrames.where((element) => (element.name == "preinfusion"));
+      var pre = _profile.shotFrames.where((element) => (element.name.startsWith("preinfusion")));
       preInfusion = pre.isEmpty ? null : pre.toList().first;
 
       var riseW = _profile.shotFrames.where((element) => (element.name == "rise and hold" || element.name == "hold"));
@@ -154,7 +154,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      ...handleChanges(preInfusion!),
+                      if (preInfusion != null) ...handleChanges(preInfusion!),
                       ...handleChanges(riseAndHold!),
                       ...handleChanges(decline!),
                       changeValue(
@@ -256,7 +256,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
           // indicator:
           //     UnderlineTabIndicator(borderSide: BorderSide(width: 5.0), insets: EdgeInsets.symmetric(horizontal: 16.0)),
           tabs: <Widget>[
-            ...createTabs(preInfusion, color: phaseColors[0]),
+            if (preInfusion != null) ...createTabs(preInfusion, color: phaseColors[0]),
             ...createTabs(riseAndHold, color: phaseColors[1]),
             ...createTabs(decline, color: phaseColors[2]),
             Tab(

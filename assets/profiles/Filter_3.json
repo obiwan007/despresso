@@ -1,0 +1,115 @@
+{
+  "title": "Filter 3",
+  "author": "Decent",
+  "notes": "Center a hand-cut Chemex filter paper in the bottom of a Filter3 basket. Wet it with Flush water. Add 22 grams of coffee and shake to level the grounds.  Gently lock the portafilter in.  Place a cup, tap the COFFEE icon on the Group Head to start.  Optional: 30 seconds into the extraction, unlock the portafilter, swirl and check for 2cm-4cm of water on the grounds.  Adjust the grind if necessary for next time: finer if you saw not enough water, coarser if there was too much water on the grounds.  If water comes out of the holes at the top of the basket, your grind is too fine.",
+  "beverage_type": "filter",
+  "steps": [
+    {
+      "name": "Prewet",
+      "temperature": "94.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "5.0",
+      "seconds": "15",
+      "volume": "75",
+      "weight": "0",
+      "limiter": {
+        "value": "5.0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "Bloom",
+      "temperature": "94.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "0",
+      "seconds": "30",
+      "volume": "75",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "Step 1a",
+      "temperature": "92.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "1.3",
+      "seconds": "30",
+      "volume": "200",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "Step 1b",
+      "temperature": "92.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "1.3",
+      "seconds": "30",
+      "volume": "200",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "Step 2",
+      "temperature": "90.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "1.3",
+      "seconds": "60",
+      "volume": "200",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    },
+    {
+      "name": "Step 3",
+      "temperature": "88.0",
+      "sensor": "coffee",
+      "pump": "flow",
+      "transition": "fast",
+      "pressure": "9.0",
+      "flow": "1.3",
+      "seconds": "100",
+      "volume": "200",
+      "weight": "0",
+      "limiter": {
+        "value": "0",
+        "range": "1.0"
+      }
+    }
+  ],
+  "tank_temperature": "0",
+  "target_weight": "0.0",
+  "target_volume": "0",
+  "target_volume_count_start": "2",
+  "legacy_profile_type": "settings_2c",
+  "type": "advanced",
+  "lang": "en",
+  "hidden": "0",
+  "reference_file": "filter3",
+  "changes_since_last_espresso": "",
+  "version": "2"
+}

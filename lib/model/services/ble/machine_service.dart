@@ -176,7 +176,8 @@ enum EspressoMachineState {
   refill,
   flush,
   descale,
-  clean
+  clean,
+  airPurge
 }
 
 class EspressoMachineFullState {
@@ -278,6 +279,12 @@ class EspressoMachineService extends ChangeNotifier {
   Stream<int> get streamBatteryState => _streamBatteryState;
 
   EspressoMachineFullState currentFullState = EspressoMachineFullState();
+
+  LineEq linGP = LineEq(1, 0, 0);
+  LineEq lingpS = LineEq(1, 0, 0);
+  LineEq linGF = LineEq(1, 0, 0);
+  LineEq lingfS = LineEq(1, 0, 0);
+  LineEq linWF = LineEq(1, 0, 0);
 
   EspressoMachineService() {
     _controllerShotState = StreamController<ShotState>();
@@ -900,21 +907,26 @@ class EspressoMachineService extends ChangeNotifier {
               // shotList.add(_floatingShot!);
             }
 
-            var linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.groupPressure, _previousShot!.groupPressure);
+            if (_newestShot!.sampleTimeCorrected != _previousShot!.sampleTimeCorrected) {
+              linGP = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                  _newestShot!.groupPressure, _previousShot!.groupPressure);
 
-            var lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
+              lingpS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                  _newestShot!.setGroupPressure, _previousShot!.setGroupPressure);
 
-            var linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.groupFlow, _previousShot!.groupFlow);
+              linGF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                  _newestShot!.groupFlow, _previousShot!.groupFlow);
 
-            var lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
+              lingfS = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                  _newestShot!.setGroupFlow, _previousShot!.setGroupFlow);
 
-            var linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
-                _newestShot!.flowWeight, _previousShot!.flowWeight);
-
+              linWF = LineEq.calcLinearEquation(_newestShot!.sampleTimeCorrected, _previousShot!.sampleTimeCorrected,
+                  _newestShot!.flowWeight, _previousShot!.flowWeight);
+            } else {
+              log.warning("Same Timestamp for interpolations");
+              log.warning(
+                  "Same Timestamp for interpolations${_newestShot!.groupPressure} ${_newestShot!.setGroupPressure} ${_newestShot!.groupFlow} ${_newestShot!.setGroupFlow} ${_newestShot!.flowWeight}");
+            }
             // var newShot = ShotState.fromJson(_previousShot!.toJson());
             // shotList.add(newShot);
             // _floatingShot = ShotState.fromJson(_previousShot!.toJson());
@@ -1397,7 +1409,7 @@ class LineEq {
 
   getY(double x) {
     double y = (m) * (x - x1) + b;
-    log.info("lin: $y = ($m * $x + $b");
+    // log.info("lin: $y = ($m * $x + $b");
     return y;
   }
 }

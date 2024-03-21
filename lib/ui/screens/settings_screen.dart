@@ -52,6 +52,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   late StreamController<int> _controllerRefresh;
   late Stream<int> _streamRefresh;
 
+  bool isBusy = false;
+
   @override
   initState() {
     super.initState();
@@ -327,7 +329,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                             if (snapshot.hasData)
                               Row(
                                 children: [
-                                  Text(S.of(context).settingsContainerCurrentWeight, style: Theme.of(context).textTheme.labelLarge),
+                                  Text(S.of(context).settingsContainerCurrentWeight,
+                                      style: Theme.of(context).textTheme.labelLarge),
                                   Text("  ${(snapshot.data as WeightMeassurement).weight} g"),
                                 ],
                               ),
@@ -571,16 +574,18 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                   stream: _streamRefresh,
                   builder: (context, snapshot) {
                     return SettingsScreen(children: [
-                      SwitchSettingsTile(
-                        title: settingsService.screenDarkTheme ? S.of(context).screenSettingsDarkTheme : S.of(context).screenSettingsLightTheme,
-                        settingKey: SettingKeys.screenDarkTheme.name,
-                        defaultValue: settingsService.screenDarkTheme,
-                        leading: const Icon(Icons.smart_screen),
-                        onChange: (value) {
-                          settingsService.notifyDelayed();
-                          updateView();
-                        },
-                      ),
+                      DropDownSettingsTile(
+                          title: "Theme mode",
+                          settingKey: SettingKeys.screenThemeMode.name,
+                          selected: settingsService.screenThemeMode,
+                          values: const {
+                            0: "System",
+                            2: "Light",
+                            1: "Dark",
+                          },
+                          onChange: (value) {
+                            settingsService.notifyDelayed();
+                          }),
                       DropDownSettingsTile(
                           title: S.of(context).screenSettingsThemeSelection,
                           settingKey: SettingKeys.screenThemeIndex.name,
@@ -830,7 +835,9 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         initialValue: settingsService.mqttServer,
                       ),
                       TextInputSettingsTile(
-                          title: S.of(context).screenSettingsMqttPort, settingKey: SettingKeys.mqttPort.name, initialValue: settingsService.mqttPort),
+                          title: S.of(context).screenSettingsMqttPort,
+                          settingKey: SettingKeys.mqttPort.name,
+                          initialValue: settingsService.mqttPort),
                       TextInputSettingsTile(
                         title: S.of(context).screenSettingsMqttUser,
                         settingKey: SettingKeys.mqttUser.name,
@@ -881,7 +888,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       ),
                     ],
                   ),
-                  SettingsVisualizer(settingsService: settingsService),
+                  SettingsVisualizer(
+                    settingsService: settingsService,
+                    visualizerService: visualizerService,
+                  ),
                   ExpandableSettingsTile(
                     title: S.of(context).screenSettingsMiniWebsite,
                     children: [
@@ -890,7 +900,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                         leading: const Icon(Icons.settings_remote),
                         settingKey: SettingKeys.webServer.name,
                         title: S.of(context).screenSettingsEnableMiniWebsiteWithPort8888,
-                        subtitle: "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen} http://$ownIpAdress:8888",
+                        subtitle:
+                            "${S.of(context).screenSettingsCheckYourRouterForIpAdressOfYourTabletOpen} http://$ownIpAdress:8888",
                         onChange: (value) {
                           settingsService.notifyDelayed();
                         },
@@ -911,33 +922,66 @@ class SettingsScreenState extends State<AppSettingsScreen> {
               child: SettingsScreen(
                 title: S.of(context).screenSettingsBackuprestore,
                 children: <Widget>[
-                  SettingsContainer(
-                    leftPadding: 16,
-                    children: [
-                      Text(S.of(context).screenSettingsBackuprestoreDatabase),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  backupDatabase();
-                                },
-                                child: Text(S.of(context).screenSettingsBackup)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                restoreDatabase();
-                              },
-                              child: Text(S.of(context).screenSettingsRestore),
+                  StreamBuilder<int>(
+                      stream: _streamRefresh,
+                      builder: (context, snapshot) {
+                        return SettingsContainer(
+                          leftPadding: 16,
+                          children: [
+                            Text(S.of(context).screenSettingsBackuprestoreDatabase),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                      onPressed: isBusy
+                                          ? null
+                                          : () async {
+                                              setState(() {
+                                                isBusy = true;
+                                                _controllerRefresh.add(0);
+                                              });
+                                              await backupDatabase();
+                                              Future.delayed(
+                                                Duration(seconds: 5),
+                                                () {
+                                                  setState(() {
+                                                    isBusy = false;
+                                                    _controllerRefresh.add(0);
+                                                  });
+                                                },
+                                              );
+                                            },
+                                      child: Text(S.of(context).screenSettingsBackup)),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    onPressed: isBusy
+                                        ? null
+                                        : () {
+                                            restoreDatabase();
+                                          },
+                                    child: Text(S.of(context).screenSettingsRestore),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                            if (isBusy)
+                              const Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        );
+                      }),
                 ],
               ),
             ),
@@ -1011,7 +1055,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   }
 
   void showSnackbar(BuildContext context) {
-    getIt<SnackbarService>().notify(S.of(context).screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp, SnackbarNotificationType.info);
+    getIt<SnackbarService>().notify(
+        S.of(context).screenSettingsYouChangedCriticalSettingsYouNeedToRestartTheApp, SnackbarNotificationType.info);
   }
 
   void settingsServiceListener() {
@@ -1028,10 +1073,10 @@ class SettingsScreenState extends State<AppSettingsScreen> {
 
       var dateStr = DateTime.now().toLocal();
       // var doc = DocumentFileSavePlus();
-      await DocumentFileSavePlus.saveMultipleFiles(data, [
+      await DocumentFileSavePlus().saveMultipleFiles(dataList: data, fileNameList: [
         "despresso_backup_$dateStr.bak",
         "logs_$dateStr.zip"
-      ], [
+      ], mimeTypeList: [
         "application/octet-stream",
         "application/zip",
       ]);
@@ -1066,7 +1111,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
   }
 
   Future<void> pickScreensaver() async {
-    var filePickerResult = await FilePicker.platform.pickFiles(allowMultiple: true, lockParentWindow: true, type: FileType.image);
+    var filePickerResult =
+        await FilePicker.platform.pickFiles(allowMultiple: true, lockParentWindow: true, type: FileType.image);
 
     final Directory saver = await ScreenSaver.getDirectory();
 
@@ -1102,7 +1148,8 @@ class SettingsScreenState extends State<AppSettingsScreen> {
             ),
             Expanded(
               flex: 5,
-              child: Text(S.of(context).screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart, style: Theme.of(context).textTheme.bodyLarge),
+              child: Text(S.of(context).screenSettingsSettingsAreRestoredPleaseCloseAppAndRestart,
+                  style: Theme.of(context).textTheme.bodyLarge),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -1132,93 +1179,109 @@ class SettingsVisualizer extends StatelessWidget {
   const SettingsVisualizer({
     super.key,
     required this.settingsService,
+    required this.visualizerService,
   });
 
   final SettingsService settingsService;
+  final VisualizerService visualizerService;
 
   @override
   Widget build(BuildContext context) {
-    return ExpandableSettingsTile(title: 'Visualizer', subtitle: S.of(context).screenSettingsCloudShotUpload, expanded: false, children: <Widget>[
-      SwitchSettingsTile(
-        leading: const Icon(Icons.cloud_upload),
-        settingKey: SettingKeys.visualizerUpload.name,
-        defaultValue: settingsService.visualizerUpload,
-        title: S.of(context).screenSettingsUploadShotsToVisualizer,
-        onChange: (value) {},
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsUserNameemail,
-        settingKey: SettingKeys.visualizerUser.name,
-        initialValue: settingsService.visualizerUser,
-        validator: (String? username) {
-          if (username != null && username.length > 3) {
-            return null;
-          }
-          return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsPassword,
-        initialValue: settingsService.visualizerPwd,
-        settingKey: SettingKeys.visualizerPwd.name,
-        obscureText: true,
-        validator: (String? password) {
-          if (password != null && password.length > 6) {
-            return null;
-          }
-          return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-      SwitchSettingsTile(
-        leading: const Icon(Icons.cloud_upload),
-        settingKey: SettingKeys.visualizerExtendedUpload.name,
-        defaultValue: settingsService.visualizerExtendedUpload,
-        title: "Upload shots to custom Visualizer",
-        onChange: (value) {},
-      ),
-      TextInputSettingsTile(
-        title: "Custom Upload URL",
-        settingKey: SettingKeys.visualizerExtendedUrl.name,
-        initialValue: settingsService.visualizerExtendedUrl,
-        validator: (String? username) {
-          if (username != null && username.length > 3) {
-            return null;
-          }
-          return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-        },
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsUserNameemail,
-        settingKey: SettingKeys.visualizerExtendedUser.name,
-        initialValue: settingsService.visualizerExtendedUser,
-        validator: (String? username) {
-          if (username != null && username.length > 3) {
-            return null;
-          }
-          return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-      TextInputSettingsTile(
-        title: S.of(context).screenSettingsPassword,
-        initialValue: settingsService.visualizerExtendedPwd,
-        settingKey: SettingKeys.visualizerExtendedPwd.name,
-        obscureText: true,
-        validator: (String? password) {
-          if (password != null && password.length > 6) {
-            return null;
-          }
-          return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
-        },
-        borderColor: Colors.blueAccent,
-        errorColor: Colors.deepOrangeAccent,
-      ),
-    ]);
+    return ExpandableSettingsTile(
+        title: 'Visualizer',
+        subtitle: S.of(context).screenSettingsCloudShotUpload,
+        expanded: false,
+        children: <Widget>[
+          SwitchSettingsTile(
+            leading: const Icon(Icons.cloud_upload),
+            settingKey: SettingKeys.visualizerUpload.name,
+            defaultValue: settingsService.visualizerUpload,
+            title: S.of(context).screenSettingsUploadShotsToVisualizer,
+            onChange: (value) {},
+          ),
+          // TextInputSettingsTile(
+          //   title: S.of(context).screenSettingsUserNameemail,
+          //   settingKey: SettingKeys.visualizerUser.name,
+          //   initialValue: settingsService.visualizerUser,
+          //   validator: (String? username) {
+          //     if (username != null && username.length > 3) {
+          //       return null;
+          //     }
+          //     return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+          //   },
+          //   borderColor: Colors.blueAccent,
+          //   errorColor: Colors.deepOrangeAccent,
+          // ),
+          // TextInputSettingsTile(
+          //   title: S.of(context).screenSettingsPassword,
+          //   initialValue: settingsService.visualizerPwd,
+          //   settingKey: SettingKeys.visualizerPwd.name,
+          //   obscureText: true,
+          //   validator: (String? password) {
+          //     if (password != null && password.length > 6) {
+          //       return null;
+          //     }
+          //     return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+          //   },
+          //   borderColor: Colors.blueAccent,
+          //   errorColor: Colors.deepOrangeAccent,
+          // ),
+          ElevatedButton(
+              onPressed: () async {
+                try {
+                  await visualizerService.createClient(settingsService.visualizerUser, settingsService.visualizerPwd);
+                  getIt<SnackbarService>().notify("Connection to visualizer established", SnackbarNotificationType.ok);
+                } catch (ex, _) {
+                  getIt<SnackbarService>().notify("Error: $ex", SnackbarNotificationType.severe);
+                }
+              },
+              child: const Text("Login to Visualizer")),
+          SwitchSettingsTile(
+            leading: const Icon(Icons.cloud_upload),
+            settingKey: SettingKeys.visualizerExtendedUpload.name,
+            defaultValue: settingsService.visualizerExtendedUpload,
+            title: "Upload shots to custom Visualizer",
+            onChange: (value) {},
+          ),
+          TextInputSettingsTile(
+            title: "Custom Upload URL",
+            settingKey: SettingKeys.visualizerExtendedUrl.name,
+            initialValue: settingsService.visualizerExtendedUrl,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsUserNameemail,
+            settingKey: SettingKeys.visualizerExtendedUser.name,
+            initialValue: settingsService.visualizerExtendedUser,
+            validator: (String? username) {
+              if (username != null && username.length > 3) {
+                return null;
+              }
+              return S.of(context).screenSettingsUserNameCantBeSmallerThan4Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+          TextInputSettingsTile(
+            title: S.of(context).screenSettingsPassword,
+            initialValue: settingsService.visualizerExtendedPwd,
+            settingKey: SettingKeys.visualizerExtendedPwd.name,
+            obscureText: true,
+            validator: (String? password) {
+              if (password != null && password.length > 6) {
+                return null;
+              }
+              return S.of(context).screenSettingsPasswordCantBeSmallerThan7Letters;
+            },
+            borderColor: Colors.blueAccent,
+            errorColor: Colors.deepOrangeAccent,
+          ),
+        ]);
   }
 }
 
@@ -1244,10 +1307,13 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // scanned scales list
-        ...widget.bleService.devices.where((element) => widget.bleService.scales.firstWhereOrNull((scale) => scale.id == element.id) == null).map((e) {
+        ...widget.bleService.devices
+            .where((element) => widget.bleService.scales.firstWhereOrNull((scale) => scale.id == element.id) == null)
+            .map((e) {
           return deviceRow(e);
         }).toList(),
-        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scalePrimary) == null)
+        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scalePrimary) ==
+            null)
           deviceRow(bledevice.DiscoveredDevice(
             id: widget.settingsService.scalePrimary,
             name: "Scale 1",
@@ -1256,7 +1322,9 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             serviceUuids: const [],
             serviceData: const <ble.Uuid, Uint8List>{},
           )),
-        if (widget.bleService.scales.firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) == null)
+        if (widget.bleService.scales
+                .firstWhereOrNull((element) => element.id == widget.settingsService.scaleSecondary) ==
+            null)
           deviceRow(bledevice.DiscoveredDevice(
             id: widget.settingsService.scaleSecondary,
             name: "Scale 2",
@@ -1281,7 +1349,8 @@ class _DeviceAssignmentState extends State<DeviceAssignment> {
             child: Row(
               children: [
                 Text(e.name),
-                if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null) const Icon(Icons.bluetooth_connected),
+                if (widget.bleService.devices.firstWhereOrNull((element) => element.id == e.id) != null)
+                  const Icon(Icons.bluetooth_connected),
               ],
             )),
         SizedBox(width: 200, child: Text("(${e.id})")),

@@ -738,7 +738,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     }
                   },
                   min: 1,
-                  max: 10.0,
+                  max: 50.0,
                   value: widget.coffeeService.currentRecipe!.ratio1,
                   decimals: 1,
                   step: 0.1,
@@ -763,7 +763,7 @@ class _RecipeDetailsState extends State<RecipeDetails> {
                     }
                   },
                   min: 1,
-                  max: 10.0,
+                  max: 50.0,
                   value: widget.coffeeService.currentRecipe!.ratio2,
                   decimals: 1,
                   step: 0.1,

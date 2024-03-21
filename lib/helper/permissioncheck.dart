@@ -24,7 +24,7 @@ Future<void> checkPermissionsHandler() async {
     Permission.location,
     Permission.bluetoothScan,
     Permission.bluetoothConnect,
-    Permission.storage,
+    // Permission.storage,
   ].request();
   checkInProgress = false;
   if (!statuses.values.any((element) => element.isDenied)) {

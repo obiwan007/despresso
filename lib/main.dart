@@ -59,7 +59,14 @@ Future<void> main() async {
           // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
           // We recommend adjusting this value in production.
           options.tracesSampleRate = 1.0;
+          options.profilesSampleRate = 1.0;
           options.enableUserInteractionTracing = true;
+          options.enableAutoNativeBreadcrumbs = true;
+          options.enableAutoSessionTracking = true;
+          options.attachViewHierarchy = true;
+          options.enableAutoPerformanceTracing = true;
+          options.enableUserInteractionBreadcrumbs = true;
+          options.enableTracing = true;
           options.attachScreenshot = true;
           options.addIntegration(LoggingIntegration());
         },
@@ -152,7 +159,11 @@ class _MyAppState extends State<MyApp> {
         //   //     // bodyMedium: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         //   //     ),
         // ),
-        themeMode: _settings.screenDarkTheme ? ThemeMode.dark : ThemeMode.light,
+        themeMode: _settings.screenThemeMode == 0
+            ? ThemeMode.system
+            : _settings.screenThemeMode == 1
+                ? ThemeMode.dark
+                : ThemeMode.light,
 
         // theme: ThemeData(
         //   useMaterial3: true,

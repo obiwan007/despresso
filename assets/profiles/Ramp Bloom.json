@@ -1,0 +1,184 @@
+{
+    "title": "Visualizer/Ramp Bloom 90C 0.5 mlps 70C Start",
+    "author": "Decent",
+    "notes": "This profile is for pressure pulsing.\n\nDownloaded from Visualizer",
+    "beverage_type": "espresso",
+    "steps": [
+        {
+            "flow": "1.5",
+            "name": "PI Ramp",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "20",
+            "weight": "0",
+            "limiter": {
+                "range": "8.0",
+                "value": "2.0"
+            },
+            "seconds": "27.00",
+            "pressure": "1.5",
+            "transition": "smooth",
+            "temperature": "70.0"
+        },
+        {
+            "flow": "1.0",
+            "name": "PI hold",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "40.00",
+            "weight": "0",
+            "limiter": {
+                "range": "8.0",
+                "value": "2.0"
+            },
+            "seconds": "50.00",
+            "pressure": "1.5",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "exit": {
+                "type": "flow",
+                "value": "0.10",
+                "condition": "under"
+            },
+            "flow": "0.1",
+            "name": "Pause",
+            "pump": "pressure",
+            "sensor": "coffee",
+            "volume": "15.00",
+            "weight": "0",
+            "limiter": {
+                "range": "8.0",
+                "value": "0"
+            },
+            "seconds": "30.00",
+            "pressure": "0",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.1",
+            "name": "Pause 0.5ml/s",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "30.00",
+            "weight": "0",
+            "limiter": {
+                "range": "8.0",
+                "value": "2.0"
+            },
+            "seconds": "30.00",
+            "pressure": "4.0",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.5",
+            "name": "Ramp",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "10.00",
+            "weight": "0",
+            "limiter": {
+                "range": "0.3",
+                "value": "4.0"
+            },
+            "seconds": "12",
+            "pressure": "1.2",
+            "transition": "smooth",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.5",
+            "name": "Pulse 9",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "range": "0.3",
+                "value": "4.0"
+            },
+            "seconds": "60.00",
+            "pressure": "1.2",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.5",
+            "name": "Pulse 9",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "range": "0.3",
+                "value": "4.0"
+            },
+            "seconds": "60.00",
+            "pressure": "1.2",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.5",
+            "name": "Pulse 9",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "range": "0.3",
+                "value": "4.0"
+            },
+            "seconds": "60.00",
+            "pressure": "1.2",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.5",
+            "name": "Pulse 9",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "range": "0.3",
+                "value": "4.0"
+            },
+            "seconds": "60.00",
+            "pressure": "1.2",
+            "transition": "fast",
+            "temperature": "90.0"
+        },
+        {
+            "flow": "0.5",
+            "name": "Pulse 9",
+            "pump": "flow",
+            "sensor": "coffee",
+            "volume": "0",
+            "weight": "0",
+            "limiter": {
+                "range": "0.3",
+                "value": "4.0"
+            },
+            "seconds": "60.00",
+            "pressure": "1.2",
+            "transition": "fast",
+            "temperature": "90.0"
+        }
+    ],
+    "tank_temperature": "0",
+    "target_weight": "0",
+    "target_volume": "0",
+    "target_volume_count_start": "2",
+    "legacy_profile_type": "settings_2c",
+    "type": "advanced",
+    "lang": "en",
+    "hidden": "0",
+    "reference_file": "Ramp_Bloom_90C_05_mlps_70C_Start",
+    "changes_since_last_espresso": "",
+    "version": "2"
+}

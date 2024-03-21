@@ -17,7 +17,7 @@ class Skale2Scale extends ChangeNotifier implements AbstractScale {
   final log = l.Logger('Skale2Scale');
 
   static Uuid ServiceUUID =
-      useLongCharacteristics() ? Uuid.parse('6e400001-b5a3-f393-e0a9-e50e24dcca9e') : Uuid.parse('ff08');
+      useLongCharacteristics() ? Uuid.parse('0000FF08-0000-1000-8000-00805F9B34FB') : Uuid.parse('FF08');
   static Uuid WeightCharacteristicUUID =
       useLongCharacteristics() ? Uuid.parse('0000EF81-0000-1000-8000-00805F9B34FB') : Uuid.parse('EF81');
 

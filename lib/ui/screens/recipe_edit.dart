@@ -256,6 +256,7 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 200,
                     child: ReactiveTextField<double>(
                       formControlName: 'grinderSettings',
+                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                       decoration: InputDecoration(
                         labelText: S.of(context).screenRecipeEditGrinderSettings,
                       ),
@@ -302,8 +303,7 @@ class RecipeEditState extends State<RecipeEdit> {
                       },
                       showErrors: (control) => control.invalid,
                       validationMessages: {
-                        ValidationMessage.max: (error) =>
-                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
                         ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
                       },
                     ),
@@ -325,8 +325,7 @@ class RecipeEditState extends State<RecipeEdit> {
                       },
                       showErrors: (control) => control.invalid,
                       validationMessages: {
-                        ValidationMessage.max: (error) =>
-                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
                         ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
                       },
                     ),
@@ -348,8 +347,7 @@ class RecipeEditState extends State<RecipeEdit> {
                       },
                       showErrors: (control) => control.invalid,
                       validationMessages: {
-                        ValidationMessage.max: (error) =>
-                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
                         ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
                       },
                     ),
@@ -367,8 +365,7 @@ class RecipeEditState extends State<RecipeEdit> {
                       ),
                       showErrors: (control) => control.invalid,
                       validationMessages: {
-                        ValidationMessage.max: (error) =>
-                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
                         ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
                       },
                     ),
@@ -392,13 +389,13 @@ class RecipeEditState extends State<RecipeEdit> {
                     width: 200,
                     child: ReactiveTextField<double>(
                       formControlName: 'adjustedTemp',
+                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                       decoration: InputDecoration(
                         labelText: S.of(context).screenRecipeEditTemperatureCorrection,
                       ),
                       showErrors: (control) => control.invalid,
                       validationMessages: {
-                        ValidationMessage.max: (error) =>
-                            'A value greater than ${(error as Map)['max']} is not accepted',
+                        ValidationMessage.max: (error) => 'A value greater than ${(error as Map)['max']} is not accepted',
                         ValidationMessage.min: (error) => 'A value lower than ${(error as Map)['min']} is not accepted',
                       },
                     ),
@@ -409,8 +406,7 @@ class RecipeEditState extends State<RecipeEdit> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Expanded(
-                      child: Text(S.of(context).screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo)),
+                  Expanded(child: Text(S.of(context).screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo)),
                   SizedBox(
                     width: 120,
                     child: ReactiveSwitch(
