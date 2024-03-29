@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
@@ -8,6 +7,7 @@ import 'package:despresso/devices/abstract_decent_de1.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
+import 'package:despresso/helper/savgol.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
 import 'package:despresso/model/services/ble/temperature_service.dart';
 import 'package:despresso/model/services/cafehub/ch_service.dart';
@@ -17,7 +17,6 @@ import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/objectbox.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_savgol/flutter_savgol.dart';
 
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1074,23 +1073,23 @@ class EspressoMachineService extends ChangeNotifier {
     final linearlyInterpolatedWeights =
         interp(linearWeightTimes, weightTimes, weightValues);
 
-    try {
     // Savitzky-Golay filter to get the derivative (relative to index)
-    final weightValuesDerivative = await savgolFilter(
-        x: Float64List.fromList(linearlyInterpolatedWeights),
-        windowLength: 11,
+    final weightValuesDerivative = savgolFilter(
+        values: linearlyInterpolatedWeights,
+        windowLength: 17,
         polyOrder: 2,
         derivative: 1);
+
+    if (weightValuesDerivative == null) {
+      log.info("Sav-Gol filter failed");
+      return null;
+    }
 
     // Then divide by timestep to convert to flow rate
     // (and convert from g/ms to g/s)
     return [weightValuesDerivative
         .map((d) => d / linearTimestep * 1000)
         .toList(), linearWeightTimes];
-    } catch (err) {
-      log.info("Sav-Gol filter failed: $err");
-      return null;
-    }
   }
 
   shotFinished(List<TimedWeightMeasurement> weightMeasurements) async {
