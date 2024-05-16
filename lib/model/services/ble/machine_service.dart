@@ -6,6 +6,7 @@ import 'package:despresso/devices/abstract_comm.dart';
 import 'package:despresso/devices/abstract_decent_de1.dart';
 import 'package:despresso/devices/abstract_scale.dart';
 import 'package:despresso/devices/decent_de1.dart';
+import 'package:despresso/helper/evicting_queue.dart';
 import 'package:despresso/helper/linear_regress.ion.dart';
 import 'package:despresso/helper/savgol.dart';
 import 'package:despresso/model/services/ble/ble_service.dart';
@@ -212,7 +213,7 @@ class EspressoMachineService extends ChangeNotifier {
   bool weightSubscriptionShouldCancel = false;
   StreamSubscription<WeightMeassurement>? weightSubscription;
   Completer<TimedWeightMeasurement> weightCompleter = Completer();
-  double flowRateForecast = 0.0;
+  EvictingQueue<double> flowRateForecast = EvictingQueue(5);
   Set<int> _weightMoveOnFrames = {};
 
   ShotList shotList = ShotList([]);
@@ -345,11 +346,13 @@ class EspressoMachineService extends ChangeNotifier {
         TimedWeightMeasurement(measurement, DateTime.now());
     weightMeasurementsDuringShot.add(timedMeasurement);
 
-    flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
+    flowRateForecast.add(getFlowRateForecast(const Duration(seconds: 1)));
 
-    if (weightSubscriptionShouldCancel &&
-        flowRateForecast < 0.1 &&
-        !weightCompleter.isCompleted) {
+    if (weightSubscriptionShouldCancel && !weightCompleter.isCompleted) {
+      if (flowRateForecast.length > 0) {
+        final avgForecast = 
+      }
+
       weightSubscription?.cancel();
       weightSubscription = null;
       weightCompleter.complete(timedMeasurement);
@@ -1010,12 +1013,12 @@ class EspressoMachineService extends ChangeNotifier {
 
     if ((isPouring || state.subState == "pre_infuse") &&
         stepWeightLimit > 0.0 &&
-        flowRateForecast > 0.0 &&
+        flowRateForecast.last > 0.0 &&
         _delayedStopActive == false) {
       var currentWeight = weightMeasurementsDuringShot.last;
       var forecastWeight = currentWeight.weight.weight +
-          flowRateForecast * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
-      var timeToWeight = (stepWeightLimit - forecastWeight) / flowRateForecast;
+          flowRateForecast.last * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
+      var timeToWeight = (stepWeightLimit - forecastWeight) / flowRateForecast.last;
 
       if (timeToWeight <= (settingsService.stepLimitWeightTimeAdjust * 1000)) {
         _weightMoveOnFrames.add(shot.frameNumber);
