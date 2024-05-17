@@ -48,7 +48,7 @@ dependencies:
   json_serializable: ^6.7.1
   path_provider: ^2.0.11
   community_charts_flutter: ^1.0.2
-  syncfusion_flutter_sliders: ^23.2.6
+  syncfusion_flutter_sliders: ^25.2.4
   copy_with_extension: ^5.0.0
   copy_with_extension_gen: ^5.0.4
   uuid: ^4.2.1
@@ -56,7 +56,7 @@ dependencies:
   reactive_flutter_rating_bar: ^2.0.0
   objectbox: 2.5.0
   objectbox_flutter_libs: 2.5.0
-  flutter_settings_screens: ^0.3.3-null-safety+2
+  flutter_settings_screens: ^0.3.4
   permission_handler: ^11.0.1
   shared_preferences: ">=2.2.0"
   get_it: ^7.6.0
@@ -73,7 +73,7 @@ dependencies:
   sentry_flutter: ^7.16.1
   feedback_sentry: ^3.0.0
   package_info_plus: ^5.0.1
-  intl: ^0.18.1
+  intl: ^0.19.0
   csv: ^5.0.1
   flutter_spinbox: ^0.13.1
   shelf: ^1.4.1
@@ -88,8 +88,11 @@ dependencies:
   web_socket_channel: ^2.4.0
   flutter_keyboard_visibility: ^6.0.0
   wakelock_plus: ^1.1.4
-  dashboard: ^0.0.3+1
-  flutter_colorpicker: ^1.0.3
+  dashboard: ^0.0.3+1  
+  flutter_colorpicker:
+    git:
+      url: https://github.com/mchome/flutter_colorpicker
+      ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba
   flutter_appauth: ^6.0.4
   flutter_whatsnew: ^1.0.5+2
 
