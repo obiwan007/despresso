@@ -75,7 +75,7 @@ class BookooScale extends ChangeNotifier implements AbstractScale {
   Future<void> writeToBokooScale(List<int> payload) async {
     log.info("Sending to Bookoo Scale");
     final characteristic = QualifiedCharacteristic(serviceId: ServiceUUID, characteristicId: CmdUUID, deviceId: device.id);
-    return await connection.writeCharacteristicWithoutResponse(characteristic, value: Uint8List.fromList(payload));
+    return await connection.writeCharacteristicWithResponse(characteristic, value: Uint8List.fromList(payload));
   }
 
   void _onStateChange(DeviceConnectionState state) async {
