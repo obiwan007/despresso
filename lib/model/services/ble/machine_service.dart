@@ -347,13 +347,37 @@ class EspressoMachineService extends ChangeNotifier {
 
     flowRateForecast = getFlowRateForecast(const Duration(seconds: 1));
 
-    if (weightSubscriptionShouldCancel &&
-        flowRateForecast < 0.1 &&
-        !weightCompleter.isCompleted) {
-      weightSubscription?.cancel();
-      weightSubscription = null;
-      weightCompleter.complete(timedMeasurement);
-      return;
+    if (weightSubscriptionShouldCancel && !weightCompleter.isCompleted) {
+      // Wait for the range of weight values in the last 1 second of
+      // measurements to drop below 0.1g
+      final latestWeightTime = weightMeasurementsDuringShot.last.time;
+      final thresholdTime =
+          latestWeightTime.subtract(const Duration(seconds: 1));
+      final lastSecondSamples =
+          weightMeasurementsDuringShot.where((measurement) {
+        return measurement.time.isAfter(thresholdTime) ||
+            measurement.time.isAtSameMomentAs(thresholdTime);
+      });
+
+      final largestWeight = maxBy(lastSecondSamples, (measurement) {
+        return measurement.weight.weight;
+      });
+      final smallestWeight = minBy(lastSecondSamples, (measurement) {
+        return measurement.weight.weight;
+      });
+
+      if (largestWeight == null || smallestWeight == null) {
+        return;
+      }
+
+      final range = largestWeight.weight.weight - smallestWeight.weight.weight;
+
+      if (range < 0.1) {
+        weightSubscription?.cancel();
+        weightSubscription = null;
+        weightCompleter.complete(timedMeasurement);
+        return;
+      }
     }
   }
 
