@@ -210,7 +210,7 @@ class ScaleService extends ChangeNotifier {
       ];
       for (var w in wl) {
         if (_weight[index] + 0.1 > w! && _weight[index] - 0.1 < w && w > 1) {
-          tare();
+          tare(index: index);
         }
       }
     }
