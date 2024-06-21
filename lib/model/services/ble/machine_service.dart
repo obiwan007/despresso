@@ -251,7 +251,7 @@ class EspressoMachineService extends ChangeNotifier {
 
   final List<int> _waterAverager = [];
 
-  bool _delayedStopActive = false;
+  Timer? _delayedStop = null;
 
   int flushCounter = 0;
   DateTime lastFlushTime = DateTime.now();
@@ -684,6 +684,8 @@ class EspressoMachineService extends ChangeNotifier {
           shotList.entries.isNotEmpty &&
           shotList.saving == false &&
           shotList.saved == false) {
+
+        _delayedStop?.cancel();
         final weights = await detachWeightListener();
         shotFinished(weights);
       }
@@ -696,7 +698,8 @@ class EspressoMachineService extends ChangeNotifier {
       currentShot = Shot();
       currentShot.targetEspressoWeight = settingsService.targetEspressoWeight;
 
-      _delayedStopActive = false;
+      _delayedStop?.cancel();
+      _delayedStop = null;
       _weightMoveOnFrames = {};
       isPouring = false;
       shotList.clear();
@@ -805,7 +808,14 @@ class EspressoMachineService extends ChangeNotifier {
               weight = profileService.currentProfile!.shotHeader.targetWeight;
             }
 
-            if (isPouring && settingsService.shotStopOnWeight && weight > 1 && _delayedStopActive == false) {
+            if (isPouring && settingsService.shotStopOnWeight && weight > 1) {
+              if (shot.weight >= weight) {
+                // fallback in case predictive SAW failed, and we're over target
+                // weight.
+
+                log.info("Shot weight already reached! Stopping now at ${weight}");
+                triggerEndOfShot();
+              } else if (_delayedStop == null) {
               var valuesCount = calcWeightReachedEstimation();
               if (valuesCount > 0) {
                 var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
@@ -815,9 +825,8 @@ class EspressoMachineService extends ChangeNotifier {
                 if (timeToWeight > 0 &&
                     timeToWeight < 2.5 &&
                     (settingsService.targetEspressoWeight - shot.weight < 5)) {
-                  _delayedStopActive = true;
                   log.info("Shot weight reached soon, starting delayed stop");
-                  Future.delayed(
+                  _delayedStop = Timer(
                     Duration(
                         milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
                     () {
@@ -834,6 +843,7 @@ class EspressoMachineService extends ChangeNotifier {
               //     triggerEndOfShot();
               //   }
               // }
+            }
             }
           }
           break;
@@ -1035,7 +1045,7 @@ class EspressoMachineService extends ChangeNotifier {
     if ((isPouring || state.subState == "pre_infuse") &&
         stepWeightLimit > 0.0 &&
         flowRateForecast > 0.0 &&
-        _delayedStopActive == false) {
+        _delayedStop == false) {
       var currentWeight = weightMeasurementsDuringShot.last;
       var forecastWeight = currentWeight.weight.weight +
           flowRateForecast * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
