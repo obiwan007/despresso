@@ -1054,7 +1054,7 @@ class EspressoMachineService extends ChangeNotifier {
     if ((isPouring || state.subState == "pre_infuse") &&
         stepWeightLimit > 0.0 &&
         flowRateForecast > 0.0 &&
-        _delayedStop == false) {
+        _delayedStop == null) {
       var currentWeight = weightMeasurementsDuringShot.last;
       var forecastWeight = currentWeight.weight.weight +
           flowRateForecast * (DateTime.now().difference(currentWeight.time)).inMilliseconds;
