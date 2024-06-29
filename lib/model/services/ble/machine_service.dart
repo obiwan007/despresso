@@ -813,37 +813,46 @@ class EspressoMachineService extends ChangeNotifier {
                 // fallback in case predictive SAW failed, and we're over target
                 // weight.
 
-                log.info("Shot weight already reached! Stopping now at ${weight}");
+                log.info("Shot weight already reached! Stopping now at $weight");
                 triggerEndOfShot();
               } else if (_delayedStop == null) {
-              var valuesCount = calcWeightReachedEstimation();
-              if (valuesCount > 0) {
-                var timeToWeight = currentShot.estimatedWeightReachedTime - shot.sampleTimeCorrected;
-                // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
-                shot.timeToWeight = timeToWeight > 0 && timeToWeight < 100 ? timeToWeight : 0;
-                log.info("Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
-                if (timeToWeight > 0 &&
-                    timeToWeight < 2.5 &&
-                    (settingsService.targetEspressoWeight - shot.weight < 5)) {
-                  log.info("Shot weight reached soon, starting delayed stop");
-                  _delayedStop = Timer(
-                    Duration(
-                        milliseconds: ((timeToWeight - settingsService.targetEspressoWeightTimeAdjust) * 1000).toInt()),
-                    () {
-                      log.info("Shot weight reached now!, stopping ${state.shot!.weight}");
-                      triggerEndOfShot();
-                    },
-                  );
+                var valuesCount = calcWeightReachedEstimation();
+                if (valuesCount > 0) {
+                  var timeToWeight = currentShot.estimatedWeightReachedTime -
+                      shot.sampleTimeCorrected;
+                  // var timeToWeight = (weight - shot.weight) / shot.flowWeight;
+                  shot.timeToWeight =
+                      timeToWeight > 0 && timeToWeight < 100 ? timeToWeight : 0;
+                  log.info(
+                      "Time to weight: $timeToWeight ${shot.weight} ${shot.flowWeight}");
+                  if (timeToWeight > 0 &&
+                      timeToWeight < 2.5 &&
+                      (settingsService.targetEspressoWeight - shot.weight <
+                          5)) {
+                    log.info("Shot weight reached soon, starting delayed stop");
+                    _delayedStop = Timer(
+                      Duration(
+                          milliseconds: ((timeToWeight -
+                                      settingsService
+                                          .targetEspressoWeightTimeAdjust) *
+                                  1000)
+                              .toInt()),
+                      () {
+                        log.info(
+                            "Shot weight reached now!, stopping ${state.shot!.weight}");
+                        triggerEndOfShot();
+                      },
+                    );
+                  }
                 }
-              }
-              // if (weight > 1 && shot.weight + 1 > weight) {
-              //   log.info("Shot Weight reached ${shot.weight} > $weight Portime: $lastPourTime");
+                // if (weight > 1 && shot.weight + 1 > weight) {
+                //   log.info("Shot Weight reached ${shot.weight} > $weight Portime: $lastPourTime");
 
-              //   if (settingsService.shotStopOnWeight) {
-              //     triggerEndOfShot();
-              //   }
-              // }
-            }
+                //   if (settingsService.shotStopOnWeight) {
+                //     triggerEndOfShot();
+                //   }
+                // }
+              }
             }
           }
           break;
