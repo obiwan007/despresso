@@ -1,4 +1,5 @@
 {
     "dart.flutterSdkPath": null,
     "cmake.configureOnOpen": false,
+    "java.configuration.updateBuildConfiguration": "interactive",
 }
