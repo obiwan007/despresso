@@ -559,6 +559,15 @@ class SettingsScreenState extends State<AppSettingsScreen> {
                       machineService.de1?.setWaterLevelWarning(value.toInt());
                     },
                   ),
+                  SwitchSettingsTile(
+                    settingKey: SettingKeys.alwaysAllowSkipping.name,
+                    defaultValue: settingsService.alwaysAllowSkipping,
+                    title: 'Always allow Step skipping',//S.of(context).screenSettingsAlwaysallowSkipping,
+                    subtitle: 'If enabled every step can be skipped - not only those called "pause"',//S.of(context).screenSettingsalwaysAllowSkippingDesc,
+                    enabledLabel: S.of(context).enabled,
+                    disabledLabel: S.of(context).disabled,
+                    onChange: (value) {},
+                  ),
                 ],
               ),
             ),

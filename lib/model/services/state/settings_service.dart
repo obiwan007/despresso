@@ -106,6 +106,7 @@ enum SettingKeys {
   visualizerRefreshToken,
   visualizerExpiring,
   currentVersion,
+  alwaysAllowSkipping,
 }
 
 class SettingsService extends ChangeNotifier {
@@ -385,6 +386,9 @@ class SettingsService extends ChangeNotifier {
 
   String get scaleSecondary => Settings.getValue<String>(SettingKeys.scaleSecondary.name) ?? "";
   set scaleSecondary(String value) => Settings.setValue<String>(SettingKeys.scaleSecondary.name, value);
+
+  bool get alwaysAllowSkipping => Settings.getValue<bool>(SettingKeys.alwaysAllowSkipping.name) ?? true;
+  set alwaysAllowSkipping(bool value) => Settings.setValue<bool>(SettingKeys.alwaysAllowSkipping.name, value);
 
   void notifyDelayed() {
     Future.delayed(
