@@ -704,7 +704,7 @@ class EspressoScreenState extends State<EspressoScreen> {
                           .labelMedium
                           ?.copyWith(color: Theme.of(context).colorScheme.primary),
                     ),
-                    if (snapshot.data!.toLowerCase().startsWith("pause") || (settingsService.alwaysAllowSkipping && machineService.state.coffeeState == EspressoMachineState.espresso))
+                    if (snapshot.data!.toLowerCase().startsWith("pause") || (settingsService.alwaysAllowSkipping && machineService.state.coffeeState == EspressoMachineState.espresso && machineService.isPouring == true))
                       ElevatedButton(
                           onPressed: () {
                             machineService.moveToNextFrame();
