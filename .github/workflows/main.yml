@@ -18,7 +18,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
            
       - name: Decode secrets.properties file
         env:
@@ -60,7 +60,7 @@ jobs:
         run: flutter build appbundle
 
       - name: Upload Android app
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Android
