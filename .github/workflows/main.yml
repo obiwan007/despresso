@@ -16,10 +16,17 @@ concurrency:
 jobs:  
   buildall:
     runs-on: macos-latest
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
-           
+
+      - name: Cache packages
+        uses: actions/cache@v2
+        with:
+          path: ${{ runner.tool_cache }}/flutter
+          key: deps-${{ hashFiles('**/pubspec.lock') }}
+
       - name: Decode secrets.properties file
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
