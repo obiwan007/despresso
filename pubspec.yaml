@@ -47,7 +47,7 @@ dependencies:
   build_runner: ^2.3.3
   json_serializable: ^6.7.1
   path_provider: ^2.0.11
-  community_charts_flutter: ^1.0.2
+  community_charts_flutter: ^1.0.4
   syncfusion_flutter_sliders: ^25.2.4
   copy_with_extension: ^5.0.0
   copy_with_extension_gen: ^5.0.4
@@ -70,9 +70,9 @@ dependencies:
   file_picker: ^6.0.0
   share_plus: ^7.2.1
   document_file_save_plus: ^2.0.0
-  sentry_flutter: ^7.16.1
+  sentry_flutter: ^8.9.0
   feedback_sentry: ^3.0.0
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.0.2
   intl: ^0.19.0
   csv: ^5.0.1
   flutter_spinbox: ^0.13.1
@@ -82,12 +82,12 @@ dependencies:
   network_info_plus: ^4.1.0
   screen_brightness: ^1.0.0
   flutter_archive: ^6.0.0
-  sentry_logging: ^7.16.1
+  sentry_logging: ^8.9.0
   flutter_localizations:
     sdk: flutter
   web_socket_channel: ^2.4.0
   flutter_keyboard_visibility: ^6.0.0
-  wakelock_plus: ^1.1.4
+  wakelock_plus: ^1.2.8
   dashboard: ^0.0.3+1  
   flutter_colorpicker:
     git:
