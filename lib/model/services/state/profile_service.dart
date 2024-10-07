@@ -574,7 +574,7 @@ class ProfileService extends ChangeNotifier {
 
       if (limiterValue != 0.0 && limiterValue != double.negativeInfinity && limiterRange != double.negativeInfinity) {
         De1ShotExtFrameClass exFrame = De1ShotExtFrameClass();
-        exFrame.frameToWrite = (frameCounter + 32).toInt();
+        exFrame.frameToWrite = (frameCounter + De1ShotExtFrameClass.extFrameOffset).toInt();
         exFrame.limiterValue = limiterValue;
         exFrame.limiterRange = limiterRange;
         shotExframes.add(exFrame);
