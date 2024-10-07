@@ -58,6 +58,25 @@ class De1ShotProfile {
 
     return shotFrames.first;
   }
+
+  De1ShotExtFrameClass getExtFrame(De1ShotFrameClass frame) {
+    final log = Logger('getExtFrame');
+		// Make sure we have a valid frame
+		if (shotFrames.isEmpty || !shotFrames.contains(frame)) {
+			log.severe("No frames in profile or frame not in profile");
+			return De1ShotExtFrameClass();
+		}
+		// find extFrame that corresponds to this frame or create a new one
+    De1ShotExtFrameClass extFrame = shotExframes
+        .firstWhere((element) => element.frameToWrite == frame.extFrameToWrite,
+            orElse: () => De1ShotExtFrameClass()
+              ..limiterRange = 0.6
+              ..frameToWrite = frame.extFrameToWrite);
+    if (!shotExframes.contains(extFrame)) {
+      shotExframes.add(extFrame);
+    }
+    return extFrame;
+  }
 }
 
 @JsonSerializable()

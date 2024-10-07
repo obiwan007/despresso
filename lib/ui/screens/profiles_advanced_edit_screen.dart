@@ -6,13 +6,11 @@ import 'package:despresso/ui/widgets/editable_text.dart';
 import 'package:despresso/ui/widgets/profile_graph.dart';
 import 'package:despresso/ui/widgets/selectable_steps.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../../model/services/ble/machine_service.dart';
 import '../../service_locator.dart';
-import 'package:collection/collection.dart';
 
 class AdvancedProfilesEditScreen extends StatefulWidget {
   final De1ShotProfile profile;
@@ -75,34 +73,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
     }
     for (var element in _profile.shotExframes) {
       log.info("Profile-Ext: $element");
-    }
-
-    var declineObject = De1ShotFrameClass();
-    declineObject.frameToWrite = _profile.shotFrames.length;
-    declineObject.temp = _profile.shotFrames.first.temp;
-    try {
-      var pre = _profile.shotFrames
-          .where((element) => (element.name == "preinfusion"));
-      preInfusion = pre.toList().first;
-
-      var riseW = _profile.shotFrames.where((element) =>
-          (element.name == "rise and hold" || element.name == "hold"));
-      riseAndHold = riseW.isNotEmpty ? riseW.first : null;
-      var forcedRiseWhere = _profile.shotFrames
-          .where((element) => (element.name == "forced rise without limit"));
-      forcedRise = forcedRiseWhere.isNotEmpty ? forcedRiseWhere.first : null;
-      var declineArray = _profile.shotFrames
-          .where((element) => (element.name == "decline"))
-          .toList();
-      if (declineArray.isNotEmpty) {
-        decline = declineArray.first;
-      } else {
-        _profile.shotFrames.add(declineObject);
-        decline = declineObject;
-      }
-      log.info("Decline: $decline");
-    } catch (e) {
-      log.severe("Preparing edit failed: $e");
     }
 
     _tabController = TabController(length: 5, vsync: this, initialIndex: 0);
@@ -326,7 +296,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
                     Text(
                       (frame.pump != "pressure"
                           ? frame.setVal.toStringAsFixed(1)
-                          : '<${valueOrInfinity(getExtFrame(frame).limiterValue)}'),
+                          : '<${valueOrInfinity(_profile.getExtFrame(frame).limiterValue)}'),
                       style: style3,
                     ),
                     Text("ml/s", style: style3),
@@ -340,7 +310,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
                     Text(
                       (frame.pump == "pressure"
                           ? frame.setVal.toStringAsFixed(1)
-                          : '<${valueOrInfinity(getExtFrame(frame).limiterValue)}'),
+                          : '<${valueOrInfinity(_profile.getExtFrame(frame).limiterValue)}'),
                       style: style3,
                     ),
                     Text("bar", style: style3),
@@ -443,246 +413,27 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
     ];
   }
 
-  Padding buildRiseAndHold(
-      De1ShotFrameClass riseAndHold, De1ShotFrameClass? forcedRise) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Text("Rise and hold (${riseAndHold.frameLen.round()} s)"),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 8,
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          Text("Time (${riseAndHold.frameLen.round()} s)"),
-                          SfSlider(
-                            min: 0.0,
-                            max: 100.0,
-                            value: riseAndHold.frameLen,
-                            interval: 20,
-                            stepSize: 0.1,
-                            showTicks: true,
-                            showLabels: true,
-                            enableTooltip: true,
-                            minorTicksPerInterval: 1,
-                            onChanged: (dynamic value) {
-                              setState(() {
-                                var v = (value * 10).round() / 10;
-                                riseAndHold.frameLen = v;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 28.0),
-                        child: Column(
-                          children: [
-                            Text(
-                                "Limit flow (${(riseAndHold.pump == "flow" ? riseAndHold.setVal : riseAndHold.triggerVal).round()} ml/s)"),
-                            SfSlider(
-                              min: 0.0,
-                              max: 10.0,
-                              value: riseAndHold.pump == "flow"
-                                  ? riseAndHold.setVal
-                                  : riseAndHold.triggerVal,
-                              interval: 1,
-                              showTicks: true,
-                              showLabels: true,
-                              stepSize: 0.1,
-                              enableTooltip: true,
-                              minorTicksPerInterval: 1,
-                              onChanged: (dynamic value) {
-                                riseAndHold.pump == "flow"
-                                    ? riseAndHold.setVal = value
-                                    : riseAndHold.triggerVal = value;
-                                setState(() {});
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      Text("Pressure (${riseAndHold.setVal.round()} bar)"),
-                      SfSlider.vertical(
-                        min: 0.0,
-                        max: 10.0,
-                        value: riseAndHold.pump == "pressure"
-                            ? riseAndHold.setVal
-                            : riseAndHold.triggerVal,
-                        interval: 2,
-                        stepSize: 0.1,
-                        showTicks: true,
-                        showLabels: true,
-                        enableTooltip: true,
-                        minorTicksPerInterval: 1,
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            riseAndHold.setVal = value;
-                            if (forcedRise != null) {
-                              forcedRise.setVal = value;
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Padding buildDecline() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          const Text("Decline"),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 8,
-                  child: Column(
-                    children: [
-                      Column(
-                        children: [
-                          Text("Time (${decline?.frameLen.round()} s)"),
-                          SfSlider(
-                            min: 0.0,
-                            max: 100.0,
-                            value: decline?.frameLen,
-                            interval: 10,
-                            stepSize: 0.1,
-                            showTicks: true,
-                            showLabels: true,
-                            enableTooltip: true,
-                            minorTicksPerInterval: 1,
-                            onChanged: (dynamic value) {
-                              setState(() {
-                                decline!.frameLen = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 28.0),
-                        child: Column(
-                          children: [
-                            Text(
-                                "Stop at weight (${_profile.shotHeader.targetWeight.round()} g)"),
-                            SfSlider(
-                              min: 0.0,
-                              max: 100.0,
-                              value: _profile.shotHeader.targetWeight,
-                              interval: 20,
-                              stepSize: 0.1,
-                              showTicks: false,
-                              showLabels: true,
-                              enableTooltip: true,
-                              minorTicksPerInterval: 1,
-                              onChanged: (dynamic value) {
-                                setState(() {
-                                  _profile.shotHeader.targetWeight = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      Text("Pressure (${decline?.setVal.round()} bar)"),
-                      SfSlider.vertical(
-                        min: 0.0,
-                        max: 15.0,
-                        value: preInfusion!.pump == "pressure"
-                            ? preInfusion!.setVal
-                            : preInfusion!.triggerVal,
-                        interval: 2,
-                        stepSize: 0.1,
-                        showTicks: true,
-                        showLabels: true,
-                        enableTooltip: true,
-                        minorTicksPerInterval: 1,
-                        onChanged: (dynamic value) {
-                          setState(() {
-                            var v = (value * 10).round() / 10;
-                            if (decline!.pump == "pressure") {
-                              decline!.setVal = v;
-                            } else {
-                              decline!.triggerVal = v;
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void profileListener() {
     log.info('Profile updated');
   }
 
-  De1ShotExtFrameClass getExtFrame(De1ShotFrameClass frame) {
-    // find extFrame that corresponds to this frame or create a new one
-    De1ShotExtFrameClass extFrame = _profile.shotExframes
-        .firstWhere((element) => element.frameToWrite == frame.extFrameToWrite,
-            orElse: () => De1ShotExtFrameClass()
-              ..limiterRange = 0.6
-              ..frameToWrite = frame.extFrameToWrite);
-    if (!_profile.shotExframes.contains(extFrame)) {
-      _profile.shotExframes.add(extFrame);
-    }
-    return extFrame;
-  }
 
   void updateLimiterValue(De1ShotFrameClass frame, double value) {
-    De1ShotExtFrameClass extFrame = getExtFrame(frame);
+    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
     extFrame.limiterValue = value;
   }
 
   double getLimiterValue(De1ShotFrameClass frame) {
-    return getExtFrame(frame).limiterValue;
+    return _profile.getExtFrame(frame).limiterValue;
   }
 
   void updateLimiterRange(De1ShotFrameClass frame, double value) {
-    De1ShotExtFrameClass extFrame = getExtFrame(frame);
+    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
     extFrame.limiterRange = value;
   }
 
   double getLimiterRange(De1ShotFrameClass frame) {
-    De1ShotExtFrameClass extFrame = getExtFrame(frame);
+    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
     return extFrame.limiterRange;
   }
 

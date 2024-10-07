@@ -186,13 +186,14 @@ class SelectableSteps extends StatelessWidget {
   }
 
   Widget getSubtitle(De1ShotFrameClass frame) {
+		De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
     bool isMix = ((frame.flag & De1ShotFrameClass.tMixTemp) > 0);
     String vol = frame.maxVol > 0 ? " or ${frame.maxVol} ml" : "";
-    String limitFlow = frame.triggerVal > 0
-        ? "with a pressure limit of ${frame.triggerVal} bar"
+    String limitFlow = extFrame.limiterValue > 0
+        ? "with a pressure limit of ${extFrame.limiterValue} bar"
         : "";
-    String limitPressure = frame.triggerVal > 0
-        ? "with a flow limit of ${frame.triggerVal} ml/s"
+    String limitPressure = extFrame.limiterValue > 0
+        ? "with a flow limit of ${extFrame.limiterValue} ml/s"
         : "";
     log.info("RenderFrame Test: $frame");
 
