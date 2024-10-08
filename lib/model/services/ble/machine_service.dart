@@ -625,7 +625,10 @@ class EspressoMachineService extends ChangeNotifier {
     for (var exFrame in profile.shotExframes) {
       try {
         log.info("Write ExtFrame: $exFrame");
-        await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
+        if (exFrame.limiterValue > 0) {
+          var bytes = De1ShotExtFrameClass.encodeDe1ExtentionFrame(exFrame);
+          await de1!.writeWithResult(Endpoint.frameWrite, bytes);
+        }
       } catch (ex) {
         log.severe("Error writing exframe $profile $ex");
         return "Error writing ex shot frame $exFrame";
