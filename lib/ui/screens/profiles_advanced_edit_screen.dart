@@ -75,7 +75,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
       log.info("Profile-Ext: $element");
     }
 
-    _tabController = TabController(length: 5, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
   }
 
   @override
