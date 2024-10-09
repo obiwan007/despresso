@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:despresso/ui/screens/settings_screen.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 
@@ -80,16 +81,42 @@ class De1ShotProfile {
   }
 
   void recalculateFramesToWrite() {
+    // Create a set to track valid extFrame indices
+    Set<int> validExtFrameIndices = {};
+
     for (int i = 0; i < shotFrames.length; i++) {
       int extIdx = shotExframes.indexWhere((element) =>
           element.frameToWrite ==
           shotFrames[i].frameToWrite + De1ShotExtFrameClass.extFrameOffset);
+
       if (extIdx >= 0) {
+        // If a valid extFrame is found, update its frame index
         shotExframes[extIdx].frameToWrite =
             i + De1ShotExtFrameClass.extFrameOffset;
+
+        // Add the index to the validExtFrameIndices set
+        validExtFrameIndices.add(extIdx);
       }
+
+      // Set the new frame index for the shotFrame
       shotFrames[i].frameToWrite = i;
     }
+
+    // Remove orphaned extFrames:
+    // - Remove frames that are not in the validExtFrameIndices set (i.e., orphaned)
+    // - Also, ensure that no duplicate frameToWrite values exist
+    shotExframes.removeWhere((element) {
+      // Check if this extFrame is not valid
+      bool isOrphaned =
+          !validExtFrameIndices.contains(shotExframes.indexOf(element));
+
+      // Check if the frameToWrite is duplicated
+      int duplicateCount = shotExframes
+          .where((ext) => ext.frameToWrite == element.frameToWrite)
+          .length;
+
+      return isOrphaned || duplicateCount > 1;
+    });
   }
 
   void deleteFrame(int index) {
