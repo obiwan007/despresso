@@ -33,7 +33,8 @@ class De1ShotProfile {
   List<De1ShotFrameClass> shotFrames;
   List<De1ShotExtFrameClass> shotExframes;
 
-  factory De1ShotProfile.fromJson(Map<String, dynamic> json) => _$De1ShotProfileFromJson(json);
+  factory De1ShotProfile.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotProfileFromJson(json);
 
   String get title => shotHeader.title;
 
@@ -61,21 +62,74 @@ class De1ShotProfile {
 
   De1ShotExtFrameClass getExtFrame(De1ShotFrameClass frame) {
     final log = Logger('getExtFrame');
-		// Make sure we have a valid frame
-		if (shotFrames.isEmpty || !shotFrames.contains(frame)) {
-			log.severe("No frames in profile or frame not in profile");
-			return De1ShotExtFrameClass();
-		}
-		// find extFrame that corresponds to this frame or create a new one
-    De1ShotExtFrameClass extFrame = shotExframes
-        .firstWhere((element) => element.frameToWrite == frame.extFrameToWrite,
-            orElse: () => De1ShotExtFrameClass()
-              ..limiterRange = 0.6
-              ..frameToWrite = frame.extFrameToWrite);
+    // Make sure we have a valid frame
+    if (shotFrames.isEmpty || !shotFrames.contains(frame)) {
+      log.severe("No frames in profile or frame not in profile");
+      return De1ShotExtFrameClass();
+    }
+    // find extFrame that corresponds to this frame or create a new one
+    De1ShotExtFrameClass extFrame = shotExframes.firstWhere(
+        (element) => element.frameToWrite == frame.extFrameToWrite,
+        orElse: () => De1ShotExtFrameClass()
+          ..limiterRange = 0.6
+          ..frameToWrite = frame.extFrameToWrite);
     if (!shotExframes.contains(extFrame)) {
       shotExframes.add(extFrame);
     }
     return extFrame;
+  }
+
+  void recalculateFramesToWrite() {
+    for (int i = 0; i < shotFrames.length; i++) {
+      int extIdx = shotExframes.indexWhere((element) =>
+          element.frameToWrite ==
+          shotFrames[i].frameToWrite + De1ShotExtFrameClass.extFrameOffset);
+      if (extIdx >= 0) {
+        shotExframes[extIdx].frameToWrite =
+            i + De1ShotExtFrameClass.extFrameOffset;
+      }
+      shotFrames[i].frameToWrite = i;
+    }
+  }
+
+  void deleteFrame(int index) {
+    // do not delete first frame (for now)
+    if (index <= 0 || index >= shotFrames.length) {
+      return;
+    }
+    shotFrames.removeAt(index);
+    shotExframes.removeWhere((element) =>
+        element.frameToWrite == index + De1ShotExtFrameClass.extFrameOffset);
+
+    // recalculate frameToWrite
+    recalculateFramesToWrite();
+  }
+
+  void cloneFrame(int index) {
+    if (index < 0 || index >= shotFrames.length) {
+      return;
+    }
+    De1ShotFrameClass newFrame = shotFrames[index].clone();
+    De1ShotExtFrameClass newExtFrame = getExtFrame(newFrame).clone();
+    newFrame.frameToWrite += 1;
+    newExtFrame.frameToWrite += 1;
+    shotFrames.insert(index + 1, newFrame);
+    shotExframes.insert(index + 1, newExtFrame);
+
+    recalculateFramesToWrite();
+  }
+
+  void reorderFrame(int index, int direction) {
+    if (index < 0 || index >= shotFrames.length) {
+      return;
+    }
+    if (index + direction < 0 || index + direction >= shotFrames.length) {
+      return;
+    }
+    int newIndex = index + direction;
+    // swap frames
+    shotFrames.insert(newIndex, shotFrames.removeAt(index));
+    recalculateFramesToWrite();
   }
 }
 
@@ -121,7 +175,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   De1ShotHeaderClass();
 
-  factory De1ShotHeaderClass.fromJson(Map<String, dynamic> json) => _$De1ShotHeaderClassFromJson(json);
+  factory De1ShotHeaderClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotHeaderClassFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -170,7 +225,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     return "FrameNum:$numberOfFrames(PreFrames:$numberOfPreinfuseFrames) MinPres:$minimumPressure MaxFlow:$maximumFlow";
   }
 
-  static bool decodeDe1ShotHeader(ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
+  static bool decodeDe1ShotHeader(
+      ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
     final log = Logger('decodeDe1ShotHeader');
     if (data.buffer.lengthInBytes != 5) return false;
 
@@ -194,7 +250,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
         }
         for (int i = 0; i < newBytes.buffer.lengthInBytes; i++) {
           if (newBytes[i] != array[i]) {
-            log.severe("Error in decoding header:${newBytes[i]} != ${array[i]}");
+            log.severe(
+                "Error in decoding header:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }
@@ -242,7 +299,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     data[5] = 0;
     data[6] = 0;
     data[7] = 0;
-    log.fine('encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
+    log.fine(
+        'encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
     return data;
   }
 }
@@ -265,25 +323,30 @@ class De1ShotFrameClass // proc spec_shotframe
   @Uint8ListConverter()
   Uint8List bytes = Uint8List(8);
 
-	int get extFrameToWrite => frameToWrite + De1ShotExtFrameClass.extFrameOffset;
+  int get extFrameToWrite => frameToWrite + De1ShotExtFrameClass.extFrameOffset;
 
   De1ShotFrameClass();
 
   static int ctrlF = 0x01; // Are we in Pressure or Flow priority mode?
   // ignore: constant_identifier_names
-  static int doCompare = 0x02; // Do a compare, early exit current frame if compare true
+  static int doCompare =
+      0x02; // Do a compare, early exit current frame if compare true
   // ignore: constant_identifier_names
-  static int dcGT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+  static int dcGT =
+      0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
   // ignore: constant_identifier_names
   static int dcCompF = 0x08; // Compare Pressure or Flow?
   // ignore: constant_identifier_names
-  static int tMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+  static int tMixTemp =
+      0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
   // ignore: constant_identifier_names
   static int interpolate = 0x20; // Hard jump to target value, or ramp?
   // ignore: constant_identifier_names
-  static int ignoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+  static int ignoreLimit =
+      0x40; // Ignore minimum pressure and max flow settings
 
-  factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) => _$De1ShotFrameClassFromJson(json);
+  factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotFrameClassFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -328,7 +391,8 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
-  static bool decodeDe1ShotFrame(ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
+  static bool decodeDe1ShotFrame(
+      ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
     final log = Logger('decodeDe1ShotFrame');
 
     if (data.buffer.lengthInBytes != 8) return false;
@@ -340,10 +404,12 @@ class De1ShotFrameClass // proc spec_shotframe
       shotFrame.flag = data.getUint8(index++);
       shotFrame.setVal = data.getUint8(index++) / 16.0;
       shotFrame.temp = data.getUint8(index++) / 2.0;
-      shotFrame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
+      shotFrame.frameLen =
+          Helper.convert_F8_1_7_to_float(data.getUint8(index++));
       shotFrame.triggerVal = data.getUint8(index++) / 16.0;
       shotFrame.maxVol = Helper.convert_bottom_10_of_U10P0(
-          256 * data.getUint8(index++) + data.getUint8(index++)); // convert_bottom_10_of_U10P0
+          256 * data.getUint8(index++) +
+              data.getUint8(index++)); // convert_bottom_10_of_U10P0
 
       if (checkEncoding) {
         var array = data.buffer.asUint8List();
@@ -426,14 +492,12 @@ class De1ShotFrameClass // proc spec_shotframe
     }
     return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
   }
-
 }
 
 @JsonSerializable()
 class De1ShotExtFrameClass // extended frames
 {
-
-	static const int extFrameOffset = 32;
+  static const int extFrameOffset = 32;
   int frameToWrite = 0;
   double limiterValue = 0.0;
   double limiterRange = 0.0;
@@ -441,7 +505,8 @@ class De1ShotExtFrameClass // extended frames
   Uint8List bytes = Uint8List(8);
 
   De1ShotExtFrameClass();
-  factory De1ShotExtFrameClass.fromJson(Map<String, dynamic> json) => _$De1ShotExtFrameClassFromJson(json);
+  factory De1ShotExtFrameClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotExtFrameClassFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -471,10 +536,12 @@ class De1ShotExtFrameClass // extended frames
   }
 
   static Uint8List encodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
-    return encodeDe1ExtentionFrame2(exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
+    return encodeDe1ExtentionFrame2(
+        exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
   }
 
-  static Uint8List encodeDe1ExtentionFrame2(int frameToWrite, double limitValue, double limitRange) {
+  static Uint8List encodeDe1ExtentionFrame2(
+      int frameToWrite, double limitValue, double limitRange) {
     Uint8List data = Uint8List(8);
 
     data[0] = frameToWrite;
@@ -537,7 +604,8 @@ class Helper {
   }
 
   // ignore: non_constant_identifier_names
-  static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
+  static void convert_float_to_U10P0_for_tail(
+      double x, Uint8List data, int index) {
     int ix = x.toInt();
 
     if (ix > 255) {
