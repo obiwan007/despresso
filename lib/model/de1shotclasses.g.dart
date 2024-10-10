@@ -20,8 +20,8 @@ Map<String, dynamic> _$De1ShotProfileToJson(De1ShotProfile instance) =>
     <String, dynamic>{
       'isDefault': instance.isDefault,
       'id': instance.id,
-      'shotHeader': instance.shotHeader,
-      'shotFrames': instance.shotFrames,
+      'shotHeader': instance.shotHeader.toJson(),
+      'shotFrames': instance.shotFrames.map((e) => e.toJson()).toList(),
     };
 
 De1ShotHeaderClass _$De1ShotHeaderClassFromJson(Map<String, dynamic> json) =>
