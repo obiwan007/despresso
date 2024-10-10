@@ -2,7 +2,6 @@
 
 import 'dart:typed_data';
 
-import 'package:despresso/ui/screens/settings_screen.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
 
@@ -28,11 +27,10 @@ class De1ShotProfile {
 
   String id = "";
 
-  De1ShotProfile(this.shotHeader, this.shotFrames, this.shotExframes);
+  De1ShotProfile(this.shotHeader, this.shotFrames);
 
   De1ShotHeaderClass shotHeader;
   List<De1ShotFrameClass> shotFrames;
-  List<De1ShotExtFrameClass> shotExframes;
 
   factory De1ShotProfile.fromJson(Map<String, dynamic> json) =>
       _$De1ShotProfileFromJson(json);
@@ -45,12 +43,11 @@ class De1ShotProfile {
   Map<String, dynamic> toJson() => _$De1ShotProfileToJson(this);
 
   De1ShotProfile clone() {
-    var copy = De1ShotProfile(De1ShotHeaderClass(), [], []);
+    var copy = De1ShotProfile(De1ShotHeaderClass(), []);
     copy.id = id;
     copy.isDefault = isDefault;
     copy.shotHeader = shotHeader.clone();
     copy.shotFrames = shotFrames.map((e) => e.clone()).toList();
-    copy.shotExframes = shotExframes.map((e) => e.clone()).toList();
 
     return copy;
   }
@@ -59,104 +56,6 @@ class De1ShotProfile {
     if (shotFrames.isEmpty) return null;
 
     return shotFrames.first;
-  }
-
-  De1ShotExtFrameClass getExtFrame(De1ShotFrameClass frame) {
-    final log = Logger('getExtFrame');
-    // Make sure we have a valid frame
-    if (shotFrames.isEmpty || !shotFrames.contains(frame)) {
-      log.severe("No frames in profile or frame not in profile");
-      return De1ShotExtFrameClass();
-    }
-    // find extFrame that corresponds to this frame or create a new one
-    De1ShotExtFrameClass extFrame = shotExframes.firstWhere(
-        (element) => element.frameToWrite == frame.extFrameToWrite,
-        orElse: () => De1ShotExtFrameClass()
-          ..limiterRange = 0.6
-          ..frameToWrite = frame.extFrameToWrite);
-    if (!shotExframes.contains(extFrame)) {
-      shotExframes.add(extFrame);
-    }
-    return extFrame;
-  }
-
-  void recalculateFramesToWrite() {
-    // Create a set to track valid extFrame indices
-    Set<int> validExtFrameIndices = {};
-
-    for (int i = 0; i < shotFrames.length; i++) {
-      int extIdx = shotExframes.indexWhere((element) =>
-          element.frameToWrite ==
-          shotFrames[i].frameToWrite + De1ShotExtFrameClass.extFrameOffset);
-
-      if (extIdx >= 0) {
-        // If a valid extFrame is found, update its frame index
-        shotExframes[extIdx].frameToWrite =
-            i + De1ShotExtFrameClass.extFrameOffset;
-
-        // Add the index to the validExtFrameIndices set
-        validExtFrameIndices.add(extIdx);
-      }
-
-      // Set the new frame index for the shotFrame
-      shotFrames[i].frameToWrite = i;
-    }
-
-    // Remove orphaned extFrames:
-    // - Remove frames that are not in the validExtFrameIndices set (i.e., orphaned)
-    // - Also, ensure that no duplicate frameToWrite values exist
-    shotExframes.removeWhere((element) {
-      // Check if this extFrame is not valid
-      bool isOrphaned =
-          !validExtFrameIndices.contains(shotExframes.indexOf(element));
-
-      // Check if the frameToWrite is duplicated
-      int duplicateCount = shotExframes
-          .where((ext) => ext.frameToWrite == element.frameToWrite)
-          .length;
-
-      return isOrphaned || duplicateCount > 1;
-    });
-  }
-
-  void deleteFrame(int index) {
-    // do not delete first frame (for now)
-    if (index <= 0 || index >= shotFrames.length) {
-      return;
-    }
-    shotFrames.removeAt(index);
-    shotExframes.removeWhere((element) =>
-        element.frameToWrite == index + De1ShotExtFrameClass.extFrameOffset);
-
-    // recalculate frameToWrite
-    recalculateFramesToWrite();
-  }
-
-  void cloneFrame(int index) {
-    if (index < 0 || index >= shotFrames.length) {
-      return;
-    }
-    De1ShotFrameClass newFrame = shotFrames[index].clone();
-    De1ShotExtFrameClass newExtFrame = getExtFrame(newFrame).clone();
-    newFrame.frameToWrite += 1;
-    newExtFrame.frameToWrite += 1;
-    shotFrames.insert(index + 1, newFrame);
-    shotExframes.insert(index + 1, newExtFrame);
-
-    recalculateFramesToWrite();
-  }
-
-  void reorderFrame(int index, int direction) {
-    if (index < 0 || index >= shotFrames.length) {
-      return;
-    }
-    if (index + direction < 0 || index + direction >= shotFrames.length) {
-      return;
-    }
-    int newIndex = index + direction;
-    // swap frames
-    shotFrames.insert(newIndex, shotFrames.removeAt(index));
-    recalculateFramesToWrite();
   }
 }
 
@@ -332,6 +231,39 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   }
 }
 
+enum De1PumpMode {
+  @JsonValue("pressure")
+  pressure,
+  @JsonValue("flow")
+  flow
+}
+
+enum De1SensorType {
+  @JsonValue("water")
+  water,
+  @JsonValue("coffee")
+  coffee
+}
+
+enum De1Transition {
+  @JsonValue("fast")
+  fast,
+  @JsonValue("smooth")
+  smooth
+}
+
+@JsonSerializable()
+class De1StepLimiterData {
+  double value = 0.0;
+  double range = 0.0;
+
+  De1StepLimiterData clone() {
+    return De1StepLimiterData()
+      ..value = value
+      ..range = range;
+  }
+}
+
 @JsonSerializable()
 class De1ShotFrameClass // proc spec_shotframe
 {
@@ -344,13 +276,15 @@ class De1ShotFrameClass // proc spec_shotframe
   double maxVol = 0.0; // convert_bottom_10_of_U10P0
   double maxWeight = 0.0;
   String name = "";
-  String pump = "";
-  String sensor = "";
-  String transition = "";
+  De1PumpMode pump = De1PumpMode.pressure;
+  De1SensorType sensor = De1SensorType.water;
+  De1Transition transition = De1Transition.fast;
+  De1StepLimiterData? limiter;
   @Uint8ListConverter()
   Uint8List bytes = Uint8List(8);
 
-  int get extFrameToWrite => frameToWrite + De1ShotExtFrameClass.extFrameOffset;
+  static const int extFrameOffset = 32;
+  int get extFrameToWrite => frameToWrite + De1ShotFrameClass.extFrameOffset;
 
   De1ShotFrameClass();
 
@@ -395,6 +329,7 @@ class De1ShotFrameClass // proc spec_shotframe
     copy.transition = transition;
     copy.triggerVal = triggerVal;
     copy.maxWeight = maxWeight;
+    copy.limiter = limiter?.clone();
 
     return copy;
   }
@@ -418,6 +353,8 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
+  // This method is not used in the codebase
+  // TODO: Remove this method
   static bool decodeDe1ShotFrame(
       ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
     final log = Logger('decodeDe1ShotFrame');
@@ -486,6 +423,30 @@ class De1ShotFrameClass // proc spec_shotframe
     return data;
   }
 
+  static Uint8List encodeDe1ExtentionFrame(De1ShotFrameClass frame) {
+    int frameToWrite = frame.frameToWrite + De1ShotFrameClass.extFrameOffset;
+    Uint8List data = Uint8List(8);
+
+    data[0] = frameToWrite;
+
+    if (frame.limiter == null) {
+      return data;
+    }
+    double limiterValue = frame.limiter!.value;
+    double limiterRange = frame.limiter!.range;
+
+    data[1] = (0.5 + limiterValue * 16.0).toInt();
+    data[2] = (0.5 + limiterRange * 16.0).toInt();
+
+    data[3] = 0;
+    data[4] = 0;
+    data[5] = 0;
+    data[6] = 0;
+    data[7] = 0;
+
+    return data;
+  }
+
   @override
   String toString() {
     // ignore: constant_identifier_names
@@ -517,82 +478,7 @@ class De1ShotFrameClass // proc spec_shotframe
     for (var b in bytes) {
       sb += "${b.toRadixString(16)}-";
     }
-    return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
-  }
-}
-
-@JsonSerializable()
-class De1ShotExtFrameClass // extended frames
-{
-  static const int extFrameOffset = 32;
-  int frameToWrite = 0;
-  double limiterValue = 0.0;
-  double limiterRange = 0.0;
-  @Uint8ListConverter()
-  Uint8List bytes = Uint8List(8);
-
-  De1ShotExtFrameClass();
-  factory De1ShotExtFrameClass.fromJson(Map<String, dynamic> json) =>
-      _$De1ShotExtFrameClassFromJson(json);
-
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$De1ShotExtFrameClassToJson(this);
-  De1ShotExtFrameClass clone() {
-    var copy = De1ShotExtFrameClass();
-    copy.bytes = Uint8List.fromList(bytes);
-    copy.frameToWrite = frameToWrite;
-    copy.limiterRange = limiterRange;
-    copy.limiterValue = limiterValue;
-
-    return copy;
-  }
-
-  bool compareBytes(De1ShotExtFrameClass sh) {
-    if (sh.bytes.buffer.lengthInBytes != bytes.buffer.lengthInBytes) {
-      return false;
-    }
-    for (int i = 0; i < sh.bytes.buffer.lengthInBytes; i++) {
-      if (sh.bytes[i] != bytes[i]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  static Uint8List encodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
-    return encodeDe1ExtentionFrame2(
-        exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
-  }
-
-  static Uint8List encodeDe1ExtentionFrame2(
-      int frameToWrite, double limitValue, double limitRange) {
-    Uint8List data = Uint8List(8);
-
-    data[0] = frameToWrite;
-
-    data[1] = (0.5 + limitValue * 16.0).toInt();
-    data[2] = (0.5 + limitRange * 16.0).toInt();
-
-    data[3] = 0;
-    data[4] = 0;
-    data[5] = 0;
-    data[6] = 0;
-    data[7] = 0;
-
-    return data;
-  }
-
-  @override
-  String toString() {
-    var sb = "";
-    for (var b in bytes) {
-      sb += "${b.toRadixString(16)}-";
-    }
-
-    return "Frame:$frameToWrite Limiter:$limiterValue LimiterRange:$limiterRange   $sb";
+    return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol LimitValue: ${limiter?.value ?? 0} LimitRange: ${limiter?.range ?? 0} B:$sb BEX: ${De1ShotFrameClass.encodeDe1ExtentionFrame(this)}";
   }
 }
 
