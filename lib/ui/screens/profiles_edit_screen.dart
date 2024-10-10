@@ -70,7 +70,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
       var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
       if (declineArray.isNotEmpty) {
         decline = declineArray.first;
-      } else {
+      } else if (_profile.shotHeader.type != "advanced") {
         _profile.shotFrames.add(declineObject);
         decline = declineObject;
       }

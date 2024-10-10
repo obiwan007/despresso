@@ -359,8 +359,8 @@ class ProfileService extends ChangeNotifier {
       var sensor = (step.flag & TMixTemp == TMixTemp) ? "water" : "coffee";
       buffer.writeln('"sensor": "$sensor",');
 
-      buffer.writeln('"pump": "${step.pump}",');
-      buffer.writeln('"transition": "${step.transition}",');
+      buffer.writeln('"pump": "${step.pump.name}",');
+      buffer.writeln('"transition": "${step.transition.name}",');
 
       if (step.pump == De1PumpMode.flow) {
         buffer.writeln('"flow": "${step.setVal}",');
