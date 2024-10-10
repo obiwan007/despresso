@@ -32,7 +32,6 @@ De1ShotHeaderClass _$De1ShotHeaderClassFromJson(Map<String, dynamic> json) =>
           (json['numberOfPreinfuseFrames'] as num).toInt()
       ..minimumPressure = (json['minimumPressure'] as num).toInt()
       ..maximumFlow = (json['maximumFlow'] as num).toDouble()
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List)
       ..hidden = (json['hidden'] as num).toInt()
       ..type = json['type'] as String
       ..lang = json['lang'] as String
@@ -56,7 +55,6 @@ Map<String, dynamic> _$De1ShotHeaderClassToJson(De1ShotHeaderClass instance) =>
       'numberOfPreinfuseFrames': instance.numberOfPreinfuseFrames,
       'minimumPressure': instance.minimumPressure,
       'maximumFlow': instance.maximumFlow,
-      'bytes': const Uint8ListConverter().toJson(instance.bytes),
       'hidden': instance.hidden,
       'type': instance.type,
       'lang': instance.lang,
@@ -99,10 +97,8 @@ De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
       ..transition = $enumDecode(_$De1TransitionEnumMap, json['transition'])
       ..limiter = json['limiter'] == null
           ? null
-          : De1StepLimiterData.fromJson(json['limiter'] as Map<String, dynamic>)
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List)
-      ..limiterValue = (json['limiterValue'] as num).toDouble()
-      ..limiterRange = (json['limiterRange'] as num).toDouble();
+          : De1StepLimiterData.fromJson(
+              json['limiter'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
     <String, dynamic>{
@@ -118,9 +114,6 @@ Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
       'sensor': _$De1SensorTypeEnumMap[instance.sensor]!,
       'transition': _$De1TransitionEnumMap[instance.transition]!,
       'limiter': instance.limiter,
-      'bytes': const Uint8ListConverter().toJson(instance.bytes),
-      'limiterValue': instance.limiterValue,
-      'limiterRange': instance.limiterRange,
     };
 
 const _$De1PumpModeEnumMap = {
