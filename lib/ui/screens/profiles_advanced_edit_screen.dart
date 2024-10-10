@@ -71,9 +71,6 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
     for (var element in _profile.shotFrames) {
       log.info("Profile: $element");
     }
-    for (var element in _profile.shotExframes) {
-      log.info("Profile-Ext: $element");
-    }
 
     _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
   }
@@ -87,7 +84,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
   }
 
   void handleStepDelete(int index) {
-    _profile.deleteFrame(index);
+    _profile.shotFrames.removeAt(index);
     _selectedStepIndex = min(_profile.shotFrames.length - 1, index);
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     log.info("New Step $_selectedStepIndex");
@@ -95,7 +92,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
   }
 
   void handleStepCopy(int index) {
-    _profile.cloneFrame(index);
+    _profile.shotFrames.insert(index + 1, _profile.shotFrames[index].clone());
     _selectedStepIndex = min(_profile.shotFrames.length - 1, index + 1);
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     log.info("New Step $_selectedStepIndex");
@@ -103,7 +100,8 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
   }
 
   void handleStepReorder(int index, int direction) {
-    _profile.reorderFrame(index, direction);
+    _profile.shotFrames
+        .insert(index + direction, _profile.shotFrames.removeAt(index));
     _selectedStepIndex = min(_profile.shotFrames.length - 1, index + direction);
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     log.info("New Step $_selectedStepIndex");
@@ -296,9 +294,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
                 Column(
                   children: [
                     Text(
-                      (frame.pump != "pressure"
+                      (frame.pump != De1PumpMode.pressure
                           ? frame.setVal.toStringAsFixed(1)
-                          : '<${valueOrInfinity(_profile.getExtFrame(frame).limiterValue)}'),
+                          : '<${valueOrInfinity(frame.limiterValue)}'),
                       style: style3,
                     ),
                     Text("ml/s", style: style3),
@@ -310,9 +308,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
                 Column(
                   children: [
                     Text(
-                      (frame.pump == "pressure"
+                      (frame.pump == De1PumpMode.pressure
                           ? frame.setVal.toStringAsFixed(1)
-                          : '<${valueOrInfinity(_profile.getExtFrame(frame).limiterValue)}'),
+                          : '<${valueOrInfinity(frame.limiterValue)}'),
                       style: style3,
                     ),
                     Text("bar", style: style3),
@@ -421,22 +419,19 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
 
 
   void updateLimiterValue(De1ShotFrameClass frame, double value) {
-    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
-    extFrame.limiterValue = value;
+    frame.limiterValue = value;
   }
 
   double getLimiterValue(De1ShotFrameClass frame) {
-    return _profile.getExtFrame(frame).limiterValue;
+    return frame.limiterValue;
   }
 
   void updateLimiterRange(De1ShotFrameClass frame, double value) {
-    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
-    extFrame.limiterRange = value;
+    frame.limiterRange = value;
   }
 
   double getLimiterRange(De1ShotFrameClass frame) {
-    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
-    return extFrame.limiterRange;
+    return frame.limiterRange;
   }
 
   List<Widget> handleChanges(De1ShotFrameClass frame) {
@@ -474,7 +469,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
             max: 10,
             interval: 1,
             frame, (value, isFast, isPressure) {
-          frame.transition = isFast ? "fast" : "smooth";
+          frame.transition = isFast ? De1Transition.fast : De1Transition.smooth;
 
           var mask = frame.flag & (255 - De1ShotFrameClass.ctrlF);
           if (isPressure) {
@@ -482,8 +477,9 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
           } else {
             frame.flag |= De1ShotFrameClass.ctrlF;
           }
-          frame.pump =
-              (frame.flag & De1ShotFrameClass.ctrlF) == 0 ? "pressure" : "flow";
+          frame.pump = (frame.flag & De1ShotFrameClass.ctrlF) == 0
+              ? De1PumpMode.pressure
+              : De1PumpMode.flow;
 
           mask = frame.flag & (255 - De1ShotFrameClass.interpolate);
           if (isFast) {
@@ -623,7 +619,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
       required double min,
       double? interval,
       String? title}) {
-    bool isPressure = (frame.pump == "pressure" ? true : false);
+    bool isPressure = (frame.pump == De1PumpMode.pressure ? true : false);
     bool isFast = (frame.flag & De1ShotFrameClass.interpolate) == 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -640,18 +636,18 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
                   height: 155,
                   child: changeValueRow(
                       unit: "bar",
-                      title: frame.pump == "pressure"
+                      title: frame.pump == De1PumpMode.pressure
                           ? "Pressure"
                           : "limit Press.",
                       min: min,
                       max: max,
                       interval: interval,
                       frame,
-                      frame.pump == "pressure"
+                      frame.pump == De1PumpMode.pressure
                           ? frame.setVal
                           : getLimiterValue(frame), (value) {
                     var v = (value * 10).round() / 10;
-                    if (frame.pump == "pressure") {
+                    if (frame.pump == De1PumpMode.pressure) {
                       frame.setVal = v;
                     } else {
                       updateLimiterValue(frame, v);
@@ -671,15 +667,17 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
                   height: 160,
                   child: changeValueRow(
                       unit: "ml/s",
-                      title: frame.pump == "pressure" ? "limit Flow" : "Flow",
+                      title: frame.pump == De1PumpMode.pressure
+                          ? "limit Flow"
+                          : "Flow",
                       min: min,
                       max: max,
                       interval: interval,
                       frame,
-                      frame.pump == "flow"
+                      frame.pump == De1PumpMode.flow
                           ? frame.setVal
                           : getLimiterValue(frame), (value) {
-                    if (frame.pump == "flow") {
+                    if (frame.pump == De1PumpMode.flow) {
                       frame.setVal = value;
                     } else {
                       updateLimiterValue(frame, value);

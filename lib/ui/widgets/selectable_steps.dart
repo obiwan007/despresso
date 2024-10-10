@@ -186,14 +186,13 @@ class SelectableSteps extends StatelessWidget {
   }
 
   Widget getSubtitle(De1ShotFrameClass frame) {
-    De1ShotExtFrameClass extFrame = _profile.getExtFrame(frame);
     bool isMix = ((frame.flag & De1ShotFrameClass.tMixTemp) > 0);
     String vol = frame.maxVol > 0 ? " or ${frame.maxVol} ml" : "";
-    String limitFlow = extFrame.limiterValue > 0
-        ? "with a pressure limit of ${extFrame.limiterValue} bar"
+    String limitFlow = frame.limiterValue > 0
+        ? "with a pressure limit of ${frame.limiterValue} bar"
         : "";
-    String limitPressure = extFrame.limiterValue > 0
-        ? "with a flow limit of ${extFrame.limiterValue} ml/s"
+    String limitPressure = frame.limiterValue > 0
+        ? "with a flow limit of ${frame.limiterValue} ml/s"
         : "";
     log.info("RenderFrame Test: $frame");
 
@@ -204,10 +203,10 @@ class SelectableSteps extends StatelessWidget {
       children: [
         Text(
             "Set ${isMix ? "water" : "coffee"} temperature to ${frame.temp.toStringAsFixed(0)} °C"),
-        if (frame.pump != "pressure")
+        if (frame.pump == De1PumpMode.pressure)
           Text(
               "pour ${frame.transition} at rate of ${frame.setVal.toStringAsFixed(1)} ml/s $limitFlow"),
-        if (frame.pump == "pressure")
+        if (frame.pump == De1PumpMode.flow)
           Text(
               "Pressurize ${frame.transition} to ${frame.setVal.toStringAsFixed(1)} bar $limitPressure"),
         Text(

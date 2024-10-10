@@ -280,13 +280,12 @@ class ProfileService extends ChangeNotifier {
   De1ShotProfile parseDefaultProfile(String json, bool isDefault) {
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
-    List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
-    var p = De1ShotProfile(header, frames, exFrames);
+    var p = De1ShotProfile(header, frames);
     if (!shotJsonParser(json, p)) throw ("Error");
 
     p.isDefault = isDefault;
 
-    log.fine("$header $frames $exFrames");
+    log.fine("$header $frames");
 
     return p;
   }
@@ -353,7 +352,7 @@ class ProfileService extends ChangeNotifier {
       buffer.writeln('"pump": "${step.pump}",');
       buffer.writeln('"transition": "${step.transition}",');
 
-      if (step.pump == "flow") {
+      if (step.pump == De1PumpMode.flow) {
         buffer.writeln('"flow": "${step.setVal}",');
       } else {
         buffer.writeln('"pressure": "${step.setVal}",');
@@ -398,16 +397,12 @@ class ProfileService extends ChangeNotifier {
         buffer.writeln("}");
       }
 
-      if (prof.shotExframes.isNotEmpty) {
-        var extended =
-            prof.shotExframes.singleWhereIndexedOrNull((index, element) => element.frameToWrite - 32 == frameNum);
-        if (extended != null) {
+      if (step.limiter != null) {
           buffer.writeln(',');
           buffer.writeln('"limiter": {');
-          buffer.writeln('  "value": "${extended.limiterValue}",');
-          buffer.writeln('  "range": "${extended.limiterRange}"');
+          buffer.writeln('  "value": "${step.limiterValue}",');
+          buffer.writeln('  "range": "${step.limiterRange}"');
           buffer.writeln("  }");
-        }
       }
 
       if (frameNum < prof.shotFrames.length - 1) {
@@ -431,7 +426,6 @@ class ProfileService extends ChangeNotifier {
 
     De1ShotHeaderClass shotHeader = profile.shotHeader;
     List<De1ShotFrameClass> shotFrames = profile.shotFrames;
-    List<De1ShotExtFrameClass> shotExframes = profile.shotExframes;
     if (!json.containsKey("version")) return false;
     if (dynamic2Double(json["version"]) != 2.0) return false;
 
@@ -468,17 +462,13 @@ class ProfileService extends ChangeNotifier {
       De1ShotFrameClass frame = De1ShotFrameClass();
       var features = IgnoreLimit;
 
-      frame.pump = dynamic2String(frameData["pump"]);
+      frame.pump = dynamic2String(frameData["pump"]) == "flow" ? De1PumpMode.flow : De1PumpMode.pressure;
       frame.name = dynamic2String(frameData["name"]);
       frame.maxWeight = dynamic2Double(frameData["weight"]);
 
       // flow control
-      if (!frameData.containsKey("pump")) return false;
-      var pump = dynamic2String(frameData["pump"]);
-      frame.pump = pump;
 
-      if (pump == "") return false;
-      if (pump == "flow") {
+      if (frame.pump == De1PumpMode.flow) {
         features |= CtrlF;
         if (!frameData.containsKey("flow")) return false;
         var flow = dynamic2Double(frameData["flow"]);
@@ -496,13 +486,14 @@ class ProfileService extends ChangeNotifier {
       var sensor = dynamic2String(frameData["sensor"]);
       if (sensor == "") return false;
       if (sensor == "water") features |= TMixTemp;
+			frame.sensor = sensor == 'water' ? De1SensorType.water : De1SensorType.coffee;
 
       if (!frameData.containsKey("transition")) return false;
       var transition = dynamic2String(frameData["transition"]);
       if (transition == "") return false;
 
       if (transition == "smooth") features |= Interpolate;
-      frame.transition = transition;
+      frame.transition = transition == 'smooth' ? De1Transition.smooth : De1Transition.fast;
       // "move on if...."
       if (frameData.containsKey("exit")) {
         var exitData = frameData["exit"];
@@ -546,6 +537,8 @@ class ProfileService extends ChangeNotifier {
 
         limiterValue = dynamic2Double(limiterData["value"]);
         limiterRange = dynamic2Double(limiterData["range"]);
+				frame.limiterValue = limiterValue;
+				frame.limiterRange = limiterRange;
       }
 
       if (!frameData.containsKey("temperature")) return false;
@@ -556,49 +549,27 @@ class ProfileService extends ChangeNotifier {
       var seconds = dynamic2Double(frameData["seconds"]);
       if (seconds == double.negativeInfinity) return false;
 
-      int frameCounter = shotFrames.length;
 
       // MaxVol for the first frame only
       double inputMaxVol = 0.0;
-      if (frameCounter == 0 && frameData.containsKey("volume")) {
+      if (frameData.containsKey("volume")) {
         inputMaxVol = dynamic2Double(frameData["volume"]);
         if (inputMaxVol == double.negativeInfinity) inputMaxVol = 0.0;
       }
 
-      frame.frameToWrite = frameCounter;
       frame.flag = features;
       frame.temp = temperature;
       frame.frameLen = seconds;
       frame.maxVol = inputMaxVol;
       shotFrames.add(frame);
 
-      if (limiterValue != 0.0 && limiterValue != double.negativeInfinity && limiterRange != double.negativeInfinity) {
-        De1ShotExtFrameClass exFrame = De1ShotExtFrameClass();
-        exFrame.frameToWrite = (frameCounter + De1ShotExtFrameClass.extFrameOffset).toInt();
-        exFrame.limiterValue = limiterValue;
-        exFrame.limiterRange = limiterRange;
-        shotExframes.add(exFrame);
-      }
     }
 
     // header
     shotHeader.numberOfFrames = shotFrames.length;
-    shotHeader.numberOfPreinfuseFrames = 1;
+    shotHeader.numberOfPreinfuseFrames = shotHeader.targetVolumeCountStart.toInt();
 
-    // update the byte array inside shot header and frame, so we are ready to write it to DE
-    encodeHeaderAndFrames(shotHeader, shotFrames, shotExframes);
     return true;
-  }
-
-  static encodeHeaderAndFrames(
-      De1ShotHeaderClass shotHeader, List<De1ShotFrameClass> shotFrames, List<De1ShotExtFrameClass> shotExframes) {
-    shotHeader.bytes = De1ShotHeaderClass.encodeDe1ShotHeader(shotHeader);
-    for (var frame in shotFrames) {
-      frame.bytes = De1ShotFrameClass.encodeDe1ShotFrame(frame);
-    }
-    for (var exframe in shotExframes) {
-      exframe.bytes = De1ShotExtFrameClass.encodeDe1ExtentionFrame(exframe);
-    }
   }
 
   Future<De1ShotProfile> getJsonProfileFromVisualizerShortCode(String shortCode) async {

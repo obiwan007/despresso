@@ -59,6 +59,38 @@ class De1ShotProfile {
   }
 }
 
+class De1ProfileMachineData {
+  Uint8List headerData;
+  List<Uint8List> frameData;
+  List<Uint8List> extFrameData;
+  Uint8List tailData;
+
+  De1ProfileMachineData._internal(
+      this.headerData, this.frameData, this.extFrameData, this.tailData);
+
+  factory De1ProfileMachineData(De1ShotProfile profile) {
+    List<Uint8List> frameData = [];
+    List<Uint8List> extFrameData = [];
+    int i = 0;
+    for (i; i < profile.shotFrames.length; i++) {
+      De1ShotFrameClass frame = profile.shotFrames[i];
+      frameData.add(De1ShotFrameClass.encodeDe1ShotFrame(frame, i));
+      if (frame.limiter != null) {
+        extFrameData.add(De1ShotFrameClass.encodeDe1ExtentionFrame(frame, i));
+      }
+    }
+    Uint8List tailData = Uint8List(8);
+
+    tailData[0] = i + 1;
+
+    Helper.convert_float_to_U10P0_for_tail(
+        profile.shotHeader.targetVolume, tailData, 1);
+
+    return De1ProfileMachineData._internal(
+        profile.shotHeader.encode(), frameData, extFrameData, tailData);
+  }
+}
+
 @JsonSerializable()
 class De1ShotHeaderClass // proc spec_shotdescheader
 {
@@ -190,6 +222,10 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     }
   }
 
+  Uint8List encode() {
+    return De1ShotHeaderClass.encodeDe1ShotHeader(this);
+  }
+
   static Uint8List encodeDe1ShotHeader(De1ShotHeaderClass shotHeader) {
     final log = Logger('encodeDe1ShotHeader');
 
@@ -257,6 +293,10 @@ class De1StepLimiterData {
   double value = 0.0;
   double range = 0.0;
 
+	De1StepLimiterData();
+
+	factory De1StepLimiterData.fromJson(Map<String, dynamic> json) => _$De1StepLimiterDataFromJson(json);
+
   De1StepLimiterData clone() {
     return De1StepLimiterData()
       ..value = value
@@ -267,7 +307,6 @@ class De1StepLimiterData {
 @JsonSerializable()
 class De1ShotFrameClass // proc spec_shotframe
 {
-  int frameToWrite = 0;
   int flag = 0;
   double setVal = 0; // {
   double temp = 0; // {
@@ -284,7 +323,25 @@ class De1ShotFrameClass // proc spec_shotframe
   Uint8List bytes = Uint8List(8);
 
   static const int extFrameOffset = 32;
-  int get extFrameToWrite => frameToWrite + De1ShotFrameClass.extFrameOffset;
+
+  // helpers for limiter values
+  double get limiterValue => limiter?.value ?? 0;
+  set limiterValue(double value) {
+    if (limiter != null) {
+      limiter!.value = value;
+    } else {
+      limiter = De1StepLimiterData()..value = value;
+    }
+  }
+
+  double get limiterRange => limiter?.range ?? 0;
+  set limiterRange(double range) {
+    if (limiter != null) {
+      limiter!.range = range;
+    } else {
+      limiter = De1StepLimiterData()..range = range;
+    }
+  }
 
   De1ShotFrameClass();
 
@@ -319,7 +376,6 @@ class De1ShotFrameClass // proc spec_shotframe
     copy.bytes = Uint8List.fromList(bytes);
     copy.flag = flag;
     copy.frameLen = frameLen;
-    copy.frameToWrite = frameToWrite;
     copy.maxVol = maxVol;
     copy.name = name;
     copy.pump = pump;
@@ -353,59 +409,14 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
-  // This method is not used in the codebase
-  // TODO: Remove this method
-  static bool decodeDe1ShotFrame(
-      ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
-    final log = Logger('decodeDe1ShotFrame');
-
-    if (data.buffer.lengthInBytes != 8) return false;
-    log.fine('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
-    try {
-      int index = 0;
-      shotFrame.frameToWrite = data.getUint8(index++);
-
-      shotFrame.flag = data.getUint8(index++);
-      shotFrame.setVal = data.getUint8(index++) / 16.0;
-      shotFrame.temp = data.getUint8(index++) / 2.0;
-      shotFrame.frameLen =
-          Helper.convert_F8_1_7_to_float(data.getUint8(index++));
-      shotFrame.triggerVal = data.getUint8(index++) / 16.0;
-      shotFrame.maxVol = Helper.convert_bottom_10_of_U10P0(
-          256 * data.getUint8(index++) +
-              data.getUint8(index++)); // convert_bottom_10_of_U10P0
-
-      if (checkEncoding) {
-        var array = data.buffer.asUint8List();
-        var newBytes = encodeDe1ShotFrame(shotFrame);
-        if (newBytes.length != array.buffer.lengthInBytes) {
-          log.severe("Error in decoding frame Length not matching");
-          return false;
-        }
-
-        for (int i = 0; i < newBytes.length; i++) {
-          if (newBytes[i] != array[i]) {
-            // todo: fix issue with encoding/decoding error.
-            log.info("Error in decoding frame:${newBytes[i]} != ${array[i]}");
-            return false;
-          }
-        }
-      }
-
-      return true;
-    } catch (ex) {
-      log.severe("Exception $ex");
-      return false;
-    }
-  }
-
-  static Uint8List encodeDe1ShotFrame(De1ShotFrameClass shotFrame) {
+  static Uint8List encodeDe1ShotFrame(
+      De1ShotFrameClass shotFrame, int frameIndex) {
     final log = Logger('encodeDe1ShotFrame');
 
     Uint8List data = Uint8List(8);
 
     int index = 0;
-    data[index] = shotFrame.frameToWrite;
+    data[index] = frameIndex;
     index++;
     data[index] = shotFrame.flag;
     index++;
@@ -423,8 +434,9 @@ class De1ShotFrameClass // proc spec_shotframe
     return data;
   }
 
-  static Uint8List encodeDe1ExtentionFrame(De1ShotFrameClass frame) {
-    int frameToWrite = frame.frameToWrite + De1ShotFrameClass.extFrameOffset;
+  static Uint8List encodeDe1ExtentionFrame(
+      De1ShotFrameClass frame, int frameIndex) {
+    int frameToWrite = frameIndex + De1ShotFrameClass.extFrameOffset;
     Uint8List data = Uint8List(8);
 
     data[0] = frameToWrite;
@@ -478,7 +490,7 @@ class De1ShotFrameClass // proc spec_shotframe
     for (var b in bytes) {
       sb += "${b.toRadixString(16)}-";
     }
-    return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol LimitValue: ${limiter?.value ?? 0} LimitRange: ${limiter?.range ?? 0} B:$sb BEX: ${De1ShotFrameClass.encodeDe1ExtentionFrame(this)}";
+    return "Frame:$name Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol LimitValue: ${limiter?.value ?? 0} LimitRange: ${limiter?.range ?? 0} B:$sb BEX: ${De1ShotFrameClass.encodeDe1ExtentionFrame(this, 0)}";
   }
 }
 

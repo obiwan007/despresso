@@ -86,7 +86,6 @@ Map<String, dynamic> _$De1StepLimiterDataToJson(De1StepLimiterData instance) =>
 
 De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
     De1ShotFrameClass()
-      ..frameToWrite = (json['frameToWrite'] as num).toInt()
       ..flag = (json['flag'] as num).toInt()
       ..setVal = (json['setVal'] as num).toDouble()
       ..temp = (json['temp'] as num).toDouble()
@@ -101,11 +100,12 @@ De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
       ..limiter = json['limiter'] == null
           ? null
           : De1StepLimiterData.fromJson(json['limiter'] as Map<String, dynamic>)
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List);
+      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List)
+      ..limiterValue = (json['limiterValue'] as num).toDouble()
+      ..limiterRange = (json['limiterRange'] as num).toDouble();
 
 Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
     <String, dynamic>{
-      'frameToWrite': instance.frameToWrite,
       'flag': instance.flag,
       'setVal': instance.setVal,
       'temp': instance.temp,
@@ -119,6 +119,8 @@ Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
       'transition': _$De1TransitionEnumMap[instance.transition]!,
       'limiter': instance.limiter,
       'bytes': const Uint8ListConverter().toJson(instance.bytes),
+      'limiterValue': instance.limiterValue,
+      'limiterRange': instance.limiterRange,
     };
 
 const _$De1PumpModeEnumMap = {
