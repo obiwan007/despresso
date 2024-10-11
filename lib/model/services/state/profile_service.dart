@@ -266,7 +266,7 @@ class ProfileService extends ChangeNotifier {
     var json = jsonEncode(profile.toJson());
     log.info("Save json $json");
 
-    return file.writeAsString(jsonEncode(json));
+    return file.writeAsString(json, flush: true);
   }
 
   Future<void> loadAllDefaultProfiles() async {
