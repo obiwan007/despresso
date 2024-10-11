@@ -24,6 +24,10 @@ class Uint8ListConverter implements JsonConverter<Uint8List, List<dynamic>> {
 
 @JsonSerializable(explicitToJson: true)
 class De1ShotProfile {
+
+	// Will this help us migrate to decent v2 json schema?
+	String? semanticVersion = "0.0.9";
+
   bool isDefault = false;
 
   String id = "";

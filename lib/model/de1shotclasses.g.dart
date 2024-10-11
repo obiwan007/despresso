@@ -13,11 +13,13 @@ De1ShotProfile _$De1ShotProfileFromJson(Map<String, dynamic> json) =>
           .map((e) => De1ShotFrameClass.fromJson(e as Map<String, dynamic>))
           .toList(),
     )
+      ..semanticVersion = json['semanticVersion'] as String?
       ..isDefault = json['isDefault'] as bool
       ..id = json['id'] as String;
 
 Map<String, dynamic> _$De1ShotProfileToJson(De1ShotProfile instance) =>
     <String, dynamic>{
+      'semanticVersion': instance.semanticVersion,
       'isDefault': instance.isDefault,
       'id': instance.id,
       'shotHeader': instance.shotHeader.toJson(),
