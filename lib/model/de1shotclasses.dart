@@ -87,7 +87,7 @@ class De1ProfileMachineData {
     }
     Uint8List tailData = Uint8List(8);
 
-    tailData[0] = i + 1;
+    tailData[0] = i;
 
     Helper.convert_float_to_U10P0_for_tail(
         profile.shotHeader.targetVolume, tailData, 1);

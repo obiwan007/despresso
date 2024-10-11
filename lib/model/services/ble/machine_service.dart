@@ -602,7 +602,7 @@ class EspressoMachineService extends ChangeNotifier {
       fr.temp += settingsService.targetTempCorrection;
     }
     De1ProfileMachineData profileData = De1ProfileMachineData(profile);
-    log.info("Uploading profile to machine $profile");
+    log.info("Uploading profile to machine $profile.name");
 
     try {
       log.info("Write Header: $profileData.headerData");
@@ -624,6 +624,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     for (Uint8List exFrameBytes in profileData.extFrameData) {
       try {
+					log.info("Write ExFrame: $exFrameBytes");
         await de1!.writeWithResult(Endpoint.frameWrite, exFrameBytes);
       } catch (ex) {
         log.severe("Error writing exframe $exFrameBytes $ex");
