@@ -84,7 +84,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
   }
 
   void handleStepDelete(int index) {
-    _profile.shotFrames.removeAt(index);
+    _profile.deleteStep(index);
     _selectedStepIndex = min(_profile.shotFrames.length - 1, index);
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     log.info("New Step $_selectedStepIndex");
@@ -92,7 +92,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
   }
 
   void handleStepCopy(int index) {
-    _profile.shotFrames.insert(index + 1, _profile.shotFrames[index].clone());
+    _profile.insertStep(index + 1, _profile.shotFrames[index].clone());
     _selectedStepIndex = min(_profile.shotFrames.length - 1, index + 1);
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     log.info("New Step $_selectedStepIndex");
@@ -100,8 +100,7 @@ class AdvancedProfilesEditScreenState extends State<AdvancedProfilesEditScreen>
   }
 
   void handleStepReorder(int index, int direction) {
-    _profile.shotFrames
-        .insert(index + direction, _profile.shotFrames.removeAt(index));
+    _profile.reorderStep(index, direction);
     _selectedStepIndex = min(_profile.shotFrames.length - 1, index + direction);
     _selectedStep = _profile.shotFrames[_selectedStepIndex];
     log.info("New Step $_selectedStepIndex");

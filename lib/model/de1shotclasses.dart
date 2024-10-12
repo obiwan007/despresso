@@ -21,12 +21,10 @@ class Uint8ListConverter implements JsonConverter<Uint8List, List<dynamic>> {
   }
 }
 
-
 @JsonSerializable(explicitToJson: true)
 class De1ShotProfile {
-
-	// Will this help us migrate to decent v2 json schema?
-	String? semanticVersion = "0.0.9";
+  // Will this help us migrate to decent v2 json schema?
+  String? semanticVersion = "0.0.9";
 
   bool isDefault = false;
 
@@ -38,15 +36,22 @@ class De1ShotProfile {
 
   List<De1ShotFrameClass> shotFrames;
 
-  factory De1ShotProfile.fromJson(Map<String, dynamic> json) =>
-      _$De1ShotProfileFromJson(json);
+  factory De1ShotProfile.fromJson(Map<String, dynamic> json) {
+    De1ShotProfile profile = _$De1ShotProfileFromJson(json);
+    profile.shotHeader.numberOfFrames = profile.shotFrames.length;
+    return profile;
+  }
 
   String get title => shotHeader.title;
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$De1ShotProfileToJson(this);
+  Map<String, dynamic> toJson() {
+// just in case we have a mismatch
+    shotHeader.numberOfFrames = shotFrames.length;
+    return _$De1ShotProfileToJson(this);
+  }
 
   De1ShotProfile clone() {
     var copy = De1ShotProfile(De1ShotHeaderClass(), []);
@@ -62,6 +67,51 @@ class De1ShotProfile {
     if (shotFrames.isEmpty) return null;
 
     return shotFrames.first;
+  }
+
+  void deleteStep(int index) {
+    if (index < 0 || index >= shotFrames.length) return;
+    shotFrames.removeAt(index);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void insertStep(int index, De1ShotFrameClass frame) {
+    if (index < 0 || index >= shotFrames.length) return;
+    shotFrames.insert(index, frame);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void reorderStep(int oldIndex, int direction) {
+    if (oldIndex < 0 || oldIndex >= shotFrames.length) return;
+    if (oldIndex + direction < 0 || oldIndex + direction >= shotFrames.length)
+      return;
+    var frame = shotFrames.removeAt(oldIndex);
+    shotFrames.insert(oldIndex + direction, frame);
+  }
+
+  // TODO: presently unused - consider migrating header data into profile to avoid issues with synchronizing data
+  void updateStep(int index, De1ShotFrameClass frame) {
+    if (index < 0 || index >= shotFrames.length) return;
+    shotFrames[index] = frame;
+  }
+
+  void addStep(De1ShotFrameClass frame) {
+    shotFrames.add(frame);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void addStepAt(int index, De1ShotFrameClass frame) {
+    shotFrames.insert(index, frame);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void setHeader(De1ShotHeaderClass header) {
+    shotHeader = header;
+  }
+
+  void setFrames(List<De1ShotFrameClass> frames) {
+    shotFrames = frames;
+    shotHeader.numberOfFrames = shotFrames.length;
   }
 }
 
@@ -106,7 +156,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   int minimumPressure = 0; // hard-coded, read as {
   double maximumFlow = 6; // hard-coded, read as {
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeToJson: false, includeFromJson: false)
   @Uint8ListConverter()
   Uint8List bytes = Uint8List(5);
 
