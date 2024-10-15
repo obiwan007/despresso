@@ -596,12 +596,13 @@ class Helper {
       double x, Uint8List data, int index) {
     int ix = x.toInt();
 
-    if (ix > 255) {
-      ix = 255;
+    if (ix > 1023) { // clamp to 1 liter, should be enough for a tasty brew
+      ix = 1023;
     }
-
-    data[index] = 0x4; // take PI into account
-    data[index + 1] = ix;
+		// set the high bit to 1 
+		int first = (ix >> 8) | 0x80;
+    data[index] = first; // Ignore preinfusion, only measure volume afterwards
+    data[index + 1] = (ix & 0xff);
   }
 
   // ignore: non_constant_identifier_names
