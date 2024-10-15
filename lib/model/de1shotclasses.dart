@@ -593,16 +593,16 @@ class Helper {
 
   // ignore: non_constant_identifier_names
   static void convert_float_to_U10P0_for_tail(
-      double x, Uint8List data, int index) {
-    int ix = x.toInt();
+      double maxTotalVolume, Uint8List data, int index) {
+    int ix = maxTotalVolume.toInt();
 
     if (ix > 1023) {
       // clamp to 1 liter, should be enough for a tasty brew
       ix = 1023;
     }
-    // set the high bit to 1
-    int first = (ix >> 8) | 0x80;
-    data[index] = first; // Ignore preinfusion, only measure volume afterwards
+    // there is a mismatch between docs and actual implementation in the firmware
+    // instead 0f 0x8000 for ignorePI, 0x400 sets PI counting to enabled.
+    data[index] = ix >> 8; // Ignore preinfusion, only measure volume afterwards
     data[index + 1] = (ix & 0xff);
   }
 
