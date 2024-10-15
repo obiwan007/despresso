@@ -12,7 +12,7 @@ ShotList _$ShotListFromJson(Map<String, dynamic> json) => ShotList(
           .toList(),
     )
       ..saving = json['saving'] as bool
-      ..lastTouched = json['lastTouched'] as int
+      ..lastTouched = (json['lastTouched'] as num).toInt()
       ..saved = json['saved'] as bool;
 
 Map<String, dynamic> _$ShotListToJson(ShotList instance) => <String, dynamic>{
@@ -33,12 +33,12 @@ ShotState _$ShotStateFromJson(Map<String, dynamic> json) => ShotState(
       (json['setHeadTemp'] as num).toDouble(),
       (json['setGroupPressure'] as num).toDouble(),
       (json['setGroupFlow'] as num).toDouble(),
-      json['frameNumber'] as int,
-      json['steamTemp'] as int,
+      (json['frameNumber'] as num).toInt(),
+      (json['steamTemp'] as num).toInt(),
       (json['weight'] as num).toDouble(),
       json['subState'] as String,
     )
-      ..id = json['id'] as int
+      ..id = (json['id'] as num).toInt()
       ..pourTime = (json['pourTime'] as num).toDouble()
       ..flowWeight = (json['flowWeight'] as num).toDouble()
       ..timeToWeight = (json['timeToWeight'] as num).toDouble()

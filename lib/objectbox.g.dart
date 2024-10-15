@@ -10,8 +10,9 @@
 import 'dart:typed_data';
 
 import 'package:flat_buffers/flat_buffers.dart' as fb;
-import 'package:objectbox/internal.dart'; // generated code can access "internal" functionality
-import 'package:objectbox/objectbox.dart';
+import 'package:objectbox/internal.dart'
+    as obx_int; // generated code can access "internal" functionality
+import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'helper/objectbox_cache_provider.dart';
@@ -23,623 +24,624 @@ import 'model/shotstate.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
-final _entities = <ModelEntity>[
-  ModelEntity(
-      id: const IdUid(3, 5050282589413394899),
+final _entities = <obx_int.ModelEntity>[
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(3, 5050282589413394899),
       name: 'Shot',
-      lastPropertyId: const IdUid(30, 8373679791166864541),
+      lastPropertyId: const obx_int.IdUid(30, 8373679791166864541),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 3409921168948181785),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 3409921168948181785),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 2023678536313964966),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 2023678536313964966),
             name: 'date',
             type: 10,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 8622027867479492178),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 8622027867479492178),
             name: 'coffeeId',
             type: 11,
             flags: 520,
-            indexId: const IdUid(3, 6812967169057673456),
+            indexId: const obx_int.IdUid(3, 6812967169057673456),
             relationTarget: 'Coffee'),
-        ModelProperty(
-            id: const IdUid(4, 8755594923067759447),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 8755594923067759447),
             name: 'profileId',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 5926041023112911997),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 5926041023112911997),
             name: 'pourTime',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 3371539309151542209),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 3371539309151542209),
             name: 'pourWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 2364668778724218869),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 2364668778724218869),
             name: 'targetEspressoWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 3676925190157138581),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 3676925190157138581),
             name: 'targetTempCorrection',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 111349150896732313),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 111349150896732313),
             name: 'recipeId',
             type: 11,
             flags: 520,
-            indexId: const IdUid(6, 446388852719725051),
+            indexId: const obx_int.IdUid(6, 446388852719725051),
             relationTarget: 'Recipe'),
-        ModelProperty(
-            id: const IdUid(10, 7125372405899859202),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 7125372405899859202),
             name: 'doseWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 3218706867177652460),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 3218706867177652460),
             name: 'drinkWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 843222103065987409),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 843222103065987409),
             name: 'grinderSettings',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 3391691028545881063),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 3391691028545881063),
             name: 'description',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 7115326853722345534),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 7115326853722345534),
             name: 'grinderName',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 1080541265960096120),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 1080541265960096120),
             name: 'roastingDate',
             type: 10,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 8073143111153977311),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 8073143111153977311),
             name: 'extractionYield',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 6900766595761360168),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(18, 6900766595761360168),
             name: 'enjoyment',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 1657747884825847241),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(19, 1657747884825847241),
             name: 'barrista',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 1949502433090459020),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(20, 1949502433090459020),
             name: 'drinker',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 3188265368046958522),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(21, 3188265368046958522),
             name: 'totalDissolvedSolids',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 7608631056957421432),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(22, 7608631056957421432),
             name: 'visualizerId',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 2565185120432732135),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(23, 2565185120432732135),
             name: 'estimatedWeightReachedTime',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(24, 7385542231737088542),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(24, 7385542231737088542),
             name: 'estimatedWeight_m',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(25, 1614129143662966902),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(25, 1614129143662966902),
             name: 'estimatedWeight_b',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(26, 3360550099619244198),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(26, 3360550099619244198),
             name: 'estimatedWeight_tEnd',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(27, 7751808523866622917),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(27, 7751808523866622917),
             name: 'estimatedWeight_tStart',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(28, 7560094062746893331),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(28, 7560094062746893331),
             name: 'ratio1',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(29, 7092783304172893944),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(29, 7092783304172893944),
             name: 'ratio2',
             type: 8,
             flags: 0)
       ],
-      relations: <ModelRelation>[
-        ModelRelation(
-            id: const IdUid(1, 2516218059471133212),
+      relations: <obx_int.ModelRelation>[
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(1, 2516218059471133212),
             name: 'shotstates',
-            targetId: const IdUid(7, 7915358336460233027))
+            targetId: const obx_int.IdUid(7, 7915358336460233027))
       ],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(5, 6166132089796684361),
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(5, 6166132089796684361),
       name: 'Coffee',
-      lastPropertyId: const IdUid(23, 3789630866646903516),
+      lastPropertyId: const obx_int.IdUid(23, 3789630866646903516),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5615950171516587099),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 5615950171516587099),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 8472885439572250925),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 8472885439572250925),
             name: 'name',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 5110044840806149074),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 5110044840806149074),
             name: 'roasterId',
             type: 11,
             flags: 520,
-            indexId: const IdUid(2, 3069173701919379915),
+            indexId: const obx_int.IdUid(2, 3069173701919379915),
             relationTarget: 'Roaster'),
-        ModelProperty(
-            id: const IdUid(4, 5457947097987531063),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 5457947097987531063),
             name: 'imageURL',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 4303540774085095790),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 4303540774085095790),
             name: 'grinderSettings',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 225021759355650432),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 225021759355650432),
             name: 'acidRating',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 6130861246586256372),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 6130861246586256372),
             name: 'intensityRating',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 1334308936684528664),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 1334308936684528664),
             name: 'roastLevel',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 5546651948055766963),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 5546651948055766963),
             name: 'description',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 1497565644929136769),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 1497565644929136769),
             name: 'origin',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 8572628874963105062),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 8572628874963105062),
             name: 'price',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 7230184989598744286),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 7230184989598744286),
             name: 'type',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 6441439649929911062),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 6441439649929911062),
             name: 'taste',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 3584125557140279811),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(16, 3584125557140279811),
             name: 'grinderDoseWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 3180181574963034735),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 3180181574963034735),
             name: 'roastDate',
             type: 10,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 6938000416295761114),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(18, 6938000416295761114),
             name: 'region',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 9026359374085873224),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(19, 9026359374085873224),
             name: 'farm',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 5729031423788409720),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(20, 5729031423788409720),
             name: 'cropyear',
             type: 10,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 6055219836272863790),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(21, 6055219836272863790),
             name: 'process',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 6473077172521626198),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(22, 6473077172521626198),
             name: 'elevation',
             type: 6,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 3789630866646903516),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(23, 3789630866646903516),
             name: 'isShot',
             type: 1,
             flags: 0)
       ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(6, 8881644376576832429),
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(6, 8881644376576832429),
       name: 'Roaster',
-      lastPropertyId: const IdUid(6, 970876983252056704),
+      lastPropertyId: const obx_int.IdUid(6, 970876983252056704),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5991058579053841031),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 5991058579053841031),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 2492045522554162963),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 2492045522554162963),
             name: 'name',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 109766545405737050),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 109766545405737050),
             name: 'imageURL',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 9028335971533423619),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 9028335971533423619),
             name: 'description',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 5316187485168323519),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 5316187485168323519),
             name: 'address',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 970876983252056704),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 970876983252056704),
             name: 'homepage',
             type: 9,
             flags: 0)
       ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[
-        ModelBacklink(name: 'coffees', srcEntity: 'Coffee', srcField: 'roaster')
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(
+            name: 'coffees', srcEntity: 'Coffee', srcField: 'roaster')
       ]),
-  ModelEntity(
-      id: const IdUid(7, 7915358336460233027),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(7, 7915358336460233027),
       name: 'ShotState',
-      lastPropertyId: const IdUid(17, 6151090906092388458),
+      lastPropertyId: const obx_int.IdUid(17, 6151090906092388458),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5911801733392743346),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 5911801733392743346),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 873810899844548098),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 873810899844548098),
             name: 'subState',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 5430882212744780164),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 5430882212744780164),
             name: 'weight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 7057243266656013589),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 7057243266656013589),
             name: 'sampleTime',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 7139045219632015353),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 7139045219632015353),
             name: 'sampleTimeCorrected',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 8336035996648567372),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 8336035996648567372),
             name: 'pourTime',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 3728387464400538728),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 3728387464400538728),
             name: 'groupPressure',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 7163267269115276469),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 7163267269115276469),
             name: 'groupFlow',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 3024067366106544243),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 3024067366106544243),
             name: 'mixTemp',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 6481804704343187952),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 6481804704343187952),
             name: 'headTemp',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 4452444150576753969),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 4452444150576753969),
             name: 'setMixTemp',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 5828096454211460982),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 5828096454211460982),
             name: 'setHeadTemp',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 6404583577823963796),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 6404583577823963796),
             name: 'setGroupPressure',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 953787600600014188),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 953787600600014188),
             name: 'setGroupFlow',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 4614454596637650047),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 4614454596637650047),
             name: 'flowWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 8625810897882043509),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(16, 8625810897882043509),
             name: 'frameNumber',
             type: 6,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 6151090906092388458),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 6151090906092388458),
             name: 'steamTemp',
             type: 6,
             flags: 0)
       ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(8, 1087044828506445333),
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(8, 1087044828506445333),
       name: 'Favorite',
-      lastPropertyId: const IdUid(2, 6993582572867488081),
+      lastPropertyId: const obx_int.IdUid(2, 6993582572867488081),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 9118758589013466597),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 9118758589013466597),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 6993582572867488081),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 6993582572867488081),
             name: 'recipeId',
             type: 11,
             flags: 520,
-            indexId: const IdUid(4, 2795591998313105007),
+            indexId: const obx_int.IdUid(4, 2795591998313105007),
             relationTarget: 'Recipe')
       ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(9, 7693652674048295668),
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(9, 7693652674048295668),
       name: 'Recipe',
-      lastPropertyId: const IdUid(28, 488663740228280711),
+      lastPropertyId: const obx_int.IdUid(28, 488663740228280711),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 4913052187613295020),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 4913052187613295020),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 7810214585185210043),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 7810214585185210043),
             name: 'coffeeId',
             type: 11,
             flags: 520,
-            indexId: const IdUid(5, 7106111853969068341),
+            indexId: const obx_int.IdUid(5, 7106111853969068341),
             relationTarget: 'Coffee'),
-        ModelProperty(
-            id: const IdUid(3, 1845236010514477562),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 1845236010514477562),
             name: 'adjustedWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 8386295331633147748),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 8386295331633147748),
             name: 'adjustedPressure',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 4533756232448450794),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 4533756232448450794),
             name: 'adjustedTemp',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 3891072045656880456),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 3891072045656880456),
             name: 'name',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 647131839827812853),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 647131839827812853),
             name: 'profileId',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 3008075691008235314),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 3008075691008235314),
             name: 'grinderDoseWeight',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 3336924770577751042),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 3336924770577751042),
             name: 'grinderSettings',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 3868213321838280891),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 3868213321838280891),
             name: 'isDeleted',
             type: 1,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 4204171820753323126),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 4204171820753323126),
             name: 'isFavorite',
             type: 1,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 3155549701286458303),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 3155549701286458303),
             name: 'ratio1',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 1901110978839052278),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 1901110978839052278),
             name: 'ratio2',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 7025254451475299925),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 7025254451475299925),
             name: 'weightWater',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 15425906396748186),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(16, 15425906396748186),
             name: 'useWater',
             type: 1,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 9055581799472750245),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 9055581799472750245),
             name: 'tempWater',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 4711319393184164790),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(18, 4711319393184164790),
             name: 'timeWater',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 1770550326036569594),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(19, 1770550326036569594),
             name: 'tempSteam',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 6084341035853340078),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(20, 6084341035853340078),
             name: 'flowSteam',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 3919563489562326148),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(21, 3919563489562326148),
             name: 'timeSteam',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 2201822893454360106),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(22, 2201822893454360106),
             name: 'weightMilk',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 4030549021668168783),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(23, 4030549021668168783),
             name: 'useSteam',
             type: 1,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(24, 5553698550197971705),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(24, 5553698550197971705),
             name: 'description',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(25, 1050422726627456052),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(25, 1050422726627456052),
             name: 'grinderModel',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(27, 5975506820285440095),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(27, 5975506820285440095),
             name: 'disableStopOnWeight',
             type: 1,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(28, 488663740228280711),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(28, 488663740228280711),
             name: 'isShot',
             type: 1,
             flags: 0)
       ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(11, 2746153146489174759),
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(11, 2746153146489174759),
       name: 'SettingsEntry',
-      lastPropertyId: const IdUid(7, 649428367441394162),
+      lastPropertyId: const obx_int.IdUid(7, 649428367441394162),
       flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 5338240427175828934),
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 5338240427175828934),
             name: 'id',
             type: 6,
             flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 8227203168176223394),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 8227203168176223394),
             name: 'doubleVal',
             type: 8,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 4672631448573261939),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 4672631448573261939),
             name: 'intVal',
             type: 6,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 6775070129254440298),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 6775070129254440298),
             name: 'stringVal',
             type: 9,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 6064803487869840239),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 6064803487869840239),
             name: 'boolVal',
             type: 1,
             flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 7666011173201483948),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 7666011173201483948),
             name: 'key',
             type: 9,
             flags: 2048,
-            indexId: const IdUid(8, 899743464370898125)),
-        ModelProperty(
-            id: const IdUid(7, 649428367441394162),
+            indexId: const obx_int.IdUid(8, 899743464370898125)),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 649428367441394162),
             name: 'type',
             type: 9,
             flags: 0)
       ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[])
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[])
 ];
 
 /// Shortcut for [Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -649,30 +651,38 @@ final _entities = <ModelEntity>[
 /// Note: for desktop apps it is recommended to specify a unique [directory].
 ///
 /// See [Store.new] for an explanation of all parameters.
-Future<Store> openStore(
-        {String? directory,
-        int? maxDBSizeInKB,
-        int? fileMode,
-        int? maxReaders,
-        bool queriesCaseSensitiveDefault = true,
-        String? macosApplicationGroup}) async =>
-    Store(getObjectBoxModel(),
-        directory: directory ?? (await defaultStoreDirectory()).path,
-        maxDBSizeInKB: maxDBSizeInKB,
-        fileMode: fileMode,
-        maxReaders: maxReaders,
-        queriesCaseSensitiveDefault: queriesCaseSensitiveDefault,
-        macosApplicationGroup: macosApplicationGroup);
+///
+/// For Flutter apps, also calls `loadObjectBoxLibraryAndroidCompat()` from
+/// the ObjectBox Flutter library to fix loading the native ObjectBox library
+/// on Android 6 and older.
+Future<obx.Store> openStore(
+    {String? directory,
+    int? maxDBSizeInKB,
+    int? maxDataSizeInKB,
+    int? fileMode,
+    int? maxReaders,
+    bool queriesCaseSensitiveDefault = true,
+    String? macosApplicationGroup}) async {
+  await loadObjectBoxLibraryAndroidCompat();
+  return obx.Store(getObjectBoxModel(),
+      directory: directory ?? (await defaultStoreDirectory()).path,
+      maxDBSizeInKB: maxDBSizeInKB,
+      maxDataSizeInKB: maxDataSizeInKB,
+      fileMode: fileMode,
+      maxReaders: maxReaders,
+      queriesCaseSensitiveDefault: queriesCaseSensitiveDefault,
+      macosApplicationGroup: macosApplicationGroup);
+}
 
 /// Returns the ObjectBox model definition for this project for use with
 /// [Store.new].
-ModelDefinition getObjectBoxModel() {
-  final model = ModelInfo(
+obx_int.ModelDefinition getObjectBoxModel() {
+  final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(11, 2746153146489174759),
-      lastIndexId: const IdUid(8, 899743464370898125),
-      lastRelationId: const IdUid(1, 2516218059471133212),
-      lastSequenceId: const IdUid(0, 0),
+      lastEntityId: const obx_int.IdUid(11, 2746153146489174759),
+      lastIndexId: const obx_int.IdUid(8, 899743464370898125),
+      lastRelationId: const obx_int.IdUid(1, 2516218059471133212),
+      lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [
         2372411160892302204,
         5004946134676291479,
@@ -722,12 +732,12 @@ ModelDefinition getObjectBoxModel() {
       modelVersionParserMinimum: 5,
       version: 1);
 
-  final bindings = <Type, EntityDefinition>{
-    Shot: EntityDefinition<Shot>(
+  final bindings = <Type, obx_int.EntityDefinition>{
+    Shot: obx_int.EntityDefinition<Shot>(
         model: _entities[0],
         toOneRelations: (Shot object) => [object.coffee, object.recipe],
         toManyRelations: (Shot object) =>
-            {RelInfo<Shot>.toMany(1, object.id): object.shotstates},
+            {obx_int.RelInfo<Shot>.toMany(1, object.id): object.shotstates},
         getId: (Shot object) => object.id,
         setId: (Shot object, int id) {
           object.id = id;
@@ -771,7 +781,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
@@ -833,11 +843,11 @@ ModelDefinition getObjectBoxModel() {
           object.recipe.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
           object.recipe.attach(store);
-          InternalToManyAccess.setRelInfo<Shot>(
-              object.shotstates, store, RelInfo<Shot>.toMany(1, object.id));
+          obx_int.InternalToManyAccess.setRelInfo<Shot>(object.shotstates,
+              store, obx_int.RelInfo<Shot>.toMany(1, object.id));
           return object;
         }),
-    Coffee: EntityDefinition<Coffee>(
+    Coffee: obx_int.EntityDefinition<Coffee>(
         model: _entities[1],
         toOneRelations: (Coffee object) => [object.roaster],
         toManyRelations: (Coffee object) => {},
@@ -881,7 +891,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
@@ -930,11 +940,11 @@ ModelDefinition getObjectBoxModel() {
           object.roaster.attach(store);
           return object;
         }),
-    Roaster: EntityDefinition<Roaster>(
+    Roaster: obx_int.EntityDefinition<Roaster>(
         model: _entities[2],
         toOneRelations: (Roaster object) => [],
         toManyRelations: (Roaster object) => {
-              RelInfo<Coffee>.toOneBacklink(
+              obx_int.RelInfo<Coffee>.toOneBacklink(
                       3, object.id, (Coffee srcObject) => srcObject.roaster):
                   object.coffees
             },
@@ -958,7 +968,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
@@ -974,14 +984,14 @@ ModelDefinition getObjectBoxModel() {
                 .vTableGet(buffer, rootOffset, 12, '')
             ..homepage = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 14, '');
-          InternalToManyAccess.setRelInfo<Roaster>(
+          obx_int.InternalToManyAccess.setRelInfo<Roaster>(
               object.coffees,
               store,
-              RelInfo<Coffee>.toOneBacklink(
+              obx_int.RelInfo<Coffee>.toOneBacklink(
                   3, object.id, (Coffee srcObject) => srcObject.roaster));
           return object;
         }),
-    ShotState: EntityDefinition<ShotState>(
+    ShotState: obx_int.EntityDefinition<ShotState>(
         model: _entities[3],
         toOneRelations: (ShotState object) => [],
         toManyRelations: (ShotState object) => {},
@@ -1012,7 +1022,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
           final sampleTimeParam =
@@ -1066,7 +1076,7 @@ ModelDefinition getObjectBoxModel() {
 
           return object;
         }),
-    Favorite: EntityDefinition<Favorite>(
+    Favorite: obx_int.EntityDefinition<Favorite>(
         model: _entities[4],
         toOneRelations: (Favorite object) => [object.recipe],
         toManyRelations: (Favorite object) => {},
@@ -1081,7 +1091,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
@@ -1092,7 +1102,7 @@ ModelDefinition getObjectBoxModel() {
           object.recipe.attach(store);
           return object;
         }),
-    Recipe: EntityDefinition<Recipe>(
+    Recipe: obx_int.EntityDefinition<Recipe>(
         model: _entities[5],
         toOneRelations: (Recipe object) => [object.coffee],
         toManyRelations: (Recipe object) => {},
@@ -1135,7 +1145,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
@@ -1194,7 +1204,7 @@ ModelDefinition getObjectBoxModel() {
           object.coffee.attach(store);
           return object;
         }),
-    SettingsEntry: EntityDefinition<SettingsEntry>(
+    SettingsEntry: obx_int.EntityDefinition<SettingsEntry>(
         model: _entities[6],
         toOneRelations: (SettingsEntry object) => [],
         toManyRelations: (SettingsEntry object) => {},
@@ -1217,7 +1227,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.finish(fbb.endTable());
           return object.id;
         },
-        objectFromFB: (Store store, ByteData fbData) {
+        objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
@@ -1240,439 +1250,460 @@ ModelDefinition getObjectBoxModel() {
         })
   };
 
-  return ModelDefinition(model, bindings);
+  return obx_int.ModelDefinition(model, bindings);
 }
 
 /// [Shot] entity fields to define ObjectBox queries.
 class Shot_ {
   /// see [Shot.id]
-  static final id = QueryIntegerProperty<Shot>(_entities[0].properties[0]);
+  static final id = obx.QueryIntegerProperty<Shot>(_entities[0].properties[0]);
 
   /// see [Shot.date]
-  static final date = QueryIntegerProperty<Shot>(_entities[0].properties[1]);
+  static final date = obx.QueryDateProperty<Shot>(_entities[0].properties[1]);
 
   /// see [Shot.coffee]
   static final coffee =
-      QueryRelationToOne<Shot, Coffee>(_entities[0].properties[2]);
+      obx.QueryRelationToOne<Shot, Coffee>(_entities[0].properties[2]);
 
   /// see [Shot.profileId]
   static final profileId =
-      QueryStringProperty<Shot>(_entities[0].properties[3]);
+      obx.QueryStringProperty<Shot>(_entities[0].properties[3]);
 
   /// see [Shot.pourTime]
-  static final pourTime = QueryDoubleProperty<Shot>(_entities[0].properties[4]);
+  static final pourTime =
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[4]);
 
   /// see [Shot.pourWeight]
   static final pourWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[5]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[5]);
 
   /// see [Shot.targetEspressoWeight]
   static final targetEspressoWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[6]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[6]);
 
   /// see [Shot.targetTempCorrection]
   static final targetTempCorrection =
-      QueryDoubleProperty<Shot>(_entities[0].properties[7]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[7]);
 
   /// see [Shot.recipe]
   static final recipe =
-      QueryRelationToOne<Shot, Recipe>(_entities[0].properties[8]);
+      obx.QueryRelationToOne<Shot, Recipe>(_entities[0].properties[8]);
 
   /// see [Shot.doseWeight]
   static final doseWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[9]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[9]);
 
   /// see [Shot.drinkWeight]
   static final drinkWeight =
-      QueryDoubleProperty<Shot>(_entities[0].properties[10]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[10]);
 
   /// see [Shot.grinderSettings]
   static final grinderSettings =
-      QueryDoubleProperty<Shot>(_entities[0].properties[11]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[11]);
 
   /// see [Shot.description]
   static final description =
-      QueryStringProperty<Shot>(_entities[0].properties[12]);
+      obx.QueryStringProperty<Shot>(_entities[0].properties[12]);
 
   /// see [Shot.grinderName]
   static final grinderName =
-      QueryStringProperty<Shot>(_entities[0].properties[13]);
+      obx.QueryStringProperty<Shot>(_entities[0].properties[13]);
 
   /// see [Shot.roastingDate]
   static final roastingDate =
-      QueryIntegerProperty<Shot>(_entities[0].properties[14]);
+      obx.QueryDateProperty<Shot>(_entities[0].properties[14]);
 
   /// see [Shot.extractionYield]
   static final extractionYield =
-      QueryDoubleProperty<Shot>(_entities[0].properties[15]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[15]);
 
   /// see [Shot.enjoyment]
   static final enjoyment =
-      QueryDoubleProperty<Shot>(_entities[0].properties[16]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[16]);
 
   /// see [Shot.barrista]
   static final barrista =
-      QueryStringProperty<Shot>(_entities[0].properties[17]);
+      obx.QueryStringProperty<Shot>(_entities[0].properties[17]);
 
   /// see [Shot.drinker]
-  static final drinker = QueryStringProperty<Shot>(_entities[0].properties[18]);
+  static final drinker =
+      obx.QueryStringProperty<Shot>(_entities[0].properties[18]);
 
   /// see [Shot.totalDissolvedSolids]
   static final totalDissolvedSolids =
-      QueryDoubleProperty<Shot>(_entities[0].properties[19]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[19]);
 
   /// see [Shot.visualizerId]
   static final visualizerId =
-      QueryStringProperty<Shot>(_entities[0].properties[20]);
+      obx.QueryStringProperty<Shot>(_entities[0].properties[20]);
 
   /// see [Shot.estimatedWeightReachedTime]
   static final estimatedWeightReachedTime =
-      QueryDoubleProperty<Shot>(_entities[0].properties[21]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[21]);
 
   /// see [Shot.estimatedWeight_m]
   static final estimatedWeight_m =
-      QueryDoubleProperty<Shot>(_entities[0].properties[22]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[22]);
 
   /// see [Shot.estimatedWeight_b]
   static final estimatedWeight_b =
-      QueryDoubleProperty<Shot>(_entities[0].properties[23]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[23]);
 
   /// see [Shot.estimatedWeight_tEnd]
   static final estimatedWeight_tEnd =
-      QueryDoubleProperty<Shot>(_entities[0].properties[24]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[24]);
 
   /// see [Shot.estimatedWeight_tStart]
   static final estimatedWeight_tStart =
-      QueryDoubleProperty<Shot>(_entities[0].properties[25]);
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[25]);
 
   /// see [Shot.ratio1]
-  static final ratio1 = QueryDoubleProperty<Shot>(_entities[0].properties[26]);
+  static final ratio1 =
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[26]);
 
   /// see [Shot.ratio2]
-  static final ratio2 = QueryDoubleProperty<Shot>(_entities[0].properties[27]);
+  static final ratio2 =
+      obx.QueryDoubleProperty<Shot>(_entities[0].properties[27]);
 
   /// see [Shot.shotstates]
   static final shotstates =
-      QueryRelationToMany<Shot, ShotState>(_entities[0].relations[0]);
+      obx.QueryRelationToMany<Shot, ShotState>(_entities[0].relations[0]);
 }
 
 /// [Coffee] entity fields to define ObjectBox queries.
 class Coffee_ {
   /// see [Coffee.id]
-  static final id = QueryIntegerProperty<Coffee>(_entities[1].properties[0]);
+  static final id =
+      obx.QueryIntegerProperty<Coffee>(_entities[1].properties[0]);
 
   /// see [Coffee.name]
-  static final name = QueryStringProperty<Coffee>(_entities[1].properties[1]);
+  static final name =
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[1]);
 
   /// see [Coffee.roaster]
   static final roaster =
-      QueryRelationToOne<Coffee, Roaster>(_entities[1].properties[2]);
+      obx.QueryRelationToOne<Coffee, Roaster>(_entities[1].properties[2]);
 
   /// see [Coffee.imageURL]
   static final imageURL =
-      QueryStringProperty<Coffee>(_entities[1].properties[3]);
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[3]);
 
   /// see [Coffee.grinderSettings]
   static final grinderSettings =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[4]);
+      obx.QueryDoubleProperty<Coffee>(_entities[1].properties[4]);
 
   /// see [Coffee.acidRating]
   static final acidRating =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[5]);
+      obx.QueryDoubleProperty<Coffee>(_entities[1].properties[5]);
 
   /// see [Coffee.intensityRating]
   static final intensityRating =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[6]);
+      obx.QueryDoubleProperty<Coffee>(_entities[1].properties[6]);
 
   /// see [Coffee.roastLevel]
   static final roastLevel =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[7]);
+      obx.QueryDoubleProperty<Coffee>(_entities[1].properties[7]);
 
   /// see [Coffee.description]
   static final description =
-      QueryStringProperty<Coffee>(_entities[1].properties[8]);
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[8]);
 
   /// see [Coffee.origin]
-  static final origin = QueryStringProperty<Coffee>(_entities[1].properties[9]);
+  static final origin =
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[9]);
 
   /// see [Coffee.price]
-  static final price = QueryStringProperty<Coffee>(_entities[1].properties[10]);
+  static final price =
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[10]);
 
   /// see [Coffee.type]
-  static final type = QueryStringProperty<Coffee>(_entities[1].properties[11]);
+  static final type =
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[11]);
 
   /// see [Coffee.taste]
-  static final taste = QueryStringProperty<Coffee>(_entities[1].properties[12]);
+  static final taste =
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[12]);
 
   /// see [Coffee.grinderDoseWeight]
   static final grinderDoseWeight =
-      QueryDoubleProperty<Coffee>(_entities[1].properties[13]);
+      obx.QueryDoubleProperty<Coffee>(_entities[1].properties[13]);
 
   /// see [Coffee.roastDate]
   static final roastDate =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[14]);
+      obx.QueryDateProperty<Coffee>(_entities[1].properties[14]);
 
   /// see [Coffee.region]
   static final region =
-      QueryStringProperty<Coffee>(_entities[1].properties[15]);
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[15]);
 
   /// see [Coffee.farm]
-  static final farm = QueryStringProperty<Coffee>(_entities[1].properties[16]);
+  static final farm =
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[16]);
 
   /// see [Coffee.cropyear]
   static final cropyear =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[17]);
+      obx.QueryDateProperty<Coffee>(_entities[1].properties[17]);
 
   /// see [Coffee.process]
   static final process =
-      QueryStringProperty<Coffee>(_entities[1].properties[18]);
+      obx.QueryStringProperty<Coffee>(_entities[1].properties[18]);
 
   /// see [Coffee.elevation]
   static final elevation =
-      QueryIntegerProperty<Coffee>(_entities[1].properties[19]);
+      obx.QueryIntegerProperty<Coffee>(_entities[1].properties[19]);
 
   /// see [Coffee.isShot]
   static final isShot =
-      QueryBooleanProperty<Coffee>(_entities[1].properties[20]);
+      obx.QueryBooleanProperty<Coffee>(_entities[1].properties[20]);
 }
 
 /// [Roaster] entity fields to define ObjectBox queries.
 class Roaster_ {
   /// see [Roaster.id]
-  static final id = QueryIntegerProperty<Roaster>(_entities[2].properties[0]);
+  static final id =
+      obx.QueryIntegerProperty<Roaster>(_entities[2].properties[0]);
 
   /// see [Roaster.name]
-  static final name = QueryStringProperty<Roaster>(_entities[2].properties[1]);
+  static final name =
+      obx.QueryStringProperty<Roaster>(_entities[2].properties[1]);
 
   /// see [Roaster.imageURL]
   static final imageURL =
-      QueryStringProperty<Roaster>(_entities[2].properties[2]);
+      obx.QueryStringProperty<Roaster>(_entities[2].properties[2]);
 
   /// see [Roaster.description]
   static final description =
-      QueryStringProperty<Roaster>(_entities[2].properties[3]);
+      obx.QueryStringProperty<Roaster>(_entities[2].properties[3]);
 
   /// see [Roaster.address]
   static final address =
-      QueryStringProperty<Roaster>(_entities[2].properties[4]);
+      obx.QueryStringProperty<Roaster>(_entities[2].properties[4]);
 
   /// see [Roaster.homepage]
   static final homepage =
-      QueryStringProperty<Roaster>(_entities[2].properties[5]);
+      obx.QueryStringProperty<Roaster>(_entities[2].properties[5]);
+
+  /// see [Roaster.coffees]
+  static final coffees =
+      obx.QueryBacklinkToMany<Coffee, Roaster>(Coffee_.roaster);
 }
 
 /// [ShotState] entity fields to define ObjectBox queries.
 class ShotState_ {
   /// see [ShotState.id]
-  static final id = QueryIntegerProperty<ShotState>(_entities[3].properties[0]);
+  static final id =
+      obx.QueryIntegerProperty<ShotState>(_entities[3].properties[0]);
 
   /// see [ShotState.subState]
   static final subState =
-      QueryStringProperty<ShotState>(_entities[3].properties[1]);
+      obx.QueryStringProperty<ShotState>(_entities[3].properties[1]);
 
   /// see [ShotState.weight]
   static final weight =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[2]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[2]);
 
   /// see [ShotState.sampleTime]
   static final sampleTime =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[3]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[3]);
 
   /// see [ShotState.sampleTimeCorrected]
   static final sampleTimeCorrected =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[4]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[4]);
 
   /// see [ShotState.pourTime]
   static final pourTime =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[5]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[5]);
 
   /// see [ShotState.groupPressure]
   static final groupPressure =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[6]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[6]);
 
   /// see [ShotState.groupFlow]
   static final groupFlow =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[7]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[7]);
 
   /// see [ShotState.mixTemp]
   static final mixTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[8]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[8]);
 
   /// see [ShotState.headTemp]
   static final headTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[9]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[9]);
 
   /// see [ShotState.setMixTemp]
   static final setMixTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[10]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[10]);
 
   /// see [ShotState.setHeadTemp]
   static final setHeadTemp =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[11]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[11]);
 
   /// see [ShotState.setGroupPressure]
   static final setGroupPressure =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[12]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[12]);
 
   /// see [ShotState.setGroupFlow]
   static final setGroupFlow =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[13]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[13]);
 
   /// see [ShotState.flowWeight]
   static final flowWeight =
-      QueryDoubleProperty<ShotState>(_entities[3].properties[14]);
+      obx.QueryDoubleProperty<ShotState>(_entities[3].properties[14]);
 
   /// see [ShotState.frameNumber]
   static final frameNumber =
-      QueryIntegerProperty<ShotState>(_entities[3].properties[15]);
+      obx.QueryIntegerProperty<ShotState>(_entities[3].properties[15]);
 
   /// see [ShotState.steamTemp]
   static final steamTemp =
-      QueryIntegerProperty<ShotState>(_entities[3].properties[16]);
+      obx.QueryIntegerProperty<ShotState>(_entities[3].properties[16]);
 }
 
 /// [Favorite] entity fields to define ObjectBox queries.
 class Favorite_ {
   /// see [Favorite.id]
-  static final id = QueryIntegerProperty<Favorite>(_entities[4].properties[0]);
+  static final id =
+      obx.QueryIntegerProperty<Favorite>(_entities[4].properties[0]);
 
   /// see [Favorite.recipe]
   static final recipe =
-      QueryRelationToOne<Favorite, Recipe>(_entities[4].properties[1]);
+      obx.QueryRelationToOne<Favorite, Recipe>(_entities[4].properties[1]);
 }
 
 /// [Recipe] entity fields to define ObjectBox queries.
 class Recipe_ {
   /// see [Recipe.id]
-  static final id = QueryIntegerProperty<Recipe>(_entities[5].properties[0]);
+  static final id =
+      obx.QueryIntegerProperty<Recipe>(_entities[5].properties[0]);
 
   /// see [Recipe.coffee]
   static final coffee =
-      QueryRelationToOne<Recipe, Coffee>(_entities[5].properties[1]);
+      obx.QueryRelationToOne<Recipe, Coffee>(_entities[5].properties[1]);
 
   /// see [Recipe.adjustedWeight]
   static final adjustedWeight =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[2]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[2]);
 
   /// see [Recipe.adjustedPressure]
   static final adjustedPressure =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[3]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[3]);
 
   /// see [Recipe.adjustedTemp]
   static final adjustedTemp =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[4]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[4]);
 
   /// see [Recipe.name]
-  static final name = QueryStringProperty<Recipe>(_entities[5].properties[5]);
+  static final name =
+      obx.QueryStringProperty<Recipe>(_entities[5].properties[5]);
 
   /// see [Recipe.profileId]
   static final profileId =
-      QueryStringProperty<Recipe>(_entities[5].properties[6]);
+      obx.QueryStringProperty<Recipe>(_entities[5].properties[6]);
 
   /// see [Recipe.grinderDoseWeight]
   static final grinderDoseWeight =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[7]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[7]);
 
   /// see [Recipe.grinderSettings]
   static final grinderSettings =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[8]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[8]);
 
   /// see [Recipe.isDeleted]
   static final isDeleted =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[9]);
+      obx.QueryBooleanProperty<Recipe>(_entities[5].properties[9]);
 
   /// see [Recipe.isFavorite]
   static final isFavorite =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[10]);
+      obx.QueryBooleanProperty<Recipe>(_entities[5].properties[10]);
 
   /// see [Recipe.ratio1]
   static final ratio1 =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[11]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[11]);
 
   /// see [Recipe.ratio2]
   static final ratio2 =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[12]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[12]);
 
   /// see [Recipe.weightWater]
   static final weightWater =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[13]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[13]);
 
   /// see [Recipe.useWater]
   static final useWater =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[14]);
+      obx.QueryBooleanProperty<Recipe>(_entities[5].properties[14]);
 
   /// see [Recipe.tempWater]
   static final tempWater =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[15]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[15]);
 
   /// see [Recipe.timeWater]
   static final timeWater =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[16]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[16]);
 
   /// see [Recipe.tempSteam]
   static final tempSteam =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[17]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[17]);
 
   /// see [Recipe.flowSteam]
   static final flowSteam =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[18]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[18]);
 
   /// see [Recipe.timeSteam]
   static final timeSteam =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[19]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[19]);
 
   /// see [Recipe.weightMilk]
   static final weightMilk =
-      QueryDoubleProperty<Recipe>(_entities[5].properties[20]);
+      obx.QueryDoubleProperty<Recipe>(_entities[5].properties[20]);
 
   /// see [Recipe.useSteam]
   static final useSteam =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[21]);
+      obx.QueryBooleanProperty<Recipe>(_entities[5].properties[21]);
 
   /// see [Recipe.description]
   static final description =
-      QueryStringProperty<Recipe>(_entities[5].properties[22]);
+      obx.QueryStringProperty<Recipe>(_entities[5].properties[22]);
 
   /// see [Recipe.grinderModel]
   static final grinderModel =
-      QueryStringProperty<Recipe>(_entities[5].properties[23]);
+      obx.QueryStringProperty<Recipe>(_entities[5].properties[23]);
 
   /// see [Recipe.disableStopOnWeight]
   static final disableStopOnWeight =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[24]);
+      obx.QueryBooleanProperty<Recipe>(_entities[5].properties[24]);
 
   /// see [Recipe.isShot]
   static final isShot =
-      QueryBooleanProperty<Recipe>(_entities[5].properties[25]);
+      obx.QueryBooleanProperty<Recipe>(_entities[5].properties[25]);
 }
 
 /// [SettingsEntry] entity fields to define ObjectBox queries.
 class SettingsEntry_ {
   /// see [SettingsEntry.id]
   static final id =
-      QueryIntegerProperty<SettingsEntry>(_entities[6].properties[0]);
+      obx.QueryIntegerProperty<SettingsEntry>(_entities[6].properties[0]);
 
   /// see [SettingsEntry.doubleVal]
   static final doubleVal =
-      QueryDoubleProperty<SettingsEntry>(_entities[6].properties[1]);
+      obx.QueryDoubleProperty<SettingsEntry>(_entities[6].properties[1]);
 
   /// see [SettingsEntry.intVal]
   static final intVal =
-      QueryIntegerProperty<SettingsEntry>(_entities[6].properties[2]);
+      obx.QueryIntegerProperty<SettingsEntry>(_entities[6].properties[2]);
 
   /// see [SettingsEntry.stringVal]
   static final stringVal =
-      QueryStringProperty<SettingsEntry>(_entities[6].properties[3]);
+      obx.QueryStringProperty<SettingsEntry>(_entities[6].properties[3]);
 
   /// see [SettingsEntry.boolVal]
   static final boolVal =
-      QueryBooleanProperty<SettingsEntry>(_entities[6].properties[4]);
+      obx.QueryBooleanProperty<SettingsEntry>(_entities[6].properties[4]);
 
   /// see [SettingsEntry.key]
   static final key =
-      QueryStringProperty<SettingsEntry>(_entities[6].properties[5]);
+      obx.QueryStringProperty<SettingsEntry>(_entities[6].properties[5]);
 
   /// see [SettingsEntry.type]
   static final type =
-      QueryStringProperty<SettingsEntry>(_entities[6].properties[6]);
+      obx.QueryStringProperty<SettingsEntry>(_entities[6].properties[6]);
 }

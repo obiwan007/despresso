@@ -12,31 +12,29 @@ De1ShotProfile _$De1ShotProfileFromJson(Map<String, dynamic> json) =>
       (json['shotFrames'] as List<dynamic>)
           .map((e) => De1ShotFrameClass.fromJson(e as Map<String, dynamic>))
           .toList(),
-      (json['shotExframes'] as List<dynamic>)
-          .map((e) => De1ShotExtFrameClass.fromJson(e as Map<String, dynamic>))
-          .toList(),
     )
+      ..semanticVersion = json['semanticVersion'] as String?
       ..isDefault = json['isDefault'] as bool
       ..id = json['id'] as String;
 
 Map<String, dynamic> _$De1ShotProfileToJson(De1ShotProfile instance) =>
     <String, dynamic>{
+      'semanticVersion': instance.semanticVersion,
       'isDefault': instance.isDefault,
       'id': instance.id,
-      'shotHeader': instance.shotHeader,
-      'shotFrames': instance.shotFrames,
-      'shotExframes': instance.shotExframes,
+      'shotHeader': instance.shotHeader.toJson(),
+      'shotFrames': instance.shotFrames.map((e) => e.toJson()).toList(),
     };
 
 De1ShotHeaderClass _$De1ShotHeaderClassFromJson(Map<String, dynamic> json) =>
     De1ShotHeaderClass()
-      ..headerV = json['headerV'] as int
-      ..numberOfFrames = json['numberOfFrames'] as int
-      ..numberOfPreinfuseFrames = json['numberOfPreinfuseFrames'] as int
-      ..minimumPressure = json['minimumPressure'] as int
+      ..headerV = (json['headerV'] as num).toInt()
+      ..numberOfFrames = (json['numberOfFrames'] as num).toInt()
+      ..numberOfPreinfuseFrames =
+          (json['numberOfPreinfuseFrames'] as num).toInt()
+      ..minimumPressure = (json['minimumPressure'] as num).toInt()
       ..maximumFlow = (json['maximumFlow'] as num).toDouble()
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List)
-      ..hidden = json['hidden'] as int
+      ..hidden = (json['hidden'] as num).toInt()
       ..type = json['type'] as String
       ..lang = json['lang'] as String
       ..legacyProfileType = json['legacyProfileType'] as String
@@ -59,7 +57,6 @@ Map<String, dynamic> _$De1ShotHeaderClassToJson(De1ShotHeaderClass instance) =>
       'numberOfPreinfuseFrames': instance.numberOfPreinfuseFrames,
       'minimumPressure': instance.minimumPressure,
       'maximumFlow': instance.maximumFlow,
-      'bytes': const Uint8ListConverter().toJson(instance.bytes),
       'hidden': instance.hidden,
       'type': instance.type,
       'lang': instance.lang,
@@ -76,10 +73,20 @@ Map<String, dynamic> _$De1ShotHeaderClassToJson(De1ShotHeaderClass instance) =>
       'version': instance.version,
     };
 
+De1StepLimiterData _$De1StepLimiterDataFromJson(Map<String, dynamic> json) =>
+    De1StepLimiterData()
+      ..value = (json['value'] as num).toDouble()
+      ..range = (json['range'] as num).toDouble();
+
+Map<String, dynamic> _$De1StepLimiterDataToJson(De1StepLimiterData instance) =>
+    <String, dynamic>{
+      'value': instance.value,
+      'range': instance.range,
+    };
+
 De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
     De1ShotFrameClass()
-      ..frameToWrite = json['frameToWrite'] as int
-      ..flag = json['flag'] as int
+      ..flag = (json['flag'] as num).toInt()
       ..setVal = (json['setVal'] as num).toDouble()
       ..temp = (json['temp'] as num).toDouble()
       ..frameLen = (json['frameLen'] as num).toDouble()
@@ -87,14 +94,16 @@ De1ShotFrameClass _$De1ShotFrameClassFromJson(Map<String, dynamic> json) =>
       ..maxVol = (json['maxVol'] as num).toDouble()
       ..maxWeight = (json['maxWeight'] as num).toDouble()
       ..name = json['name'] as String
-      ..pump = json['pump'] as String
-      ..sensor = json['sensor'] as String
-      ..transition = json['transition'] as String
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List);
+      ..pump = $enumDecode(_$De1PumpModeEnumMap, json['pump'])
+      ..sensor = $enumDecode(_$De1SensorTypeEnumMap, json['sensor'])
+      ..transition = $enumDecode(_$De1TransitionEnumMap, json['transition'])
+      ..limiter = json['limiter'] == null
+          ? null
+          : De1StepLimiterData.fromJson(
+              json['limiter'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
     <String, dynamic>{
-      'frameToWrite': instance.frameToWrite,
       'flag': instance.flag,
       'setVal': instance.setVal,
       'temp': instance.temp,
@@ -103,25 +112,23 @@ Map<String, dynamic> _$De1ShotFrameClassToJson(De1ShotFrameClass instance) =>
       'maxVol': instance.maxVol,
       'maxWeight': instance.maxWeight,
       'name': instance.name,
-      'pump': instance.pump,
-      'sensor': instance.sensor,
-      'transition': instance.transition,
-      'bytes': const Uint8ListConverter().toJson(instance.bytes),
+      'pump': _$De1PumpModeEnumMap[instance.pump]!,
+      'sensor': _$De1SensorTypeEnumMap[instance.sensor]!,
+      'transition': _$De1TransitionEnumMap[instance.transition]!,
+      'limiter': instance.limiter,
     };
 
-De1ShotExtFrameClass _$De1ShotExtFrameClassFromJson(
-        Map<String, dynamic> json) =>
-    De1ShotExtFrameClass()
-      ..frameToWrite = json['frameToWrite'] as int
-      ..limiterValue = (json['limiterValue'] as num).toDouble()
-      ..limiterRange = (json['limiterRange'] as num).toDouble()
-      ..bytes = const Uint8ListConverter().fromJson(json['bytes'] as List);
+const _$De1PumpModeEnumMap = {
+  De1PumpMode.pressure: 'pressure',
+  De1PumpMode.flow: 'flow',
+};
 
-Map<String, dynamic> _$De1ShotExtFrameClassToJson(
-        De1ShotExtFrameClass instance) =>
-    <String, dynamic>{
-      'frameToWrite': instance.frameToWrite,
-      'limiterValue': instance.limiterValue,
-      'limiterRange': instance.limiterRange,
-      'bytes': const Uint8ListConverter().toJson(instance.bytes),
-    };
+const _$De1SensorTypeEnumMap = {
+  De1SensorType.water: 'water',
+  De1SensorType.coffee: 'coffee',
+};
+
+const _$De1TransitionEnumMap = {
+  De1Transition.fast: 'fast',
+  De1Transition.smooth: 'smooth',
+};

@@ -188,27 +188,29 @@ class SelectableSteps extends StatelessWidget {
   Widget getSubtitle(De1ShotFrameClass frame) {
     bool isMix = ((frame.flag & De1ShotFrameClass.tMixTemp) > 0);
     String vol = frame.maxVol > 0 ? " or ${frame.maxVol} ml" : "";
-    String limitFlow = frame.triggerVal > 0
-        ? "with a pressure limit of ${frame.triggerVal} bar"
+    String limitFlow = (frame.pump == De1PumpMode.flow && frame.limiterValue > 0)
+        ? "with a pressure limit of ${frame.limiterValue} bar"
         : "";
-    String limitPressure = frame.triggerVal > 0
-        ? "with a flow limit of ${frame.triggerVal} ml/s"
+    String limitPressure = (frame.pump == De1PumpMode.pressure && frame.limiterValue > 0)
+        ? "with a flow limit of ${frame.limiterValue} ml/s"
         : "";
-    log.info("RenderFrame Test: $frame");
+    log.finer("RenderFrame Test: $frame");
+		log.finer("Render frame pump: ${frame.pump} limiter: ${frame.limiterValue}");
 
     var moveOnSubtitle = getMoveOnSubtitle(frame);
+		String transition = frame.transition == De1Transition.smooth ? "gradually" : "instantly";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
             "Set ${isMix ? "water" : "coffee"} temperature to ${frame.temp.toStringAsFixed(0)} °C"),
-        if (frame.pump != "pressure")
+        if (frame.pump == De1PumpMode.flow)
           Text(
-              "pour ${frame.transition} at rate of ${frame.setVal.toStringAsFixed(1)} ml/s $limitFlow"),
-        if (frame.pump == "pressure")
+              "Advance $transition to ${frame.setVal.toStringAsFixed(1)} ml/s $limitFlow"),
+        if (frame.pump == De1PumpMode.pressure)
           Text(
-              "Pressurize ${frame.transition} to ${frame.setVal.toStringAsFixed(1)} bar $limitPressure"),
+              "Pressurize $transition to ${frame.setVal.toStringAsFixed(1)} bar $limitPressure"),
         Text(
             "For a maximum of ${frame.frameLen.toStringAsFixed(0)} seconds $vol"),
         if (moveOnSubtitle != null) Text(moveOnSubtitle),

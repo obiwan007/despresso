@@ -8,7 +8,7 @@ part of 'data_models.dart';
 
 T_Request _$T_RequestFromJson(Map<String, dynamic> json) => T_Request(
       command: json['command'] as String,
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       params: json['params'] as Map<String, dynamic>?,
     )..type = json['type'] as String;
 
@@ -32,7 +32,7 @@ Map<String, dynamic> _$T_ScanResultToJson(T_ScanResult instance) =>
     };
 
 T_ErrorDesc _$T_ErrorDescFromJson(Map<String, dynamic> json) => T_ErrorDesc()
-  ..eid = json['eid'] as int
+  ..eid = (json['eid'] as num).toInt()
   ..errmsg = json['errmsg'] as String;
 
 Map<String, dynamic> _$T_ErrorDescToJson(T_ErrorDesc instance) =>
@@ -77,7 +77,7 @@ T_Response _$T_ResponseFromJson(Map<String, dynamic> json) => T_Response()
   ..error = json['error'] == null
       ? null
       : T_ErrorDesc.fromJson(json['error'] as Map<String, dynamic>)
-  ..id = json['id'] as int
+  ..id = (json['id'] as num).toInt()
   ..results = json['results'] as Map<String, dynamic>?;
 
 Map<String, dynamic> _$T_ResponseToJson(T_Response instance) =>
@@ -91,7 +91,7 @@ Map<String, dynamic> _$T_ResponseToJson(T_Response instance) =>
 T_Update _$T_UpdateFromJson(Map<String, dynamic> json) => T_Update()
   ..type = json['type'] as String
   ..update = json['update'] as String
-  ..id = json['id'] as int
+  ..id = (json['id'] as num).toInt()
   ..results = json['results'] as Map<String, dynamic>?;
 
 Map<String, dynamic> _$T_UpdateToJson(T_Update instance) => <String, dynamic>{
