@@ -667,7 +667,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   }
 
   bool _onKey(KeyEvent event) {
-
     if (event is! KeyDownEvent) {
       return false;
     }
@@ -689,6 +688,13 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         log.info("Flush");
         machineService.setState(EspressoMachineState.flush);
         break;
+      case LogicalKeyboardKey.keyP:
+        final machineState = machineService.lastState;
+        if (machineState == EspressoMachineState.sleep) {
+          machineService.setState(EspressoMachineState.idle);
+        } else if (machineState == EspressoMachineState.idle) {
+          machineService.setState(EspressoMachineState.sleep);
+        }
       case LogicalKeyboardKey.space:
         machineService.setState(EspressoMachineState.idle);
         log.info("stop");
