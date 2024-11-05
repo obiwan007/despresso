@@ -695,6 +695,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         } else if (machineState == EspressoMachineState.idle) {
           machineService.setState(EspressoMachineState.sleep);
         }
+				break;
       case LogicalKeyboardKey.space:
         machineService.setState(EspressoMachineState.idle);
         log.info("stop");
