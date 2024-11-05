@@ -667,25 +667,33 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
   }
 
   bool _onKey(KeyEvent event) {
-    // final key = event.logicalKey.keyLabel;
-    final keys = RawKeyboard.instance.keysPressed;
-    if (event is KeyDownEvent && keys.contains(LogicalKeyboardKey.controlLeft)) {
-      if (event.logicalKey == LogicalKeyboardKey.keyB) {
+
+    if (event is! KeyDownEvent) {
+      return false;
+    }
+    log.fine("event: $event");
+    switch (event.logicalKey) {
+      case LogicalKeyboardKey.keyE:
         log.info("Brewing");
         machineService.setState(EspressoMachineState.espresso);
-      } else if (event.logicalKey == LogicalKeyboardKey.keyW) {
+        break;
+      case LogicalKeyboardKey.keyW:
         log.info("Water");
         machineService.setState(EspressoMachineState.water);
-      } else if (event.logicalKey == LogicalKeyboardKey.keyS) {
+        break;
+      case LogicalKeyboardKey.keyS:
         log.info("Steam");
         machineService.setState(EspressoMachineState.steam);
-      } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+        break;
+      case LogicalKeyboardKey.keyF:
         log.info("Flush");
         machineService.setState(EspressoMachineState.flush);
-      } else if (event.logicalKey == LogicalKeyboardKey.space) {
+        break;
+      case LogicalKeyboardKey.space:
         machineService.setState(EspressoMachineState.idle);
         log.info("stop");
-      } else {
+        break;
+      default:
         final digits = [
           LogicalKeyboardKey.digit1,
           LogicalKeyboardKey.digit2,
@@ -706,7 +714,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             // setState(() {});
           }
         }
-      }
     }
 
     return false;
