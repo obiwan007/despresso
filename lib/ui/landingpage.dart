@@ -105,8 +105,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
 
     _settings.addListener(updatedSettings);
 
-    ServicesBinding.instance.keyboard.addHandler(_onKey);
-
     Future.delayed(
       const Duration(seconds: 1),
       () {
@@ -190,7 +188,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
     profileService.removeListener(updatedProfile);
     _screensaver.removeListener(screenSaverEvent);
     _settings.removeListener(updatedSettings);
-    ServicesBinding.instance.keyboard.removeHandler(_onKey);
   }
 
   @override
@@ -254,16 +251,19 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
               ],
             ),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  const RecipeScreen(),
-                  const EspressoScreen(),
-                  if (_settings.useSteam) const SteamScreen(),
-                  if (_settings.useWater) const WaterScreen(),
-                  if (_settings.showFlushScreen) const FlushScreen(),
-                ],
-              ),
+              child: Focus(
+                  autofocus: true,
+                  onKeyEvent: _onKey,
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      const RecipeScreen(),
+                      const EspressoScreen(),
+                      if (_settings.useSteam) const SteamScreen(),
+                      if (_settings.useWater) const WaterScreen(),
+                      if (_settings.showFlushScreen) const FlushScreen(),
+                    ],
+                  )),
             ),
             const MachineFooter(),
           ],
@@ -641,34 +641,38 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
       pageBuilder: (context, animation, secondaryAnimation) {
         _saverContext = context;
         return Scaffold(
-          backgroundColor: Colors.black,
-          body: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.pop(context);
-                _saverContext = null;
-                _screensaver.handleTap();
-              },
-              child: const Column(
-                children: [
-                  Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(child: ScreenSaver()),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-        );
+            backgroundColor: Colors.black,
+            body: Focus(
+              autofocus: true,
+              onKeyEvent: _onKey,
+              child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _saverContext = null;
+                    _screensaver.handleTap();
+                  },
+                  child: const Column(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(child: ScreenSaver()),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+            ));
       },
     );
   }
 
-  bool _onKey(KeyEvent event) {
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    log.fine("got $event from $node");
     if (event is! KeyDownEvent) {
-      return false;
+      return KeyEventResult.ignored;
     }
     log.fine("event: $event");
     switch (event.logicalKey) {
@@ -723,6 +727,6 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         }
     }
 
-    return false;
+    return KeyEventResult.ignored;
   }
 }
