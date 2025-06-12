@@ -340,11 +340,12 @@ packages:
   document_file_save_plus:
     dependency: "direct main"
     description:
-      name: document_file_save_plus
-      sha256: ff05c6a3b072377566e8e92666db38eb277786f90c0ac267ea47dc22725c1df3
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
+      path: "."
+      ref: master
+      resolved-ref: ba0f118aa4b044dd1d14bc1c73da0eeb47fe5b39
+      url: "https://github.com/Shajk0/document_file_save_plus.git"
+    source: git
+    version: "2.0.1"
   equatable:
     dependency: transitive
     description:

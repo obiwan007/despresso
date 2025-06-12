@@ -69,7 +69,10 @@ dependencies:
   logging: ^1.2.0
   file_picker: ^10.1.9
   share_plus: ^11.0.0
-  document_file_save_plus: ^2.0.0
+  document_file_save_plus:
+    git:
+      url: https://github.com/Shajk0/document_file_save_plus.git
+      ref: master 
   sentry_flutter: ^8.9.0
   feedback_sentry: ^3.0.0
   package_info_plus: ^8.0.2
