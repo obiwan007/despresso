@@ -19,13 +19,16 @@ import '../../../service_locator.dart';
 // ignore: constant_identifier_names
 const int CtrlF = 0x01; // Are we in Pressure or Flow priority mode?
 // ignore: constant_identifier_names
-const int DoCompare = 0x02; // Do a compare, early exit current frame if compare true
+const int DoCompare =
+    0x02; // Do a compare, early exit current frame if compare true
 // ignore: constant_identifier_names
-const int DC_GT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+const int DC_GT =
+    0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
 // ignore: constant_identifier_names
 const int DC_CompF = 0x08; // Compare Pressure or Flow?
 // ignore: constant_identifier_names
-const int TMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+const int TMixTemp =
+    0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
 // ignore: constant_identifier_names
 const int Interpolate = 0x20; // Hard jump to target value, or ramp?
 // ignore: constant_identifier_names
@@ -56,7 +59,8 @@ class ProfileService extends ChangeNotifier {
     currentProfile = profiles.first;
     if (profileId.isNotEmpty) {
       try {
-        currentProfile = profiles.where((element) => element.id == profileId).first;
+        currentProfile =
+            profiles.where((element) => element.id == profileId).first;
       } catch (_) {}
       log.info("Profile ${currentProfile!.shotHeader.title} loaded");
     }
@@ -140,7 +144,8 @@ class ProfileService extends ChangeNotifier {
     try {
       await saveProfileToDocuments(profile, profile.id);
       currentProfile = profile;
-      if (profiles.firstWhereOrNull((element) => element.id == profile.id) == null) {
+      if (profiles.firstWhereOrNull((element) => element.id == profile.id) ==
+          null) {
         log.info("New profile saved");
         profiles.add(profile);
       } else {
@@ -159,7 +164,8 @@ class ProfileService extends ChangeNotifier {
     log.info("Delete as a existing profile to documents region");
     profile.isDefault = false;
     currentProfile = profile;
-    var toBeDeleted = profiles.firstWhereOrNull((element) => element.id == profile.id);
+    var toBeDeleted =
+        profiles.firstWhereOrNull((element) => element.id == profile.id);
 
     if (toBeDeleted != null) {
       var i = profiles.indexOf(toBeDeleted);
@@ -219,7 +225,8 @@ class ProfileService extends ChangeNotifier {
     }
   }
 
-  Future deleteProfileFromDocuments(De1ShotProfile profile, String filename) async {
+  Future deleteProfileFromDocuments(
+      De1ShotProfile profile, String filename) async {
     log.info("Storing shot: ${profile.id}");
 
     final directory = await getApplicationDocumentsDirectory();
@@ -238,7 +245,8 @@ class ProfileService extends ChangeNotifier {
     return Future(() => null);
   }
 
-  Future<File> saveProfileToDocuments(De1ShotProfile profile, String filename) async {
+  Future<File> saveProfileToDocuments(
+      De1ShotProfile profile, String filename) async {
     log.info("Storing shot: ${profile.id}");
 
     final directory = await getApplicationDocumentsDirectory();
@@ -255,16 +263,17 @@ class ProfileService extends ChangeNotifier {
     }
     await file.create();
 
-    var json = profile.toJson();
+    var json = jsonEncode(profile.toJson());
     log.info("Save json $json");
 
-    return file.writeAsString(jsonEncode(json));
+    return file.writeAsString(json, flush: true);
   }
 
   Future<void> loadAllDefaultProfiles() async {
     var assets = await rootBundle.loadString('AssetManifest.json');
     Map jsondata = json.decode(assets);
-    List get = jsondata.keys.where((element) => element.endsWith(".json")).toList();
+    List get =
+        jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
       var rawJson = await rootBundle.loadString(file);
@@ -277,16 +286,16 @@ class ProfileService extends ChangeNotifier {
     log.info('all profiles loaded');
   }
 
+  // TODO: use toJson on profile once migrated to json v2 completely
   De1ShotProfile parseDefaultProfile(String json, bool isDefault) {
     De1ShotHeaderClass header = De1ShotHeaderClass();
     List<De1ShotFrameClass> frames = <De1ShotFrameClass>[];
-    List<De1ShotExtFrameClass> exFrames = <De1ShotExtFrameClass>[];
-    var p = De1ShotProfile(header, frames, exFrames);
+    var p = De1ShotProfile(header, frames);
     if (!shotJsonParser(json, p)) throw ("Error");
 
     p.isDefault = isDefault;
 
-    log.fine("$header $frames $exFrames");
+    log.fine("$header $frames");
 
     return p;
   }
@@ -350,10 +359,10 @@ class ProfileService extends ChangeNotifier {
       var sensor = (step.flag & TMixTemp == TMixTemp) ? "water" : "coffee";
       buffer.writeln('"sensor": "$sensor",');
 
-      buffer.writeln('"pump": "${step.pump}",');
-      buffer.writeln('"transition": "${step.transition}",');
+      buffer.writeln('"pump": "${step.pump.name}",');
+      buffer.writeln('"transition": "${step.transition.name}",');
 
-      if (step.pump == "flow") {
+      if (step.pump == De1PumpMode.flow) {
         buffer.writeln('"flow": "${step.setVal}",');
       } else {
         buffer.writeln('"pressure": "${step.setVal}",');
@@ -398,16 +407,12 @@ class ProfileService extends ChangeNotifier {
         buffer.writeln("}");
       }
 
-      if (prof.shotExframes.isNotEmpty) {
-        var extended =
-            prof.shotExframes.singleWhereIndexedOrNull((index, element) => element.frameToWrite - 32 == frameNum);
-        if (extended != null) {
+      if (step.limiter != null) {
           buffer.writeln(',');
           buffer.writeln('"limiter": {');
-          buffer.writeln('  "value": "${extended.limiterValue}",');
-          buffer.writeln('  "range": "${extended.limiterRange}"');
+          buffer.writeln('  "value": "${step.limiterValue}",');
+          buffer.writeln('  "range": "${step.limiterRange}"');
           buffer.writeln("  }");
-        }
       }
 
       if (frameNum < prof.shotFrames.length - 1) {
@@ -431,7 +436,6 @@ class ProfileService extends ChangeNotifier {
 
     De1ShotHeaderClass shotHeader = profile.shotHeader;
     List<De1ShotFrameClass> shotFrames = profile.shotFrames;
-    List<De1ShotExtFrameClass> shotExframes = profile.shotExframes;
     if (!json.containsKey("version")) return false;
     if (dynamic2Double(json["version"]) != 2.0) return false;
 
@@ -445,7 +449,8 @@ class ProfileService extends ChangeNotifier {
     shotHeader.legacyProfileType = dynamic2String(json["legacy_profile_type"]);
     shotHeader.targetWeight = dynamic2Double(json["target_weight"]);
     shotHeader.targetVolume = dynamic2Double(json["target_volume"]);
-    shotHeader.targetVolumeCountStart = dynamic2Double(json["target_volume_count_start"]);
+    shotHeader.targetVolumeCountStart =
+        dynamic2Double(json["target_volume_count_start"]);
     shotHeader.tankTemperature = dynamic2Double(json["tank_temperature"]);
     shotHeader.title = dynamic2String(json["title"]);
     shotHeader.author = dynamic2String(json["author"]);
@@ -468,17 +473,15 @@ class ProfileService extends ChangeNotifier {
       De1ShotFrameClass frame = De1ShotFrameClass();
       var features = IgnoreLimit;
 
-      frame.pump = dynamic2String(frameData["pump"]);
+      frame.pump = dynamic2String(frameData["pump"]) == "flow"
+          ? De1PumpMode.flow
+          : De1PumpMode.pressure;
       frame.name = dynamic2String(frameData["name"]);
       frame.maxWeight = dynamic2Double(frameData["weight"]);
 
       // flow control
-      if (!frameData.containsKey("pump")) return false;
-      var pump = dynamic2String(frameData["pump"]);
-      frame.pump = pump;
 
-      if (pump == "") return false;
-      if (pump == "flow") {
+      if (frame.pump == De1PumpMode.flow) {
         features |= CtrlF;
         if (!frameData.containsKey("flow")) return false;
         var flow = dynamic2Double(frameData["flow"]);
@@ -496,13 +499,16 @@ class ProfileService extends ChangeNotifier {
       var sensor = dynamic2String(frameData["sensor"]);
       if (sensor == "") return false;
       if (sensor == "water") features |= TMixTemp;
+      frame.sensor =
+          sensor == 'water' ? De1SensorType.water : De1SensorType.coffee;
 
       if (!frameData.containsKey("transition")) return false;
       var transition = dynamic2String(frameData["transition"]);
       if (transition == "") return false;
 
       if (transition == "smooth") features |= Interpolate;
-      frame.transition = transition;
+      frame.transition =
+          transition == 'smooth' ? De1Transition.smooth : De1Transition.fast;
       // "move on if...."
       if (frameData.containsKey("exit")) {
         var exitData = frameData["exit"];
@@ -546,6 +552,8 @@ class ProfileService extends ChangeNotifier {
 
         limiterValue = dynamic2Double(limiterData["value"]);
         limiterRange = dynamic2Double(limiterData["range"]);
+        frame.limiterValue = limiterValue;
+        frame.limiterRange = limiterRange;
       }
 
       if (!frameData.containsKey("temperature")) return false;
@@ -556,55 +564,34 @@ class ProfileService extends ChangeNotifier {
       var seconds = dynamic2Double(frameData["seconds"]);
       if (seconds == double.negativeInfinity) return false;
 
-      int frameCounter = shotFrames.length;
-
       // MaxVol for the first frame only
       double inputMaxVol = 0.0;
-      if (frameCounter == 0 && frameData.containsKey("volume")) {
+      if (frameData.containsKey("volume")) {
         inputMaxVol = dynamic2Double(frameData["volume"]);
         if (inputMaxVol == double.negativeInfinity) inputMaxVol = 0.0;
       }
 
-      frame.frameToWrite = frameCounter;
       frame.flag = features;
       frame.temp = temperature;
       frame.frameLen = seconds;
       frame.maxVol = inputMaxVol;
       shotFrames.add(frame);
-
-      if (limiterValue != 0.0 && limiterValue != double.negativeInfinity && limiterRange != double.negativeInfinity) {
-        De1ShotExtFrameClass exFrame = De1ShotExtFrameClass();
-        exFrame.frameToWrite = (frameCounter + 32).toInt();
-        exFrame.limiterValue = limiterValue;
-        exFrame.limiterRange = limiterRange;
-        shotExframes.add(exFrame);
-      }
     }
 
     // header
     shotHeader.numberOfFrames = shotFrames.length;
-    shotHeader.numberOfPreinfuseFrames = 1;
+    shotHeader.numberOfPreinfuseFrames =
+        shotHeader.targetVolumeCountStart.toInt();
 
-    // update the byte array inside shot header and frame, so we are ready to write it to DE
-    encodeHeaderAndFrames(shotHeader, shotFrames, shotExframes);
     return true;
   }
 
-  static encodeHeaderAndFrames(
-      De1ShotHeaderClass shotHeader, List<De1ShotFrameClass> shotFrames, List<De1ShotExtFrameClass> shotExframes) {
-    shotHeader.bytes = De1ShotHeaderClass.encodeDe1ShotHeader(shotHeader);
-    for (var frame in shotFrames) {
-      frame.bytes = De1ShotFrameClass.encodeDe1ShotFrame(frame);
-    }
-    for (var exframe in shotExframes) {
-      exframe.bytes = De1ShotExtFrameClass.encodeDe1ExtentionFrame(exframe);
-    }
-  }
-
-  Future<De1ShotProfile> getJsonProfileFromVisualizerShortCode(String shortCode) async {
+  Future<De1ShotProfile> getJsonProfileFromVisualizerShortCode(
+      String shortCode) async {
     if (shortCode.length == 4) {
       try {
-        var url = Uri.https('visualizer.coffee', '/api/shots/shared', {'code': shortCode});
+        var url = Uri.https(
+            'visualizer.coffee', '/api/shots/shared', {'code': shortCode});
         var response = await http.get(url);
         if (response.statusCode != 200) {
           throw ("Shot not found");

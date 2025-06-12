@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:despresso/devices/abstract_comm.dart';
@@ -596,57 +597,54 @@ class EspressoMachineService extends ChangeNotifier {
     if (de1 == null) {
       return Future.error("No de1 connected");
     }
-    var profile = profileToBeUploaded.clone();
-    log.info("Uploading profile to machine $profile");
-    var header = profile.shotHeader;
+    De1ShotProfile profile = profileToBeUploaded.clone();
+    for (De1ShotFrameClass fr in profile.shotFrames) {
+      fr.temp += settingsService.targetTempCorrection;
+    }
+    De1ProfileMachineData profileData = De1ProfileMachineData(profile);
+    log.info("Uploading profile to machine $profile.name");
 
     try {
-      log.info("Write Header: $header");
-      await de1!.writeWithResult(Endpoint.headerWrite, header.bytes);
+      log.info("Write Header: $profileData.headerData");
+      await de1!.writeWithResult(Endpoint.headerWrite, profileData.headerData);
     } catch (ex) {
-      log.severe("Error writing header $profile $ex");
+      log.severe("Error writing header $profileData.headerData $ex");
       return "Error writing profile header $ex";
     }
 
-    for (var fr in profile.shotFrames) {
+    for (var fr in profileData.frameData) {
       try {
         log.info("Write Frame: $fr");
-        var oldTemp = fr.temp;
-        fr.temp += settingsService.targetTempCorrection;
-        var bytes = De1ShotFrameClass.encodeDe1ShotFrame(fr);
-        await de1!.writeWithResult(Endpoint.frameWrite, bytes);
-        fr.temp = oldTemp;
+        await de1!.writeWithResult(Endpoint.frameWrite, fr);
       } catch (ex) {
-        log.severe("Error writing frame $profile $ex");
-        return "Error writing shot frame $fr";
+        log.severe("Error writing frame $fr $ex");
+        return "Error writing shot frame $profile";
       }
     }
 
-    for (var exFrame in profile.shotExframes) {
+    for (Uint8List exFrameBytes in profileData.extFrameData) {
       try {
-        log.info("Write ExtFrame: $exFrame");
-        await de1!.writeWithResult(Endpoint.frameWrite, exFrame.bytes);
+					log.info("Write ExFrame: $exFrameBytes");
+        await de1!.writeWithResult(Endpoint.frameWrite, exFrameBytes);
       } catch (ex) {
-        log.severe("Error writing exframe $profile $ex");
-        return "Error writing ex shot frame $exFrame";
+        log.severe("Error writing exframe $exFrameBytes $ex");
+        return "Error writing ex shot frame $profile.name";
       }
     }
 
     // stop at volume in the profile tail
-    if (true) {
-      var tailBytes = De1ShotHeaderClass.encodeDe1ShotTail(profile.shotFrames.length, 0);
-
-      try {
-        log.fine("Write Tail: $tailBytes");
-        await de1!.writeWithResult(Endpoint.frameWrite, tailBytes);
-      } catch (ex) {
-        return "Error writing shot frame tail $tailBytes";
-      }
+    try {
+      log.fine("Write Tail: $profileData.tailData");
+      await de1!.writeWithResult(Endpoint.frameWrite, profileData.tailData);
+    } catch (ex) {
+      return "Error writing shot frame tail $profile.name";
     }
 
     // check if we need to send the new water temp
     if (settingsService.targetGroupTemp != profile.shotFrames[0].temp) {
-      profile.shotHeader.targetGroupTemp = profile.shotFrames[0].temp;
+      settingsService.targetGroupTemp =
+          (profile.shotFrames[0].temp + settingsService.targetTempCorrection)
+              .toInt();
 
       try {
         log.fine("Write Shot Settings");

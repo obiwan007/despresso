@@ -58,7 +58,6 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
     }
 
     var declineObject = De1ShotFrameClass();
-    declineObject.frameToWrite = _profile.shotFrames.length;
     declineObject.temp = _profile.shotFrames.first.temp;
     try {
       var pre = _profile.shotFrames.where((element) => (element.name.startsWith("preinfusion")));
@@ -71,7 +70,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
       var declineArray = _profile.shotFrames.where((element) => (element.name == "decline")).toList();
       if (declineArray.isNotEmpty) {
         decline = declineArray.first;
-      } else {
+      } else if (_profile.shotHeader.type != "advanced") {
         _profile.shotFrames.add(declineObject);
         decline = declineObject;
       }
@@ -373,13 +372,13 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               child: FittedBox(
                 child: Text(
                   "Pres.",
-                  style: (frame.pump == "pressure") ? style1 : style2,
+                  style: (frame.pump == De1PumpMode.pressure) ? style1 : style2,
                 ),
               ),
             ),
-            Text("${(frame.pump == "pressure" ? frame.setVal : frame.triggerVal)}",
-                style: (frame.pump == "pressure") ? style1 : style2),
-            Text("bar", style: (frame.pump == "pressure") ? style3 : null),
+            Text("${(frame.pump == De1PumpMode.pressure ? frame.setVal : frame.triggerVal)}",
+                style: (frame.pump == De1PumpMode.pressure) ? style1 : style2),
+            Text("bar", style: (frame.pump == De1PumpMode.pressure) ? style3 : null),
           ],
         ),
       ),
@@ -392,13 +391,13 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
               child: FittedBox(
                 child: Text(
                   "Flow",
-                  style: (frame.pump == "flow") ? style1 : style2,
+                  style: (frame.pump == De1PumpMode.flow) ? style1 : style2,
                 ),
               ),
             ),
-            Text("${(frame.pump == "flow" ? frame.setVal : frame.triggerVal)}",
-                style: (frame.pump == "flow") ? style1 : style2),
-            Text("ml/s", style: (frame.pump == "flow") ? style3 : null),
+            Text("${(frame.pump == De1PumpMode.flow ? frame.setVal : frame.triggerVal)}",
+                style: (frame.pump == De1PumpMode.flow) ? style1 : style2),
+            Text("ml/s", style: (frame.pump == De1PumpMode.flow) ? style3 : null),
           ],
         ),
       ),
@@ -464,11 +463,11 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                         child: Column(
                           children: [
                             Text(
-                                "Limit flow (${(riseAndHold.pump == "flow" ? riseAndHold.setVal : riseAndHold.triggerVal).round()} ml/s)"),
+                                "Limit flow (${(riseAndHold.pump == De1PumpMode.flow ? riseAndHold.setVal : riseAndHold.triggerVal).round()} ml/s)"),
                             SfSlider(
                               min: 0.0,
                               max: 10.0,
-                              value: riseAndHold.pump == "flow" ? riseAndHold.setVal : riseAndHold.triggerVal,
+                              value: riseAndHold.pump == De1PumpMode.flow ? riseAndHold.setVal : riseAndHold.triggerVal,
                               interval: 1,
                               showTicks: true,
                               showLabels: true,
@@ -476,7 +475,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                               enableTooltip: true,
                               minorTicksPerInterval: 1,
                               onChanged: (dynamic value) {
-                                riseAndHold.pump == "flow"
+                                riseAndHold.pump == De1PumpMode.flow
                                     ? riseAndHold.setVal = value
                                     : riseAndHold.triggerVal = value;
                                 setState(() {});
@@ -496,7 +495,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                       SfSlider.vertical(
                         min: 0.0,
                         max: 10.0,
-                        value: riseAndHold.pump == "pressure" ? riseAndHold.setVal : riseAndHold.triggerVal,
+                        value: riseAndHold.pump == De1PumpMode.pressure ? riseAndHold.setVal : riseAndHold.triggerVal,
                         interval: 2,
                         stepSize: 0.1,
                         showTicks: true,
@@ -593,7 +592,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                       SfSlider.vertical(
                         min: 0.0,
                         max: 15.0,
-                        value: preInfusion!.pump == "pressure" ? preInfusion!.setVal : preInfusion!.triggerVal,
+                        value: preInfusion!.pump == De1PumpMode.pressure ? preInfusion!.setVal : preInfusion!.triggerVal,
                         interval: 2,
                         stepSize: 0.1,
                         showTicks: true,
@@ -603,7 +602,7 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
                         onChanged: (dynamic value) {
                           setState(() {
                             var v = (value * 10).round() / 10;
-                            if (decline!.pump == "pressure") {
+                            if (decline!.pump == De1PumpMode.pressure) {
                               decline!.setVal = v;
                             } else {
                               decline!.triggerVal = v;
@@ -639,9 +638,9 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
           max: 16,
           interval: 1,
           frame,
-          frame.pump == "pressure" ? frame.setVal : frame.triggerVal, (value) {
+          frame.pump == De1PumpMode.pressure ? frame.setVal : frame.triggerVal, (value) {
         var v = (value * 10).round() / 10;
-        if (frame.pump == "pressure") {
+        if (frame.pump == De1PumpMode.pressure) {
           frame.setVal = v;
         } else {
           frame.triggerVal = v;
@@ -656,9 +655,9 @@ class ProfilesEditScreenState extends State<ProfilesEditScreen> with SingleTicke
           max: 16,
           interval: 1,
           frame,
-          frame.pump == "flow" ? frame.setVal : frame.triggerVal, (value) {
+          frame.pump == De1PumpMode.flow ? frame.setVal : frame.triggerVal, (value) {
         var v = (value * 10).round() / 10;
-        if (frame.pump == "flow") {
+        if (frame.pump == De1PumpMode.flow) {
           frame.setVal = v;
         } else {
           frame.triggerVal = v;

@@ -21,34 +21,44 @@ class Uint8ListConverter implements JsonConverter<Uint8List, List<dynamic>> {
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class De1ShotProfile {
+  // Will this help us migrate to decent v2 json schema?
+  String? semanticVersion = "0.0.9";
+
   bool isDefault = false;
 
   String id = "";
 
-  De1ShotProfile(this.shotHeader, this.shotFrames, this.shotExframes);
+  De1ShotProfile(this.shotHeader, this.shotFrames);
 
   De1ShotHeaderClass shotHeader;
-  List<De1ShotFrameClass> shotFrames;
-  List<De1ShotExtFrameClass> shotExframes;
 
-  factory De1ShotProfile.fromJson(Map<String, dynamic> json) => _$De1ShotProfileFromJson(json);
+  List<De1ShotFrameClass> shotFrames;
+
+  factory De1ShotProfile.fromJson(Map<String, dynamic> json) {
+    De1ShotProfile profile = _$De1ShotProfileFromJson(json);
+    profile.shotHeader.numberOfFrames = profile.shotFrames.length;
+    return profile;
+  }
 
   String get title => shotHeader.title;
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$De1ShotProfileToJson(this);
+  Map<String, dynamic> toJson() {
+// just in case we have a mismatch
+    shotHeader.numberOfFrames = shotFrames.length;
+    return _$De1ShotProfileToJson(this);
+  }
 
   De1ShotProfile clone() {
-    var copy = De1ShotProfile(De1ShotHeaderClass(), [], []);
+    var copy = De1ShotProfile(De1ShotHeaderClass(), []);
     copy.id = id;
     copy.isDefault = isDefault;
     copy.shotHeader = shotHeader.clone();
     copy.shotFrames = shotFrames.map((e) => e.clone()).toList();
-    copy.shotExframes = shotExframes.map((e) => e.clone()).toList();
 
     return copy;
   }
@@ -57,6 +67,83 @@ class De1ShotProfile {
     if (shotFrames.isEmpty) return null;
 
     return shotFrames.first;
+  }
+
+  void deleteStep(int index) {
+    if (index < 0 || index >= shotFrames.length) return;
+    shotFrames.removeAt(index);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void insertStep(int index, De1ShotFrameClass frame) {
+    if (index < 0 || index >= shotFrames.length) return;
+    shotFrames.insert(index, frame);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void reorderStep(int oldIndex, int direction) {
+    if (oldIndex < 0 || oldIndex >= shotFrames.length) return;
+    if (oldIndex + direction < 0 || oldIndex + direction >= shotFrames.length)
+      return;
+    var frame = shotFrames.removeAt(oldIndex);
+    shotFrames.insert(oldIndex + direction, frame);
+  }
+
+  // TODO: presently unused - consider migrating header data into profile to avoid issues with synchronizing data
+  void updateStep(int index, De1ShotFrameClass frame) {
+    if (index < 0 || index >= shotFrames.length) return;
+    shotFrames[index] = frame;
+  }
+
+  void addStep(De1ShotFrameClass frame) {
+    shotFrames.add(frame);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void addStepAt(int index, De1ShotFrameClass frame) {
+    shotFrames.insert(index, frame);
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+
+  void setHeader(De1ShotHeaderClass header) {
+    shotHeader = header;
+  }
+
+  void setFrames(List<De1ShotFrameClass> frames) {
+    shotFrames = frames;
+    shotHeader.numberOfFrames = shotFrames.length;
+  }
+}
+
+class De1ProfileMachineData {
+  Uint8List headerData;
+  List<Uint8List> frameData;
+  List<Uint8List> extFrameData;
+  Uint8List tailData;
+
+  De1ProfileMachineData._internal(
+      this.headerData, this.frameData, this.extFrameData, this.tailData);
+
+  factory De1ProfileMachineData(De1ShotProfile profile) {
+    List<Uint8List> frameData = [];
+    List<Uint8List> extFrameData = [];
+    int i = 0;
+    for (i; i < profile.shotFrames.length; i++) {
+      De1ShotFrameClass frame = profile.shotFrames[i];
+      frameData.add(De1ShotFrameClass.encodeDe1ShotFrame(frame, i));
+      if (frame.limiter != null) {
+        extFrameData.add(De1ShotFrameClass.encodeDe1ExtentionFrame(frame, i));
+      }
+    }
+    Uint8List tailData = Uint8List(8);
+
+    tailData[0] = i;
+
+    Helper.convert_float_to_U10P0_for_tail(
+        profile.shotHeader.targetVolume, tailData, 1);
+
+    return De1ProfileMachineData._internal(
+        profile.shotHeader.encode(), frameData, extFrameData, tailData);
   }
 }
 
@@ -69,6 +156,7 @@ class De1ShotHeaderClass // proc spec_shotdescheader
   int minimumPressure = 0; // hard-coded, read as {
   double maximumFlow = 6; // hard-coded, read as {
 
+  @JsonKey(includeToJson: false, includeFromJson: false)
   @Uint8ListConverter()
   Uint8List bytes = Uint8List(5);
 
@@ -102,7 +190,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
 
   De1ShotHeaderClass();
 
-  factory De1ShotHeaderClass.fromJson(Map<String, dynamic> json) => _$De1ShotHeaderClassFromJson(json);
+  factory De1ShotHeaderClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotHeaderClassFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -151,7 +240,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     return "FrameNum:$numberOfFrames(PreFrames:$numberOfPreinfuseFrames) MinPres:$minimumPressure MaxFlow:$maximumFlow";
   }
 
-  static bool decodeDe1ShotHeader(ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
+  static bool decodeDe1ShotHeader(
+      ByteData data, De1ShotHeaderClass shotHeader, bool checkEncoding) {
     final log = Logger('decodeDe1ShotHeader');
     if (data.buffer.lengthInBytes != 5) return false;
 
@@ -175,7 +265,8 @@ class De1ShotHeaderClass // proc spec_shotdescheader
         }
         for (int i = 0; i < newBytes.buffer.lengthInBytes; i++) {
           if (newBytes[i] != array[i]) {
-            log.severe("Error in decoding header:${newBytes[i]} != ${array[i]}");
+            log.severe(
+                "Error in decoding header:${newBytes[i]} != ${array[i]}");
             return false;
           }
         }
@@ -186,6 +277,10 @@ class De1ShotHeaderClass // proc spec_shotdescheader
       log.severe("Exception in header decode $ex");
       return false;
     }
+  }
+
+  Uint8List encode() {
+    return De1ShotHeaderClass.encodeDe1ShotHeader(this);
   }
 
   static Uint8List encodeDe1ShotHeader(De1ShotHeaderClass shotHeader) {
@@ -223,15 +318,55 @@ class De1ShotHeaderClass // proc spec_shotdescheader
     data[5] = 0;
     data[6] = 0;
     data[7] = 0;
-    log.fine('encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
+    log.fine(
+        'encodeDe1ShotTail: Frame#: $frameToWrite Volume:$maxTotalVolume ${Helper.toHex(data)}');
     return data;
+  }
+}
+
+enum De1PumpMode {
+  @JsonValue("pressure")
+  pressure,
+  @JsonValue("flow")
+  flow
+}
+
+enum De1SensorType {
+  @JsonValue("water")
+  water,
+  @JsonValue("coffee")
+  coffee
+}
+
+enum De1Transition {
+  @JsonValue("fast")
+  fast,
+  @JsonValue("smooth")
+  smooth
+}
+
+@JsonSerializable()
+class De1StepLimiterData {
+  double value = 0.0;
+  double range = 0.6;
+
+  De1StepLimiterData();
+
+  factory De1StepLimiterData.fromJson(Map<String, dynamic> json) =>
+      _$De1StepLimiterDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$De1StepLimiterDataToJson(this);
+
+  De1StepLimiterData clone() {
+    return De1StepLimiterData()
+      ..value = value
+      ..range = range;
   }
 }
 
 @JsonSerializable()
 class De1ShotFrameClass // proc spec_shotframe
 {
-  int frameToWrite = 0;
   int flag = 0;
   double setVal = 0; // {
   double temp = 0; // {
@@ -240,29 +375,59 @@ class De1ShotFrameClass // proc spec_shotframe
   double maxVol = 0.0; // convert_bottom_10_of_U10P0
   double maxWeight = 0.0;
   String name = "";
-  String pump = "";
-  String sensor = "";
-  String transition = "";
+  De1PumpMode pump = De1PumpMode.pressure;
+  De1SensorType sensor = De1SensorType.water;
+  De1Transition transition = De1Transition.fast;
+  De1StepLimiterData? limiter;
+  @JsonKey(ignore: true)
   @Uint8ListConverter()
   Uint8List bytes = Uint8List(8);
+
+  static const int extFrameOffset = 32;
+
+  // helpers for limiter values
+  @JsonKey(ignore: true)
+  double get limiterValue => limiter?.value ?? 0;
+  set limiterValue(double value) {
+    if (limiter != null) {
+      limiter!.value = value;
+    } else {
+      limiter = De1StepLimiterData()..value = value;
+    }
+  }
+
+  @JsonKey(ignore: true)
+  double get limiterRange => limiter?.range ?? 0;
+  set limiterRange(double range) {
+    if (limiter != null) {
+      limiter!.range = range;
+    } else {
+      limiter = De1StepLimiterData()..range = range;
+    }
+  }
 
   De1ShotFrameClass();
 
   static int ctrlF = 0x01; // Are we in Pressure or Flow priority mode?
   // ignore: constant_identifier_names
-  static int doCompare = 0x02; // Do a compare, early exit current frame if compare true
+  static int doCompare =
+      0x02; // Do a compare, early exit current frame if compare true
   // ignore: constant_identifier_names
-  static int dcGT = 0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
+  static int dcGT =
+      0x04; // If we are doing a compare, then 0 = less than, 1 = greater than
   // ignore: constant_identifier_names
   static int dcCompF = 0x08; // Compare Pressure or Flow?
   // ignore: constant_identifier_names
-  static int tMixTemp = 0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
+  static int tMixTemp =
+      0x10; // Disable shower head temperature compensation. Target Mix Temp instead.
   // ignore: constant_identifier_names
   static int interpolate = 0x20; // Hard jump to target value, or ramp?
   // ignore: constant_identifier_names
-  static int ignoreLimit = 0x40; // Ignore minimum pressure and max flow settings
+  static int ignoreLimit =
+      0x40; // Ignore minimum pressure and max flow settings
 
-  factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) => _$De1ShotFrameClassFromJson(json);
+  factory De1ShotFrameClass.fromJson(Map<String, dynamic> json) =>
+      _$De1ShotFrameClassFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -274,7 +439,6 @@ class De1ShotFrameClass // proc spec_shotframe
     copy.bytes = Uint8List.fromList(bytes);
     copy.flag = flag;
     copy.frameLen = frameLen;
-    copy.frameToWrite = frameToWrite;
     copy.maxVol = maxVol;
     copy.name = name;
     copy.pump = pump;
@@ -284,6 +448,7 @@ class De1ShotFrameClass // proc spec_shotframe
     copy.transition = transition;
     copy.triggerVal = triggerVal;
     copy.maxWeight = maxWeight;
+    copy.limiter = limiter?.clone();
 
     return copy;
   }
@@ -307,54 +472,14 @@ class De1ShotFrameClass // proc spec_shotframe
   //   return true;
   // }
 
-  static bool decodeDe1ShotFrame(ByteData data, De1ShotFrameClass shotFrame, bool checkEncoding) {
-    final log = Logger('decodeDe1ShotFrame');
-
-    if (data.buffer.lengthInBytes != 8) return false;
-    log.fine('DecodeDe1ShotFrame:${Helper.toHex(data.buffer.asUint8List())}');
-    try {
-      int index = 0;
-      shotFrame.frameToWrite = data.getUint8(index++);
-
-      shotFrame.flag = data.getUint8(index++);
-      shotFrame.setVal = data.getUint8(index++) / 16.0;
-      shotFrame.temp = data.getUint8(index++) / 2.0;
-      shotFrame.frameLen = Helper.convert_F8_1_7_to_float(data.getUint8(index++));
-      shotFrame.triggerVal = data.getUint8(index++) / 16.0;
-      shotFrame.maxVol = Helper.convert_bottom_10_of_U10P0(
-          256 * data.getUint8(index++) + data.getUint8(index++)); // convert_bottom_10_of_U10P0
-
-      if (checkEncoding) {
-        var array = data.buffer.asUint8List();
-        var newBytes = encodeDe1ShotFrame(shotFrame);
-        if (newBytes.length != array.buffer.lengthInBytes) {
-          log.severe("Error in decoding frame Length not matching");
-          return false;
-        }
-
-        for (int i = 0; i < newBytes.length; i++) {
-          if (newBytes[i] != array[i]) {
-            // todo: fix issue with encoding/decoding error.
-            log.info("Error in decoding frame:${newBytes[i]} != ${array[i]}");
-            return false;
-          }
-        }
-      }
-
-      return true;
-    } catch (ex) {
-      log.severe("Exception $ex");
-      return false;
-    }
-  }
-
-  static Uint8List encodeDe1ShotFrame(De1ShotFrameClass shotFrame) {
+  static Uint8List encodeDe1ShotFrame(
+      De1ShotFrameClass shotFrame, int frameIndex) {
     final log = Logger('encodeDe1ShotFrame');
 
     Uint8List data = Uint8List(8);
 
     int index = 0;
-    data[index] = shotFrame.frameToWrite;
+    data[index] = frameIndex;
     index++;
     data[index] = shotFrame.flag;
     index++;
@@ -369,6 +494,31 @@ class De1ShotFrameClass // proc spec_shotframe
     index++;
     Helper.convert_float_to_U10P0(shotFrame.maxVol, data, index);
     log.fine('EncodeDe1ShotFrame:$shotFrame ${Helper.toHex(data)}');
+    return data;
+  }
+
+  static Uint8List encodeDe1ExtentionFrame(
+      De1ShotFrameClass frame, int frameIndex) {
+    int frameToWrite = frameIndex + De1ShotFrameClass.extFrameOffset;
+    Uint8List data = Uint8List(8);
+
+    data[0] = frameToWrite;
+
+    if (frame.limiter == null) {
+      return data;
+    }
+    double limiterValue = frame.limiter!.value;
+    double limiterRange = frame.limiter!.range;
+
+    data[1] = (0.5 + limiterValue * 16.0).toInt();
+    data[2] = (0.5 + limiterRange * 16.0).toInt();
+
+    data[3] = 0;
+    data[4] = 0;
+    data[5] = 0;
+    data[6] = 0;
+    data[7] = 0;
+
     return data;
   }
 
@@ -403,78 +553,7 @@ class De1ShotFrameClass // proc spec_shotframe
     for (var b in bytes) {
       sb += "${b.toRadixString(16)}-";
     }
-    return "Frame:$name $frameToWrite Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol B:$sb";
-  }
-}
-
-@JsonSerializable()
-class De1ShotExtFrameClass // extended frames
-{
-  int frameToWrite = 0;
-  double limiterValue = 0.0;
-  double limiterRange = 0.0;
-  @Uint8ListConverter()
-  Uint8List bytes = Uint8List(8);
-
-  De1ShotExtFrameClass();
-  factory De1ShotExtFrameClass.fromJson(Map<String, dynamic> json) => _$De1ShotExtFrameClassFromJson(json);
-
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$De1ShotExtFrameClassToJson(this);
-  De1ShotExtFrameClass clone() {
-    var copy = De1ShotExtFrameClass();
-    copy.bytes = Uint8List.fromList(bytes);
-    copy.frameToWrite = frameToWrite;
-    copy.limiterRange = limiterRange;
-    copy.limiterValue = limiterValue;
-
-    return copy;
-  }
-
-  bool compareBytes(De1ShotExtFrameClass sh) {
-    if (sh.bytes.buffer.lengthInBytes != bytes.buffer.lengthInBytes) {
-      return false;
-    }
-    for (int i = 0; i < sh.bytes.buffer.lengthInBytes; i++) {
-      if (sh.bytes[i] != bytes[i]) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  static Uint8List encodeDe1ExtentionFrame(De1ShotExtFrameClass exshot) {
-    return encodeDe1ExtentionFrame2(exshot.frameToWrite, exshot.limiterValue, exshot.limiterRange);
-  }
-
-  static Uint8List encodeDe1ExtentionFrame2(int frameToWrite, double limitValue, double limitRange) {
-    Uint8List data = Uint8List(8);
-
-    data[0] = frameToWrite;
-
-    data[1] = (0.5 + limitValue * 16.0).toInt();
-    data[2] = (0.5 + limitRange * 16.0).toInt();
-
-    data[3] = 0;
-    data[4] = 0;
-    data[5] = 0;
-    data[6] = 0;
-    data[7] = 0;
-
-    return data;
-  }
-
-  @override
-  String toString() {
-    var sb = "";
-    for (var b in bytes) {
-      sb += "${b.toRadixString(16)}-";
-    }
-
-    return "Frame:$frameToWrite Limiter:$limiterValue LimiterRange:$limiterRange   $sb";
+    return "Frame:$name Flag:$flag/0x${flag.toRadixString(16)} $flagStr Value:$setVal Temp:$temp FrameLen:$frameLen TriggerVal:$triggerVal MaxVol:$maxVol LimitValue: ${limiter?.value ?? 0} LimitRange: ${limiter?.range ?? 0} B:$sb BEX: ${De1ShotFrameClass.encodeDe1ExtentionFrame(this, 0)}";
   }
 }
 
@@ -513,7 +592,8 @@ class Helper {
   }
 
   // ignore: non_constant_identifier_names
-  static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
+  static void convert_float_to_U10P0_for_tail(
+      double x, Uint8List data, int index) {
     int ix = x.toInt();
 
     if (ix > 255) {
