@@ -517,7 +517,7 @@ class SteamScreenState extends State<SteamScreen> {
       fontSize: 10,
     );
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 6,
       child: Text(meta.formattedValue, style: style),
     );
@@ -530,7 +530,7 @@ class SteamScreenState extends State<SteamScreen> {
       fontSize: 10,
     );
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 16,
       child: Text(meta.formattedValue, style: style),
     );

@@ -48,44 +48,44 @@ dependencies:
   json_serializable: ^6.8.0
   path_provider: ^2.0.11
   community_charts_flutter: ^1.0.4
-  syncfusion_flutter_sliders: ^25.2.4
-  copy_with_extension: ^5.0.0
-  copy_with_extension_gen: ^5.0.4
+  syncfusion_flutter_sliders: ^29.2.10
+  copy_with_extension: ^6.0.1
+  copy_with_extension_gen: ^6.0.1
   uuid: ^4.2.1
-  reactive_forms: ^16.1.1
+  reactive_forms: ^18.0.0
   reactive_flutter_rating_bar: ^2.0.0
-  objectbox: 2.5.0
-  objectbox_flutter_libs: 2.5.0
+  objectbox: ^4.3.0
+  objectbox_flutter_libs: ^4.3.0
   flutter_settings_screens: ^0.3.4
-  permission_handler: ^11.0.1
+  permission_handler: ^12.0.0+1
   shared_preferences: ">=2.2.0"
-  get_it: ^7.6.0
+  get_it: ^8.0.3
   url_launcher: ^6.1.12
-  fl_chart: ^0.66.2
+  fl_chart: ^1.0.0
   mqtt_client: ^10.0.0
-  collection: 1.18.0
-  battery_plus: ^5.0.3
+  collection: ^1.19.1
+  battery_plus: ^6.2.1
   logging_appenders: ^1.2.0
   logging: ^1.2.0
-  file_picker: ^6.0.0
-  share_plus: ^7.2.1
+  file_picker: ^10.1.9
+  share_plus: ^11.0.0
   document_file_save_plus: ^2.0.0
   sentry_flutter: ^8.9.0
   feedback_sentry: ^3.0.0
   package_info_plus: ^8.0.2
-  intl: ^0.19.0
-  csv: ^5.0.1
+  intl: ^0.20.2
+  csv: ^6.0.0
   flutter_spinbox: ^0.13.1
   shelf: ^1.4.1
   shelf_static: ^1.1.2
   shelf_router: ^1.1.4
-  network_info_plus: ^4.1.0
-  screen_brightness: ^1.0.0
+  network_info_plus: ^6.1.4
+  screen_brightness: ^2.1.4
   flutter_archive: ^6.0.0
   sentry_logging: ^8.9.0
   flutter_localizations:
     sdk: flutter
-  web_socket_channel: ^2.4.0
+  web_socket_channel: ^3.0.3
   flutter_keyboard_visibility: ^6.0.0
   wakelock_plus: ^1.2.8
   dashboard: ^0.0.3+1  
@@ -93,7 +93,7 @@ dependencies:
     git:
       url: https://github.com/mchome/flutter_colorpicker
       ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba
-  flutter_appauth: ^6.0.4
+  flutter_appauth: ^9.0.1
   flutter_whatsnew: ^1.0.5+2
 
 dev_dependencies:
@@ -102,15 +102,15 @@ dev_dependencies:
   provider: ^6.0.5
   transparent_image: ^2.0.0
   bubble_tab_indicator: ">=0.1.4"
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.3.10
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
-  objectbox_generator: 2.5.0
+  flutter_lints: ^6.0.0
+  objectbox_generator: ^4.3.0
 
 # objectbox_generator:generator:
 #     generate_for:
