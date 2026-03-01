@@ -65,9 +65,9 @@ lane :beta do
         package_name: "com.mmmedia.despresso",   # PACKAGE_NAME is a global variable defined earlier
         track: "alpha",          # this can be alpha, Closed Beta etc.
         # json_key: PLAYSTORE_KEY_PATH,
-      )
+      ).max
 
-    version_code_from_play_store = version_code_from_play_store_strings[0].to_i
+    version_code_from_play_store = version_code_from_play_store_strings.to_i
     UPDATED_VERSION_CODE = version_code_from_play_store + 1
     increment_version_code(
         gradle_file_path: Dir.pwd + "/../app/build.gradle",
