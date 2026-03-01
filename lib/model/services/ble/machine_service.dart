@@ -798,6 +798,7 @@ class EspressoMachineService extends ChangeNotifier {
         lastPourTime = shot.pourTime;
       }
 
+// STAGE 11
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
           if (lastPourTime > 5 && scaleService.state[0] == ScaleState.connected) {

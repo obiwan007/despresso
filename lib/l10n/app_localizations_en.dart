@@ -263,7 +263,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get screenRecipeEditDescription => 'Description';
 
   @override
-  String get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
+  String
+  get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
       'Disable Stop-on-Weight (Select this for pour over where you do not want to stop on weight): ';
 
   @override
@@ -474,11 +475,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Go back to Recipe screen if timeout occured';
 
   @override
-  String get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
+  String
+  get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
       'Graph data during heating and preinfusion are saved into shot history.';
 
   @override
-  String get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
+  String
+  get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
       'Handling of connections to other external systems like MQTT and Visualizer.';
 
   @override

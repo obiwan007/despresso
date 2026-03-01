@@ -265,8 +265,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String
-      get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
-          'قم بتعطيل Stop-on-Weight (حدد هذا للصب حيث لا تريد التوقف عن الوزن):';
+  get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
+      'قم بتعطيل Stop-on-Weight (حدد هذا للصب حيث لا تريد التوقف عن الوزن):';
 
   @override
   String get screenRecipeEditDoseWeightin => 'الوزن بالجرعة';
@@ -478,13 +478,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'ارجع إلى شاشة الوصفة إذا حدثت المهلة';
 
   @override
-  String get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
+  String
+  get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
       'يتم حفظ بيانات الرسم البياني أثناء التسخين والتسريب المسبق في سجل اللقطات.';
 
   @override
   String
-      get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
-          'التعامل مع الاتصالات بأنظمة خارجية أخرى مثل MQTT و Visualizer.';
+  get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
+      'التعامل مع الاتصالات بأنظمة خارجية أخرى مثل MQTT و Visualizer.';
 
   @override
   String get screenSettingsIfAShotIsStartingAutotareTheScale =>

@@ -263,7 +263,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get screenRecipeEditDescription => 'Beschreibung';
 
   @override
-  String get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
+  String
+  get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
       'Stop-on-Weight deaktivieren (Wählen Sie dies für Profile, wo Sie nicht bei erreichen eines Gewichts stoppen möchten):';
 
   @override
@@ -475,11 +476,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Nach einem Timeout automatisch zum Rezept Bildschirm zurückwechseln';
 
   @override
-  String get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
+  String
+  get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
       'Speichere Diagramm Daten die während des Aufheizens und der Preinfusion gesammelt werden in die Shot Historie.';
 
   @override
-  String get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
+  String
+  get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
       'Einstellungen für Verbindungen zu anderen Systemen wie MQTT und Visualizer.';
 
   @override

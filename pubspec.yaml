@@ -20,7 +20,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.16+1
 
 environment:
-  sdk: ">=2.18.6 <3.0.0"
+  sdk: "^3.8.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -49,13 +49,13 @@ dependencies:
   path_provider: ^2.0.11
   community_charts_flutter: ^1.0.4
   syncfusion_flutter_sliders: ^29.2.10
-  copy_with_extension: ^6.0.1
-  copy_with_extension_gen: ^6.0.1
+  copy_with_extension: ^12.1.0
+  copy_with_extension_gen: ^12.1.0
   uuid: ^4.2.1
   reactive_forms: ^18.0.0
   reactive_flutter_rating_bar: ^2.0.0
-  objectbox: ^4.3.0
-  objectbox_flutter_libs: ^4.3.0
+  objectbox: ^5.2.0
+  objectbox_flutter_libs: ^5.2.0
   flutter_settings_screens: ^0.3.4
   permission_handler: ^12.0.0+1
   shared_preferences: ">=2.2.0"
@@ -73,7 +73,7 @@ dependencies:
     git:
       url: https://github.com/Shajk0/document_file_save_plus.git
       ref: master 
-  sentry_flutter: ^8.9.0
+  sentry_flutter: ^9.14.0
   feedback_sentry: ^3.0.0
   package_info_plus: ^8.0.2
   intl: ^0.20.2
@@ -85,7 +85,7 @@ dependencies:
   network_info_plus: ^6.1.4
   screen_brightness: ^2.1.4
   flutter_archive: ^6.0.0
-  sentry_logging: ^8.9.0
+  sentry_logging: ^9.14.0
   flutter_localizations:
     sdk: flutter
   web_socket_channel: ^3.0.3
@@ -113,7 +113,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  objectbox_generator: ^4.3.0
+  objectbox_generator: ^5.0.0
 
 # objectbox_generator:generator:
 #     generate_for:

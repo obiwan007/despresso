@@ -263,7 +263,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get screenRecipeEditDescription => 'Descripción';
 
   @override
-  String get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
+  String
+  get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
       'Deshabilite la parada por peso (seleccione esto para verter donde no desea detenerse por peso):';
 
   @override
@@ -481,11 +482,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Volver a la pantalla Receta si se agotó el tiempo de espera';
 
   @override
-  String get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
+  String
+  get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
       'Los datos gráficos durante el calentamiento y la preinfusión se guardan en el historial de disparos.';
 
   @override
-  String get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
+  String
+  get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
       'Manejo de conexiones a otros sistemas externos como MQTT y Visualizer.';
 
   @override

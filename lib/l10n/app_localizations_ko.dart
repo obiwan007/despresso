@@ -262,8 +262,8 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String
-      get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
-          'Stop-on-Weight 비활성화';
+  get screenRecipeEditDisableStoponweightSelectThisForPourOverWhereYouDo =>
+      'Stop-on-Weight 비활성화';
 
   @override
   String get screenRecipeEditDoseWeightin => '복용량 가중치';
@@ -470,13 +470,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String
-      get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
-          '가열 및 프리인퓨전 동안의 그래프 데이터는 샷 히스토리에 저장됩니다.';
+  get screenSettingsGraphDataDuringHeatingAndPreinfusionAreSavedIntoShot =>
+      '가열 및 프리인퓨전 동안의 그래프 데이터는 샷 히스토리에 저장됩니다.';
 
   @override
   String
-      get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
-          'MQTT 및 Visualizer와 같은 다른 외부 시스템에 대한 연결 처리.';
+  get screenSettingsHandlingOfConnectionsToOtherExternalSystemsLikeMqttAnd =>
+      'MQTT 및 Visualizer와 같은 다른 외부 시스템에 대한 연결 처리.';
 
   @override
   String get screenSettingsIfAShotIsStartingAutotareTheScale =>

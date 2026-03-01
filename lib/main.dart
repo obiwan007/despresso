@@ -66,7 +66,6 @@ Future<void> main() async {
           options.attachViewHierarchy = true;
           options.enableAutoPerformanceTracing = true;
           options.enableUserInteractionBreadcrumbs = true;
-          options.enableTracing = true;
           options.attachScreenshot = true;
           options.addIntegration(LoggingIntegration());
         },
