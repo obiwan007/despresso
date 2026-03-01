@@ -20,6 +20,7 @@ import 'package:despresso/ui/theme.dart' as theme;
 import 'package:intl/intl.dart';
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:csv/csv.dart';
 
 class ShotSelectionTab extends StatefulWidget {
   const ShotSelectionTab({super.key});
@@ -375,8 +376,8 @@ class ShotSelectionTabState extends State<ShotSelectionTab> {
       "setHeadTemp",
       "setMixTemp",
     ];
-    list.insert(0, header);
-    String csv = const ListToCsvConverter().convert(list, fieldDelimiter: ";");
+    list.insert(0, header);    
+    String csv = excel.encode(list);
 
     final List<int> codeUnits = csv.codeUnits;
     final Uint8List unit8List = Uint8List.fromList(codeUnits);

@@ -59,6 +59,8 @@ class ScreensaverService extends ChangeNotifier {
             break;
           case EspressoMachineState.refill:
             break;
+          default:
+            break;
         }
       }
     });
@@ -100,6 +102,8 @@ class ScreensaverService extends ChangeNotifier {
         case EspressoMachineState.steam:
         case EspressoMachineState.water:
           break;
+        default:
+          return false;
       }
     }
 

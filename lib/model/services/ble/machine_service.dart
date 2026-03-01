@@ -907,6 +907,8 @@ class EspressoMachineService extends ChangeNotifier {
           break;
         case EspressoMachineState.refill:
           break;
+        default:
+          break;
       }
 
       //if (profileService.currentProfile.shot_header.target_weight)
