@@ -45,7 +45,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
+          ruby-version: '4.0.1'
           bundler-cache: true
       
       - name: InstallFlutter
@@ -81,7 +81,7 @@ jobs:
 
       - name: Bundle install
         run: cd ./android && bundle install
-      - uses: maierj/fastlane-action@v3.0.0        
+      - uses: maierj/fastlane-action@v3.1.0        
         env:            
             API_KEY: ${{ secrets.API_KEY }}
             API_KEY_ID: ${{ secrets.API_KEY_ID }}
