@@ -153,9 +153,9 @@ class WebService extends ChangeNotifier {
     dir.create(recursive: true);
 
     // This will give a list of all files inside the `assets`.
-    var assets = await rootBundle.loadString('AssetManifest.json');
-    Map jn = json.decode(assets);
-    List get = jn.keys.where((element) => element.startsWith("assets/website")).toList();
+
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final get = manifest.listAssets().where((path) => path.startsWith("assets/website")).toList();    
     log.info("Found web content: $get");
 
     for (String element in get) {

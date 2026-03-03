@@ -269,11 +269,12 @@ class ProfileService extends ChangeNotifier {
     return file.writeAsString(json, flush: true);
   }
 
-  Future<void> loadAllDefaultProfiles() async {
-    var assets = await rootBundle.loadString('AssetManifest.json');
-    Map jsondata = json.decode(assets);
-    List get =
-        jsondata.keys.where((element) => element.endsWith(".json")).toList();
+  Future<void> loadAllDefaultProfiles() async {    
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final get = manifest.listAssets().where((path) => path.startsWith('assets/profiles')).toList();
+    // Map jsondata = json.decode(assets);
+    // List get =
+    //     jsondata.keys.where((element) => element.endsWith(".json")).toList();
 
     for (var file in get) {
       var rawJson = await rootBundle.loadString(file);
