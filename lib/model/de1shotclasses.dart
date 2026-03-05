@@ -139,8 +139,11 @@ class De1ProfileMachineData {
 
     tailData[0] = i;
 
+    // Helper.convert_float_to_U10P0_for_tail(
+    //     profile.shotHeader.targetVolume, tailData, 1);
+
     Helper.convert_float_to_U10P0_for_tail(
-        profile.shotHeader.targetVolume, tailData, 1);
+        0, tailData, 1);
 
     return De1ProfileMachineData._internal(
         profile.shotHeader.encode(), frameData, extFrameData, tailData);
@@ -591,8 +594,18 @@ class Helper {
     return ret;
   }
 
+
+static void convert_float_to_U10P0_for_tail(double x, Uint8List data, int index) {
+    final ix = x.truncate();
+
+    final hi = (ix >> 8) & 0x03;
+    final lo = ix & 0xff;
+    data[index] = hi; // take PI into account
+    data[index + 1] = lo;
+  }
+
   // ignore: non_constant_identifier_names
-  static void convert_float_to_U10P0_for_tail(
+  static void convert_float_to_U10P0_for_tail_legacy(
       double x, Uint8List data, int index) {
     int ix = x.toInt();
 

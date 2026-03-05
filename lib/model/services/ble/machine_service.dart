@@ -634,7 +634,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     // stop at volume in the profile tail
     try {
-      log.fine("Write Tail: $profileData.tailData");
+      log.info("Write Tail: $profileData.tailData");
       await de1!.writeWithResult(Endpoint.frameWrite, profileData.tailData);
     } catch (ex) {
       return "Error writing shot frame tail $profile.name";
