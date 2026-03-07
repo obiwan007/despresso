@@ -20,7 +20,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.16+1
 
 environment:
-  sdk: ">=2.18.6 <3.0.0"
+  sdk: "^3.8.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -42,59 +42,62 @@ dependencies:
   flat_buffers: null
   flutter_typeahead: ^5.2.0
   cached_network_image: ^3.3.0
-  flutter_reactive_ble: ^5.3.1
-  json_annotation: ^4.8.1
+  flutter_reactive_ble: ^5.4.0
+  json_annotation: ^4.11.0
   build_runner: ^2.3.3
-  json_serializable: ^6.8.0
-  path_provider: ^2.0.11
+  json_serializable: ^6.13.0 
+  path_provider: ^2.1.5
   community_charts_flutter: ^1.0.4
-  syncfusion_flutter_sliders: ^25.2.4
-  copy_with_extension: ^5.0.0
-  copy_with_extension_gen: ^5.0.4
+  syncfusion_flutter_sliders: ^32.2.7
+  copy_with_extension: ^12.1.0
+  copy_with_extension_gen: ^12.1.0
   uuid: ^4.2.1
-  reactive_forms: ^16.1.1
-  reactive_flutter_rating_bar: ^2.0.0
-  objectbox: 2.5.0
-  objectbox_flutter_libs: 2.5.0
+  reactive_forms: ^18.2.2
+  reactive_flutter_rating_bar: ^2.0.2
+  objectbox: ^5.2.0
+  objectbox_flutter_libs: ^5.2.0
   flutter_settings_screens: ^0.3.4
-  permission_handler: ^11.0.1
-  shared_preferences: ">=2.2.0"
-  get_it: ^7.6.0
-  url_launcher: ^6.1.12
-  fl_chart: ^0.66.2
-  mqtt_client: ^10.0.0
-  collection: 1.18.0
-  battery_plus: ^5.0.3
-  logging_appenders: ^1.2.0
+  permission_handler: ^12.0.1
+  shared_preferences: ">=2.5.4"
+  get_it: ^9.2.1
+  url_launcher: ^6.3.2
+  fl_chart: ^1.1.1
+  mqtt_client: ^10.11.9
+  collection: ^1.19.1
+  battery_plus: ^7.0.0
+  logging_appenders: ^2.0.0+1
   logging: ^1.2.0
-  file_picker: ^6.0.0
-  share_plus: ^7.2.1
-  document_file_save_plus: ^2.0.0
-  sentry_flutter: ^8.9.0
+  file_picker: ^10.3.10
+  share_plus: ^12.0.1
+  document_file_save_plus:
+    git:
+      url: https://github.com/Shajk0/document_file_save_plus.git
+      ref: master 
+  sentry_flutter: ^9.14.0
   feedback_sentry: ^3.0.0
-  package_info_plus: ^8.0.2
-  intl: ^0.19.0
-  csv: ^5.0.1
+  package_info_plus: ^9.0.0
+  intl: ^0.20.2
+  csv: ^7.1.0
   flutter_spinbox: ^0.13.1
   shelf: ^1.4.1
   shelf_static: ^1.1.2
   shelf_router: ^1.1.4
-  network_info_plus: ^4.1.0
-  screen_brightness: ^1.0.0
+  network_info_plus: ^7.0.0
+  screen_brightness: ^2.1.4
   flutter_archive: ^6.0.0
-  sentry_logging: ^8.9.0
+  sentry_logging: ^9.14.0
   flutter_localizations:
     sdk: flutter
-  web_socket_channel: ^2.4.0
+  web_socket_channel: ^3.0.3
   flutter_keyboard_visibility: ^6.0.0
-  wakelock_plus: ^1.2.8
+  wakelock_plus: ^1.4.0
   dashboard: ^0.0.3+1  
   flutter_colorpicker:
     git:
       url: https://github.com/mchome/flutter_colorpicker
       ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba
-  flutter_appauth: ^6.0.4
-  flutter_whatsnew: ^1.0.5+2
+  flutter_appauth: ^11.0.0
+  flutter_whatsnew: ^1.1.0+1
 
 dev_dependencies:
   flutter_test:
@@ -102,15 +105,15 @@ dev_dependencies:
   provider: ^6.0.5
   transparent_image: ^2.0.0
   bubble_tab_indicator: ">=0.1.4"
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.3.10
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
-  objectbox_generator: 2.5.0
+  flutter_lints: ^6.0.0
+  objectbox_generator: ^5.0.0
 
 # objectbox_generator:generator:
 #     generate_for:

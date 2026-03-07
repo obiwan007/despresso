@@ -627,7 +627,7 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 6,
       child: Text(meta.formattedValue, style: Theme.of(context).textTheme.labelSmall),
     );
@@ -635,7 +635,7 @@ class EspressoScreenState extends State<EspressoScreen> {
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 6,
       child: Text(meta.formattedValue, style: Theme.of(context).textTheme.labelSmall),
     );

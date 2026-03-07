@@ -447,9 +447,9 @@ class ShotGraphState extends State<ShotGraph> {
       fontSize: 10,
     );
     return SideTitleWidget(
-      axisSide: meta.axisSide,
       space: 6,
       child: Text(meta.formattedValue, style: style),
+      meta: meta,
     );
   }
 
@@ -459,10 +459,10 @@ class ShotGraphState extends State<ShotGraph> {
       fontWeight: FontWeight.bold,
       fontSize: 10,
     );
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
+    return SideTitleWidget(      
       space: 16,
       child: Text(meta.formattedValue, style: style),
+      meta: meta,
     );
   }
 }

@@ -634,7 +634,7 @@ class EspressoMachineService extends ChangeNotifier {
 
     // stop at volume in the profile tail
     try {
-      log.fine("Write Tail: $profileData.tailData");
+      log.info("Write Tail: $profileData.tailData");
       await de1!.writeWithResult(Endpoint.frameWrite, profileData.tailData);
     } catch (ex) {
       return "Error writing shot frame tail $profile.name";
@@ -798,6 +798,7 @@ class EspressoMachineService extends ChangeNotifier {
         lastPourTime = shot.pourTime;
       }
 
+// STAGE 11
       switch (state.coffeeState) {
         case EspressoMachineState.espresso:
           if (lastPourTime > 5 && scaleService.state[0] == ScaleState.connected) {
@@ -905,6 +906,8 @@ class EspressoMachineService extends ChangeNotifier {
         case EspressoMachineState.connecting:
           break;
         case EspressoMachineState.refill:
+          break;
+        default:
           break;
       }
 

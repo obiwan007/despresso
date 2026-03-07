@@ -156,6 +156,9 @@ class _StartStopButtonState extends State<StartStopButton> {
               break;
             case null:
               break;
+          default:
+            null;
+              
           }
 
           return Column(
