@@ -437,22 +437,31 @@ class ProfileService extends ChangeNotifier {
 
     De1ShotHeaderClass shotHeader = profile.shotHeader;
     List<De1ShotFrameClass> shotFrames = profile.shotFrames;
-    if (!json.containsKey("version")) return false;
-    if (dynamic2Double(json["version"]) != 2.0) return false;
+    // if (!json.containsKey("version")) return false;
+    // if (dynamic2Double(json["version"]) != 2.0) return false;
 
     profile.id = dynamic2String(json["id"]);
     shotHeader.version = dynamic2String(json["version"]);
 
-    shotHeader.hidden = dynamic2Double(json["hidden"]).toInt();
+    if (json.containsKey("hidden")) {
+      shotHeader.hidden = dynamic2Double(json["hidden"]).toInt();
+    }    
     shotHeader.type = dynamic2String(json["type"]);
     shotHeader.type = dynamic2String(json["type"]);
     shotHeader.lang = dynamic2String(json["lang"]);
     shotHeader.legacyProfileType = dynamic2String(json["legacy_profile_type"]);
-    shotHeader.targetWeight = dynamic2Double(json["target_weight"]);
-    shotHeader.targetVolume = dynamic2Double(json["target_volume"]);
-    shotHeader.targetVolumeCountStart =
-        dynamic2Double(json["target_volume_count_start"]);
-    shotHeader.tankTemperature = dynamic2Double(json["tank_temperature"]);
+    if (json.containsKey("target_weight")) {
+      shotHeader.targetWeight = dynamic2Double(json["target_weight"]);
+    }
+    if (json.containsKey("target_volume")) {
+      shotHeader.targetVolume = dynamic2Double(json["target_volume"]);
+    }
+    if (json.containsKey("target_volume_count_start")) {
+      shotHeader.targetVolumeCountStart = dynamic2Double(json["target_volume_count_start"]);
+    }
+    if (json.containsKey("tank_temperature")) {
+      shotHeader.tankTemperature = dynamic2Double(json["tank_temperature"]);
+    }
     shotHeader.title = dynamic2String(json["title"]);
     shotHeader.author = dynamic2String(json["author"]);
     shotHeader.notes = dynamic2String(json["notes"]);
@@ -478,7 +487,9 @@ class ProfileService extends ChangeNotifier {
           ? De1PumpMode.flow
           : De1PumpMode.pressure;
       frame.name = dynamic2String(frameData["name"]);
-      frame.maxWeight = dynamic2Double(frameData["weight"]);
+      if (frameData.containsKey("weight")) {
+        frame.maxWeight = dynamic2Double(frameData["weight"]);
+      }
 
       // flow control
 

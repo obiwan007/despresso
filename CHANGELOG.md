@@ -1,7 +1,7 @@
 # Version History
 
-## 1.0.16
+## 1.0.17
 
 - Version bump for Android
-- Stop on Weight more save if goal was reached in strange ways.
 - Library updates
+- alot of internal optimizations regarding handling of profiles

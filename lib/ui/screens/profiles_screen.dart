@@ -246,7 +246,8 @@ class ProfilesScreenState extends State<ProfilesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const ProfileSelect(),
+                      const SizedBox(height: 56, child: ProfileSelect()),
+                      const SizedBox(height: 8),
                       Expanded(
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
