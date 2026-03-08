@@ -71,6 +71,11 @@ class ProfileSelectState extends State<ProfileSelect> {
     shortCodeController = TextEditingController();
 
     selectedFilter = settingsService.profileFilterList;
+    final filtered = selectedFilter.where(filterOptions.contains).toList();
+    if (filtered.length != selectedFilter.length) {
+      selectedFilter = filtered;
+      settingsService.profileFilterList = selectedFilter;
+    }
 
     _selectedProfile = profileService.currentProfile;
     profileService.addListener(profileListener);
@@ -214,16 +219,14 @@ class ProfileSelectState extends State<ProfileSelect> {
           );
         }).toList(),
         //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
-        value: selectedFilter.isEmpty ? null : selectedFilter.last,
+        value: selectedFilter.isEmpty || !filterOptions.contains(selectedFilter.last) ? null : selectedFilter.last,
         onChanged: (value) {},
         // buttonHeight: 40,
         // buttonWidth: 140,
         // itemHeight: 40,
         // itemPadding: EdgeInsets.zero,
         selectedItemBuilder: (context) {
-          return [
-            const Icon(Icons.filter_alt),
-          ];
+          return filterOptions.map((_) => const Icon(Icons.filter_alt)).toList();
           // items.map(
           //   (item) {
           //     return Container(

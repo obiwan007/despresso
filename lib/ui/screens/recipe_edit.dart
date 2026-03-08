@@ -204,11 +204,11 @@ class RecipeEditState extends State<RecipeEdit> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Profile", style: Theme.of(context).textTheme.labelMedium),
-                    ProfileSelect(
-                      onChanged: (p0) {
-                        _editedRecipe.profileId = p0.id;
-                      },
-                    ),
+                      ProfileSelect(
+                        onChanged: (p0) {
+                          _editedRecipe.profileId = p0.id;
+                        },
+                      ),
                   ],
                 ),
               ),
