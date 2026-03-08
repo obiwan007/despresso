@@ -98,6 +98,7 @@ dependencies:
       ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba
   flutter_appauth: ^11.0.0
   flutter_whatsnew: ^1.1.0+1
+  usb_serial: ^0.5.2
 
 dev_dependencies:
   flutter_test:

@@ -5,6 +5,8 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 import '../model/services/state/settings_service.dart';
 
+enum ConnectionState { connecting, connected, disconnecting, disconnected }
+
 abstract class DeviceCommunication {
   Stream<ConnectionStateUpdate> connectToDevice(
       {required String id, Map<Uuid, List<Uuid>>? servicesWithCharacteristicsToDiscover, Duration? connectionTimeout});
@@ -15,7 +17,13 @@ abstract class DeviceCommunication {
   Stream<List<int>> subscribeToCharacteristic(QualifiedCharacteristic characteristic);
   Future<int> requestMtu({required String deviceId, required int mtu});
   BleStatus get status;
+  String get deviceId;
+  String get name;
   void startScan() {}
+  // tear down any connections
+  Future<void> disconnect();
+
+  Stream<ConnectionState> get connectionState;
 }
 
 bool useLongCharacteristics() {
