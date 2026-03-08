@@ -177,7 +177,7 @@ class RecipeScreenState extends State<RecipeScreen> {
           data.name,
         ),
         subtitle: Text(
-          "${profileService.getProfile(data.profileId)?.title ?? "no profile"} ${data.coffee.target?.name ?? "no bean"}",
+          "${profileService.getProfile(data.profileId)?.title ?? "no profile"}\n${data.coffee.target?.name ?? "no bean"}",
         ),
         selected: coffeeService.selectedRecipeId == data.id,
         onTap: () {
