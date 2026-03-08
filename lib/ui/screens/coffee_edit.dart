@@ -6,6 +6,7 @@ import 'package:despresso/model/coffee.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:reactive_flutter_rating_bar/reactive_flutter_rating_bar.dart';
 
@@ -87,7 +88,7 @@ class CoffeeEditState extends State<CoffeeEdit> {
       "farm": [_editedCoffee.farm],
       "cropyear": [_editedCoffee.cropyear],
       "process": [_editedCoffee.process],
-      "elevation": [_editedCoffee.elevation, Validators.number],
+      "elevation": fb.control<int>(_editedCoffee.elevation, [Validators.number()]),
     });
   }
 
@@ -241,7 +242,9 @@ class CoffeeEditState extends State<CoffeeEdit> {
           ),
           ReactiveTextField<int>(
             formControlName: 'elevation',
-            keyboardType: TextInputType.text,
+            keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
             decoration: const InputDecoration(
               labelText: 'Elevation (m or ft)',
             ),
