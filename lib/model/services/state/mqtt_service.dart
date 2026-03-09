@@ -268,6 +268,48 @@ class MqttService extends ChangeNotifier {
       'device': device,
     };
     _publishDiscoveryConfig('switch', 'power', powerSwitchConfig);
+
+    final shotConfig = <String, dynamic>{
+      'name': 'despresso shot',
+      'unique_id': '${rootTopic}_shot',
+      'state_topic': '$rootTopic/de1/shot',
+      'value_template': '{{ value_json.subState }}',
+      'json_attributes_topic': '$rootTopic/de1/shot',
+      'device': device,
+    };
+    _publishDiscoveryConfig('sensor', 'shot', shotConfig);
+
+    final shotFields = <Map<String, dynamic>>[
+      {'id': 'shot_substate', 'name': 'substate', 'template': 'subState'},
+      {'id': 'shot_weight', 'name': 'shot weight', 'template': 'weight', 'unit': 'g'},
+      {'id': 'shot_sample_time', 'name': 'sample time', 'template': 'sampleTime', 'unit': 's'},
+      {'id': 'shot_pour_time', 'name': 'pour time', 'template': 'pourTime', 'unit': 's'},
+      {'id': 'shot_group_pressure', 'name': 'group pressure', 'template': 'groupPressure', 'unit': 'bar'},
+      {'id': 'shot_group_flow', 'name': 'group flow', 'template': 'groupFlow', 'unit': 'ml/s'},
+      {'id': 'shot_mix_temp', 'name': 'mix temp', 'template': 'mixTemp', 'unit': '°C'},
+      {'id': 'shot_head_temp', 'name': 'head temp', 'template': 'headTemp', 'unit': '°C'},
+      {'id': 'shot_set_mix_temp', 'name': 'set mix temp', 'template': 'setMixTemp', 'unit': '°C'},
+      {'id': 'shot_set_head_temp', 'name': 'set head temp', 'template': 'setHeadTemp', 'unit': '°C'},
+      {'id': 'shot_set_group_pressure', 'name': 'set group pressure', 'template': 'setGroupPressure', 'unit': 'bar'},
+      {'id': 'shot_set_group_flow', 'name': 'set group flow', 'template': 'setGroupFlow', 'unit': 'ml/s'},
+      {'id': 'shot_flow_weight', 'name': 'flow weight', 'template': 'flowWeight', 'unit': 'g'},
+      {'id': 'shot_frame_number', 'name': 'frame number', 'template': 'frameNumber'},
+      {'id': 'shot_steam_temp', 'name': 'steam temp', 'template': 'steamTemp', 'unit': '°C'},
+    ];
+
+    for (final field in shotFields) {
+      final config = <String, dynamic>{
+        'name': field['name'],
+        'unique_id': '${rootTopic}_${field['id']}',
+        'state_topic': '$rootTopic/de1/shot',
+        'value_template': "{{ value_json.${field['template']} }}",
+        'device': device,
+      };
+      if (field['unit'] != null) {
+        config['unit_of_measurement'] = field['unit'];
+      }
+      _publishDiscoveryConfig('sensor', field['id'], config);
+    }
   }
 
   void _publishDiscoveryConfig(String component, String objectId, Map<String, dynamic> config) {
