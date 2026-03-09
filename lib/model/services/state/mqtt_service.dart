@@ -24,6 +24,15 @@ class MqttService extends ChangeNotifier {
 
   bool connected = false;
 
+  double _round1(dynamic value) {
+    if (value is num) {
+      return (value * 10).round() / 10;
+    }
+    final parsed = double.tryParse(value?.toString() ?? '');
+    if (parsed == null) return 0;
+    return (parsed * 10).round() / 10;
+  }
+
   static const _haDiscoveryPrefix = 'homeassistant';
   static const _deviceModel = 'decent de1';
   static const _deviceManufacturer = 'decent';
@@ -195,15 +204,7 @@ class MqttService extends ChangeNotifier {
     log.info('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       log.info('MQTT:OnDisconnected callback is solicited, this is correct');
-    }
-
-    // Future.delayed(
-    //   const Duration(seconds: 10),
-    //   () {
-    //     log.info('MQTT:Reconnecting');
-    //     startService();
-    //   },
-    // );
+    }   
   }
 
   /// The successful connect callback
@@ -241,7 +242,7 @@ class MqttService extends ChangeNotifier {
       'name': 'despresso water level',
       'unique_id': '${rootTopic}_water_level',
       'state_topic': '$rootTopic/de1/waterlevel',
-      'unit_of_measurement': '%',
+      'unit_of_measurement': 'ml',
       'device': device,
     };
     _publishDiscoveryConfig('sensor', 'water_level', waterConfig);
@@ -343,7 +344,21 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/de1/shot';
         var builder = MqttClientPayloadBuilder();
 
-        builder.addString(jsonEncode(event.toJson()));
+        final payload = Map<String, dynamic>.from(event.toJson());
+        if (payload['sampleTime'] is num) {
+          payload['sampleTime'] = _round1((payload['sampleTime'] as num));
+        }
+        if (payload['sampleTimeCorrected'] is num) {
+          payload['sampleTimeCorrected'] = _round1((payload['sampleTimeCorrected'] as num));
+        }
+        payload['mixTemp'] = _round1(payload['mixTemp']);
+        payload['headTemp'] = _round1(payload['headTemp']);
+        payload['setMixTemp'] = _round1(payload['setMixTemp']);
+        payload['setHeadTemp'] = _round1(payload['setHeadTemp']);
+        payload['steamTemp'] = _round1(payload['steamTemp']);
+        payload['groupPressure'] = _round1(payload['groupPressure']);
+
+        builder.addString(jsonEncode(payload));
         client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
       } catch (e) {
         log.severe("MQTT: $e");
@@ -355,10 +370,10 @@ class MqttService extends ChangeNotifier {
         if (!settingsService.mqttSendWater) return;
         var pubTopic = '$rootTopic/de1/waterlevel';
         var builder = MqttClientPayloadBuilder();
-        builder.addString(event.waterLevel.toString());
+        builder.addString(event.getLevelML().toString());
         client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
         builder = MqttClientPayloadBuilder();
-        builder.addString(event.waterLimit.toString());
+        builder.addString(event.getLevelRefill().toString());
         client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
       } catch (e) {
         log.severe("MQTT: $e");
