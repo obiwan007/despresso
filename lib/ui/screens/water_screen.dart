@@ -4,6 +4,7 @@ import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/settings_service.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:despresso/generated/l10n.dart';
 
 import '../../model/shotstate.dart';
@@ -23,6 +24,38 @@ class WaterScreenState extends State<WaterScreen> {
 
   List<ShotState> dataPoints = [];
   EspressoMachineState currentState = EspressoMachineState.disconnected;
+
+  int _parseIntInRange(String value, int min, int max, int fallback) {
+    final parsed = int.tryParse(value);
+    if (parsed == null) return fallback;
+    if (parsed < min) return min;
+    if (parsed > max) return max;
+    return parsed;
+  }
+
+  Widget _buildIntInput({required int value, required int min, required int max, required String suffix, required void Function(int value) onValue}) {
+    final controller = TextEditingController(text: value.toString());
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          final parsed = _parseIntInRange(controller.text, min, max, value);
+          onValue(parsed);
+        }
+      },
+      child: TextField(
+        key: ValueKey(value),
+        controller: controller,
+        textAlign: TextAlign.center,
+        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), suffixText: suffix),
+        onSubmitted: (text) {
+          final parsed = _parseIntInRange(text, min, max, value);
+          onValue(parsed);
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -65,18 +98,39 @@ class WaterScreenState extends State<WaterScreen> {
                         children: [
                           Text(S.of(context).screenWaterTemperatureWatertemp(settings.targetHotWaterTemp),
                               style: Theme.of(context).textTheme.labelLarge),
-                          Slider(
-                            value: settings.targetHotWaterTemp.toDouble(),
-                            max: 100,
-                            min: 30,
-                            divisions: 100,
-                            label: "${settings.targetHotWaterTemp} °C",
-                            onChanged: (double value) {
-                              setState(() {
-                                settings.targetHotWaterTemp = value.toInt();
-                                machineService.updateSettings();
-                              });
-                            },
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Slider(
+                                  value: settings.targetHotWaterTemp.toDouble(),
+                                  max: 100,
+                                  min: 30,
+                                  divisions: 100,
+                                  label: "${settings.targetHotWaterTemp} °C",
+                                  onChanged: (double value) {
+                                    setState(() {
+                                      settings.targetHotWaterTemp = value.toInt();
+                                      machineService.updateSettings();
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 90,
+                                child: _buildIntInput(
+                                  value: settings.targetHotWaterTemp,
+                                  min: 30,
+                                  max: 100,
+                                  suffix: "°C",
+                                  onValue: (value) {
+                                    setState(() {
+                                      settings.targetHotWaterTemp = value;
+                                      machineService.updateSettings();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -120,18 +174,39 @@ class WaterScreenState extends State<WaterScreen> {
                           children: [
                             Text(S.of(context).screenSteamTimerS(settings.targetHotWaterLength),
                                 style: Theme.of(context).textTheme.labelLarge),
-                            Slider(
-                              value: settings.targetHotWaterLength.toDouble(),
-                              max: 100,
-                              min: 5,
-                              divisions: 200,
-                              label: "${settings.targetHotWaterLength} s",
-                              onChanged: (double value) {
-                                setState(() {
-                                  settings.targetHotWaterLength = value.toInt();
-                                  machineService.updateSettings();
-                                });
-                              },
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Slider(
+                                    value: settings.targetHotWaterLength.toDouble(),
+                                    max: 100,
+                                    min: 5,
+                                    divisions: 200,
+                                    label: "${settings.targetHotWaterLength} s",
+                                    onChanged: (double value) {
+                                      setState(() {
+                                        settings.targetHotWaterLength = value.toInt();
+                                        machineService.updateSettings();
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 90,
+                                  child: _buildIntInput(
+                                    value: settings.targetHotWaterLength,
+                                    min: 5,
+                                    max: 100,
+                                    suffix: "s",
+                                    onValue: (value) {
+                                      setState(() {
+                                        settings.targetHotWaterLength = value;
+                                        machineService.updateSettings();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -178,19 +253,41 @@ class WaterScreenState extends State<WaterScreen> {
                           children: [
                             Text(S.of(context).screenWaterWeightVolume(settings.targetHotWaterWeight),
                                 style: Theme.of(context).textTheme.labelLarge),
-                            Slider(
-                              value: settings.targetHotWaterWeight.toDouble(),
-                              max: 200,
-                              min: 0,
-                              divisions: 200,
-                              label: "${settings.targetHotWaterWeight} g",
-                              onChanged: (double value) {
-                                setState(() {
-                                  settings.targetHotWaterWeight = value.toInt();
-                                  settings.targetHotWaterVol = (value * 1.1).toInt();
-                                  machineService.updateSettings();
-                                });
-                              },
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Slider(
+                                    value: settings.targetHotWaterWeight.toDouble(),
+                                    max: 200,
+                                    min: 0,
+                                    divisions: 200,
+                                    label: "${settings.targetHotWaterWeight} g",
+                                    onChanged: (double value) {
+                                      setState(() {
+                                        settings.targetHotWaterWeight = value.toInt();
+                                        settings.targetHotWaterVol = (value * 1.1).toInt();
+                                        machineService.updateSettings();
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 90,
+                                  child: _buildIntInput(
+                                    value: settings.targetHotWaterWeight,
+                                    min: 0,
+                                    max: 200,
+                                    suffix: "g",
+                                    onValue: (value) {
+                                      setState(() {
+                                        settings.targetHotWaterWeight = value;
+                                        settings.targetHotWaterVol = (value * 1.1).toInt();
+                                        machineService.updateSettings();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

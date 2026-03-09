@@ -10,6 +10,7 @@ import 'package:despresso/service_locator.dart';
 import 'package:despresso/ui/widgets/legend_list.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:despresso/ui/theme.dart' as theme;
 import 'package:despresso/generated/l10n.dart';
 import '../../model/shotstate.dart';
@@ -31,6 +32,78 @@ class SteamScreenState extends State<SteamScreen> {
   EspressoMachineState currentState = EspressoMachineState.disconnected;
 
   late SettingsService settings;
+
+  int _parseIntInRange(String value, int min, int max, int fallback) {
+    final parsed = int.tryParse(value);
+    if (parsed == null) return fallback;
+    if (parsed < min) return min;
+    if (parsed > max) return max;
+    return parsed;
+  }
+
+  double _parseDoubleInRange(String value, double min, double max, double fallback) {
+    final parsed = double.tryParse(value);
+    if (parsed == null) return fallback;
+    if (parsed < min) return min;
+    if (parsed > max) return max;
+    return parsed;
+  }
+
+  Widget _buildIntInput({required int value, required int min, required int max, required String suffix, required void Function(int value) onValue}) {
+    final controller = TextEditingController(text: value.toString());
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          final parsed = _parseIntInRange(controller.text, min, max, value);
+          onValue(parsed);
+        }
+      },
+      child: TextField(
+        key: ValueKey(value),
+        controller: controller,
+        textAlign: TextAlign.center,
+        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), suffixText: suffix),
+        onSubmitted: (text) {
+          final parsed = _parseIntInRange(text, min, max, value);
+          onValue(parsed);
+        },
+      ),
+    );
+  }
+
+  Widget _buildDoubleInput({
+    required double value,
+    required double min,
+    required double max,
+    required String suffix,
+    required int decimals,
+    required RegExp formatterPattern,
+    required void Function(double value) onValue,
+  }) {
+    final controller = TextEditingController(text: value.toStringAsFixed(decimals));
+    return Focus(
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) {
+          final parsed = _parseDoubleInRange(controller.text, min, max, value);
+          onValue(parsed);
+        }
+      },
+      child: TextField(
+        key: ValueKey(value),
+        controller: controller,
+        textAlign: TextAlign.center,
+        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
+        inputFormatters: [FilteringTextInputFormatter.allow(formatterPattern)],
+        decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), suffixText: suffix),
+        onSubmitted: (text) {
+          final parsed = _parseDoubleInRange(text, min, max, value);
+          onValue(parsed);
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -114,24 +187,46 @@ class SteamScreenState extends State<SteamScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        Column(
-                          children: [
-                            Text(S.of(context).screenSteamTemperaturs(settings.targetSteamTemp),
-                                style: Theme.of(context).textTheme.labelLarge),
-                            Slider(
-                              value: settings.targetSteamTemp.toDouble(),
-                              max: 180,
-                              min: 100,
-                              divisions: 80,
-                              label: "${settings.targetSteamTemp} °C",
-                              onChanged: (double value) {
-                                setState(() {
-                                  settings.targetSteamTemp = value.toInt();
-                                  machineService.updateSettings();
-                                });
-                              },
-                            ),
-                          ],
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text(S.of(context).screenSteamTemperaturs(settings.targetSteamTemp), style: Theme.of(context).textTheme.labelLarge),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Slider(
+                                      value: settings.targetSteamTemp.toDouble(),
+                                      max: 180,
+                                      min: 100,
+                                      divisions: 80,
+                                      label: "${settings.targetSteamTemp} °C",
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          settings.targetSteamTemp = value.toInt();
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 90,
+                                    child: _buildIntInput(
+                                      value: settings.targetSteamTemp,
+                                      min: 100,
+                                      max: 180,
+                                      suffix: "°C",
+                                      onValue: (value) {
+                                        setState(() {
+                                          settings.targetSteamTemp = value;
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 100,
@@ -175,18 +270,39 @@ class SteamScreenState extends State<SteamScreen> {
                             children: [
                               Text(S.of(context).screenSteamTimerS(settings.targetSteamLength.toInt()),
                                   style: Theme.of(context).textTheme.labelLarge),
-                              Slider(
-                                value: settings.targetSteamLength.toDouble(),
-                                max: 200,
-                                min: 1,
-                                divisions: 200,
-                                label: "${settings.targetSteamLength} s",
-                                onChanged: (double value) {
-                                  setState(() {
-                                    settings.targetSteamLength = value.toInt();
-                                    machineService.updateSettings();
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Slider(
+                                      value: settings.targetSteamLength.toDouble(),
+                                      max: 200,
+                                      min: 1,
+                                      divisions: 200,
+                                      label: "${settings.targetSteamLength} s",
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          settings.targetSteamLength = value.toInt();
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 90,
+                                    child: _buildIntInput(
+                                      value: settings.targetSteamLength.toInt(),
+                                      min: 1,
+                                      max: 200,
+                                      suffix: "s",
+                                      onValue: (value) {
+                                        setState(() {
+                                          settings.targetSteamLength = value;
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -222,18 +338,39 @@ class SteamScreenState extends State<SteamScreen> {
                       children: [
                         Text(S.of(context).screenSteamStopAtTemperatur(settings.targetMilkTemperature),
                             style: Theme.of(context).textTheme.labelLarge),
-                        Slider(
-                          value: settings.targetMilkTemperature.toDouble(),
-                          max: 80,
-                          min: 20,
-                          divisions: 60,
-                          label: "${settings.targetMilkTemperature} °C",
-                          onChanged: (double value) {
-                            setState(() {
-                              settings.targetMilkTemperature = value.toInt();
-                              machineService.updateSettings();
-                            });
-                          },
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Slider(
+                                value: settings.targetMilkTemperature.toDouble(),
+                                max: 80,
+                                min: 20,
+                                divisions: 60,
+                                label: "${settings.targetMilkTemperature} °C",
+                                onChanged: (double value) {
+                                  setState(() {
+                                    settings.targetMilkTemperature = value.toInt();
+                                    machineService.updateSettings();
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 90,
+                              child: _buildIntInput(
+                                value: settings.targetMilkTemperature,
+                                min: 20,
+                                max: 80,
+                                suffix: "°C",
+                                onValue: (value) {
+                                  setState(() {
+                                    settings.targetMilkTemperature = value;
+                                    machineService.updateSettings();
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -253,18 +390,41 @@ class SteamScreenState extends State<SteamScreen> {
                             children: [
                               Text(S.of(context).screenSteamFlowrate(settings.targetSteamFlow.toStringAsFixed(1)),
                                   style: Theme.of(context).textTheme.labelLarge),
-                              Slider(
-                                value: settings.targetSteamFlow,
-                                max: 4.5,
-                                min: 0.5,
-                                divisions: 40,
-                                label: "${settings.targetSteamFlow.toStringAsFixed(1)} ml/s",
-                                onChanged: (double value) {
-                                  setState(() {
-                                    settings.targetSteamFlow = value;
-                                    machineService.de1?.setSteamFlow(value);
-                                  });
-                                },
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Slider(
+                                      value: settings.targetSteamFlow,
+                                      max: 4.5,
+                                      min: 0.5,
+                                      divisions: 40,
+                                      label: "${settings.targetSteamFlow.toStringAsFixed(1)} ml/s",
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          settings.targetSteamFlow = value;
+                                          machineService.de1?.setSteamFlow(value);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 90,
+                                    child: _buildDoubleInput(
+                                      value: settings.targetSteamFlow,
+                                      min: 0.5,
+                                      max: 4.5,
+                                      decimals: 1,
+                                      suffix: "ml/s",
+                                      formatterPattern: RegExp(r'^\d*\.?\d{0,1}'),
+                                      onValue: (value) {
+                                        setState(() {
+                                          settings.targetSteamFlow = value;
+                                          machineService.de1?.setSteamFlow(value);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

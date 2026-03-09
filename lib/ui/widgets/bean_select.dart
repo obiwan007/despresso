@@ -61,7 +61,7 @@ class BeanSelectState extends State<BeanSelect> {
     // Build and watch the query,
     // set triggerImmediately to emit the query immediately on listen.
     final builder = _coffeeService.coffeeBox.query().order(Coffee_.name).build();
-    var found = builder.find();
+    var found = builder.find().where((coffee) => coffee.isShot == false);
 
     var coffees = found
         .map(
