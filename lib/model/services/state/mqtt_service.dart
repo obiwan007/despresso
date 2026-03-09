@@ -24,6 +24,10 @@ class MqttService extends ChangeNotifier {
 
   bool connected = false;
 
+  static const _haDiscoveryPrefix = 'homeassistant';
+  static const _deviceModel = 'decent de1';
+  static const _deviceManufacturer = 'decent';
+
   late StreamSubscription<EspressoMachineFullState> streamStateSubscription;
   late StreamSubscription<int> streamBatterySubscription;
   late StreamSubscription<ShotState> streamShotSubscription;
@@ -113,10 +117,12 @@ class MqttService extends ChangeNotifier {
         if (c[0].topic == statusRequest) {
           var validState = false;
           switch (pt) {
+            case "ON":
             case "idle":
               machineService.de1?.switchOn();
               validState = true;
               break;
+            case "OFF":
             case "sleep":
               machineService.de1?.switchOff();
               validState = true;
@@ -204,12 +210,71 @@ class MqttService extends ChangeNotifier {
   void onConnected() {
     connected = true;
     log.info('MQTT:OnConnected client callback - Client connection was sucessful');
+    publishDiscovery();
     handleEvents();
   }
 
   /// Pong callback
   void pong() {
     log.info('MQTT:Ping response client callback invoked');
+  }
+
+  void publishDiscovery() {
+    if (client.connectionStatus?.state != MqttConnectionState.connected) return;
+
+    final device = <String, dynamic>{
+      'identifiers': [rootTopic],
+      'name': 'despresso',
+      'model': _deviceModel,
+      'manufacturer': _deviceManufacturer,
+    };
+
+    final stateConfig = <String, dynamic>{
+      'name': 'despresso machine state',
+      'unique_id': '${rootTopic}_machine_state',
+      'state_topic': '$rootTopic/de1/status',
+      'device': device,
+    };
+    _publishDiscoveryConfig('sensor', 'machine_state', stateConfig);
+
+    final waterConfig = <String, dynamic>{
+      'name': 'despresso water level',
+      'unique_id': '${rootTopic}_water_level',
+      'state_topic': '$rootTopic/de1/waterlevel',
+      'unit_of_measurement': '%',
+      'device': device,
+    };
+    _publishDiscoveryConfig('sensor', 'water_level', waterConfig);
+
+    final batteryConfig = <String, dynamic>{
+      'name': 'despresso battery',
+      'unique_id': '${rootTopic}_battery',
+      'state_topic': '$rootTopic/tablet/batterylevel',
+      'device_class': 'battery',
+      'unit_of_measurement': '%',
+      'device': device,
+    };
+    _publishDiscoveryConfig('sensor', 'battery', batteryConfig);
+
+    final powerSwitchConfig = <String, dynamic>{
+      'name': 'despresso power',
+      'unique_id': '${rootTopic}_power',
+      'state_topic': '$rootTopic/de1/status',
+      'command_topic': '$rootTopic/de1/setstatus',
+      'payload_on': 'ON',
+      'payload_off': 'OFF',
+      'state_on': 'idle',
+      'state_off': 'sleep',
+      'device': device,
+    };
+    _publishDiscoveryConfig('switch', 'power', powerSwitchConfig);
+  }
+
+  void _publishDiscoveryConfig(String component, String objectId, Map<String, dynamic> config) {
+    final topic = '$_haDiscoveryPrefix/$component/despresso/$objectId/config';
+    final builder = MqttClientPayloadBuilder();
+    builder.addString(jsonEncode(config));
+    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!);
   }
 
   void handleEvents() {
