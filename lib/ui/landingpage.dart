@@ -140,6 +140,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
             col = null;
             Theme.of(context).primaryColor;
             log.info(n.text);
+            duration = const Duration(seconds: 3);
             break;
           case SnackbarNotificationType.warn:
             col = const Color.fromARGB(255, 239, 174, 113);
