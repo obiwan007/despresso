@@ -5,3 +5,7 @@
 - Version bump for Android
 - Library updates
 - alot of internal optimizations regarding handling of profiles
+
+## 1.0.18
+
+- Notifications hide themselfes again.

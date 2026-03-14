@@ -156,13 +156,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
         var snackBar = SnackBar(
           backgroundColor: col,
           content: Text(n.text),
-          duration: duration,
-          action: SnackBarAction(
-            label: "Ok",
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
-          ),
+          duration: duration,          
         );
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -451,12 +445,7 @@ class LandingPageState extends State<LandingPage> with TickerProviderStateMixin 
                   Navigator.pop(context);
                   var snackBar = SnackBar(
                       content: const Text('Going to sleep'),
-                      action: SnackBarAction(
-                        label: 'Undo',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ));
+                      );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   machineService.de1?.switchOff();
                   // Then close the drawer
