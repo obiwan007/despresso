@@ -1,4 +1,11 @@
-import {Component, computed, effect, inject, makeEnvironmentProviders, signal} from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  makeEnvironmentProviders,
+  signal,
+} from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -201,17 +208,19 @@ export class BrewingTabComponent {
   markers = computed(() => {
     const frames = this.shotFrames() ?? [];
     const s = this.machineService.isInShot() ? this.shotSamples() : this.lastShot()?.shotstates;
-    const l =  (
+    const l =
       s
         ?.filter(
           (ss, i, arr) =>
-            ss.frameNumber > 0 && (i === 0 || ss.frameNumber !== arr[i - 1].frameNumber && frames[ss.frameNumber]?.name!== undefined),
+            ss.frameNumber > 0 &&
+            (i === 0 ||
+              (ss.frameNumber !== arr[i - 1].frameNumber &&
+                frames[ss.frameNumber]?.name !== undefined)),
         )
         .map((ss) => ({
           x: ss.pourTime,
           label: frames[ss.frameNumber]?.name ?? '',
-        })) ?? []
-    );
+        })) ?? [];
     return l;
   });
 
@@ -449,6 +458,6 @@ export class BrewingTabComponent {
   }
 
   async sendShotToVisualizer(id: string): Promise<void> {
-  // await this.shotService.sendShotToVisualizer(id);
+    // await this.shotService.sendShotToVisualizer(id);
   }
 }

@@ -28,12 +28,12 @@
                 <mat-icon>add</mat-icon>
                 <span>Add Recipe</span>
               </button>
-            @if (selectedRecipe()) {
+              @if (selectedRecipe()) {
               <button mat-menu-item aria-label="Delete recipe" (click)="onDeleteRecipe()">
                 <mat-icon>delete</mat-icon>
                 <span>Delete Recipe</span>
               </button>
-            }
+              }
               <button mat-menu-item routerLink="/shots">
                 <mat-icon fontSet="material-symbols-outlined">add</mat-icon>
                 <span>Add Beans</span>
@@ -78,19 +78,13 @@
           </mat-form-field>
           <div class="flex items-start gap-4">
             <mat-form-field appearance="fill" class="flex-1" floatLabel="always">
-              <mat-label>Beans
-
-                
-
-
-
-              </mat-label>
+              <mat-label>Beans </mat-label>
               <mat-select
                 [value]="sp.coffeeId"
                 aria-label="Select beans for recipe"
                 (selectionChange)="onCoffeeChange($event.value)"
               >
-              <mat-option [value]="-1">Add new Beans...</mat-option>
+                <mat-option [value]="-1">Add new Beans...</mat-option>
                 @for (c of coffees() || []; track c.id) {
                   <mat-option [value]="c.id">{{ c.name }}</mat-option>
                 }
@@ -124,14 +118,12 @@
                 <mat-icon>edit</mat-icon>
                 <span>Edit Beans</span>
               </button>
-            
+
               <button mat-menu-item aria-label="Delete beans" (click)="onDeleteCoffee()">
                 <mat-icon>delete</mat-icon>
                 <span>Delete Beans</span>
               </button>
-            
             </mat-menu>
-
           </div>
           <div class="flex gap-4">
             <div class="mt-2">

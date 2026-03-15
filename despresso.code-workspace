@@ -1,20 +1,25 @@
 {
-    "folders": [
-        {
-            "name": "despresso",
-            "path": "."
-        },
-        {
-            "path": "minipage"
-        },
-        {
-            "path": "webpage"
-        }
-    ],
-    "settings": {
-        "dart.flutterSdkPath": null,
-        "dart.lineLength": 120,
-        "java.configuration.updateBuildConfiguration": "disabled",
-        "svn.ignoreMissingSvnWarning": true
+  "folders": [
+    {
+      "name": "despresso",
+      "path": "."
+    },
+    {
+      "path": "minipage"
+    },
+    {
+      "path": "webpage"
     }
+  ],
+  "settings": {
+    "dart.flutterSdkPath": null,
+    "dart.lineLength": 120,
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "svn.ignoreMissingSvnWarning": true,
+
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  }
 }
