@@ -8,6 +8,7 @@ import {
   RecipeEntity,
   Roaster,
 } from '../models/state';
+import {ApiService} from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfilesService {
@@ -273,7 +274,7 @@ export class ProfilesService {
     },
   ];
 
-  constructor() {
+  constructor(private readonly apiService: ApiService) {
     this.fetchProfiles();
     this.fetchRecipes();
     this.fetchRoasters();
@@ -281,27 +282,79 @@ export class ProfilesService {
   }
 
   async fetchProfiles(): Promise<Profile[]> {
-    const list = [...this.mockProfiles].sort((a, b) => a.title.localeCompare(b.title));
-    this._profiles.set(list);
-    return list;
+    try {
+      const ids = await this.apiService.getAllProfileIds();
+      if (ids.length === 0) {
+        this._profiles.set([]);
+        return [];
+      }
+      const list = await this.apiService.getProfiles(ids);
+      const sorted = [...list].sort((a, b) => a.title.localeCompare(b.title));
+      this._profiles.set(sorted);
+      return sorted;
+    } catch (error) {
+      console.error('Failed to load profiles, using mock data.', error);
+      const list = [...this.mockProfiles].sort((a, b) => a.title.localeCompare(b.title));
+      this._profiles.set(list);
+      return list;
+    }
   }
 
   async fetchRecipes(): Promise<RecipeEntity[]> {
-    const list = [...this.mockRecipes].sort((a, b) => a.name.localeCompare(b.name));
-    this._recipes.set(list);
-    return list;
+    try {
+      const ids = await this.apiService.getAllRecipeIds();
+      if (ids.length === 0) {
+        this._recipes.set([]);
+        return [];
+      }
+      const list = await this.apiService.getRecipes(ids);
+      const sorted = [...list].sort((a, b) => a.name.localeCompare(b.name));
+      this._recipes.set(sorted);
+      return sorted;
+    } catch (error) {
+      console.error('Failed to load recipes, using mock data.', error);
+      const list = [...this.mockRecipes].sort((a, b) => a.name.localeCompare(b.name));
+      this._recipes.set(list);
+      return list;
+    }
   }
 
   async fetchRoasters(): Promise<Roaster[]> {
-    const list = [...this.mockRoasters].sort((a, b) => a.name.localeCompare(b.name));
-    this._roasters.set(list);
-    return list;
+    try {
+      const ids = await this.apiService.getAllRoasterIds();
+      if (ids.length === 0) {
+        this._roasters.set([]);
+        return [];
+      }
+      const list = await this.apiService.getRoasters(ids);
+      const sorted = [...list].sort((a, b) => a.name.localeCompare(b.name));
+      this._roasters.set(sorted);
+      return sorted;
+    } catch (error) {
+      console.error('Failed to load roasters, using mock data.', error);
+      const list = [...this.mockRoasters].sort((a, b) => a.name.localeCompare(b.name));
+      this._roasters.set(list);
+      return list;
+    }
   }
 
   async fetchCoffees(): Promise<Coffee[]> {
-    const list = [...this.mockCoffees].sort((a, b) => a.name.localeCompare(b.name));
-    this._coffees.set(list);
-    return list;
+    try {
+      const ids = await this.apiService.getAllCoffeeIds();
+      if (ids.length === 0) {
+        this._coffees.set([]);
+        return [];
+      }
+      const list = await this.apiService.getCoffees(ids);
+      const sorted = [...list].sort((a, b) => a.name.localeCompare(b.name));
+      this._coffees.set(sorted);
+      return sorted;
+    } catch (error) {
+      console.error('Failed to load coffees, using mock data.', error);
+      const list = [...this.mockCoffees].sort((a, b) => a.name.localeCompare(b.name));
+      this._coffees.set(list);
+      return list;
+    }
   }
 
   async ensureLoaded(): Promise<Profile[]> {

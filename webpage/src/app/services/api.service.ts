@@ -1,5 +1,5 @@
 import {effect, Injectable, signal} from "@angular/core";
-import {ApiShot, EspressoMachineState, SnapShot, Shot, shotFromApi, ScaleSnapShot, WaterLevelSnapShot, LogSnapShot} from "../models/state";
+import {ApiShot, EspressoMachineState, SnapShot, Shot, shotFromApi, ScaleSnapShot, WaterLevelSnapShot, LogSnapShot, Coffee, Roaster, Profile, RecipeEntity} from "../models/state";
 
 const getGatewayUrl = () => {
     if (typeof window === 'undefined') {
@@ -37,12 +37,17 @@ export class ApiService {
     readonly logSnapshot = signal<LogSnapShot | null>(null);  
     readonly devices = signal<ApiDevice[]>([]);
     readonly shotIds = signal<string[]>([]);
+    readonly coffeeIds = signal<string[]>([]);
+    readonly roasterIds = signal<string[]>([]);
+    readonly profileIds = signal<string[]>([]);
+    readonly recipeIds = signal<string[]>([]);
 
     /**
      *
      */
     constructor() {
         this.initShots();
+
 
         effect(() => {
             const logSnapshot = this.logSnapshot();
@@ -57,6 +62,39 @@ export class ApiService {
             if (ids.length > 0) {
                 this.getShots([ids[ids.length - 1]]).then(shots => {
                     console.log('Initial shots:', shots);
+                });
+            }
+        });
+    }
+
+    private initCoffee() {
+        this.getAllCoffeeIds().then(ids => {
+            console.log('Initial coffee IDs:', ids);
+            if (ids.length > 0) {
+                this.getCoffees(ids).then(coffees => {
+                    console.log('Initial coffees:', coffees);
+                });
+            }
+        });
+    }
+
+    private initRoasters() {
+        this.getAllRoasterIds().then(ids => {
+            console.log('Initial roaster IDs:', ids);
+            if (ids.length > 0) {
+                this.getRoasters(ids).then(roasters => {
+                    console.log('Initial roasters:', roasters);
+                });
+            }
+        });
+    }
+
+    private initProfiles() {
+        this.getAllProfileIds().then(ids => {
+            console.log('Initial profile IDs:', ids);
+            if (ids.length > 0) {
+                this.getProfiles(ids).then(profiles => {
+                    console.log('Initial profiles:', profiles);
                 });
             }
         });
@@ -265,6 +303,62 @@ export class ApiService {
         });
     }
 
+    getAllCoffeeIds(): Promise<string[]> {
+        return fetch(`${GATEWAY_URL}/api/v1/coffee/ids`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('Coffee IDs:', data);
+                this.coffeeIds.set(data);
+                return data as string[];
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as string[];
+            });
+    }
+
+    getAllRoasterIds(): Promise<string[]> {
+        return fetch(`${GATEWAY_URL}/api/v1/roaster/ids`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('Roaster IDs:', data);
+                this.roasterIds.set(data);
+                return data as string[];
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as string[];
+            });
+    }
+
+    getAllProfileIds(): Promise<string[]> {
+        return fetch(`${GATEWAY_URL}/api/v1/profile/ids`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('Profile IDs:', data);
+                this.profileIds.set(data);
+                return data as string[];
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as string[];
+            });
+    }
+
+    getAllRecipeIds(): Promise<string[]> {
+        return fetch(`${GATEWAY_URL}/api/v1/recipe/ids`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('Recipe IDs:', data);
+                this.recipeIds.set(data);
+                return data as string[];
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as string[];
+            });
+    }
+
     getShots(ids: string[]): Promise<Shot[]> {
         const limitedIds = ids.slice(0, 10);
         const params = new URLSearchParams({ids: limitedIds.join(',')});
@@ -279,6 +373,70 @@ export class ApiService {
             console.error('Connection failed:', err);
             return [] as Shot[];
         });
+    }
+
+    getCoffees(ids: string[]): Promise<Coffee[]> {
+        const limitedIds = ids.slice(0, 10);
+        const params = new URLSearchParams({ids: limitedIds.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/coffee?${params.toString()}`)
+            .then(res => res.json())
+            .then((data: Coffee[]) => {
+                const list = Array.isArray(data) ? data : [];
+                console.log('Coffees:', list);
+                return list;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as Coffee[];
+            });
+    }
+
+    getRoasters(ids: string[]): Promise<Roaster[]> {
+        const limitedIds = ids.slice(0, 10);
+        const params = new URLSearchParams({ids: limitedIds.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/roaster?${params.toString()}`)
+            .then(res => res.json())
+            .then((data: Roaster[]) => {
+                const list = Array.isArray(data) ? data : [];
+                console.log('Roasters:', list);
+                return list;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as Roaster[];
+            });
+    }
+
+    getProfiles(ids: string[]): Promise<Profile[]> {
+        const limitedIds = ids.slice(0, 10);
+        const params = new URLSearchParams({ids: limitedIds.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/profile?${params.toString()}`)
+            .then(res => res.json())
+            .then((data: Profile[]) => {
+                const list = Array.isArray(data) ? data : [];
+                console.log('Profiles:', list);
+                return list;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as Profile[];
+            });
+    }
+
+    getRecipes(ids: string[]): Promise<RecipeEntity[]> {
+        const limitedIds = ids.slice(0, 10);
+        const params = new URLSearchParams({ids: limitedIds.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/recipe?${params.toString()}`)
+            .then(res => res.json())
+            .then((data: RecipeEntity[]) => {
+                const list = Array.isArray(data) ? data : [];
+                console.log('Recipes:', list);
+                return list;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return [] as RecipeEntity[];
+            });
     }
 
     

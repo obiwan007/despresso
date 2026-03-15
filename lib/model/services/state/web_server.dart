@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:despresso/model/coffee.dart';
 
+import 'package:despresso/model/de1shotclasses.dart';
 import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/profile_service.dart';
 import 'package:despresso/model/shot.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
@@ -31,6 +33,7 @@ class WebService extends ChangeNotifier {
   late EspressoMachineService machineService;
   late ScaleService scaleService;
   late CoffeeService coffeeService;
+  late ProfileService profileService;
 
   StreamSubscription<EspressoMachineFullState>? streamStateSubscription;
   StreamSubscription<int>? streamBatterySubscription;
@@ -60,6 +63,7 @@ class WebService extends ChangeNotifier {
     machineService = getIt<EspressoMachineService>();
     scaleService = getIt<ScaleService>();
     coffeeService = getIt<CoffeeService>();
+    profileService = getIt<ProfileService>();
 
     settingsService.addListener(() async {
       if (settingsService.webServer && isRunning == false) {
@@ -125,6 +129,38 @@ class WebService extends ChangeNotifier {
 
     router.get('/api/v1/shots', (Request request) {
       return getShots(request);
+    });
+
+    router.get('/api/v1/coffee', (Request request) {
+      return getCoffees(request);
+    });
+
+    router.get('/api/v1/roaster', (Request request) {
+      return getRoasters(request);
+    });
+
+    router.get('/api/v1/profile', (Request request) {
+      return getProfiles(request);
+    });
+
+    router.get('/api/v1/recipe', (Request request) {
+      return getRecipes(request);
+    });
+
+    router.get('/api/v1/coffee/ids', (Request request) {
+      return getCoffeeIds();
+    });
+
+    router.get('/api/v1/roaster/ids', (Request request) {
+      return getRoasterIds();
+    });
+
+    router.get('/api/v1/profile/ids', (Request request) {
+      return getProfileIds();
+    });
+
+    router.get('/api/v1/recipe/ids', (Request request) {
+      return getRecipeIds();
     });
 
     router.get('/api/shot', (Request request) {
@@ -294,7 +330,131 @@ class WebService extends ChangeNotifier {
     }
   }
 
+  Response getCoffees(Request request) {
+    final ids = _parseCoffeeIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final coffees = ids.map((id) => coffeeService.coffeeBox.get(id)).whereType<Coffee>().map(_coffeeToApi).toList();
+
+    try {
+      log.info("getCoffees with ids: $ids, found: ${coffees.length}");
+      return Response.ok(jsonEncode(coffees), headers: header);
+    } catch (e) {
+      log.severe("Error getting coffees for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve coffee"}', headers: header);
+    }
+  }
+
+  Response getRoasters(Request request) {
+    final ids = _parseRoasterIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final roasters = ids.map((id) => coffeeService.roasterBox.get(id)).whereType<Roaster>().map(_roasterToApi).toList();
+
+    try {
+      log.info("getRoasters with ids: $ids, found: ${roasters.length}");
+      return Response.ok(jsonEncode(roasters), headers: header);
+    } catch (e) {
+      log.severe("Error getting roasters for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve roasters"}', headers: header);
+    }
+  }
+
+  Response getProfiles(Request request) {
+    final ids = _parseProfileIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final profiles = profileService.profiles.where((profile) => ids.contains(profile.id)).map(_profileToApi).toList();
+
+    try {
+      log.info("getProfiles with ids: $ids, found: ${profiles.length}");
+      return Response.ok(jsonEncode(profiles), headers: header);
+    } catch (e) {
+      log.severe("Error getting profiles for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve profiles"}', headers: header);
+    }
+  }
+
+  Response getRecipes(Request request) {
+    final ids = _parseRecipeIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final recipes = ids.map((id) => coffeeService.recipeBox.get(id)).whereType<Recipe>().map(_recipeToApi).toList();
+
+    try {
+      log.info("getRecipes with ids: $ids, found: ${recipes.length}");
+      return Response.ok(jsonEncode(recipes), headers: header);
+    } catch (e) {
+      log.severe("Error getting recipes for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve recipes"}', headers: header);
+    }
+  }
+
+  Response getCoffeeIds() {
+    final ids = coffeeService.coffeeBox.getAll().map((coffee) => coffee.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getRoasterIds() {
+    final ids = coffeeService.roasterBox.getAll().map((roaster) => roaster.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getProfileIds() {
+    final ids = profileService.profiles.map((profile) => profile.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getRecipeIds() {
+    final ids = coffeeService.recipeBox.getAll().map((recipe) => recipe.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
   List<int> _parseShotIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  List<int> _parseCoffeeIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  List<int> _parseRoasterIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  List<String> _parseProfileIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => value.trim()).where((value) => value.isNotEmpty).toList();
+  }
+
+  List<int> _parseRecipeIds(Request request) {
     final params = request.url.queryParameters;
     final idsParam = params['ids'] ?? params['IDS'] ?? '';
     if (idsParam.trim().isEmpty) {
@@ -362,6 +522,30 @@ class WebService extends ChangeNotifier {
       'cropyear': coffee.cropyear.toUtc().toIso8601String(),
       'process': coffee.process,
       'isShot': coffee.isShot,
+    };
+  }
+
+  Map<String, dynamic> _roasterToApi(Roaster? roaster) {
+    if (roaster == null) {
+      return {};
+    }
+    return {
+      'id': roaster.id.toString(),
+      'name': roaster.name,
+      'imageURL': roaster.imageURL,
+      'description': roaster.description,
+      'address': roaster.address,
+      'homepage': roaster.homepage,
+    };
+  }
+
+  Map<String, dynamic> _profileToApi(De1ShotProfile profile) {
+    return {
+      'id': profile.id,
+      'isDefault': profile.isDefault,
+      'title': profile.title,
+      'shotHeader': profile.shotHeader.toJson(),
+      'shotFrames': profile.shotFrames.map((frame) => frame.toJson()).toList(),
     };
   }
 
