@@ -6,7 +6,10 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "predeploy2": "rm -r ../assets/website/",
+    "deploy": "ng build --configuration production",
+    "postdeploy": "cd dist/despresso-streamline/browser/ && cp -r . ../../../../assets/website/"
   },
   "prettier": {
     "printWidth": 100,

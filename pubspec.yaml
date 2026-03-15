@@ -151,6 +151,7 @@ flutter:
     - assets/iconStore.png
     - assets/profiles/
     - assets/website/
+    - assets/website/media/
     - assets/website/static/
     - assets/website/static/js/
     - assets/website/static/css/
