@@ -164,11 +164,11 @@ export class ShotGraphComponent {
     return s
       ?.filter((ss, i, arr) =>
         ss.frameNumber > 0 &&
-        (i === 0 || ss.frameNumber !== arr[i - 1].frameNumber)
+        (i === 0 || ss.frameNumber !== arr[i - 1].frameNumber && frames[ss.frameNumber]?.name!== undefined)
       )
       .map(ss => ({
-        x: ss.pourTime,
-        label: frames[ss.frameNumber]?.name
+        x: ss.pourTime*100,
+        label: frames[ss.frameNumber]?.name ?? ''
       })) ?? [];
   });
 

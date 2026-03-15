@@ -472,7 +472,8 @@ export const shotFromApi = (input: ApiShot): Shot => {
         workflow: input.workflow,
         recipeId: input.recipe?.id,
         coffeeId: input.coffee?.id,
-        roasterId: input.coffee?.roasterId,        
+        roasterId: input.coffee?.roasterId,
+        profileId: input.recipe?.profileId,        
     };
 };
 

@@ -1,0 +1,20 @@
+{
+  "name": "despressoweb",  
+  "short_name": "despresso web",
+  "description": "Decent Espresso Frontend",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "minimal-ui"],
+  "scope": "./",
+  "start_url": "./",
+  "background_color": "#151316",
+  "theme_color": "#0EA5E9",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "/image.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

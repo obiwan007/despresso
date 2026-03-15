@@ -201,17 +201,18 @@ export class BrewingTabComponent {
   markers = computed(() => {
     const frames = this.shotFrames() ?? [];
     const s = this.machineService.isInShot() ? this.shotSamples() : this.lastShot()?.shotstates;
-    return (
+    const l =  (
       s
         ?.filter(
           (ss, i, arr) =>
-            ss.frameNumber > 0 && (i === 0 || ss.frameNumber !== arr[i - 1].frameNumber),
+            ss.frameNumber > 0 && (i === 0 || ss.frameNumber !== arr[i - 1].frameNumber && frames[ss.frameNumber]?.name!== undefined),
         )
         .map((ss) => ({
           x: ss.pourTime,
-          label: frames[ss.frameNumber]?.name,
+          label: frames[ss.frameNumber]?.name ?? '',
         })) ?? []
     );
+    return l;
   });
 
   d1 = computed(() => {
