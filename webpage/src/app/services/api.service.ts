@@ -266,7 +266,8 @@ export class ApiService {
     }
 
     getShots(ids: string[]): Promise<Shot[]> {
-        const params = new URLSearchParams({ ids: ids.join(',') });
+        const limitedIds = ids.slice(0, 10);
+        const params = new URLSearchParams({ids: limitedIds.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/shots?${params.toString()}`)
         .then(res => res.json())
         .then((data: ApiShot[]) => {

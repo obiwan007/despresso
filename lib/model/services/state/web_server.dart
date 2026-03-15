@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:despresso/model/coffee.dart';
 
+import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
 import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/shot.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -26,6 +30,7 @@ class WebService extends ChangeNotifier {
   late SettingsService settingsService;
   late EspressoMachineService machineService;
   late ScaleService scaleService;
+  late CoffeeService coffeeService;
 
   StreamSubscription<EspressoMachineFullState>? streamStateSubscription;
   StreamSubscription<int>? streamBatterySubscription;
@@ -54,6 +59,7 @@ class WebService extends ChangeNotifier {
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
     scaleService = getIt<ScaleService>();
+    coffeeService = getIt<CoffeeService>();
 
     settingsService.addListener(() async {
       if (settingsService.webServer && isRunning == false) {
@@ -111,6 +117,14 @@ class WebService extends ChangeNotifier {
 
     router.put('/api/v1/scale/tare', (Request request) {
       return tareScale();
+    });
+
+    router.get('/api/v1/shots/ids', (Request request) {
+      return getShotIds();
+    });
+
+    router.get('/api/v1/shots', (Request request) {
+      return getShots(request);
     });
 
     router.get('/api/shot', (Request request) {
@@ -256,6 +270,141 @@ class WebService extends ChangeNotifier {
   Future<Response> tareScale() async {
     await scaleService.tare();
     return Response.ok('{"status":"ok"}', headers: header);
+  }
+
+  Response getShotIds() {
+    final ids = coffeeService.shotBox.getAll().map((shot) => shot.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getShots(Request request) {
+    final ids = _parseShotIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final shots = ids.map((id) => coffeeService.shotBox.get(id)).whereType<Shot>().map(_shotToApi).toList();
+
+    try {
+      log.info("getShots with ids: $ids, found: ${shots.length}");
+      return Response.ok(jsonEncode(shots), headers: header);
+    } catch (e) {
+      log.severe("Error getting shots for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve shots"}', headers: header);
+    }
+  }
+
+  List<int> _parseShotIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  Map<String, dynamic> _shotToApi(Shot shot) {
+    final baseTime = shot.date.toUtc();
+    final workflowName = shot.description.isNotEmpty ? shot.description : (shot.recipe.target?.name ?? 'shot');
+    final measurements = shot.shotstates.map((state) {
+      final timestamp = baseTime.add(Duration(milliseconds: _safeMillis(state.sampleTimeCorrected)));
+      return {
+        'machine': {
+          'timestamp': timestamp.toIso8601String(),
+          'state': {'state': 'espresso', 'substate': state.subState},
+          'flow': _safeNum(state.groupFlow),
+          'pressure': _safeNum(state.groupPressure),
+          'mixTemperature': _safeNum(state.mixTemp),
+        },
+        'scale': {'timestamp': timestamp.toIso8601String(), 'weight': _safeNum(state.weight), 'weightFlow': _safeNum(state.flowWeight), 'batteryLevel': 0},
+        'volume': _safeNum(state.weight),
+      };
+    }).toList();
+
+    return {
+      'id': shot.id.toString(),
+      'timestamp': shot.date.toUtc().toIso8601String(),
+      'measurements': measurements,
+      'recipe': _recipeToApi(shot.recipe.target),
+      'coffee': _coffeeToApi(shot.coffee.target),
+      'workflow': {
+        'name': workflowName,
+        'profileId': shot.profileId.toString(),
+        "visualizerId": shot.visualizerId.toString(),
+        'doseData': {'doseIn': shot.doseWeight, 'doseOut': shot.drinkWeight},
+      },
+    };
+  }
+
+  Map<String, dynamic> _coffeeToApi(Coffee? coffee) {
+    if (coffee == null) {
+      return {};
+    }
+    return {
+      'id': coffee.id.toString(),
+      'name': coffee.name,
+      'description': coffee.description,
+      'type': coffee.type,
+      'taste': coffee.taste,
+      'roasterId': coffee.roaster.targetId.toString(),
+      'imageURL': coffee.imageURL,
+      'grinderSettings': _safeNum(coffee.grinderSettings),
+      'grinderDoseWeight': _safeNum(coffee.grinderDoseWeight),
+      'acidRating': _safeNum(coffee.acidRating),
+      'intensityRating': _safeNum(coffee.intensityRating),
+      'roastLevel': _safeNum(coffee.roastLevel),
+      'roastDate': coffee.roastDate.toUtc().toIso8601String(),
+      'elevation': coffee.elevation,
+      'price': coffee.price,
+      'origin': coffee.origin,
+      'region': coffee.region,
+      'farm': coffee.farm,
+      'cropyear': coffee.cropyear.toUtc().toIso8601String(),
+      'process': coffee.process,
+      'isShot': coffee.isShot,
+    };
+  }
+
+  Map<String, dynamic> _recipeToApi(Recipe? recipe) {
+    if (recipe == null) {
+      return {};
+    }
+    return {
+      'id': recipe.id.toString(),
+      'coffeeId': recipe.coffee.targetId.toString(),
+      'profileId': recipe.profileId,
+      'adjustedWeight': _safeNum(recipe.adjustedWeight),
+      'adjustedPressure': _safeNum(recipe.adjustedPressure),
+      'adjustedTemp': _safeNum(recipe.adjustedTemp),
+      'grinderDoseWeight': _safeNum(recipe.grinderDoseWeight),
+      'grinderSettings': _safeNum(recipe.grinderSettings),
+      'grinderModel': recipe.grinderModel,
+      'ratio1': _safeNum(recipe.ratio1),
+      'ratio2': _safeNum(recipe.ratio2),
+      'isDeleted': recipe.isDeleted,
+      'isFavorite': recipe.isFavorite,
+      'isShot': recipe.isShot,
+      'name': recipe.name,
+      'description': recipe.description,
+      'weightWater': _safeNum(recipe.weightWater),
+      'useWater': recipe.useWater,
+      'disableStopOnWeight': recipe.disableStopOnWeight,
+      'tempWater': _safeNum(recipe.tempWater),
+      'timeWater': _safeNum(recipe.timeWater),
+      'tempSteam': _safeNum(recipe.tempSteam),
+      'flowSteam': _safeNum(recipe.flowSteam),
+      'timeSteam': _safeNum(recipe.timeSteam),
+      'weightMilk': _safeNum(recipe.weightMilk),
+      'useSteam': recipe.useSteam,
+    };
+  }
+
+  double _safeNum(double value) {
+    return value.isFinite ? value : 0.0;
+  }
+
+  int _safeMillis(double seconds) {
+    return (_safeNum(seconds) * 1000).round();
   }
 
   EspressoMachineState? _mapTargetToState(String target) {
