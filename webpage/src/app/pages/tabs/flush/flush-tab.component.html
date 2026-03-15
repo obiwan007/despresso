@@ -1,0 +1,43 @@
+<div class="tab-content">
+	<mat-card class="flush-card">
+		<mat-card-title>
+			<div class="title-row">
+				<span>Flush</span>
+				<!-- <div class="actions">
+					@if (!isFlushing()) {
+						<button mat-flat-button color="primary" (click)="startFlush()" aria-label="Start flush">Start</button>
+					} @else {
+						<button mat-stroked-button color="warn" (click)="stopFlush()" aria-label="Stop flush">Stop</button>
+					}
+				</div> -->
+			</div>
+		</mat-card-title>
+		<mat-card-content>
+			<div class="controls">
+				<div class="left">
+					<div class="control">
+						<div class="label">Timer {{ targetFlushTime() | number:'1.0-0' }} s</div>
+						<mat-slider min="0" max="60" step="1" aria-label="Flush timer">
+							<input matSliderThumb [value]="targetFlushTime()" (input)="onFlushTimeChanged($any($event.target).value)" />
+						</mat-slider>
+					</div>
+					<div class="control">
+						<div class="label">Second Timer {{ targetFlushTime2() | number:'1.0-0' }} s</div>
+						<mat-slider min="0" max="60" step="1" aria-label="Second flush timer">
+							<input matSliderThumb [value]="targetFlushTime2()" (input)="onFlushTime2Changed($any($event.target).value)" />
+						</mat-slider>
+					</div>
+				</div>
+
+				<div class="right">
+					@if (isFlushing()) {
+						<div class="progress-wrap" aria-live="polite">
+							<mat-progress-spinner mode="determinate" [value]="progressValue()"diameter="100" strokeWidth="8" aria-label="Flush progress"></mat-progress-spinner>
+							<div class="progress-label">Flushing…</div>
+						</div>
+					}
+				</div>
+			</div>
+		</mat-card-content>		
+	</mat-card>
+</div>

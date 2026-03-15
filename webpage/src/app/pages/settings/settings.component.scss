@@ -1,0 +1,20 @@
+.container {
+  overflow-y: auto;
+  gap: 16px;
+  width: 100%;
+  height: calc(100vh - 70px); 
+  display: flex; 
+  flex-direction: column; 
+  padding: 8px;
+  margin: 0;
+}
+
+mat-slide-toggle {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+mat-card {
+  padding: 16px;
+  height: 100%;
+}

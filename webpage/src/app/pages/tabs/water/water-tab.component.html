@@ -1,0 +1,47 @@
+<div class="tab-content">
+	<mat-card class="water-card">
+		<mat-card-title>
+			<div class="title-row">
+				<span>Hot Water</span>
+				<button mat-icon-button aria-label="Tare scale" (click)="tareScale()">
+					<mat-icon>scale</mat-icon>
+				</button>
+			</div>
+		</mat-card-title>
+		<mat-card-content>
+			<div class="controls">
+				<div class="control">
+					<label for="temp-slider" class="sr-only">Target water temperature</label>
+					<mat-slider id="temp-slider" min="50" max="100" step="1" aria-label="Target water temperature">
+						<input matSliderThumb [value]="targetTemp()" (input)="onTempChanged($any($event.target).value)" />
+					</mat-slider>
+					<div class="hint">Temperature: {{ targetTemp() }}°C</div>
+				</div>
+
+				<mat-form-field  class="w-50 mt-2" floatLabel="always">
+					<mat-label>Water Amount (g)</mat-label>
+					<input matInput type="number" step="1" min="1" [value]="targetWeight()" aria-label="Target water weight"
+								 (change)="onWeightChanged($any($event.target).value)" />
+				</mat-form-field>
+
+				<!-- <div class="actions">
+					@if (!isPouring()) {
+						<button mat-flat-button color="primary" (click)="startWater()" aria-label="Start hot water">Start</button>
+					} @else {
+						<button mat-stroked-button color="warn" (click)="stopWater()" aria-label="Stop hot water">Stop</button>
+					}
+				</div> -->
+			</div>
+
+			<div class="status mt-4">
+				<div class="row">
+					<span class="label">Current Weight:</span>
+					<span class="value">{{ currentWeight() | number:'1.0-1' }} g</span>
+				</div>
+
+				<mat-progress-bar mode="determinate" [value]="progressPct()" aria-label="Water progress"></mat-progress-bar>
+				<div class="progress-hint">{{ progressPct() }}%</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+</div>

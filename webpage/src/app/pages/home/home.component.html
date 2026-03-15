@@ -1,0 +1,63 @@
+<mat-sidenav-container class="home-container">
+  <mat-sidenav-content>
+    <div class="container">
+      <mat-tab-group [selectedIndex]="selectedTab()" (selectedIndexChange)="onTabChange($event)">
+        <mat-tab label="Recipe">
+          <ng-template matTabContent>
+          <app-recipe-tab />
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Brewing">
+          <ng-template matTabContent>
+            <app-brewing-tab />
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Steam">
+          <ng-template matTabContent>
+          <app-steam-tab />
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Water">
+          <ng-template matTabContent>
+          <app-water-tab />
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Flush">
+          <ng-template matTabContent>
+          <app-flush-tab />
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+      
+    </div>
+  </mat-sidenav-content>
+
+  <mat-sidenav position="end" mode="side" opened class="machine-sidenav" style="overflow:hidden;">    
+    <!-- Top-right Settings Menu inside side panel -->
+    <div class="side-actions">
+      <button mat-icon-button [matMenuTriggerFor]="sideOptions" aria-label="Open settings menu">
+        <mat-icon fontSet="material-symbols-outlined">more_vert</mat-icon>
+      </button>
+       <!-- Describe your Shot button moved to BrewingTab -->
+    </div>
+    <mat-menu #sideOptions="matMenu">
+      <button mat-menu-item routerLink="/shots">
+        <mat-icon fontSet="material-symbols-outlined">history</mat-icon>
+        <span>Shots</span>
+      </button>
+      <button mat-menu-item routerLink="/profiles">
+        <mat-icon fontSet="material-symbols-outlined">list</mat-icon>
+        <span>Profiles</span>
+      </button>
+      <button mat-menu-item (click)="onSettingsClick()">
+        <mat-icon fontSet="material-symbols-outlined">settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
+
+    <app-machine />
+  </mat-sidenav>
+</mat-sidenav-container>
+
+<!-- Non-blocking version indicator in bottom-left -->
+<div class="app-version" aria-hidden="true">{{ buildInfoService.version() }}</div>

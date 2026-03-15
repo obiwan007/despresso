@@ -1,0 +1,119 @@
+<h2 mat-dialog-title>Edit Coffee</h2>
+<mat-dialog-content>
+    <div class="flex gap-2">
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="coffee.name" />
+  </mat-form-field>
+   <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Roaster</mat-label>
+      <mat-select [(ngModel)]="coffee.roasterId">
+        <mat-option [value]="null">None</mat-option>
+        @if (profiles.roasters()) {
+          @for (r of profiles.roasters(); track r.id) {
+            <mat-option [value]="r.id">{{ r.name }}</mat-option>
+          }
+        }
+      </mat-select>
+    </mat-form-field>
+</div>
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Description</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="coffee.description"></textarea>
+  </mat-form-field>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Type</mat-label>
+      <input matInput [(ngModel)]="coffee.type" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Taste</mat-label>
+      <input matInput [(ngModel)]="coffee.taste" />
+    </mat-form-field>
+  </div>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Grinder Settings</mat-label>
+      <input matInput type="number" [(ngModel)]="coffee.grinderSettings" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Grinder Dose Weight (g)</mat-label>
+      <input matInput type="number" [(ngModel)]="coffee.grinderDoseWeight" />
+    </mat-form-field>
+  </div>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Acid Rating</mat-label>
+      <input matInput type="number" [(ngModel)]="coffee.acidRating" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Intensity Rating</mat-label>
+      <input matInput type="number" [(ngModel)]="coffee.intensityRating" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Roast Level</mat-label>
+      <input matInput type="number" [(ngModel)]="coffee.roastLevel" />
+    </mat-form-field>
+  </div>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Roast Date</mat-label>
+      <input matInput [(ngModel)]="coffee.roastDate" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Elevation (m)</mat-label>
+      <input matInput type="number" [(ngModel)]="coffee.elevation" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Price</mat-label>
+      <input matInput [(ngModel)]="coffee.price" />
+    </mat-form-field>
+  </div>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Origin</mat-label>
+      <input matInput [(ngModel)]="coffee.origin" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Region</mat-label>
+      <input matInput [(ngModel)]="coffee.region" />
+    </mat-form-field>
+    
+  </div>
+  <div class="flex gap-2">    
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Farm</mat-label>
+      <textarea matInput [(ngModel)]="coffee.farm"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Crop Year</mat-label>
+      <input matInput [(ngModel)]="coffee.cropyear" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Process</mat-label>
+      <input matInput [(ngModel)]="coffee.process" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Image URL</mat-label>
+      <input matInput [(ngModel)]="coffee.imageURL" />
+    </mat-form-field>
+  </div>
+  @if (coffee.imageURL) {
+  <div class="mt-4 px-4 pb-2">
+    <img [src]="coffee.imageURL" alt="Coffee image preview" class="w-full max-h-128 object-contain" />
+  </div>
+}
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

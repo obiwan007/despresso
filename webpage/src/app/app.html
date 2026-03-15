@@ -1,0 +1,33 @@
+@if (!isHome()) {
+  <mat-toolbar color="primary" role="toolbar" aria-label="Application toolbar">
+    <button mat-icon-button type="button" aria-label="Back" (click)="onBack()">
+      <mat-icon fontSet="material-symbols-outlined">arrow_back</mat-icon>
+    </button>
+    <span routerLink="/" aria-label="Home">despresso web</span>
+    <span class="spacer"></span>
+    @if (toolbar.showSave()) {
+      <button mat-icon-button type="button" aria-label="Save" (click)="onSave()">
+        <mat-icon fontSet="material-symbols-outlined">save</mat-icon>
+      </button>
+    }
+    <button mat-icon-button type="button" [matMenuTriggerFor]="options" aria-label="More options" style="margin-left: 8px;">
+      <mat-icon fontSet="material-symbols-outlined">more_vert</mat-icon>
+    </button>
+    <mat-menu #options="matMenu">
+      <button mat-menu-item routerLink="/profiles" aria-label="Profiles">
+        <mat-icon fontSet="material-symbols-outlined">list</mat-icon>
+        <span>Profiles</span>
+      </button>
+      <button mat-menu-item routerLink="/settings" aria-label="Settings">
+        <mat-icon fontSet="material-symbols-outlined">settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+}
+
+<router-outlet />
+
+@if (showScreensaver()) {
+  <app-screensaver (screensaverClick)="onScreensaverClick()" />
+}

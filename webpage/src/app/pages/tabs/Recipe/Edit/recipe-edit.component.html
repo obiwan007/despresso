@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>Edit Recipe</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="recipe.name" />
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Description</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="recipe.description"></textarea>
+  </mat-form-field>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Ratio 1</mat-label>
+      <input matInput type="number" [(ngModel)]="recipe.ratio1" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Ratio 2</mat-label>
+      <input matInput type="number" [(ngModel)]="recipe.ratio2" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Bean Weight (g)</mat-label>
+      <input matInput type="number" [(ngModel)]="recipe.grinderDoseWeight" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Adjusted Weight (g)</mat-label>
+      <input matInput type="number" [(ngModel)]="recipe.adjustedWeight" />
+    </mat-form-field>
+  </div>
+
+  <div class="flex gap-2">
+    
+    
+  </div>
+
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Grinder Settings</mat-label>
+      <input matInput type="number" [(ngModel)]="recipe.grinderSettings" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Grinder Model</mat-label>
+      <input matInput [(ngModel)]="recipe.grinderModel" />
+    </mat-form-field>
+  </div>
+
+
+  <mat-checkbox [(ngModel)]="recipe.useSteam">Use Steam</mat-checkbox>
+  @if (recipe.useSteam) {
+    <div class="flex gap-2">
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Milk Weight (g)</mat-label>
+        <input matInput type="number" [(ngModel)]="recipe.weightMilk" />
+      </mat-form-field>
+    </div>
+  }
+
+  <mat-checkbox [(ngModel)]="recipe.useWater">Use Water</mat-checkbox>
+  @if (recipe.useWater) {
+    <div class="flex gap-2">
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>Water Weight (g)</mat-label>
+        <input matInput type="number" [(ngModel)]="recipe.weightWater" />
+      </mat-form-field>
+    </div>
+  }
+
+  <mat-checkbox [(ngModel)]="recipe.disableStopOnWeight">Disable Stop On Weight</mat-checkbox>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

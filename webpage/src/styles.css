@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@import "@fontsource/inter/index.css";
+@import "material-symbols/outlined.css";
+@import "material-icons/iconfont/material-icons.css";
+
+:root {
+  --app-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --mdc-typography-font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+/* Local fonts: place files under public/fonts and they will be copied. */
+
+html, body {
+	height: 100%;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--app-font);
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+/* Angular Material prebuilt Indigo/Pink theme provides a blue primary. */
+
+/* Basic layout helpers for the landing */
+.spacer { flex: 1 1 auto; }
+
+.status-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.status-row.ok { color: #2e7d32; }
+.status-row.err { color: #c62828; }
+
+mat-sidenav {
+  width: 300px;
+  overflow: hidden;
+  background: red;
+}
+
+
+.tab-content {
+  height: calc(100vh - 50px); 
+  display: flex; 
+  flex-direction: column; 
+  padding: 8px;
+  margin: 0;  
+}

@@ -1,0 +1,41 @@
+:host {
+  background-color: var(--gc-outer-bg, #555555);
+  color: var(--gc-text, #ffffff);
+  font-weight: 600;
+  text-align: center;
+}
+:host:focus {
+  outline: 2px solid #9c9c9c;
+  outline-offset: 2px;
+}
+/* Warn state styling */
+:host.warn {
+  background-color: var(--gc-warn-outer-bg, #ffe5e5);
+}
+:host.warn .inner {
+  background-color: var(--gc-warn-bg, #d92d20);
+  color: var(--gc-warn-text, #ffffff);
+}
+.inner {
+    background-color: rgb(65, 20, 20);  
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  transition: width 500ms ease, height 500ms ease;
+}
+
+:host.goal .inner {
+  background-color: green!important;  
+}
+
+:host.growing .inner {
+  background-color: rgb(186, 186, 186);  
+}
+
+.warn {
+  background-color: var(--mat-badge-background-color, red);  
+}
+
+.value {
+  user-select: none;
+}

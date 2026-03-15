@@ -1,0 +1,121 @@
+<div class="shots-content">
+  <div class="flex flex-row w-full gap-3">
+    <mat-card>
+      <mat-card-title><span class="ml-2">Diary</span></mat-card-title>
+      <mat-card-actions>
+        <button mat-button (click)="shareCSV()">
+          <mat-icon>ios_share</mat-icon>
+          CSV
+        </button>
+        @if (
+          settingsService.settings()?.visualizerUpload ||
+          settingsService.settings()?.visualizerExtendedUpload
+        ) {
+          <!-- @if(settingsService.settings()?.visualizerUpload) { -->
+          <button mat-button (click)="uploadToVisualizer()">
+            <mat-icon>cloud_upload</mat-icon>
+            Visualizer
+          </button>
+          <!-- } -->
+        }
+      </mat-card-actions>
+      <!-- <mat-progress-spinner *ngIf="busy()" [value]="busyProgress() * 100"></mat-progress-spinner> -->
+      <div class="shot-list">
+        <mat-nav-list>
+          @for (shot of shots(); track shot.id) {
+            @let prof = profileService.getProfileById(shot?.profileId ?? 'Default');
+            @let coffee = profileService.getCoffeeById(shot.coffeeId);
+            @let roaster = profileService.getRoasterById(coffee?.roasterId);
+            @let recipe = profileService.getRecipeById(shot.recipeId);
+
+            <a
+              mat-list-item
+              [activated]="selectedShots().includes(shot)"
+              (click)="setSelection(shot.id)"
+            >
+              <!-- TITLE (row 1) -->
+              <div matListItemTitle>
+                {{ prof?.title ?? shot.profileId }}
+              </div>
+
+              <div matListItemMeta>
+                <span>
+                  {{ shot.pourWeight | number: '1.0-0' }}g /
+                  {{ shot.pourTime | number: '1.0-0' }}s<br />
+                </span>
+                <span>{{ shot.date | date }}<br /></span>
+                <span>{{ shot.date | date: 'shortTime' }}</span>
+              </div>
+
+              <div matListItemLine>
+                <span>&nbsp;{{ recipe?.name ?? 'no recipe' }}</span>
+              </div>
+              <div matListItemLine>
+                <span>&nbsp;{{ coffee?.name }} ({{ roaster?.name ?? 'no roaster' }})</span>
+              </div>
+            </a>
+          }
+        </mat-nav-list>
+      </div>
+    </mat-card>
+    <!-- <mat-slide-toggle [(ngModel)]="overlay">Overlay mode</mat-slide-toggle> -->
+    <div *ngIf="selectedShots().length > 0">
+      <mat-card style="width: calc(100vw - 525px)">
+        <mat-card-title><span class="ml-2">Selected Shots</span></mat-card-title>
+
+        <div class="graph-list">
+          @for (shot of overlay() ? [selectedShots()[0]] : selectedShots(); track shot) {
+            @let prof = profileService.getProfileById(shot?.profileId ?? 'Default');
+            @let coffee = profileService.getCoffeeById(shot!.coffeeId);
+            @let roaster = profileService.getRoasterById(coffee?.roasterId);
+            @let recipe = profileService.getRecipeById(shot.recipeId);
+
+            <div style="margin-bottom: 16px">
+              <div class="flex flex-row items-center justify-between">
+                <div>
+                  <div class="ml-2">
+                    {{ recipe?.name ?? 'no recipe' }} / {{ prof?.title ?? shot.profileId }} /
+                    {{ shot.date | date }}
+                  </div>
+                  <div class="ml-2">
+                    {{ shot?.pourWeight }}g in {{ shot?.pourTime | number: '1.1-1' }}s
+                  </div>
+                </div>
+                <div></div>
+                <div class="flex flex-col items-end">
+                  <button
+                    mat-button
+                    (click)="openDescribeShot(shot)"
+                    aria-label="Describe your shot"
+                  >
+                    Describe your Shot
+                  </button>
+                  @if (shot.visualizerId) {
+                    <a
+                      mat-button
+                      href="https://visualizer.coffee/shots/{{ shot.visualizerId }}"
+                      target="_blank"
+                      class="ml-2"
+                      >Open in Visualizer</a
+                    >
+                  } @else {
+                    <button mat-button (click)="uploadToVisualizerById(shot.id)">
+                      Add to Visualizer
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="p-3">
+                <app-shot-graph
+                  [height]="'calc((100vh - 198px))'"
+                  [shotId]="shot.id"
+                ></app-shot-graph>
+              </div>
+            </div>
+          }
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

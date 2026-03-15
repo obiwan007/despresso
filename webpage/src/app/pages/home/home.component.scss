@@ -1,0 +1,71 @@
+.app-version {
+  position: fixed;
+  left: 0.75rem;
+  bottom: 0.2rem;
+  font-size: 0.6rem; /* small font */
+  line-height: 1;
+  pointer-events: none; /* non-blocking */
+  user-select: none;
+  z-index: 1000;
+}
+
+
+.floating-settings-button {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.home-container {
+  height: 100vh;
+}
+
+mat-sidenav-content {
+  height: 100%;
+}
+
+.container {
+  height: 100%;
+  padding: 0px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Angular Material MDC tab group layout */
+mat-tab-group,
+.mat-mdc-tab-group {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-mdc-tab-body-wrapper {
+  height: 100%;
+  flex: 1;
+}
+
+.machine-sidenav {
+  width: 305px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  background: var(--mat-sys-surface-container-highest);
+  overflow: hidden;
+}
+
+.side-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
+.machine-sidenav app-machine {
+  flex: 1;
+}

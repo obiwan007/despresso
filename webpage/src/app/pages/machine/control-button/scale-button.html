@@ -1,0 +1,18 @@
+<button
+  type="button"
+  class="rounded-full border-4 w-10 h-18 sm:w-20 sm:h-25 flex flex-col items-center justify-center gap-1 bg-white/10 text-current shadow hover:scale-105 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+  [class.border-green-600]="connected()"
+  [class.border-gray-400]="!connected()"  
+  (click)="onTare()"
+  aria-label="Tare scale"
+>
+  <mat-icon>scale</mat-icon>
+  <div class="flex flex-col leading-tight items-center">
+    <span class="text-sm sm:text-base font-semibold">
+      {{ weight() !== null ? (weight()?.weight| number:'1.1-2') + ' g' : '---' }}
+    </span>
+    <span class="text-[0.65rem] sm:text-xs opacity-80">
+      {{ connected() ? 'Tare' : 'No scale' }}
+    </span>
+  </div>
+</button>

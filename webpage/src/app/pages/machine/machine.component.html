@@ -1,0 +1,50 @@
+<div class="flex items-start gap-4 justify-center">
+  <app-gauge
+    [status]="displayStatus()"
+    [subStatus]="subState()"
+    [pressure]="displayPressure()"
+    [temp]="displayTemp()"
+    [flow]="displayFlow()"
+    [time]="displayTime()"
+    [weight]="displayWeight()"
+    [min]="0"
+    [max]="16"
+    [size]="240"
+    [stroke]="8"
+  />
+
+  <!-- Vertical Water Gauge (width 10px) -->
+</div>
+<div>
+  <button mat-raised-button color="primary" (click)="machineService.startSim()">Start Sim</button>
+</div>
+@if (displayStatus() === 'espresso' || displayStatus() === 'water') {
+  <div class="flex items-start gap-4 justify-center">
+    <app-growing-circle
+      [width]="230"
+      [value]="displayWeight()"
+      [destinationValue]="displayDestWeight()"
+    ></app-growing-circle>
+  </div>
+}
+<div class="fixed bottom-4 flex flex-row justify-center items-start gap-4">
+  <app-water-gauge
+    [level]="machineService.waterLevel()?.currentLevel ?? 0"
+    [limit]="machineService.waterLevel()?.refillLevel"
+    [max]="100"
+    [height]="150"
+    aria-label="Water level"
+  ></app-water-gauge>
+  <app-control-button></app-control-button>
+  <app-scale-button></app-scale-button>
+</div>
+<div class="fixed bottom-4 right-4 z-1 flex items-center">
+  <mat-slide-toggle
+    [checked]="isOn()"
+    (change)="onPowerToggle($event.checked)"
+    color="primary"
+    [aria-label]="isOn() ? 'Switch machine off' : 'Switch machine on'"
+  >
+    {{ isOn() ? 'On' : 'Off' }}
+  </mat-slide-toggle>
+</div>

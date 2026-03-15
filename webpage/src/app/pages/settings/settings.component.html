@@ -1,0 +1,192 @@
+<div class="container">
+  <mat-card>
+    <!-- <div class="flex flex-row items-center justify-between px-2 pt-2">
+      <button mat-icon-button aria-label="Back" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="flex-1"></span>
+      <button mat-icon-button color="primary" aria-label="Save" (click)="save()">
+        <mat-icon>save</mat-icon>
+      </button>
+    </div> -->
+    <mat-card-header>
+      <mat-card-title>Settings</mat-card-title>
+      <mat-card-subtitle>Personalize your experience</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form">
+        <mat-accordion multi>
+          <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Theme</mat-panel-title>
+              <mat-panel-description>Light, Dark, or System</mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-button-toggle-group [value]="mode()" (change)="onModeChange($event.value)" exclusive>
+              <mat-button-toggle value="light">Light</mat-button-toggle>
+              <mat-button-toggle value="dark">Dark</mat-button-toggle>
+              <mat-button-toggle value="system">System</mat-button-toggle>
+            </mat-button-toggle-group>
+          </mat-expansion-panel>
+
+          
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Machine & Scale</mat-panel-title>
+              <mat-panel-description>Hardware capabilities</mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="ml-5 flex flex-col gap-4">
+              <div><mat-slide-toggle formControlName="hasScale">Has Scale</mat-slide-toggle></div>
+              <!-- <div><mat-slide-toggle formControlName="hasSteamThermometer">Steam Thermometer</mat-slide-toggle></div>
+              <div><mat-slide-toggle formControlName="hasRefractometer">Refractometer</mat-slide-toggle></div> -->
+              <div><mat-slide-toggle formControlName="steamHeaterOff">Steam Heater Off</mat-slide-toggle></div>
+              <mat-slide-toggle formControlName="tareOnWakeUp">Tare On Wake</mat-slide-toggle>
+              <mat-slide-toggle formControlName="scaleDisplayOffOnSleep">Turn Off Scale On Sleep</mat-slide-toggle>
+
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Shot</mat-panel-title>
+              <mat-panel-description>Behavior and targets</mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="ml-5 flex flex-col gap-4">
+              <mat-slide-toggle formControlName="shotStopOnWeight">Stop On Weight</mat-slide-toggle>
+              <mat-slide-toggle formControlName="shotAutoTare">Auto Tare</mat-slide-toggle>
+              <mat-slide-toggle formControlName="scaleStartTimer">Start Timer On Scale</mat-slide-toggle>
+              <mat-slide-toggle formControlName="tareOnWakeUp">Tare On Wake</mat-slide-toggle>
+              <mat-slide-toggle formControlName="scaleDisplayOffOnSleep">Turn Off Scale On Sleep</mat-slide-toggle>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Espresso Weight/Time Adjust</mat-label>
+                <input matInput type="number" formControlName="targetEspressoWeightTimeAdjust">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Step Limit Weight/Time Adjust</mat-label>
+                <input matInput type="number" formControlName="stepLimitWeightTimeAdjust">
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Flush & Water</mat-panel-title>
+              <mat-panel-description>Cleaning and levels</mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="ml-5 flex flex-col gap-4">
+              <mat-slide-toggle formControlName="showFlushScreen">Show Flush Screen</mat-slide-toggle>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Target Flush Time (s)</mat-label>
+                <input matInput type="number" formControlName="targetFlushTime">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Target Flush Time 2 (s)</mat-label>
+                <input matInput type="number" formControlName="targetFlushTime2">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Target Water Level (%)</mat-label>
+                <input matInput type="number" formControlName="targetWaterlevel">
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Tablet</mat-panel-title>
+              <mat-panel-description>Brightness and sleep</mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="ml-5 flex flex-col gap-4">
+              <mat-form-field appearance="outline">
+                <mat-label>Screen Brightness Timer (s)</mat-label>
+                <input matInput type="number" formControlName="screenBrightnessTimer">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Screen Brightness (%)</mat-label>
+                <input matInput type="number" formControlName="screenBrightnessValue">
+              </mat-form-field>
+
+              <mat-slide-toggle formControlName="screensaverShowClock">Screensaver Shows Clock</mat-slide-toggle>
+              <mat-slide-toggle formControlName="tabletSleepDuringScreensaver">Sleep During Screensaver</mat-slide-toggle>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Screensaver Sleep Timeout (s)</mat-label>
+                <input matInput type="number" formControlName="tabletSleepDuringScreensaverTimeout">
+              </mat-form-field>
+
+              <mat-slide-toggle formControlName="tabletSleepWhenMachineOff">Sleep When Machine Off</mat-slide-toggle>
+              <mat-slide-toggle formControlName="launchWake">Wake On Launch</mat-slide-toggle>
+              <mat-slide-toggle formControlName="screenTimoutGoToRecipe">Go To Recipe On Timeout</mat-slide-toggle>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Sleep Timer (min)</mat-label>
+                <input matInput type="number" formControlName="sleepTimer">
+              </mat-form-field>
+              <mat-slide-toggle formControlName="smartCharging">Smart Charging</mat-slide-toggle>
+            </div>
+          </mat-expansion-panel>                    
+          
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>MQTT</mat-panel-title>
+              <mat-panel-description>Broker and authentication</mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="ml-5 flex flex-col gap-1">
+              <mat-slide-toggle formControlName="mqttEnabled">MQTT Enabled</mat-slide-toggle>
+              <mat-form-field appearance="outline">
+                <mat-label>MQTT Server</mat-label>
+                <input matInput placeholder="e.g. broker.local" formControlName="mqttServer">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>MQTT Port</mat-label>
+                <input matInput placeholder="e.g. 1883" formControlName="mqttPort">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>MQTT User</mat-label>
+                <input matInput formControlName="mqttUser">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>MQTT Password</mat-label>
+                <input matInput type="password" formControlName="mqttPassword">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Root Topic</mat-label>
+                <input matInput placeholder="e.g. despresso" formControlName="mqttRootTopic">
+              </mat-form-field>
+
+              <mat-slide-toggle formControlName="mqttSendState">Send State</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mqttSendShot">Send Shot</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mqttSendBattery">Send Battery</mat-slide-toggle>
+              <mat-slide-toggle formControlName="mqttSendWater">Send Water</mat-slide-toggle>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Server Maintenance</mat-panel-title>
+              <mat-panel-description>Hostsystem</mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="ml-5 flex flex-col gap-1">
+              <button mat-raised-button color="warn" (click)="machineService.stopServer()">
+                Stop/restart Server
+              </button>
+              
+            </div>
+          </mat-expansion-panel>
+
+        </mat-accordion>
+      </form>
+    </mat-card-content>
+  </mat-card>

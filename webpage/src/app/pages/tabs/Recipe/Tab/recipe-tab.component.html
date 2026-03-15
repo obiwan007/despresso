@@ -1,0 +1,217 @@
+<div class="tab-content">
+  @let list = recipes() || [];
+  <div class="profiles-container">
+    <mat-card class="profiles-list">
+      <mat-card-title>
+        <div class="flex flex-row items-center gap-2 justify-between">
+          <div>Recipes</div>
+          <span>
+            <!-- <button mat-icon-button aria-label="Add recipe" (click)="onAddRecipe()">
+              <mat-icon>add</mat-icon>
+            </button>
+            @if (selectedRecipe()) {
+              <button mat-icon-button aria-label="Delete recipe" (click)="onDeleteRecipe()">
+                <mat-icon>delete</mat-icon>
+              </button>
+            } -->
+
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="sideOptions"
+              aria-label="Open settings menu"
+            >
+              <mat-icon fontSet="material-symbols-outlined">more_vert</mat-icon>
+            </button>
+
+            <mat-menu #sideOptions="matMenu">
+              <button mat-menu-item aria-label="Add recipe" (click)="onAddRecipe()">
+                <mat-icon>add</mat-icon>
+                <span>Add Recipe</span>
+              </button>
+            @if (selectedRecipe()) {
+              <button mat-menu-item aria-label="Delete recipe" (click)="onDeleteRecipe()">
+                <mat-icon>delete</mat-icon>
+                <span>Delete Recipe</span>
+              </button>
+            }
+              <button mat-menu-item routerLink="/shots">
+                <mat-icon fontSet="material-symbols-outlined">add</mat-icon>
+                <span>Add Beans</span>
+              </button>
+            </mat-menu>
+          </span>
+        </div>
+      </mat-card-title>
+      <mat-nav-list>
+        @for (p of list; track p.id) {
+          <a mat-list-item [activated]="p.id === selectedId()" (click)="selectRecipe(p.id)">
+            <mat-icon matListItemIcon>description</mat-icon>
+            <div matListItemTitle>{{ p.name }}</div>
+          </a>
+        }
+      </mat-nav-list>
+    </mat-card>
+    @if (selectedRecipe(); as sp) {
+      <mat-card class="profile-details">
+        <mat-card-title>
+          <div class="flex flex-row items-center gap-2 justify-between">
+            <div>{{ sp.name }}</div>
+            <span>
+              <button mat-icon-button aria-label="Edit recipe" (click)="onEditRecipe()">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </span>
+          </div>
+        </mat-card-title>
+        <mat-card-content>
+          <mat-form-field appearance="fill" class="w-full" floatLabel="always">
+            <mat-label>Profile</mat-label>
+            <mat-select
+              [value]="sp.profileId"
+              aria-label="Select profile for recipe"
+              (selectionChange)="onProfileChange($event.value)"
+            >
+              @for (p of profiles() || []; track p.id) {
+                <mat-option [value]="p.id">{{ p.title }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <div class="flex items-start gap-4">
+            <mat-form-field appearance="fill" class="flex-1" floatLabel="always">
+              <mat-label>Beans
+
+                
+
+
+
+              </mat-label>
+              <mat-select
+                [value]="sp.coffeeId"
+                aria-label="Select beans for recipe"
+                (selectionChange)="onCoffeeChange($event.value)"
+              >
+              <mat-option [value]="-1">Add new Beans...</mat-option>
+                @for (c of coffees() || []; track c.id) {
+                  <mat-option [value]="c.id">{{ c.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            @let currentCoffee = selectedCoffee();
+            @if (currentCoffee && currentCoffee.imageURL) {
+              <img
+                [src]="currentCoffee.imageURL"
+                width="60"
+                height="60"
+                alt="Coffee image: {{ currentCoffee.name }}"
+                class="rounded mt-0"
+              />
+            }
+
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="sideOptions"
+              aria-label="Open settings menu"
+            >
+              <mat-icon fontSet="material-symbols-outlined">more_vert</mat-icon>
+            </button>
+
+            <mat-menu #sideOptions="matMenu">
+              <button mat-menu-item aria-label="Add beans" (click)="onAddCoffee()">
+                <mat-icon>add</mat-icon>
+                <span>Add Beans</span>
+              </button>
+              <button mat-menu-item aria-label="Add beans" (click)="onEditCoffee()">
+                <mat-icon>edit</mat-icon>
+                <span>Edit Beans</span>
+              </button>
+            
+              <button mat-menu-item aria-label="Delete beans" (click)="onDeleteCoffee()">
+                <mat-icon>delete</mat-icon>
+                <span>Delete Beans</span>
+              </button>
+            
+            </mat-menu>
+
+          </div>
+          <div class="flex gap-4">
+            <div class="mt-2">
+              Ratio: <br />
+              {{ sp.ratio1 }} : {{ sp.ratio2 }}
+            </div>
+            <mat-form-field appearance="fill" class="flex-1" floatLabel="always">
+              <mat-label>Bean Weight (g) </mat-label>
+              <input
+                matInput
+                type="number"
+                step="1"
+                min="0"
+                [value]="sp.grinderDoseWeight"
+                aria-label="Bean weight"
+                (change)="onAdjustedBeanWeightChange($any($event.target).value)"
+              />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="flex-1" floatLabel="always">
+              <mat-label>Drink Weight (g)</mat-label>
+              <input
+                matInput
+                type="number"
+                step="1"
+                min="0"
+                [value]="sp.adjustedWeight"
+                aria-label="Adjusted espresso target weight"
+                (change)="onAdjustedWeightChange($any($event.target).value)"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- <div class="detail-row">
+              <span class="label">Type</span>
+              <span class="value">{{ sp. || '—' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Author</span>
+              <span class="value">{{ sp.shotHeader?.author || '—' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Beverage Type</span>
+              <span class="value">{{ sp.shotHeader?.beverageType || '—' }}</span>
+            </div> -->
+          @if (sp.useWater) {
+            <mat-form-field appearance="fill" class="w-full" floatLabel="always">
+              <mat-label>Water (g)</mat-label>
+              <input
+                matInput
+                type="number"
+                step="1"
+                min="0"
+                [value]="sp.weightWater"
+                aria-label="Adjusted water target weight"
+                (change)="onAdjustedWaterWeightChange($any($event.target).value)"
+              />
+            </mat-form-field>
+          }
+          @if (sp.useSteam) {
+            <mat-form-field appearance="fill" class="w-full" floatLabel="always">
+              <mat-label>Milk (g)</mat-label>
+              <input
+                matInput
+                type="number"
+                step="1"
+                min="0"
+                [value]="sp.weightMilk"
+                aria-label="Adjusted milk target weight"
+                (change)="onAdjustedMilkWeightChange($any($event.target).value)"
+              />
+            </mat-form-field>
+          }
+          @if (sp.description; as notes) {
+            <div class="detail-row notes">
+              <span class="label">Notes: </span>
+              <span class="value">{{ notes }}</span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</div>

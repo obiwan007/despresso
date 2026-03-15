@@ -15,6 +15,8 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:shelf_static/shelf_static.dart' as shelf_static;
+import 'package:shelf_web_socket/shelf_web_socket.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 // final client = MqttServerClient(mqttServer, mqttPort.toString());
 
 class WebService extends ChangeNotifier {
@@ -23,15 +25,18 @@ class WebService extends ChangeNotifier {
   late SettingsService settingsService;
   late EspressoMachineService machineService;
 
-  late StreamSubscription<EspressoMachineFullState> streamStateSubscription;
-  late StreamSubscription<int> streamBatterySubscription;
-  late StreamSubscription<ShotState> streamShotSubscription;
-  late StreamSubscription<WaterLevel> streamWaterSubscription;
+  StreamSubscription<EspressoMachineFullState>? streamStateSubscription;
+  StreamSubscription<int>? streamBatterySubscription;
+  StreamSubscription<ShotState>? streamShotSubscription;
+  StreamSubscription<WaterLevel>? streamWaterSubscription;
 
   HttpServer? server;
 
   bool isRunning = false;
   bool isStarting = false;
+
+  final Set<WebSocketChannel> _machineStateSockets = {};
+  ShotState? _lastShotState;
 
   final Map<String, String> header = {
     "content-type": 'application/json',
@@ -98,6 +103,23 @@ class WebService extends ChangeNotifier {
       return res;
     });
 
+    router.get(
+      '/ws/v1/machine/state',
+      webSocketHandler((WebSocketChannel socket, _) {
+        _machineStateSockets.add(socket);
+        _sendMachineState(socket, _lastShotState);
+        socket.stream.listen(
+          (_) {},
+          onDone: () {
+            _machineStateSockets.remove(socket);
+          },
+          onError: (_) {
+            _machineStateSockets.remove(socket);
+          },
+        );
+      }),
+    );
+
     try {
       server = await shelf_io.serve(
         logRequests()
@@ -112,6 +134,16 @@ class WebService extends ChangeNotifier {
 
       log.info('Serving at http://${server!.address.host}:${server!.port}');
       isRunning = true;
+
+      await streamShotSubscription?.cancel();
+      await streamStateSubscription?.cancel();
+      streamShotSubscription = machineService.streamShotState.listen((shotState) {
+        _lastShotState = shotState;
+        _broadcastMachineState(shotState);
+      });
+      streamStateSubscription = machineService.streamState.listen((_) {
+        _broadcastMachineState(_lastShotState);
+      });
     } catch (e) {
       log.severe('webserving error $e');
       isRunning = false;
@@ -141,10 +173,54 @@ class WebService extends ChangeNotifier {
 
   stopService() async {
     if (server != null) {
+      await streamShotSubscription?.cancel();
+      await streamStateSubscription?.cancel();
+      await streamBatterySubscription?.cancel();
+      await streamWaterSubscription?.cancel();
+      for (final socket in _machineStateSockets.toList()) {
+        await socket.sink.close();
+      }
+      _machineStateSockets.clear();
       await server!.close(force: true);
       isRunning = false;
       log.info('server stopped');
     }
+  }
+
+  void _broadcastMachineState(ShotState? shotState) {
+    if (_machineStateSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _machineStateSockets.toList()) {
+      _sendMachineState(socket, shotState);
+    }
+  }
+
+  void _sendMachineState(WebSocketChannel socket, ShotState? shotState) {
+    try {
+      socket.sink.add(jsonEncode(_buildMachineStatePayload(shotState)));
+    } catch (e) {
+      _machineStateSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  Map<String, dynamic> _buildMachineStatePayload(ShotState? shotState) {
+    final state = machineService.currentFullState;
+    return {
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+      'state': {'state': state.state.name, 'substate': state.subState},
+      'flow': shotState?.groupFlow ?? 0.0,
+      'pressure': shotState?.groupPressure ?? 0.0,
+      'targetFlow': shotState?.setGroupFlow ?? 0.0,
+      'targetPressure': shotState?.setGroupPressure ?? 0.0,
+      'mixTemperature': shotState?.mixTemp ?? 0.0,
+      'groupTemperature': shotState?.headTemp ?? 0.0,
+      'targetMixTemperature': shotState?.setMixTemp ?? 0.0,
+      'targetGroupTemperature': shotState?.setHeadTemp ?? 0.0,
+      'profileFrame': shotState?.frameNumber ?? 0,
+      'steamTemperature': shotState?.steamTemp ?? 0,
+    };
   }
 
   Future<void> prepareWebsite() async {
