@@ -134,7 +134,9 @@ export class ShotService {
 
   async fetchShots(): Promise<ShotEntity[]> {
     const ids = await this.apiService.getAllShotIds();
-    const shots = await this.apiService.getShots(ids);
+
+    const recentIds = ids.slice(-10);
+    const shots = await this.apiService.getShots(recentIds);
     // const s = [...this.mockShots].sort((a, b) => a.id.localeCompare(b.id));
     const s = shots.map(shot => shotEntityFromShot(shot));
     this.shots.set(s);

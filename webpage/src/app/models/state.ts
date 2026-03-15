@@ -418,6 +418,10 @@ export type Shot = {
     timestamp: Date;
     measurements: ShotMeasurement[];
     workflow: ShotWorkflow;
+    recipeId?: string;
+    profileId?: string;
+    coffeeId?: string;
+    roasterId?: string;
 };
 
 export type ApiShot = {
@@ -440,6 +444,9 @@ export type ApiShot = {
         volume: number;
     }>;
     workflow: ShotWorkflow;
+    recipe?: RecipeEntity;
+    coffee?: Coffee;
+
 };
 
 export const shotFromApi = (input: ApiShot): Shot => {
@@ -463,6 +470,9 @@ export const shotFromApi = (input: ApiShot): Shot => {
             volume: m.volume,
         })),
         workflow: input.workflow,
+        recipeId: input.recipe?.id,
+        coffeeId: input.coffee?.id,
+        roasterId: input.coffee?.roasterId,        
     };
 };
 
@@ -491,7 +501,7 @@ export const shotEntityFromShot = (shot: Shot): ShotEntity => {
             setMixTemp: machine.mixTemperature,
             steamTemp: 0,
             subState: machine.state.substate,
-            weight: scale?.weight ?? 0,
+            weight: scale?.weight ?? 0,            
         };
     });
 
@@ -503,6 +513,10 @@ export const shotEntityFromShot = (shot: Shot): ShotEntity => {
         drinkWeight: shot.workflow.doseData.doseOut,
         shotstates,
         targetEspressoWeight: shot.workflow.doseData.doseOut,
+        coffeeId: shot.coffeeId,
+        profileId: shot.profileId,
+        recipeId: shot.recipeId,
+
     };
 };
 

@@ -21,6 +21,7 @@ export class ProfilesService {
   readonly recipes = this._recipes.asReadonly();
   readonly roasters = this._roasters.asReadonly();
   readonly coffees = this._coffees.asReadonly();
+  private readonly pendingRecipeIds = new Set<string>();
 
   private readonly mockProfiles: Profile[] = [
     {
@@ -378,7 +379,9 @@ export class ProfilesService {
   }
   getRecipeById(id: string | null | undefined): RecipeEntity | undefined {
     if (!id) return undefined;
-    return this.recipes()?.find((r) => r.id === id);
+    const existing = this.recipes()?.find((r) => r.id === id);
+    if (existing) return existing;
+    return undefined;
   }
 
   async updateRecipe(id: string, recipe: RecipeEntity): Promise<RecipeEntity | null> {

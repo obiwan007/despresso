@@ -45,7 +45,7 @@ export class RecipeTabComponent {
   private readonly profilesService = inject(ProfilesService);
   private readonly settingsService = inject(SettingsService);
 
-  recipes = this.profilesService.recipes;
+  recipes = computed(() => this.profilesService.recipes()?.filter(r => r.isShot === false));
   roasters = this.profilesService.roasters;
   profiles = computed(
     () =>
@@ -54,7 +54,7 @@ export class RecipeTabComponent {
         ?.filter((p) => p.shotHeader.beverageType !== 'cleaning')
         .sort((a, b) => a.title.localeCompare(b.title)) ?? null,
   );
-  coffees = this.profilesService.coffees;
+  coffees = computed(() => this.profilesService.coffees()?.filter(c => c.isShot === false));
 
   settings = this.settingsService.settings;
 

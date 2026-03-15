@@ -383,11 +383,9 @@ class WebService extends ChangeNotifier {
 
   Response getRecipes(Request request) {
     final ids = _parseRecipeIds(request);
-    if (ids.isEmpty) {
-      return Response.ok('[]', headers: header);
-    }
-
-    final recipes = ids.map((id) => coffeeService.recipeBox.get(id)).whereType<Recipe>().map(_recipeToApi).toList();
+    final recipes = ids.isEmpty
+        ? coffeeService.recipeBox.getAll().map(_recipeToApi).toList()
+        : ids.map((id) => coffeeService.recipeBox.get(id)).whereType<Recipe>().map(_recipeToApi).toList();
 
     try {
       log.info("getRecipes with ids: $ids, found: ${recipes.length}");

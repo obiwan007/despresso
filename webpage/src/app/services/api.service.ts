@@ -360,7 +360,7 @@ export class ApiService {
     }
 
     getShots(ids: string[]): Promise<Shot[]> {
-        const limitedIds = ids.slice(0, 10);
+        const limitedIds = ids; // slice(0, 10);
         const params = new URLSearchParams({ids: limitedIds.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/shots?${params.toString()}`)
         .then(res => res.json())
@@ -376,7 +376,7 @@ export class ApiService {
     }
 
     getCoffees(ids: string[]): Promise<Coffee[]> {
-        const limitedIds = ids.slice(0, 10);
+        const limitedIds = ids;
         const params = new URLSearchParams({ids: limitedIds.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/coffee?${params.toString()}`)
             .then(res => res.json())
@@ -392,7 +392,7 @@ export class ApiService {
     }
 
     getRoasters(ids: string[]): Promise<Roaster[]> {
-        const limitedIds = ids.slice(0, 10);
+        const limitedIds = ids;
         const params = new URLSearchParams({ids: limitedIds.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/roaster?${params.toString()}`)
             .then(res => res.json())
@@ -408,7 +408,7 @@ export class ApiService {
     }
 
     getProfiles(ids: string[]): Promise<Profile[]> {
-        const limitedIds = ids.slice(0, 10);
+        const limitedIds = ids;
         const params = new URLSearchParams({ids: limitedIds.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/profile?${params.toString()}`)
             .then(res => res.json())
@@ -423,9 +423,9 @@ export class ApiService {
             });
     }
 
-    getRecipes(ids: string[]): Promise<RecipeEntity[]> {
-        const limitedIds = ids.slice(0, 10);
-        const params = new URLSearchParams({ids: limitedIds.join(',')});
+    getRecipes(ids: string[] | undefined): Promise<RecipeEntity[]> {
+        const limitedIds = ids;
+        const params = limitedIds ? new URLSearchParams({ids: limitedIds.join(',')}) : new URLSearchParams();
         return fetch(`${GATEWAY_URL}/api/v1/recipe?${params.toString()}`)
             .then(res => res.json())
             .then((data: RecipeEntity[]) => {
