@@ -439,6 +439,62 @@ export class ApiService {
             });
     }
 
+    deleteShots(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
+        const params = new URLSearchParams({ids: ids.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/shot?${params.toString()}`, {method: 'DELETE'})
+            .then(res => res.json())
+            .then(data => {
+                console.log('Delete shots:', data);
+                return data as {deleted: number; requested: number; ids: number[]};
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return {deleted: 0, requested: ids.length, ids: []};
+            });
+    }
+
+    deleteRecipes(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
+        const params = new URLSearchParams({ids: ids.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/recipe?${params.toString()}`, {method: 'DELETE'})
+            .then(res => res.json())
+            .then(data => {
+                console.log('Delete recipes:', data);
+                return data as {deleted: number; requested: number; ids: number[]};
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return {deleted: 0, requested: ids.length, ids: []};
+            });
+    }
+
+    deleteCoffees(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
+        const params = new URLSearchParams({ids: ids.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/coffee?${params.toString()}`, {method: 'DELETE'})
+            .then(res => res.json())
+            .then(data => {
+                console.log('Delete coffees:', data);
+                return data as {deleted: number; requested: number; ids: number[]};
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return {deleted: 0, requested: ids.length, ids: []};
+            });
+    }
+
+    deleteRoasters(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
+        const params = new URLSearchParams({ids: ids.join(',')});
+        return fetch(`${GATEWAY_URL}/api/v1/roaster?${params.toString()}`, {method: 'DELETE'})
+            .then(res => res.json())
+            .then(data => {
+                console.log('Delete roasters:', data);
+                return data as {deleted: number; requested: number; ids: number[]};
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return {deleted: 0, requested: ids.length, ids: []};
+            });
+    }
+
     
     
 }

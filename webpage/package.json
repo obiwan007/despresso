@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "predeploy2": "rm -r ../assets/website/",
+    "predeploy": "rm -r ../assets/website/*",
     "deploy": "ng build --configuration production",
     "postdeploy": "cd dist/despresso-streamline/browser/ && cp -r . ../../../../assets/website/"
   },
@@ -35,6 +35,7 @@
     "@angular/platform-browser": "^21.0.0",
     "@angular/router": "^21.0.0",
     "@fontsource/inter": "^5.2.8",
+    "@fontsource/roboto": "^5.2.8",
     "angular-plotly.js": "^20.0.0",
     "material-icons": "^1.13.14",
     "material-symbols": "^0.40.2",

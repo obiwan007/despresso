@@ -404,6 +404,11 @@ export class ProfilesService {
   }
 
   async deleteRecipe(recipe: RecipeEntity): Promise<void> {
+    try {
+      await this.apiService.deleteRecipes([recipe.id]);
+    } catch (error) {
+      console.error('Failed to delete recipe via API.', error);
+    }
     const current = this._recipes() ?? [...this.mockRecipes];
     this._recipes.set(current.filter((r) => r.id !== recipe.id));
   }
@@ -428,6 +433,11 @@ export class ProfilesService {
   }
 
   async deleteCoffee(coffee: Coffee): Promise<void> {
+    try {
+      await this.apiService.deleteCoffees([coffee.id]);
+    } catch (error) {
+      console.error('Failed to delete coffee via API.', error);
+    }
     const current = this._coffees() ?? [...this.mockCoffees];
     this._coffees.set(current.filter((c) => c.id !== coffee.id));
   }
@@ -452,6 +462,11 @@ export class ProfilesService {
   }
 
   async deleteRoaster(roaster: Roaster): Promise<void> {
+    try {
+      await this.apiService.deleteRoasters([roaster.id]);
+    } catch (error) {
+      console.error('Failed to delete roaster via API.', error);
+    }
     const current = this._roasters() ?? [...this.mockRoasters];
     this._roasters.set(current.filter((r) => r.id !== roaster.id));
   }

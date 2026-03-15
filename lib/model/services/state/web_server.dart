@@ -131,12 +131,24 @@ class WebService extends ChangeNotifier {
       return getShots(request);
     });
 
+    router.delete('/api/v1/shot', (Request request) {
+      return deleteShots(request);
+    });
+
     router.get('/api/v1/coffee', (Request request) {
       return getCoffees(request);
     });
 
+    router.delete('/api/v1/coffee', (Request request) {
+      return deleteCoffees(request);
+    });
+
     router.get('/api/v1/roaster', (Request request) {
       return getRoasters(request);
+    });
+
+    router.delete('/api/v1/roaster', (Request request) {
+      return deleteRoasters(request);
     });
 
     router.get('/api/v1/profile', (Request request) {
@@ -145,6 +157,10 @@ class WebService extends ChangeNotifier {
 
     router.get('/api/v1/recipe', (Request request) {
       return getRecipes(request);
+    });
+
+    router.delete('/api/v1/recipe', (Request request) {
+      return deleteRecipes(request);
     });
 
     router.get('/api/v1/coffee/ids', (Request request) {
@@ -394,6 +410,71 @@ class WebService extends ChangeNotifier {
       log.severe("Error getting recipes for ids $ids: $e");
       return Response(500, body: '{"error":"Failed to retrieve recipes"}', headers: header);
     }
+  }
+
+  Response deleteShots(Request request) {
+    final ids = _parseShotIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.shotBox.remove(id)) {
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Response deleteCoffees(Request request) {
+    final ids = _parseCoffeeIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.coffeeBox.remove(id)) {
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Response deleteRoasters(Request request) {
+    final ids = _parseRoasterIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.roasterBox.remove(id)) {
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Response deleteRecipes(Request request) {
+    final ids = _parseRecipeIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.recipeBox.get(id) != null) {
+        coffeeService.removeRecipe(id);
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
   }
 
   Response getCoffeeIds() {
