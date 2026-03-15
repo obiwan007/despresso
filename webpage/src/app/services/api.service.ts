@@ -1,8 +1,23 @@
 import {effect, Injectable, signal} from "@angular/core";
 import {ApiShot, EspressoMachineState, SnapShot, Shot, shotFromApi, ScaleSnapShot, WaterLevelSnapShot, LogSnapShot} from "../models/state";
 
-const GATEWAY_URL = 'http://localhost:4200';
-const WS_URL = 'ws://localhost:4200';
+const getGatewayUrl = () => {
+    if (typeof window === 'undefined') {
+        return 'http://localhost:4200';
+    }
+    return window.location.origin;
+};
+
+const getWsUrl = () => {
+    if (typeof window === 'undefined') {
+        return 'ws://localhost:4200';
+    }
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${wsProtocol}//${window.location.host}`;
+};
+
+const GATEWAY_URL = getGatewayUrl();
+const WS_URL = getWsUrl();
 
 export { GATEWAY_URL, WS_URL };
 

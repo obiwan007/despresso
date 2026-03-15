@@ -105,6 +105,14 @@ class WebService extends ChangeNotifier {
       return setMachineState(request);
     });
 
+    router.put('/api/v1/machine/state/<target>', (Request request, String target) {
+      return setMachineStateByTarget(target);
+    });
+
+    router.put('/api/v1/scale/tare', (Request request) {
+      return tareScale();
+    });
+
     router.get('/api/shot', (Request request) {
       var s = jsonEncode(machineService.state.shot?.toJson());
       var res = Response.ok(s, headers: header);
@@ -226,6 +234,59 @@ class WebService extends ChangeNotifier {
     log.info("post: $data ${js['state']}");
     var res = Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
     return res;
+  }
+
+  Future<Response> setMachineStateByTarget(String target) async {
+    final mapped = _mapTargetToState(target);
+    if (mapped == null) {
+      return Response(400, body: '{"error":"Unknown target: $target"}', headers: header);
+    }
+
+    if (mapped == EspressoMachineState.idle) {
+      machineService.de1?.switchOn();
+    } else if (mapped == EspressoMachineState.sleep) {
+      machineService.de1?.switchOff();
+    }
+
+    await machineService.setState(mapped);
+    var s = machineService.currentFullState;
+    return Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
+  }
+
+  Future<Response> tareScale() async {
+    await scaleService.tare();
+    return Response.ok('{"status":"ok"}', headers: header);
+  }
+
+  EspressoMachineState? _mapTargetToState(String target) {
+    switch (target) {
+      case 'airPurge':
+        return EspressoMachineState.airPurge;
+      case 'clean':
+        return EspressoMachineState.clean;
+      case 'connecting':
+        return EspressoMachineState.connecting;
+      case 'descale':
+        return EspressoMachineState.descale;
+      case 'disconnected':
+        return EspressoMachineState.disconnected;
+      case 'espresso':
+        return EspressoMachineState.espresso;
+      case 'flush':
+        return EspressoMachineState.flush;
+      case 'idle':
+        return EspressoMachineState.idle;
+      case 'refill':
+        return EspressoMachineState.refill;
+      case 'sleeping':
+        return EspressoMachineState.sleep;
+      case 'steam':
+        return EspressoMachineState.steam;
+      case 'hotWater':
+        return EspressoMachineState.water;
+      default:
+        return null;
+    }
   }
 
   stopService() async {
