@@ -1,11 +1,11 @@
 {
   "/api": {
-    "target": "http://localhost:8888",
+    "target": "http://192.168.178.199:8888",
     "secure": false,
     "changeOrigin": true
   },
   "/ws": {
-    "target": "ws://localhost:8888",
+    "target": "ws://192.168.178.199:8888",
     "secure": false,
     "changeOrigin": true,
     "ws": true

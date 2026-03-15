@@ -1,8 +1,8 @@
 import {effect, Injectable, signal} from "@angular/core";
 import {ApiShot, EspressoMachineState, SnapShot, Shot, shotFromApi, ScaleSnapShot, WaterLevelSnapShot, LogSnapShot} from "../models/state";
 
-const GATEWAY_URL = 'http://192.168.178.98:8080';
-const WS_URL = 'ws://192.168.178.98:8080';
+const GATEWAY_URL = 'http://localhost:4200';
+const WS_URL = 'ws://localhost:4200';
 
 export { GATEWAY_URL, WS_URL };
 

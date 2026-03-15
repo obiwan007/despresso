@@ -25,11 +25,12 @@ function settingsInitializerFactory(settings: SettingsService, theme: ThemeServi
   return async () => {
     try {
       const s = await settings.ensureLoaded();
-      if (s?.screenDarkTheme === true) {
-        theme.setMode('dark');
-      } else if (s?.screenDarkTheme === false) {
-        theme.setMode('light');
-      }
+      // if (s?.screenDarkTheme === true) {
+      //   theme.setMode('dark');
+      // } else if (s?.screenDarkTheme === false) {
+      //   theme.setMode('light');
+      // }
+      theme.setMode('dark');
     } catch {
       // Ignore startup settings failures to avoid blocking app boot
     }

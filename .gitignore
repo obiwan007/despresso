@@ -19,6 +19,7 @@ keys/
 **/report.xml
 **/node_modules
 .angular
+logs_*
 
 # Android Studio will place build artifacts here
 android/app/debug

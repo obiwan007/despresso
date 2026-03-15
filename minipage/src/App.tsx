@@ -32,9 +32,9 @@ let uri = window.location.origin;
 console.log("Origin", uri);
 
 // Only for debugging
-if (uri.startsWith("http://localhost:300")) {
-    uri = "http://192.168.178.98:8888";
-}
+// if (uri.startsWith("http://localhost:4200")) {
+//     uri = "http://192.168.178.98:8888";
+// }
 
 const darkTheme = createTheme({
     palette: {

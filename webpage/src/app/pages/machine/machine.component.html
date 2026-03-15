@@ -31,7 +31,7 @@
   <app-water-gauge
     [level]="machineService.waterLevel()?.currentLevel ?? 0"
     [limit]="machineService.waterLevel()?.refillLevel"
-    [max]="100"
+    [max]="2000"
     [height]="150"
     aria-label="Water level"
   ></app-water-gauge>

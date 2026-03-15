@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/services/ble/scale_service.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -24,11 +25,14 @@ class WebService extends ChangeNotifier {
 
   late SettingsService settingsService;
   late EspressoMachineService machineService;
+  late ScaleService scaleService;
 
   StreamSubscription<EspressoMachineFullState>? streamStateSubscription;
   StreamSubscription<int>? streamBatterySubscription;
   StreamSubscription<ShotState>? streamShotSubscription;
   StreamSubscription<WaterLevel>? streamWaterSubscription;
+  StreamSubscription<WeightMeassurement>? streamScaleSubscription;
+  StreamSubscription<BatteryLevel>? streamScaleBatterySubscription;
 
   HttpServer? server;
 
@@ -36,16 +40,20 @@ class WebService extends ChangeNotifier {
   bool isStarting = false;
 
   final Set<WebSocketChannel> _machineStateSockets = {};
+  final Set<WebSocketChannel> _scaleSnapshotSockets = {};
+  final Set<WebSocketChannel> _waterLevelSockets = {};
   ShotState? _lastShotState;
+  double _lastScaleWeight = 0.0;
+  int _lastScaleBattery = 0;
+  int _lastWaterLevel = 0;
+  int _lastRefillLevel = 0;
 
-  final Map<String, String> header = {
-    "content-type": 'application/json',
-    "Access-Control-Allow-Origin": "*",
-  };
+  final Map<String, String> header = {"content-type": 'application/json', "Access-Control-Allow-Origin": "*"};
 
   WebService() {
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
+    scaleService = getIt<ScaleService>();
 
     settingsService.addListener(() async {
       if (settingsService.webServer && isRunning == false) {
@@ -104,7 +112,7 @@ class WebService extends ChangeNotifier {
     });
 
     router.get(
-      '/ws/v1/machine/state',
+      '/ws/v1/machine/snapshot',
       webSocketHandler((WebSocketChannel socket, _) {
         _machineStateSockets.add(socket);
         _sendMachineState(socket, _lastShotState);
@@ -120,11 +128,45 @@ class WebService extends ChangeNotifier {
       }),
     );
 
+    router.get(
+      '/ws/v1/scale/snapshot',
+      webSocketHandler((WebSocketChannel socket, _) {
+        _scaleSnapshotSockets.add(socket);
+        _sendScaleSnapshot(socket);
+        socket.stream.listen(
+          (_) {},
+          onDone: () {
+            _scaleSnapshotSockets.remove(socket);
+          },
+          onError: (_) {
+            _scaleSnapshotSockets.remove(socket);
+          },
+        );
+      }),
+    );
+
+    router.get(
+      '/ws/v1/machine/waterLevels',
+      webSocketHandler((WebSocketChannel socket, _) {
+        _waterLevelSockets.add(socket);
+        _sendWaterLevelSnapshot(socket);
+        socket.stream.listen(
+          (_) {},
+          onDone: () {
+            _waterLevelSockets.remove(socket);
+          },
+          onError: (_) {
+            _waterLevelSockets.remove(socket);
+          },
+        );
+      }),
+    );
+
     try {
       server = await shelf_io.serve(
         logRequests()
-            // See https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
-            .addHandler(cascade.handler),
+        // See https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
+        .addHandler(cascade.handler),
         InternetAddress.anyIPv4,
         8888,
       );
@@ -137,12 +179,27 @@ class WebService extends ChangeNotifier {
 
       await streamShotSubscription?.cancel();
       await streamStateSubscription?.cancel();
+      await streamScaleSubscription?.cancel();
+      await streamScaleBatterySubscription?.cancel();
       streamShotSubscription = machineService.streamShotState.listen((shotState) {
         _lastShotState = shotState;
         _broadcastMachineState(shotState);
       });
       streamStateSubscription = machineService.streamState.listen((_) {
         _broadcastMachineState(_lastShotState);
+      });
+      streamScaleSubscription = scaleService.stream0.listen((measurement) {
+        _lastScaleWeight = measurement.weight;
+        _broadcastScaleSnapshot();
+      });
+      streamScaleBatterySubscription = scaleService.streamBattery0.listen((battery) {
+        _lastScaleBattery = battery.level;
+        _broadcastScaleSnapshot();
+      });
+      streamWaterSubscription = machineService.streamWaterLevel.listen((water) {
+        _lastWaterLevel = water.getLevelML();
+        _lastRefillLevel = water.getLevelRefill();
+        _broadcastWaterLevelSnapshot();
       });
     } catch (e) {
       log.severe('webserving error $e');
@@ -177,10 +234,20 @@ class WebService extends ChangeNotifier {
       await streamStateSubscription?.cancel();
       await streamBatterySubscription?.cancel();
       await streamWaterSubscription?.cancel();
+      await streamScaleSubscription?.cancel();
+      await streamScaleBatterySubscription?.cancel();
       for (final socket in _machineStateSockets.toList()) {
         await socket.sink.close();
       }
       _machineStateSockets.clear();
+      for (final socket in _scaleSnapshotSockets.toList()) {
+        await socket.sink.close();
+      }
+      _scaleSnapshotSockets.clear();
+      for (final socket in _waterLevelSockets.toList()) {
+        await socket.sink.close();
+      }
+      _waterLevelSockets.clear();
       await server!.close(force: true);
       isRunning = false;
       log.info('server stopped');
@@ -205,6 +272,42 @@ class WebService extends ChangeNotifier {
     }
   }
 
+  void _broadcastScaleSnapshot() {
+    if (_scaleSnapshotSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _scaleSnapshotSockets.toList()) {
+      _sendScaleSnapshot(socket);
+    }
+  }
+
+  void _sendScaleSnapshot(WebSocketChannel socket) {
+    try {
+      socket.sink.add(jsonEncode(_buildScaleSnapshotPayload()));
+    } catch (e) {
+      _scaleSnapshotSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  void _broadcastWaterLevelSnapshot() {
+    if (_waterLevelSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _waterLevelSockets.toList()) {
+      _sendWaterLevelSnapshot(socket);
+    }
+  }
+
+  void _sendWaterLevelSnapshot(WebSocketChannel socket) {
+    try {
+      socket.sink.add(jsonEncode(_buildWaterLevelSnapshotPayload()));
+    } catch (e) {
+      _waterLevelSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
   Map<String, dynamic> _buildMachineStatePayload(ShotState? shotState) {
     final state = machineService.currentFullState;
     return {
@@ -223,6 +326,14 @@ class WebService extends ChangeNotifier {
     };
   }
 
+  Map<String, dynamic> _buildScaleSnapshotPayload() {
+    return {'timestamp': DateTime.now().toUtc().toIso8601String(), 'weight': _lastScaleWeight, 'batteryLevel': _lastScaleBattery};
+  }
+
+  Map<String, dynamic> _buildWaterLevelSnapshotPayload() {
+    return {'currentLevel': _lastWaterLevel, 'refillLevel': _lastRefillLevel};
+  }
+
   Future<void> prepareWebsite() async {
     String webPath = await getWebPath();
     var dir = Directory(webPath);
@@ -231,7 +342,7 @@ class WebService extends ChangeNotifier {
     // This will give a list of all files inside the `assets`.
 
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-    final get = manifest.listAssets().where((path) => path.startsWith("assets/website")).toList();    
+    final get = manifest.listAssets().where((path) => path.startsWith("assets/website")).toList();
     log.info("Found web content: $get");
 
     for (String element in get) {

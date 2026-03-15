@@ -174,7 +174,7 @@ export class MachineService {
   start(): void {
     this.apiService.test();
     this.apiService.getDevices();
-    this.apiService.initWebserviceLogs();
+    // this.apiService.initWebserviceLogs();
     this.apiService.initWebserviceMachine();
     this.apiService.initWebserviceScale();
     this.apiService.initWebserviceWaterlevel();
