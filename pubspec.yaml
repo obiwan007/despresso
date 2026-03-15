@@ -74,7 +74,7 @@ dependencies:
       url: https://github.com/Shajk0/document_file_save_plus.git
       ref: master 
   sentry_flutter: ^9.14.0
-  feedback_sentry: ^3.0.0
+  feedback_sentry: ^3.2.0
   package_info_plus: ^9.0.0
   intl: ^0.20.2
   csv: ^7.1.0
@@ -84,7 +84,7 @@ dependencies:
   shelf_router: ^1.1.4
   network_info_plus: ^7.0.0
   screen_brightness: ^2.1.4
-  flutter_archive: ^6.0.0
+  flutter_archive: ^6.0.4
   sentry_logging: ^9.14.0
   flutter_localizations:
     sdk: flutter
@@ -96,7 +96,7 @@ dependencies:
     git:
       url: https://github.com/mchome/flutter_colorpicker
       ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba
-  flutter_appauth: ^11.0.0
+  flutter_appauth: ^12.0.0
   flutter_whatsnew: ^1.1.0+1
 
 dev_dependencies:
