@@ -139,12 +139,28 @@ class WebService extends ChangeNotifier {
       return getCoffees(request);
     });
 
+    router.post('/api/v1/coffee', (Request request) {
+      return createCoffee(request);
+    });
+
+    router.put('/api/v1/coffee', (Request request) {
+      return updateCoffee(request);
+    });
+
     router.delete('/api/v1/coffee', (Request request) {
       return deleteCoffees(request);
     });
 
     router.get('/api/v1/roaster', (Request request) {
       return getRoasters(request);
+    });
+
+    router.post('/api/v1/roaster', (Request request) {
+      return createRoaster(request);
+    });
+
+    router.put('/api/v1/roaster', (Request request) {
+      return updateRoaster(request);
     });
 
     router.delete('/api/v1/roaster', (Request request) {
@@ -157,6 +173,14 @@ class WebService extends ChangeNotifier {
 
     router.get('/api/v1/recipe', (Request request) {
       return getRecipes(request);
+    });
+
+    router.post('/api/v1/recipe', (Request request) {
+      return createRecipe(request);
+    });
+
+    router.put('/api/v1/recipe', (Request request) {
+      return updateRecipe(request);
     });
 
     router.delete('/api/v1/recipe', (Request request) {
@@ -477,6 +501,243 @@ class WebService extends ChangeNotifier {
     return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
   }
 
+  Future<Response> createRoaster(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final roaster = Roaster()
+      ..name = _readString(payload['name'], fallback: '')
+      ..imageURL = _readString(payload['imageURL'], fallback: '')
+      ..description = _readString(payload['description'], fallback: '')
+      ..address = _readString(payload['address'], fallback: '')
+      ..homepage = _readString(payload['homepage'], fallback: '');
+
+    final id = coffeeService.roasterBox.put(roaster);
+    roaster.id = id;
+    return Response.ok(jsonEncode(_roasterToApi(roaster)), headers: header);
+  }
+
+  Future<Response> createCoffee(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final coffee = Coffee()
+      ..name = _readString(payload['name'], fallback: '')
+      ..description = _readString(payload['description'], fallback: '')
+      ..type = _readString(payload['type'], fallback: '')
+      ..taste = _readString(payload['taste'], fallback: '')
+      ..imageURL = _readString(payload['imageURL'], fallback: '')
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: 0.0)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: 0.0)
+      ..acidRating = _readDouble(payload['acidRating'], fallback: 0.0)
+      ..intensityRating = _readDouble(payload['intensityRating'], fallback: 0.0)
+      ..roastLevel = _readDouble(payload['roastLevel'], fallback: 0.0)
+      ..elevation = _readInt(payload['elevation'], fallback: 0)
+      ..price = _readString(payload['price'], fallback: '')
+      ..origin = _readString(payload['origin'], fallback: '')
+      ..region = _readString(payload['region'], fallback: '')
+      ..farm = _readString(payload['farm'], fallback: '')
+      ..process = _readString(payload['process'], fallback: '')
+      ..isShot = _readBool(payload['isShot'], fallback: false);
+
+    final roastDate = _readDate(payload['roastDate']);
+    if (roastDate != null) {
+      coffee.roastDate = roastDate;
+    }
+
+    final cropYear = _readDate(payload['cropyear']);
+    if (cropYear != null) {
+      coffee.cropyear = cropYear;
+    }
+
+    final roasterId = _readInt(payload['roasterId'], fallback: 0);
+    if (roasterId > 0) {
+      coffee.roaster.targetId = roasterId;
+    }
+
+    final id = coffeeService.coffeeBox.put(coffee);
+    coffee.id = id;
+    return Response.ok(jsonEncode(_coffeeToApi(coffee)), headers: header);
+  }
+
+  Future<Response> createRecipe(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final recipe = Recipe()
+      ..name = _readString(payload['name'], fallback: '')
+      ..description = _readString(payload['description'], fallback: '')
+      ..profileId = _readString(payload['profileId'], fallback: '')
+      ..adjustedWeight = _readDouble(payload['adjustedWeight'], fallback: 0.0)
+      ..adjustedPressure = _readDouble(payload['adjustedPressure'], fallback: 0.0)
+      ..adjustedTemp = _readDouble(payload['adjustedTemp'], fallback: 0.0)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: 36.0)
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: 0.0)
+      ..grinderModel = _readString(payload['grinderModel'], fallback: '')
+      ..ratio1 = _readDouble(payload['ratio1'], fallback: 1.0)
+      ..ratio2 = _readDouble(payload['ratio2'], fallback: 2.0)
+      ..isDeleted = _readBool(payload['isDeleted'], fallback: false)
+      ..isFavorite = _readBool(payload['isFavorite'], fallback: false)
+      ..isShot = _readBool(payload['isShot'], fallback: false)
+      ..weightWater = _readDouble(payload['weightWater'], fallback: 0.0)
+      ..useWater = _readBool(payload['useWater'], fallback: true)
+      ..disableStopOnWeight = _readBool(payload['disableStopOnWeight'], fallback: false)
+      ..tempWater = _readDouble(payload['tempWater'], fallback: 85.0)
+      ..timeWater = _readDouble(payload['timeWater'], fallback: 10.0)
+      ..tempSteam = _readDouble(payload['tempSteam'], fallback: 160.0)
+      ..flowSteam = _readDouble(payload['flowSteam'], fallback: 0.0)
+      ..timeSteam = _readDouble(payload['timeSteam'], fallback: 25.0)
+      ..weightMilk = _readDouble(payload['weightMilk'], fallback: 100.0)
+      ..useSteam = _readBool(payload['useSteam'], fallback: false);
+
+    final coffeeId = _readInt(payload['coffeeId'], fallback: 0);
+    if (coffeeId > 0) {
+      recipe.coffee.targetId = coffeeId;
+    }
+
+    final id = coffeeService.recipeBox.put(recipe);
+    recipe.id = id;
+    return Response.ok(jsonEncode(_recipeToApi(recipe)), headers: header);
+  }
+
+  Future<Response> updateRoaster(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final id = _readInt(payload['id'], fallback: 0);
+    if (id <= 0) {
+      return Response(400, body: '{"error":"id is required"}', headers: header);
+    }
+
+    final existing = coffeeService.roasterBox.get(id);
+    if (existing == null) {
+      return Response(404, body: '{"error":"Roaster not found"}', headers: header);
+    }
+
+    existing
+      ..name = _readString(payload['name'], fallback: existing.name)
+      ..imageURL = _readString(payload['imageURL'], fallback: existing.imageURL)
+      ..description = _readString(payload['description'], fallback: existing.description)
+      ..address = _readString(payload['address'], fallback: existing.address)
+      ..homepage = _readString(payload['homepage'], fallback: existing.homepage);
+
+    coffeeService.roasterBox.put(existing);
+    return Response.ok(jsonEncode(_roasterToApi(existing)), headers: header);
+  }
+
+  Future<Response> updateCoffee(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final id = _readInt(payload['id'], fallback: 0);
+    if (id <= 0) {
+      return Response(400, body: '{"error":"id is required"}', headers: header);
+    }
+
+    final existing = coffeeService.coffeeBox.get(id);
+    if (existing == null) {
+      return Response(404, body: '{"error":"Coffee not found"}', headers: header);
+    }
+
+    existing
+      ..name = _readString(payload['name'], fallback: existing.name)
+      ..description = _readString(payload['description'], fallback: existing.description)
+      ..type = _readString(payload['type'], fallback: existing.type)
+      ..taste = _readString(payload['taste'], fallback: existing.taste)
+      ..imageURL = _readString(payload['imageURL'], fallback: existing.imageURL)
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: existing.grinderSettings)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: existing.grinderDoseWeight)
+      ..acidRating = _readDouble(payload['acidRating'], fallback: existing.acidRating)
+      ..intensityRating = _readDouble(payload['intensityRating'], fallback: existing.intensityRating)
+      ..roastLevel = _readDouble(payload['roastLevel'], fallback: existing.roastLevel)
+      ..elevation = _readInt(payload['elevation'], fallback: existing.elevation)
+      ..price = _readString(payload['price'], fallback: existing.price)
+      ..origin = _readString(payload['origin'], fallback: existing.origin)
+      ..region = _readString(payload['region'], fallback: existing.region)
+      ..farm = _readString(payload['farm'], fallback: existing.farm)
+      ..process = _readString(payload['process'], fallback: existing.process)
+      ..isShot = _readBool(payload['isShot'], fallback: existing.isShot);
+
+    final roastDate = _readDate(payload['roastDate']);
+    if (roastDate != null) {
+      existing.roastDate = roastDate;
+    }
+
+    final cropYear = _readDate(payload['cropyear']);
+    if (cropYear != null) {
+      existing.cropyear = cropYear;
+    }
+
+    final roasterId = _readInt(payload['roasterId'], fallback: existing.roaster.targetId);
+    if (roasterId > 0) {
+      existing.roaster.targetId = roasterId;
+    }
+
+    coffeeService.coffeeBox.put(existing);
+    return Response.ok(jsonEncode(_coffeeToApi(existing)), headers: header);
+  }
+
+  Future<Response> updateRecipe(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final id = _readInt(payload['id'], fallback: 0);
+    if (id <= 0) {
+      return Response(400, body: '{"error":"id is required"}', headers: header);
+    }
+
+    final existing = coffeeService.recipeBox.get(id);
+    if (existing == null) {
+      return Response(404, body: '{"error":"Recipe not found"}', headers: header);
+    }
+
+    existing
+      ..name = _readString(payload['name'], fallback: existing.name)
+      ..description = _readString(payload['description'], fallback: existing.description)
+      ..profileId = _readString(payload['profileId'], fallback: existing.profileId)
+      ..adjustedWeight = _readDouble(payload['adjustedWeight'], fallback: existing.adjustedWeight)
+      ..adjustedPressure = _readDouble(payload['adjustedPressure'], fallback: existing.adjustedPressure)
+      ..adjustedTemp = _readDouble(payload['adjustedTemp'], fallback: existing.adjustedTemp)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: existing.grinderDoseWeight)
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: existing.grinderSettings)
+      ..grinderModel = _readString(payload['grinderModel'], fallback: existing.grinderModel)
+      ..ratio1 = _readDouble(payload['ratio1'], fallback: existing.ratio1)
+      ..ratio2 = _readDouble(payload['ratio2'], fallback: existing.ratio2)
+      ..isDeleted = _readBool(payload['isDeleted'], fallback: existing.isDeleted)
+      ..isFavorite = _readBool(payload['isFavorite'], fallback: existing.isFavorite)
+      ..isShot = _readBool(payload['isShot'], fallback: existing.isShot)
+      ..weightWater = _readDouble(payload['weightWater'], fallback: existing.weightWater)
+      ..useWater = _readBool(payload['useWater'], fallback: existing.useWater)
+      ..disableStopOnWeight = _readBool(payload['disableStopOnWeight'], fallback: existing.disableStopOnWeight)
+      ..tempWater = _readDouble(payload['tempWater'], fallback: existing.tempWater)
+      ..timeWater = _readDouble(payload['timeWater'], fallback: existing.timeWater)
+      ..tempSteam = _readDouble(payload['tempSteam'], fallback: existing.tempSteam)
+      ..flowSteam = _readDouble(payload['flowSteam'], fallback: existing.flowSteam)
+      ..timeSteam = _readDouble(payload['timeSteam'], fallback: existing.timeSteam)
+      ..weightMilk = _readDouble(payload['weightMilk'], fallback: existing.weightMilk)
+      ..useSteam = _readBool(payload['useSteam'], fallback: existing.useSteam);
+
+    final coffeeId = _readInt(payload['coffeeId'], fallback: existing.coffee.targetId);
+    if (coffeeId > 0) {
+      existing.coffee.targetId = coffeeId;
+    }
+
+    coffeeService.recipeBox.put(existing);
+    return Response.ok(jsonEncode(_recipeToApi(existing)), headers: header);
+  }
+
   Response getCoffeeIds() {
     final ids = coffeeService.coffeeBox.getAll().map((coffee) => coffee.id).toList();
     return Response.ok(jsonEncode(ids), headers: header);
@@ -540,6 +801,81 @@ class WebService extends ChangeNotifier {
       return [];
     }
     return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  Future<Map<String, dynamic>?> _readJsonBody(Request request) async {
+    try {
+      final data = await request.readAsString();
+      final decoded = jsonDecode(data);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
+  String _readString(dynamic value, {required String fallback}) {
+    if (value == null) {
+      return fallback;
+    }
+    return value.toString();
+  }
+
+  int _readInt(dynamic value, {required int fallback}) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value) ?? fallback;
+    }
+    return fallback;
+  }
+
+  double _readDouble(dynamic value, {required double fallback}) {
+    if (value is double) {
+      return value;
+    }
+    if (value is num) {
+      return value.toDouble();
+    }
+    if (value is String) {
+      return double.tryParse(value) ?? fallback;
+    }
+    return fallback;
+  }
+
+  bool _readBool(dynamic value, {required bool fallback}) {
+    if (value is bool) {
+      return value;
+    }
+    if (value is String) {
+      final normalized = value.toLowerCase();
+      if (normalized == 'true') {
+        return true;
+      }
+      if (normalized == 'false') {
+        return false;
+      }
+    }
+    return fallback;
+  }
+
+  DateTime? _readDate(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is DateTime) {
+      return value;
+    }
+    if (value is String && value.trim().isNotEmpty) {
+      return DateTime.tryParse(value);
+    }
+    return null;
   }
 
   Map<String, dynamic> _shotToApi(Shot shot) {

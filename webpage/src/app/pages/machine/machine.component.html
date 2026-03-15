@@ -15,9 +15,6 @@
 
   <!-- Vertical Water Gauge (width 10px) -->
 </div>
-<div>
-  <button mat-raised-button color="primary" (click)="machineService.startSim()">Start Sim</button>
-</div>
 @if (displayStatus() === 'espresso' || displayStatus() === 'water') {
   <div class="flex items-start gap-4 justify-center">
     <app-growing-circle

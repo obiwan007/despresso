@@ -439,6 +439,120 @@ export class ApiService {
             });
     }
 
+    createRecipe(recipe: RecipeEntity): Promise<RecipeEntity | null> {
+        const payload = { ...recipe } as Record<string, unknown>;
+        delete payload['__typename'];
+        return fetch(`${GATEWAY_URL}/api/v1/recipe`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then((data: RecipeEntity) => {
+                console.log('Create recipe:', data);
+                return data ?? null;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return null;
+            });
+    }
+
+    updateRecipe(recipe: RecipeEntity): Promise<RecipeEntity | null> {
+        const payload = { ...recipe } as Record<string, unknown>;
+        delete payload['__typename'];
+        return fetch(`${GATEWAY_URL}/api/v1/recipe`, {
+            method: 'PUT',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then((data: RecipeEntity) => {
+                console.log('Update recipe:', data);
+                return data ?? null;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return null;
+            });
+    }
+
+    createCoffee(coffee: Coffee): Promise<Coffee | null> {
+        const payload = { ...coffee } as Record<string, unknown>;
+        delete payload['__typename'];
+        return fetch(`${GATEWAY_URL}/api/v1/coffee`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then((data: Coffee) => {
+                console.log('Create coffee:', data);
+                return data ?? null;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return null;
+            });
+    }
+
+    updateCoffee(coffee: Coffee): Promise<Coffee | null> {
+        const payload = { ...coffee } as Record<string, unknown>;
+        delete payload['__typename'];
+        return fetch(`${GATEWAY_URL}/api/v1/coffee`, {
+            method: 'PUT',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then((data: Coffee) => {
+                console.log('Update coffee:', data);
+                return data ?? null;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return null;
+            });
+    }
+
+    createRoaster(roaster: Roaster): Promise<Roaster | null> {
+        const payload = { ...roaster } as Record<string, unknown>;
+        delete payload['__typename'];
+        return fetch(`${GATEWAY_URL}/api/v1/roaster`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then((data: Roaster) => {
+                console.log('Create roaster:', data);
+                return data ?? null;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return null;
+            });
+    }
+
+    updateRoaster(roaster: Roaster): Promise<Roaster | null> {
+        const payload = { ...roaster } as Record<string, unknown>;
+        delete payload['__typename'];
+        return fetch(`${GATEWAY_URL}/api/v1/roaster`, {
+            method: 'PUT',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+            .then(res => res.json())
+            .then((data: Roaster) => {
+                console.log('Update roaster:', data);
+                return data ?? null;
+            })
+            .catch(err => {
+                console.error('Connection failed:', err);
+                return null;
+            });
+    }
+
     deleteShots(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
         const params = new URLSearchParams({ids: ids.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/shot?${params.toString()}`, {method: 'DELETE'})
