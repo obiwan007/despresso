@@ -13,6 +13,7 @@ import {
     Roaster,
     Profile,
     RecipeEntity,
+    ShotState,
 } from '../models/state';
 
 const getGatewayUrl = () => {
@@ -58,7 +59,8 @@ export class ApiService {
 
     readonly scaleConnected = signal<boolean>(false);
     readonly de1Connected = signal<boolean>(false);
-
+    sampleCounter: number = 0;
+    startSampleTime: number = 0;
     /**
      *
      */
@@ -127,6 +129,7 @@ export class ApiService {
       ws.onmessage = (event) => {
           const snapshot = JSON.parse(event.data);
           this.snapshot.set(new SnapShot(snapshot));
+
       // console.log('Received snapshot:', this.snapshot());
     };
 
@@ -212,26 +215,26 @@ export class ApiService {
     async initWebserviceSettings() {
         const ws = new WebSocket(`${WS_URL}/ws/v1/settings`);
 
-        ws.onopen = () => {
-            console.log('Connected to settings stream');
-        };
+      ws.onopen = () => {
+          console.log('Connected to settings stream');
+      };
 
-        ws.onmessage = (event) => {
-            const payload = JSON.parse(event.data);
-            const settings = payload?.settings ?? payload;
-            this.settings.set(settings as Settings);
-            console.log('Received settings update:', settings);
-        };
+      ws.onmessage = (event) => {
+          const payload = JSON.parse(event.data);
+          const settings = payload?.settings ?? payload;
+          this.settings.set(settings as Settings);
+          console.log('Received settings update:', settings);
+      };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
+      ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+      };
 
-        ws.onclose = () => {
-            console.log('WebSocket Settings closed, attempting reconnect...');
-            setTimeout(() => this.initWebserviceSettings(), 1000);
-        };
-    }
+      ws.onclose = () => {
+          console.log('WebSocket Settings closed, attempting reconnect...');
+          setTimeout(() => this.initWebserviceSettings(), 1000);
+      };
+  }
 
     getDevices() {
     // Test connection
@@ -321,22 +324,22 @@ export class ApiService {
     updateSettings(updates: Partial<Settings>) {
         return fetch(`${GATEWAY_URL}/api/vi/settings`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(updates ?? {}),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.settings) {
-                    this.settings.set(data.settings as Settings);
-                }
-                console.log('Settings updated:', data);
-                return data;
-            })
-            .catch((err) => {
-                console.error('Connection failed:', err);
-                throw err;
-            });
-    }
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(updates ?? {}),
+    })
+          .then((res) => res.json())
+          .then((data) => {
+              if (data?.settings) {
+                  this.settings.set(data.settings as Settings);
+              }
+              console.log('Settings updated:', data);
+              return data;
+          })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              throw err;
+          });
+  }
 
     getAllShotIds(): Promise<string[]> {
         return fetch(`${GATEWAY_URL}/api/v1/shots/ids`)

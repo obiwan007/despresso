@@ -56,7 +56,7 @@ export class BrewingTabComponent {
     const list = this.recipes();
     const id = this.selectedId();
     if (!list || !id) return null;
-    return list.find((p) => p.id === id) ?? null;
+    return list.find((p) => p.id.toString() === id.toString()) ?? null;
   });
 
   darkLayout = computed(() => ({
@@ -408,8 +408,8 @@ export class BrewingTabComponent {
       if (!s || !list || current) return;
       const id = s.selectedRecipe ?? null;
       if (!id) return;
-      if (list.some((r) => r.id === id)) {
-        this.selectedId.set(id);
+      if (list.some((r) => r.id.toString() === id.toString())) {
+        this.selectedId.set(id.toString());
       }
     });
 

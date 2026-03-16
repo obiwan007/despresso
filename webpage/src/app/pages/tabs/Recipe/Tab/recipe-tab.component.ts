@@ -45,7 +45,7 @@ export class RecipeTabComponent {
   private readonly profilesService = inject(ProfilesService);
   private readonly settingsService = inject(SettingsService);
 
-  recipes = computed(() => this.profilesService.recipes()?.filter(r => r.isShot === false));
+  recipes = computed(() => this.profilesService.recipes()?.filter((r) => r.isShot === false));
   roasters = this.profilesService.roasters;
   profiles = computed(
     () =>
@@ -54,7 +54,7 @@ export class RecipeTabComponent {
         ?.filter((p) => p.shotHeader.beverageType !== 'cleaning')
         .sort((a, b) => a.title.localeCompare(b.title)) ?? null,
   );
-  coffees = computed(() => this.profilesService.coffees()?.filter(c => c.isShot === false));
+  coffees = computed(() => this.profilesService.coffees()?.filter((c) => c.isShot === false));
 
   settings = this.settingsService.settings;
 
@@ -64,7 +64,7 @@ export class RecipeTabComponent {
     const list = this.recipes();
     const id = this.selectedId();
     if (!list || !id) return null;
-    return list.find((p) => p.id === id) ?? null;
+    return list.find((p) => p.id.toString() === id.toString()) ?? null;
   });
 
   private readonly dialog = inject(MatDialog);
@@ -198,8 +198,8 @@ export class RecipeTabComponent {
     if (!s || !list || current) return;
     const id = s.selectedRecipe ?? null;
     if (!id) return;
-    if (list.some((r) => r.id === id)) {
-      this.selectedId.set(id);
+    if (list.some((r) => r.id.toString() === id.toString())) {
+      this.selectedId.set(id.toString());
     }
   });
 
@@ -236,12 +236,12 @@ export class RecipeTabComponent {
     }
   }
 
-  async onDeleteCoffee() {    
+  async onDeleteCoffee() {
     await this.profilesService.deleteCoffee(this.selectedCoffee() as Coffee);
     const list = this.coffees();
     if (list && list?.length > 0) {
       this.onCoffeeChange(list[0].id);
-    }    
+    }
   }
 
   async onEditRecipe() {
@@ -280,9 +280,9 @@ export class RecipeTabComponent {
   async onDeleteRecipe() {
     const id = this.selectedRecipe()?.id ?? 0;
     await this.profilesService.deleteRecipe(this.selectedRecipe() as RecipeEntity);
-    const list = this.recipes()
+    const list = this.recipes();
     if (list && list?.length > 0) {
       this.selectRecipe(list[0].id);
-    }    
+    }
   }
 }

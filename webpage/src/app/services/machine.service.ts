@@ -170,13 +170,53 @@ export class MachineService {
   interpolCounter = 0;
 
   intHz = 16;
+  _isInShot: boolean = false;
 
   constructor() {
-    this.start();
+    effect(() => {
+      const s = this._machineState();
+      if (!s) return;
+      const state =
+        s.state === EspressoMachineState.Espresso ||
+        s.state === EspressoMachineState.Water ||
+        s.state === EspressoMachineState.Steam;
+      // console.log('isInShot:', state);
 
-    // effect(() => {
-    //   console.log('Water level:', this.waterLevel());
-    // });
+      this._isInShot = state;
+    });
+
+    effect(() => {
+      if (this._shotState()) {
+        // console.log("ShotState update", data);
+        const ret = this._shotState();
+        //console.log(ret.id)
+        this.sampleCounter++;
+        if (this.sampleCounter % 10 === 0) {
+          const now = Date.now();
+          const elapsed = now - this.startSampleTime;
+          const rate = this.sampleCounter / (elapsed / 1000);
+          // console.log(`Shot sample rate: ${rate.toFixed(2)} samples/sec`);
+          this.startSampleTime = now;
+          this.sampleCounter = 0;
+        }
+        if (this._isInShot) {
+          this.shotSamples.update((shots) => {
+            const lastShot = shots.length > 0 ? shots[shots.length - 1].pourTime : 0;
+            if (ret.pourTime < lastShot) {
+              const diff = lastShot - ret.pourTime;
+              // console.log('Resetting shot samples with time correction', diff);
+              shots.forEach((s) => (s.pourTime -= diff));
+            }
+            this.interpolationTimer(ret.pourTime - 0.25);
+            return [...shots, ret];
+          });
+        } else {
+          this.shotSamples.set([]);
+        }
+      }
+    });
+
+    this.start();
   }
 
   /** Start all subscriptions */
