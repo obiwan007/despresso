@@ -187,6 +187,7 @@ export class MachineService {
     this.apiService.initWebserviceMachine();
     this.apiService.initWebserviceScale();
     this.apiService.initWebserviceWaterlevel();
+    this.apiService.initWebserviceSettings();
 
     // this.startMachineState();
     // this.startShotState();

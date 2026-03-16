@@ -139,10 +139,14 @@ class SettingsService extends ChangeNotifier {
   set shotStopOnWeight(bool value) => Settings.setValue<bool>(SettingKeys.shotStopOnWeight.name, value);
 
   bool get shotAutoTare => Settings.getValue(SettingKeys.shotAutoTare.name) ?? true;
+  set shotAutoTare(bool value) => Settings.setValue<bool>(SettingKeys.shotAutoTare.name, value);
 
   bool get visualizerUpload => Settings.getValue(SettingKeys.visualizerUpload.name) ?? false;
+  set visualizerUpload(bool value) => Settings.setValue<bool>(SettingKeys.visualizerUpload.name, value);
   String get visualizerUser => Settings.getValue(SettingKeys.visualizerUser.name) ?? "";
+  set visualizerUser(String value) => Settings.setValue<String>(SettingKeys.visualizerUser.name, value);
   String get visualizerPwd => Settings.getValue(SettingKeys.visualizerPwd.name) ?? "";
+  set visualizerPwd(String value) => Settings.setValue<String>(SettingKeys.visualizerPwd.name, value);
 
   String get visualizerAccessToken => Settings.getValue(SettingKeys.visualizerAccessToken.name) ?? "";
   set visualizerAccessToken(String value) => Settings.setValue<String>(SettingKeys.visualizerAccessToken.name, value);
@@ -154,35 +158,61 @@ class SettingsService extends ChangeNotifier {
   set visualizerExpiring(String value) => Settings.setValue<String>(SettingKeys.visualizerExpiring.name, value);
 
   bool get visualizerExtendedUpload => Settings.getValue(SettingKeys.visualizerExtendedUpload.name) ?? false;
+  set visualizerExtendedUpload(bool value) => Settings.setValue<bool>(SettingKeys.visualizerExtendedUpload.name, value);
   String get visualizerExtendedUser => Settings.getValue(SettingKeys.visualizerExtendedUser.name) ?? "";
+  set visualizerExtendedUser(String value) => Settings.setValue<String>(SettingKeys.visualizerExtendedUser.name, value);
   String get visualizerExtendedPwd => Settings.getValue(SettingKeys.visualizerExtendedPwd.name) ?? "";
+  set visualizerExtendedPwd(String value) => Settings.setValue<String>(SettingKeys.visualizerExtendedPwd.name, value);
   String get visualizerExtendedUrl => Settings.getValue(SettingKeys.visualizerExtendedUrl.name) ?? "";
+  set visualizerExtendedUrl(String value) => Settings.setValue<String>(SettingKeys.visualizerExtendedUrl.name, value);
 
   double get sleepTimer => Settings.getValue<double>(SettingKeys.sleepTimer.name) ?? 15;
+  set sleepTimer(double value) => Settings.setValue<double>(SettingKeys.sleepTimer.name, value);
   bool get tabletSleepDuringScreensaver =>
       Settings.getValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name) ?? false;
+  set tabletSleepDuringScreensaver(bool value) =>
+      Settings.setValue<bool>(SettingKeys.tabletSleepDuringScreensaver.name, value);
   double get tabletSleepDuringScreensaverTimeout =>
       Settings.getValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name) ?? 60;
+  set tabletSleepDuringScreensaverTimeout(double value) =>
+      Settings.setValue<double>(SettingKeys.tabletSleepDuringScreensaverTimeout.name, value);
   bool get tabletSleepWhenMachineOff => Settings.getValue<bool>(SettingKeys.tabletSleepWhenMachineOff.name) ?? false;
+  set tabletSleepWhenMachineOff(bool value) =>
+      Settings.setValue<bool>(SettingKeys.tabletSleepWhenMachineOff.name, value);
 
   bool get mqttEnabled => Settings.getValue<bool>(SettingKeys.mqttEnabled.name) ?? false;
+  set mqttEnabled(bool value) => Settings.setValue<bool>(SettingKeys.mqttEnabled.name, value);
   String get mqttServer => Settings.getValue<String>(SettingKeys.mqttServer.name) ?? "192.168.178.79";
+  set mqttServer(String value) => Settings.setValue<String>(SettingKeys.mqttServer.name, value);
   String get mqttPort => Settings.getValue<String>(SettingKeys.mqttPort.name) ?? "1883";
+  set mqttPort(String value) => Settings.setValue<String>(SettingKeys.mqttPort.name, value);
   String get mqttUser => Settings.getValue<String>(SettingKeys.mqttUser.name) ?? "";
+  set mqttUser(String value) => Settings.setValue<String>(SettingKeys.mqttUser.name, value);
   String get mqttPassword => Settings.getValue<String>(SettingKeys.mqttPassword.name) ?? "";
+  set mqttPassword(String value) => Settings.setValue<String>(SettingKeys.mqttPassword.name, value);
   String get mqttRootTopic => Settings.getValue<String>(SettingKeys.mqttRootTopic.name) ?? "0";
+  set mqttRootTopic(String value) => Settings.setValue<String>(SettingKeys.mqttRootTopic.name, value);
   bool get mqttSendState => Settings.getValue<bool>(SettingKeys.mqttSendState.name) ?? false;
+  set mqttSendState(bool value) => Settings.setValue<bool>(SettingKeys.mqttSendState.name, value);
   bool get mqttSendShot => Settings.getValue<bool>(SettingKeys.mqttSendShot.name) ?? false;
+  set mqttSendShot(bool value) => Settings.setValue<bool>(SettingKeys.mqttSendShot.name, value);
   bool get mqttSendBattery => Settings.getValue<bool>(SettingKeys.mqttSendBattery.name) ?? false;
+  set mqttSendBattery(bool value) => Settings.setValue<bool>(SettingKeys.mqttSendBattery.name, value);
   bool get mqttSendWater => Settings.getValue<bool>(SettingKeys.mqttSendWater.name) ?? false;
+  set mqttSendWater(bool value) => Settings.setValue<bool>(SettingKeys.mqttSendWater.name, value);
 
   bool get smartCharging => Settings.getValue<bool>(SettingKeys.smartCharging.name) ?? true;
+  set smartCharging(bool value) => Settings.setValue<bool>(SettingKeys.smartCharging.name, value);
 
   bool get hasSteamThermometer => Settings.getValue<bool>(SettingKeys.hasSteamThermometer.name) ?? false;
+  set hasSteamThermometer(bool value) => Settings.setValue<bool>(SettingKeys.hasSteamThermometer.name, value);
   bool get hasRefractometer => Settings.getValue<bool>(SettingKeys.hasRefractometer.name) ?? false;
+  set hasRefractometer(bool value) => Settings.setValue<bool>(SettingKeys.hasRefractometer.name, value);
   bool get hasScale => Settings.getValue<bool>(SettingKeys.hasScale.name) ?? true;
+  set hasScale(bool value) => Settings.setValue<bool>(SettingKeys.hasScale.name, value);
 
   bool get useSentry => Settings.getValue<bool>(SettingKeys.useSentry.name) ?? true;
+  set useSentry(bool value) => Settings.setValue<bool>(SettingKeys.useSentry.name, value);
 
   String get currentProfile => Settings.getValue<String>(SettingKeys.currentProfile.name) ?? "Default";
   set currentProfile(String value) => Settings.setValue<String>(SettingKeys.currentProfile.name, value);
@@ -389,6 +419,107 @@ class SettingsService extends ChangeNotifier {
 
   bool get alwaysAllowSkipping => Settings.getValue<bool>(SettingKeys.alwaysAllowSkipping.name) ?? true;
   set alwaysAllowSkipping(bool value) => Settings.setValue<bool>(SettingKeys.alwaysAllowSkipping.name, value);
+
+  Map<String, dynamic> toSettingsSnapshot() {
+    return {
+      'shotStopOnWeight': shotStopOnWeight,
+      'shotAutoTare': shotAutoTare,
+      'visualizerUpload': visualizerUpload,
+      'visualizerUser': visualizerUser,
+      'visualizerPwd': visualizerPwd,
+      'visualizerAccessToken': visualizerAccessToken,
+      'visualizerRefreshToken': visualizerRefreshToken,
+      'visualizerExpiring': visualizerExpiring,
+      'visualizerExtendedUpload': visualizerExtendedUpload,
+      'visualizerExtendedUser': visualizerExtendedUser,
+      'visualizerExtendedPwd': visualizerExtendedPwd,
+      'visualizerExtendedUrl': visualizerExtendedUrl,
+      'sleepTimer': sleepTimer,
+      'tabletSleepDuringScreensaver': tabletSleepDuringScreensaver,
+      'tabletSleepDuringScreensaverTimeout': tabletSleepDuringScreensaverTimeout,
+      'tabletSleepWhenMachineOff': tabletSleepWhenMachineOff,
+      'mqttEnabled': mqttEnabled,
+      'mqttServer': mqttServer,
+      'mqttPort': mqttPort,
+      'mqttUser': mqttUser,
+      'mqttPassword': mqttPassword,
+      'mqttRootTopic': mqttRootTopic,
+      'mqttSendState': mqttSendState,
+      'mqttSendShot': mqttSendShot,
+      'mqttSendBattery': mqttSendBattery,
+      'mqttSendWater': mqttSendWater,
+      'smartCharging': smartCharging,
+      'hasSteamThermometer': hasSteamThermometer,
+      'hasScale': hasScale,
+      'hasRefractometer': hasRefractometer,
+      'useSentry': useSentry,
+      'currentProfile': currentProfile,
+      'currentVersion': currentVersion,
+      'selectedRoaster': selectedRoaster,
+      'selectedCoffee': selectedCoffee,
+      'selectedRecipe': selectedRecipe,
+      'selectedShot': selectedShot,
+      'steamSettings': steamSettings,
+      'targetSteamTemp': targetSteamTemp,
+      'steamHeaterOff': steamHeaterOff,
+      'targetSteamLength': targetSteamLength,
+      'targetSteamFlow': targetSteamFlow,
+      'targetMilkTemperature': targetMilkTemperature,
+      'targetMilkTempPreset1': targetMilkTempPreset1,
+      'targetMilkTempPreset2': targetMilkTempPreset2,
+      'targetMilkTempPreset3': targetMilkTempPreset3,
+      'targetHotWaterTemp': targetHotWaterTemp,
+      'targetHotWaterVol': targetHotWaterVol,
+      'targetHotWaterWeight': targetHotWaterWeight,
+      'targetHotWaterLength': targetHotWaterLength,
+      'targetEspressoVol': targetEspressoVol,
+      'targetEspressoWeight': targetEspressoWeight,
+      'targetEspressoWeightTimeAdjust': targetEspressoWeightTimeAdjust,
+      'stepLimitWeightTimeAdjust': stepLimitWeightTimeAdjust,
+      'targetFlushTime': targetFlushTime,
+      'targetFlushTime2': targetFlushTime2,
+      'targetGroupTemp': targetGroupTemp,
+      'webServer': webServer,
+      'targetTempCorrection': targetTempCorrection,
+      'targetWaterlevel': targetWaterlevel,
+      'screenBrightnessTimer': screenBrightnessTimer,
+      'screenBrightnessValue': screenBrightnessValue,
+      'screenTapWake': screenTapWake,
+      'launchWake': launchWake,
+      'screenTimoutGoToRecipe': screenTimoutGoToRecipe,
+      'screenDarkTheme': screenDarkTheme,
+      'screenThemeMode': screenThemeMode,
+      'screenThemeIndex': screenThemeIndex,
+      'startCounter': startCounter,
+      'showFlushScreen': showFlushScreen,
+      'screensaverOnIfIdle': screensaverOnIfIdle,
+      'screensaverShowClock': screensaverShowClock,
+      'locale': locale,
+      'profileFilter': profileFilter,
+      'useSteam': useSteam,
+      'useWater': useWater,
+      'showPressureGraph': showPressureGraph,
+      'showFlowGraph': showFlowGraph,
+      'showWeightGraph': showWeightGraph,
+      'showTempGraph': showTempGraph,
+      'chUrl': chUrl,
+      'useCafeHub': useCafeHub,
+      'useLongUUID': useLongUUID,
+      'recordPrePouring': recordPrePouring,
+      'savePrePouring': savePrePouring,
+      'scaleStartTimer': scaleStartTimer,
+      'tareOnWakeUp': tareOnWakeUp,
+      'tareOnWeight1': tareOnWeight1,
+      'tareOnWeight2': tareOnWeight2,
+      'tareOnWeight3': tareOnWeight3,
+      'tareOnWeight4': tareOnWeight4,
+      'tareOnDetectedWeight': tareOnDetectedWeight,
+      'scaleDisplayOffOnSleep': scaleDisplayOffOnSleep,
+      'scalePrimary': scalePrimary,
+      'scaleSecondary': scaleSecondary,
+      'alwaysAllowSkipping': alwaysAllowSkipping,
+    };
+  }
 
   void notifyDelayed() {
     Future.delayed(

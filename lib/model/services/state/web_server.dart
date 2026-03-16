@@ -50,6 +50,7 @@ class WebService extends ChangeNotifier {
   final Set<WebSocketChannel> _machineStateSockets = {};
   final Set<WebSocketChannel> _scaleSnapshotSockets = {};
   final Set<WebSocketChannel> _waterLevelSockets = {};
+  final Set<WebSocketChannel> _settingsSockets = {};
   ShotState? _lastShotState;
   double _lastScaleWeight = 0.0;
   int _lastScaleBattery = 0;
@@ -72,6 +73,12 @@ class WebService extends ChangeNotifier {
 
       if (settingsService.webServer == false && isRunning == true) {
         await stopService();
+      }
+    });
+
+    settingsService.addListener(() {
+      if (isRunning) {
+        _broadcastSettingsSnapshot();
       }
     });
 
@@ -121,6 +128,10 @@ class WebService extends ChangeNotifier {
 
     router.put('/api/v1/scale/tare', (Request request) {
       return tareScale();
+    });
+
+    router.put('/api/vi/settings', (Request request) {
+      return updateSettings(request);
     });
 
     router.get('/api/v1/shots/ids', (Request request) {
@@ -260,6 +271,27 @@ class WebService extends ChangeNotifier {
       }),
     );
 
+    void settingsSocketHandler(WebSocketChannel socket) {
+      _settingsSockets.add(socket);
+      _sendSettingsSnapshot(socket);
+      socket.stream.listen(
+        (_) {},
+        onDone: () {
+          _settingsSockets.remove(socket);
+        },
+        onError: (_) {
+          _settingsSockets.remove(socket);
+        },
+      );
+    }
+
+    router.get(
+      '/ws/v1/settings',
+      webSocketHandler((WebSocketChannel socket, _) {
+        settingsSocketHandler(socket);
+      }),
+    );    
+
     try {
       server = await shelf_io.serve(
         logRequests()
@@ -346,6 +378,291 @@ class WebService extends ChangeNotifier {
   Future<Response> tareScale() async {
     await scaleService.tare();
     return Response.ok('{"status":"ok"}', headers: header);
+  }
+
+  Future<Response> updateSettings(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final updates = <String, dynamic>{};
+
+    void applyBool(String key, bool current, void Function(bool) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readBool(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    void applyInt(String key, int current, void Function(int) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readInt(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    void applyDouble(String key, double current, void Function(double) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readDouble(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    void applyString(String key, String current, void Function(String) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readString(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    applyBool(
+      'shotStopOnWeight',
+      settingsService.shotStopOnWeight,
+      (value) => settingsService.shotStopOnWeight = value,
+    );
+    applyBool('shotAutoTare', settingsService.shotAutoTare, (value) => settingsService.shotAutoTare = value);
+    applyBool(
+      'visualizerUpload',
+      settingsService.visualizerUpload,
+      (value) => settingsService.visualizerUpload = value,
+    );
+    applyString('visualizerUser', settingsService.visualizerUser, (value) => settingsService.visualizerUser = value);
+    applyString('visualizerPwd', settingsService.visualizerPwd, (value) => settingsService.visualizerPwd = value);
+    applyString(
+      'visualizerAccessToken',
+      settingsService.visualizerAccessToken,
+      (value) => settingsService.visualizerAccessToken = value,
+    );
+    applyString(
+      'visualizerRefreshToken',
+      settingsService.visualizerRefreshToken,
+      (value) => settingsService.visualizerRefreshToken = value,
+    );
+    applyString(
+      'visualizerExpiring',
+      settingsService.visualizerExpiring,
+      (value) => settingsService.visualizerExpiring = value,
+    );
+    applyDouble('sleepTimer', settingsService.sleepTimer, (value) => settingsService.sleepTimer = value);
+    applyBool(
+      'tabletSleepDuringScreensaver',
+      settingsService.tabletSleepDuringScreensaver,
+      (value) => settingsService.tabletSleepDuringScreensaver = value,
+    );
+    applyDouble(
+      'tabletSleepDuringScreensaverTimeout',
+      settingsService.tabletSleepDuringScreensaverTimeout,
+      (value) => settingsService.tabletSleepDuringScreensaverTimeout = value,
+    );
+    applyBool(
+      'tabletSleepWhenMachineOff',
+      settingsService.tabletSleepWhenMachineOff,
+      (value) => settingsService.tabletSleepWhenMachineOff = value,
+    );
+    applyBool('mqttEnabled', settingsService.mqttEnabled, (value) => settingsService.mqttEnabled = value);
+    applyString('mqttServer', settingsService.mqttServer, (value) => settingsService.mqttServer = value);
+    applyString('mqttPort', settingsService.mqttPort, (value) => settingsService.mqttPort = value);
+    applyString('mqttUser', settingsService.mqttUser, (value) => settingsService.mqttUser = value);
+    applyString('mqttPassword', settingsService.mqttPassword, (value) => settingsService.mqttPassword = value);
+    applyString('mqttRootTopic', settingsService.mqttRootTopic, (value) => settingsService.mqttRootTopic = value);
+    applyBool('mqttSendState', settingsService.mqttSendState, (value) => settingsService.mqttSendState = value);
+    applyBool('mqttSendShot', settingsService.mqttSendShot, (value) => settingsService.mqttSendShot = value);
+    applyBool('mqttSendBattery', settingsService.mqttSendBattery, (value) => settingsService.mqttSendBattery = value);
+    applyBool('mqttSendWater', settingsService.mqttSendWater, (value) => settingsService.mqttSendWater = value);
+    applyBool('smartCharging', settingsService.smartCharging, (value) => settingsService.smartCharging = value);
+    applyBool(
+      'hasSteamThermometer',
+      settingsService.hasSteamThermometer,
+      (value) => settingsService.hasSteamThermometer = value,
+    );
+    applyBool('hasScale', settingsService.hasScale, (value) => settingsService.hasScale = value);
+    applyBool(
+      'hasRefractometer',
+      settingsService.hasRefractometer,
+      (value) => settingsService.hasRefractometer = value,
+    );
+    applyBool('useSentry', settingsService.useSentry, (value) => settingsService.useSentry = value);
+    applyString('currentProfile', settingsService.currentProfile, (value) => settingsService.currentProfile = value);
+    applyString('currentVersion', settingsService.currentVersion, (value) => settingsService.currentVersion = value);
+    applyInt('selectedRoaster', settingsService.selectedRoaster, (value) => settingsService.selectedRoaster = value);
+    applyInt('selectedCoffee', settingsService.selectedCoffee, (value) => settingsService.selectedCoffee = value);
+    applyInt('selectedRecipe', settingsService.selectedRecipe, (value) => settingsService.selectedRecipe = value);
+    applyInt('selectedShot', settingsService.selectedShot, (value) => settingsService.selectedShot = value);
+    applyInt('steamSettings', settingsService.steamSettings, (value) => settingsService.steamSettings = value);
+    applyInt('targetSteamTemp', settingsService.targetSteamTemp, (value) => settingsService.targetSteamTemp = value);
+    applyBool('steamHeaterOff', settingsService.steamHeaterOff, (value) => settingsService.steamHeaterOff = value);
+    applyInt(
+      'targetSteamLength',
+      settingsService.targetSteamLength,
+      (value) => settingsService.targetSteamLength = value,
+    );
+    applyDouble('targetSteamFlow', settingsService.targetSteamFlow, (value) => settingsService.targetSteamFlow = value);
+    applyInt(
+      'targetMilkTemperature',
+      settingsService.targetMilkTemperature,
+      (value) => settingsService.targetMilkTemperature = value,
+    );
+    applyInt(
+      'targetMilkTempPreset1',
+      settingsService.targetMilkTempPreset1,
+      (value) => settingsService.targetMilkTempPreset1 = value,
+    );
+    applyInt(
+      'targetMilkTempPreset2',
+      settingsService.targetMilkTempPreset2,
+      (value) => settingsService.targetMilkTempPreset2 = value,
+    );
+    applyInt(
+      'targetMilkTempPreset3',
+      settingsService.targetMilkTempPreset3,
+      (value) => settingsService.targetMilkTempPreset3 = value,
+    );
+    applyInt(
+      'targetHotWaterTemp',
+      settingsService.targetHotWaterTemp,
+      (value) => settingsService.targetHotWaterTemp = value,
+    );
+    applyInt(
+      'targetHotWaterVol',
+      settingsService.targetHotWaterVol,
+      (value) => settingsService.targetHotWaterVol = value,
+    );
+    applyInt(
+      'targetHotWaterWeight',
+      settingsService.targetHotWaterWeight,
+      (value) => settingsService.targetHotWaterWeight = value,
+    );
+    applyInt(
+      'targetHotWaterLength',
+      settingsService.targetHotWaterLength,
+      (value) => settingsService.targetHotWaterLength = value,
+    );
+    applyInt(
+      'targetEspressoVol',
+      settingsService.targetEspressoVol,
+      (value) => settingsService.targetEspressoVol = value,
+    );
+    applyDouble(
+      'targetEspressoWeight',
+      settingsService.targetEspressoWeight,
+      (value) => settingsService.targetEspressoWeight = value,
+    );
+    applyDouble(
+      'targetEspressoWeightTimeAdjust',
+      settingsService.targetEspressoWeightTimeAdjust,
+      (value) => settingsService.targetEspressoWeightTimeAdjust = value,
+    );
+    applyDouble(
+      'stepLimitWeightTimeAdjust',
+      settingsService.stepLimitWeightTimeAdjust,
+      (value) => settingsService.stepLimitWeightTimeAdjust = value,
+    );
+    applyDouble('targetFlushTime', settingsService.targetFlushTime, (value) => settingsService.targetFlushTime = value);
+    applyDouble(
+      'targetFlushTime2',
+      settingsService.targetFlushTime2,
+      (value) => settingsService.targetFlushTime2 = value,
+    );
+    applyInt('targetGroupTemp', settingsService.targetGroupTemp, (value) => settingsService.targetGroupTemp = value);
+    applyBool('webServer', settingsService.webServer, (value) => settingsService.webServer = value);
+    applyDouble(
+      'targetTempCorrection',
+      settingsService.targetTempCorrection,
+      (value) => settingsService.targetTempCorrection = value,
+    );
+    applyInt('targetWaterlevel', settingsService.targetWaterlevel, (value) => settingsService.targetWaterlevel = value);
+    applyDouble(
+      'screenBrightnessTimer',
+      settingsService.screenBrightnessTimer,
+      (value) => settingsService.screenBrightnessTimer = value,
+    );
+    applyDouble(
+      'screenBrightnessValue',
+      settingsService.screenBrightnessValue,
+      (value) => settingsService.screenBrightnessValue = value,
+    );
+    applyBool('screenTapWake', settingsService.screenTapWake, (value) => settingsService.screenTapWake = value);
+    applyBool('launchWake', settingsService.launchWake, (value) => settingsService.launchWake = value);
+    applyBool(
+      'screenTimoutGoToRecipe',
+      settingsService.screenTimoutGoToRecipe,
+      (value) => settingsService.screenTimoutGoToRecipe = value,
+    );
+    applyBool('screenDarkTheme', settingsService.screenDarkTheme, (value) => settingsService.screenDarkTheme = value);
+    applyInt('screenThemeMode', settingsService.screenThemeMode, (value) => settingsService.screenThemeMode = value);
+    applyString(
+      'screenThemeIndex',
+      settingsService.screenThemeIndex,
+      (value) => settingsService.screenThemeIndex = value,
+    );
+    applyInt('startCounter', settingsService.startCounter, (value) => settingsService.startCounter = value);
+    applyBool('showFlushScreen', settingsService.showFlushScreen, (value) => settingsService.showFlushScreen = value);
+    applyBool(
+      'screensaverOnIfIdle',
+      settingsService.screensaverOnIfIdle,
+      (value) => settingsService.screensaverOnIfIdle = value,
+    );
+    applyBool(
+      'screensaverShowClock',
+      settingsService.screensaverShowClock,
+      (value) => settingsService.screensaverShowClock = value,
+    );
+    applyString('locale', settingsService.locale, (value) => settingsService.locale = value);
+    applyString('profileFilter', settingsService.profileFilter, (value) => settingsService.profileFilter = value);
+    applyBool('useSteam', settingsService.useSteam, (value) => settingsService.useSteam = value);
+    applyBool('useWater', settingsService.useWater, (value) => settingsService.useWater = value);
+    applyBool(
+      'showPressureGraph',
+      settingsService.showPressureGraph,
+      (value) => settingsService.showPressureGraph = value,
+    );
+    applyBool('showFlowGraph', settingsService.showFlowGraph, (value) => settingsService.showFlowGraph = value);
+    applyBool('showWeightGraph', settingsService.showWeightGraph, (value) => settingsService.showWeightGraph = value);
+    applyBool('showTempGraph', settingsService.showTempGraph, (value) => settingsService.showTempGraph = value);
+    applyString('chUrl', settingsService.chUrl, (value) => settingsService.chUrl = value);
+    applyBool('useCafeHub', settingsService.useCafeHub, (value) => settingsService.useCafeHub = value);
+    applyBool('useLongUUID', settingsService.useLongUUID, (value) => settingsService.useLongUUID = value);
+    applyBool(
+      'recordPrePouring',
+      settingsService.recordPrePouring,
+      (value) => settingsService.recordPrePouring = value,
+    );
+    applyBool('savePrePouring', settingsService.savePrePouring, (value) => settingsService.savePrePouring = value);
+    applyBool('scaleStartTimer', settingsService.scaleStartTimer, (value) => settingsService.scaleStartTimer = value);
+    applyBool('tareOnWakeUp', settingsService.tareOnWakeUp, (value) => settingsService.tareOnWakeUp = value);
+    applyDouble('tareOnWeight1', settingsService.tareOnWeight1, (value) => settingsService.tareOnWeight1 = value);
+    applyDouble('tareOnWeight2', settingsService.tareOnWeight2, (value) => settingsService.tareOnWeight2 = value);
+    applyDouble('tareOnWeight3', settingsService.tareOnWeight3, (value) => settingsService.tareOnWeight3 = value);
+    applyDouble('tareOnWeight4', settingsService.tareOnWeight4, (value) => settingsService.tareOnWeight4 = value);
+    applyBool(
+      'tareOnDetectedWeight',
+      settingsService.tareOnDetectedWeight,
+      (value) => settingsService.tareOnDetectedWeight = value,
+    );
+    applyBool(
+      'scaleDisplayOffOnSleep',
+      settingsService.scaleDisplayOffOnSleep,
+      (value) => settingsService.scaleDisplayOffOnSleep = value,
+    );
+    applyString('scalePrimary', settingsService.scalePrimary, (value) => settingsService.scalePrimary = value);
+    applyString('scaleSecondary', settingsService.scaleSecondary, (value) => settingsService.scaleSecondary = value);
+    applyBool(
+      'alwaysAllowSkipping',
+      settingsService.alwaysAllowSkipping,
+      (value) => settingsService.alwaysAllowSkipping = value,
+    );
+
+    settingsService.notifyDelayed();
+
+    return Response.ok(
+      jsonEncode({'updated': updates, 'settings': settingsService.toSettingsSnapshot()}),
+      headers: header,
+    );
   }
 
   Response getShotIds() {
@@ -1057,6 +1374,10 @@ class WebService extends ChangeNotifier {
         await socket.sink.close();
       }
       _waterLevelSockets.clear();
+      for (final socket in _settingsSockets.toList()) {
+        await socket.sink.close();
+      }
+      _settingsSockets.clear();
       await server!.close(force: true);
       isRunning = false;
       log.info('server stopped');
@@ -1108,11 +1429,29 @@ class WebService extends ChangeNotifier {
     }
   }
 
+  void _broadcastSettingsSnapshot() {
+    if (_settingsSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _settingsSockets.toList()) {
+      _sendSettingsSnapshot(socket);
+    }
+  }
+
   void _sendWaterLevelSnapshot(WebSocketChannel socket) {
     try {
       socket.sink.add(jsonEncode(_buildWaterLevelSnapshotPayload()));
     } catch (e) {
       _waterLevelSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  void _sendSettingsSnapshot(WebSocketChannel socket) {
+    try {
+      socket.sink.add(jsonEncode(_buildSettingsSnapshotPayload()));
+    } catch (e) {
+      _settingsSockets.remove(socket);
       socket.sink.close();
     }
   }
@@ -1141,6 +1480,10 @@ class WebService extends ChangeNotifier {
 
   Map<String, dynamic> _buildWaterLevelSnapshotPayload() {
     return {'currentLevel': _lastWaterLevel, 'refillLevel': _lastRefillLevel};
+  }
+
+  Map<String, dynamic> _buildSettingsSnapshotPayload() {
+    return {'timestamp': DateTime.now().toUtc().toIso8601String(), 'settings': settingsService.toSettingsSnapshot()};
   }
 
   Future<void> prepareWebsite() async {

@@ -1,15 +1,15 @@
-import {Injectable, signal} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {Subject} from 'rxjs';
 import {debounceTime, tap} from 'rxjs/operators';
 import {Settings} from '../models/state';
-
+import {ApiService} from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-
+  private readonly apiService = inject(ApiService);
   private readonly _settings = signal<Settings | null>(null);
   // Public readonly signal for consumers
-  readonly settings = this._settings.asReadonly();
+  readonly settings = this.apiService.settings.asReadonly();
 
   // RxJS-based debounced mutation pipeline
   private readonly debounceMs = 1000;
@@ -82,10 +82,12 @@ export class SettingsService {
       });
   }
 
-  public mutateSettings(input: Partial<Settings>) {
+  public async mutateSettings(input: Partial<Settings>) {
     console.log('Mutating settings (mock):', input);
-    const merged = {...this.mockSettings, ...this._settings(), ...input};
-    this._settings.set(merged);
+    const merged = {...this.settings(), ...input};
+
+    await this.apiService.updateSettings(merged);
+
     return Promise.resolve({
       data: {
         updateSettings: merged,
