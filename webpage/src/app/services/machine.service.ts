@@ -2,25 +2,29 @@ import {computed, effect, inject, Injectable, signal} from '@angular/core';
 import {firstValueFrom, Subscription} from 'rxjs';
 
 import {ShotService} from './shot.service';
-import {BleStatus, Device, EspressoMachineFullState, EspressoMachineState, ScaleState, ShotState, WeightMeasurement} from '../models/state';
+import {
+  BleStatus,
+  Device,
+  EspressoMachineFullState,
+  EspressoMachineState,
+  ScaleState,
+  ShotState,
+  WeightMeasurement,
+} from '../models/state';
 import {ApiService} from './api.service';
 
 export enum EspressoMachineSubState {
-  HeatWaterTank = "heat_water_tank",
-  Pouring = "pouring",
-  Preinfusion = "preinfusion",
-  NoState = "no_state",
+  HeatWaterTank = 'heat_water_tank',
+  Pouring = 'pouring',
+  Preinfusion = 'preinfusion',
+  NoState = 'no_state',
 }
 
-
-
 @Injectable({ providedIn: 'root' })
-export class MachineService {  
-
+export class MachineService {
   private readonly shotService = inject(ShotService);
   private readonly apiService = inject(ApiService);
   // Signals holding latest data from subscriptions
-
 
   private readonly _machineState = computed(() => {
     const snapshot = this.apiService.snapshot();
@@ -71,7 +75,13 @@ export class MachineService {
 
   readonly scales = signal<Device[]>([]);
 
-  readonly scaleState = signal<ScaleState[]>([ScaleState.Disconnected, ScaleState.Disconnected]);
+  readonly scaleState2 = signal<ScaleState[]>([ScaleState.Disconnected, ScaleState.Disconnected]);
+
+  readonly scaleState = computed(() => {
+    return this.apiService.scaleConnected()
+      ? [ScaleState.Connected, ScaleState.Disconnected]
+      : [ScaleState.Disconnected, ScaleState.Disconnected];
+  });
 
   readonly isSleeping = computed(() => {
     const s = this._machineState();
@@ -105,7 +115,6 @@ export class MachineService {
     }
     return 0;
   });
-
 
   timer = signal(0);
 
@@ -261,108 +270,6 @@ export class MachineService {
     // this.simInterval = setInterval(() => {}, 100);
   }
 
-  private startMachineState(): void {
-    // Avoid duplicate subscriptions
-    this.subMachine?.unsubscribe();
-    if (this.machineInterval) {
-      clearInterval(this.machineInterval);
-      this.machineInterval = undefined;
-    }
-
-    const states: EspressoMachineFullState[] = [
-      {state: EspressoMachineState.Idle, subState: EspressoMachineSubState.NoState},
-      {state: EspressoMachineState.Espresso, subState: EspressoMachineSubState.Preinfusion},
-      {state: EspressoMachineState.Espresso, subState: EspressoMachineSubState.Pouring},
-      {state: EspressoMachineState.Sleep, subState: EspressoMachineSubState.NoState},
-    ];
-
-    let index = 0;
-    this.machineInterval = setInterval(() => {
-      const next = states[index % states.length];
-      index += 1;
-      if (
-        this._machineState()?.state !== EspressoMachineState.Espresso &&
-        next.state === EspressoMachineState.Espresso
-      ) {
-        this.timeRunning = false;
-      }
-      // if (!this.simRunning()) {
-      //   this._machineState.set(next);
-      // }
-    }, 5000);
-  }
-
-  private startShotState(): void {
-    this.subShot?.unsubscribe();
-    if (this.shotInterval) {
-      clearInterval(this.shotInterval);
-      this.shotInterval = undefined;
-    }
-
-    this.shotSimIndex = 0;
-    this.shotInterval = setInterval(() => {
-      if (this.simRunning()) {
-        this.pushNextShotStateForSim();
-        return;
-      }
-
-      const shot = this.shotService.lastShot();
-      if (!shot || shot.shotstates!.length === 0) {
-        return;
-      }
-
-      const next = shot.shotstates![this.shotSimIndex % shot.shotstates!.length];
-      this.shotSimIndex += 1;
-      const ret = structuredClone(next);
-
-      this.sampleCounter++;
-      if (this.sampleCounter % 10 === 0) {
-        const now = Date.now();
-        const elapsed = now - this.startSampleTime;
-        const rate = this.sampleCounter / (elapsed / 1000);
-        // console.log(`Shot sample rate: ${rate.toFixed(2)} samples/sec`);
-        this.startSampleTime = now;
-        this.sampleCounter = 0;
-      }
-
-      if (this.isInShot() === true) {
-        this.shotSamples.update((shots) => {
-          const lastShot = shots.length > 0 ? shots[shots.length - 1].pourTime : 0;
-          if (ret.pourTime < lastShot) {
-            const diff = lastShot - ret.pourTime;
-            // console.log('Resetting shot samples with time correction', diff);
-            shots.forEach((s) => (s.pourTime -= diff));
-          }
-          this.interpolationTimer(ret.pourTime - 0.25);
-          return [...shots, ret];
-        });
-      } else {
-        this.shotSamples.set([]);
-      }
-
-      // this._shotState.set(ret);
-    }, 250);
-  }
-  pushNextShotStateForSim() {
-    this.simRunningCounter++;
-    const data = this.shotService.lastShot();
-    if (data === null || this.simRunningCounter >= data.shotstates!.length) {
-      this.simInterval && clearInterval(this.simInterval);
-      this.simRunning.set(false);
-      this.simRunningCounter = 0;
-      // this._machineState.set({
-      //   state: EspressoMachineState.Idle,
-      //   subState: EspressoMachineSubState.NoState,
-      // } as EspressoMachineFullState);
-      return;
-    }
-    const shot = data.shotstates![this.simRunningCounter];
-    this.shotSamples.update((shots) => [...shots, shot]);
-    this.interpolationTimer(shot.pourTime - 0.25);
-    //this._weightUpdate.set({ weight: shot.weight, flow: shot.flowWeight } as WeightMeasurement);
-    // this._shotState.set(shot);
-  }
-
   interpolationTimer(t: number): void {
     this.timer.set(t);
     const frequency = 16 / 4; // Hz
@@ -413,7 +320,6 @@ export class MachineService {
       const delta = Math.random() * 0.6 - 0.2;
       this.weightSimValue = Math.max(0, this.weightSimValue + delta);
       const flow = Math.max(0, 1 + Math.random() * 2);
-
     }, 100);
   }
 
@@ -442,24 +348,24 @@ export class MachineService {
     }, 2000);
   }
 
-  private startScaleStatusUpdates(index: number): void {
-    if (this.scaleInterval) {
-      clearInterval(this.scaleInterval);
-      this.scaleInterval = undefined;
-    }
+  // private startScaleStatusUpdates(index: number): void {
+  //   if (this.scaleInterval) {
+  //     clearInterval(this.scaleInterval);
+  //     this.scaleInterval = undefined;
+  //   }
 
-    const states = [ScaleState.Connecting, ScaleState.Connected, ScaleState.Disconnected];
-    let stateIndex = 0;
-    this.scaleInterval = setInterval(() => {
-      const next = states[stateIndex % states.length];
-      stateIndex += 1;
-      this.scaleState.update((s) => {
-        return [...s.slice(0, index), next, ...s.slice(index + 1)];
-      });
-    }, 3000);
-  }
+  //   const states = [ScaleState.Connecting, ScaleState.Connected, ScaleState.Disconnected];
+  //   let stateIndex = 0;
+  //   this.scaleInterval = setInterval(() => {
+  //     const next = states[stateIndex % states.length];
+  //     stateIndex += 1;
+  //     this.scaleState.update((s) => {
+  //       return [...s.slice(0, index), next, ...s.slice(index + 1)];
+  //     });
+  //   }, 3000);
+  // }
 
-  async stopServer(): Promise<boolean | undefined> {    
+  async stopServer(): Promise<boolean | undefined> {
     return false;
   }
 
@@ -471,7 +377,7 @@ export class MachineService {
   }
 
   async requestState(state: EspressoMachineState): Promise<void> {
-    return await this.apiService.setState(state);    
+    return await this.apiService.setState(state);
   }
 
   async scaleTare(index: number): Promise<boolean | undefined> {
@@ -482,7 +388,7 @@ export class MachineService {
 
   async startScan(): Promise<boolean | undefined> {
     this.apiService.scanDevices(true, false);
-    return true;    
+    return true;
   }
 
   async scanForScales(): Promise<Device[]> {

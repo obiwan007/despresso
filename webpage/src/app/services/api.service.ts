@@ -1,5 +1,18 @@
-import {effect, Injectable, signal} from "@angular/core";
-import {ApiShot, EspressoMachineState, SnapShot, Shot, shotFromApi, ScaleSnapShot, WaterLevelSnapShot, LogSnapShot, Coffee, Roaster, Profile, RecipeEntity} from "../models/state";
+import {effect, Injectable, signal} from '@angular/core';
+import {
+    ApiShot,
+    EspressoMachineState,
+    SnapShot,
+    Shot,
+    shotFromApi,
+    ScaleSnapShot,
+    WaterLevelSnapShot,
+    LogSnapShot,
+    Coffee,
+    Roaster,
+    Profile,
+    RecipeEntity,
+} from '../models/state';
 
 const getGatewayUrl = () => {
     if (typeof window === 'undefined') {
@@ -30,11 +43,10 @@ type ApiDevice = {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-
     readonly snapshot = signal<SnapShot | null>(null);
     readonly scaleSnapshot = signal<ScaleSnapShot | null>(null);
     readonly waterLevelSnapshot = signal<WaterLevelSnapShot | null>(null);
-    readonly logSnapshot = signal<LogSnapShot | null>(null);  
+    readonly logSnapshot = signal<LogSnapShot | null>(null);
     readonly devices = signal<ApiDevice[]>([]);
     readonly shotIds = signal<string[]>([]);
     readonly coffeeIds = signal<string[]>([]);
@@ -42,199 +54,190 @@ export class ApiService {
     readonly profileIds = signal<string[]>([]);
     readonly recipeIds = signal<string[]>([]);
 
+    readonly scaleConnected = signal<boolean>(false);
+    readonly de1Connected = signal<boolean>(false);
+
     /**
      *
      */
     constructor() {
         this.initShots();
 
+      effect(() => {
+          const logSnapshot = this.logSnapshot();
+          console.log(`${logSnapshot?.timestamp} = ${logSnapshot?.level}: ${logSnapshot?.message}`);
+      });
 
-        effect(() => {
-            const logSnapshot = this.logSnapshot();
-            console.log(`${logSnapshot?.timestamp} = ${logSnapshot?.level}: ${logSnapshot?.message}`);
-        });
+      effect(() => {
+          const scaleSnapshot = this.scaleSnapshot();
+          this.scaleConnected.set(scaleSnapshot !== null);
+      });
 
-    }
+      effect(() => {
+          const snapshot = this.snapshot();
+          this.de1Connected.set(snapshot !== null);
+      });
+
+      setInterval(() => {
+          const snap = this.snapshot();
+          if (snap?.timestamp) {
+              const t = new Date(snap.timestamp);
+              const now = new Date();
+              const diff = (now.getTime() - t.getTime()) / 1000;
+              this.de1Connected.set(diff < 10);
+          }
+        const snapshot = this.scaleSnapshot();
+        if (snapshot?.timestamp) {
+            const t = new Date(snapshot.timestamp);
+            const now = new Date();
+            const diff = (now.getTime() - t.getTime()) / 1000;
+            this.scaleConnected.set(diff < 10);
+        }
+    }, 1000);
+  }
 
     private initShots() {
-        this.getAllShotIds().then(ids => {
+        this.getAllShotIds().then((ids) => {
             console.log('Initial shot IDs:', ids);
             if (ids.length > 0) {
-                this.getShots([ids[ids.length - 1]]).then(shots => {
-                    console.log('Initial shots:', shots);
-                });
-            }
-        });
-    }
-
-    private initCoffee() {
-        this.getAllCoffeeIds().then(ids => {
-            console.log('Initial coffee IDs:', ids);
-            if (ids.length > 0) {
-                this.getCoffees(ids).then(coffees => {
-                    console.log('Initial coffees:', coffees);
-                });
-            }
-        });
-    }
-
-    private initRoasters() {
-        this.getAllRoasterIds().then(ids => {
-            console.log('Initial roaster IDs:', ids);
-            if (ids.length > 0) {
-                this.getRoasters(ids).then(roasters => {
-                    console.log('Initial roasters:', roasters);
-                });
-            }
-        });
-    }
-
-    private initProfiles() {
-        this.getAllProfileIds().then(ids => {
-            console.log('Initial profile IDs:', ids);
-            if (ids.length > 0) {
-                this.getProfiles(ids).then(profiles => {
-                    console.log('Initial profiles:', profiles);
-                });
-            }
-        });
-    }
+            this.getShots([ids[ids.length - 1]]).then((shots) => {
+                console.log('Initial shots:', shots);
+            });
+        }
+    });
+  }
 
     test() {
     // Test connection
-        fetch(`${GATEWAY_URL}/api/v1/machine/state`)
-        .then(res => res.json())
-        .then(data => console.log('Machine state:', data))
-        .catch(err => console.error('Connection failed:', err));
-    }
+      fetch(`${GATEWAY_URL}/api/v1/machine/state`)
+          .then((res) => res.json())
+          .then((data) => console.log('Machine state:', data))
+          .catch((err) => console.error('Connection failed:', err));
+  }
 
     async initWebserviceMachine() {
         const ws = new WebSocket(`${WS_URL}/ws/v1/machine/snapshot`);
 
-        ws.onopen = () => {
-        console.log('Connected to machine snapshot stream');
-        };
+      ws.onopen = () => {
+          console.log('Connected to machine snapshot stream');
+      };
 
-        ws.onmessage = (event) => {
-        const snapshot = JSON.parse(event.data);
-        this.snapshot.set(new SnapShot(snapshot));
-        // console.log('Received snapshot:', this.snapshot());
+      ws.onmessage = (event) => {
+          const snapshot = JSON.parse(event.data);
+          this.snapshot.set(new SnapShot(snapshot));
+      // console.log('Received snapshot:', this.snapshot());
+    };
 
-        };
+      ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+      };
 
-        ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        };
-
-        ws.onclose = () => {
-            console.log('WebSocket Machine closed, attempting reconnect...');
-            setTimeout(() => this.initWebserviceMachine(), 1000);
-        };
-    }
+      ws.onclose = () => {
+          console.log('WebSocket Machine closed, attempting reconnect...');
+          setTimeout(() => this.initWebserviceMachine(), 1000);
+      };
+  }
 
     async initWebserviceScale() {
         const ws = new WebSocket(`${WS_URL}/ws/v1/scale/snapshot`);
 
-        ws.onopen = () => {
-            console.log('Connected to scale snapshot stream');
-        };
+      ws.onopen = () => {
+          console.log('Connected to scale snapshot stream');
+      };
 
-        ws.onmessage = (event) => {
-            const snapshot = JSON.parse(event.data);
-            this.scaleSnapshot.set(new ScaleSnapShot(snapshot));
-            // console.log('Received snapshot:', this.snapshot());
+      ws.onmessage = (event) => {
+          const snapshot = JSON.parse(event.data);
+          this.scaleSnapshot.set(new ScaleSnapShot(snapshot));
+      // console.log('Received snapshot:', this.snapshot());
+    };
 
-        };
+      ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+      };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        ws.onclose = () => {
-            console.log('WebSocket Scale closed, attempting reconnect...');
-            setTimeout(() => this.initWebserviceScale(), 1000);
-        };
-    }
+      ws.onclose = () => {
+          console.log('WebSocket Scale closed, attempting reconnect...');
+          setTimeout(() => this.initWebserviceScale(), 1000);
+      };
+  }
 
     async initWebserviceWaterlevel() {
         const ws = new WebSocket(`${WS_URL}/ws/v1/machine/waterLevels`);
 
-        ws.onopen = () => {
-            console.log('Connected to water level snapshot stream');
-        };
+      ws.onopen = () => {
+          console.log('Connected to water level snapshot stream');
+      };
 
-        ws.onmessage = (event) => {
-            const snapshot = JSON.parse(event.data);
-            this.waterLevelSnapshot.set(new WaterLevelSnapShot(snapshot));
-            // console.log('Received snapshot:', this.snapshot());
+      ws.onmessage = (event) => {
+          const snapshot = JSON.parse(event.data);
+          this.waterLevelSnapshot.set(new WaterLevelSnapShot(snapshot));
+      // console.log('Received snapshot:', this.snapshot());
+    };
 
-        };
+      ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+      };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        ws.onclose = () => {
-            console.log('WebSocket closed, attempting reconnect...');
-            setTimeout(() => this.initWebserviceScale(), 1000);
-        };
-    }
+      ws.onclose = () => {
+          console.log('WebSocket closed, attempting reconnect...');
+          setTimeout(() => this.initWebserviceScale(), 1000);
+      };
+  }
 
     async initWebserviceLogs() {
         const ws = new WebSocket(`${WS_URL}/ws/v1/logs`);
 
-        ws.onopen = () => {
-            console.log('Connected to logs snapshot stream');
-        };
+      ws.onopen = () => {
+          console.log('Connected to logs snapshot stream');
+      };
 
-        ws.onmessage = (event) => {
-            const snapshot = JSON.parse(event.data);
-            this.logSnapshot.set(new LogSnapShot(snapshot));
-            // console.log('Received snapshot:', this.snapshot());
+      ws.onmessage = (event) => {
+          const snapshot = JSON.parse(event.data);
+          this.logSnapshot.set(new LogSnapShot(snapshot));
+      // console.log('Received snapshot:', this.snapshot());
+    };
 
-        };
+      ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+      };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        ws.onclose = () => {
-            console.log('WebSocket Logs closed, attempting reconnect...');
-            setTimeout(() => this.initWebserviceLogs(), 1000);
-        };
-    }
+      ws.onclose = () => {
+          console.log('WebSocket Logs closed, attempting reconnect...');
+          setTimeout(() => this.initWebserviceLogs(), 1000);
+      };
+  }
 
     getDevices() {
     // Test connection
-        fetch(`${GATEWAY_URL}/api/v1/devices`)
-        .then(res => res.json())
+      fetch(`${GATEWAY_URL}/api/v1/devices`)
+        .then((res) => res.json())
         .then((data: ApiDevice[]) => {
             const list = Array.isArray(data) ? data : [];
             this.devices.set(list);
             console.log('Devices:', list);
         })
-        .catch(err => console.error('Connection failed:', err));
-    }
+          .catch((err) => console.error('Connection failed:', err));
+  }
 
     scanDevices(connect = false, quick = false) {
         const params = new URLSearchParams({
             connect: String(connect),
             quick: String(quick),
         });
-        fetch(`${GATEWAY_URL}/api/v1/devices/scan?${params.toString()}`, {method: 'GET'})
-        .then(res => res.json())
-        .then((data: ApiDevice[]) => {
-            const list = Array.isArray(data) ? data : [];
-            this.devices.set(list);
-            console.log('Scan devices:', list);
-        })
-        .catch(err => console.error('Connection failed:', err));
-    }
+      fetch(`${GATEWAY_URL}/api/v1/devices/scan?${params.toString()}`, {method: 'GET'})
+          .then((res) => res.json())
+          .then((data: ApiDevice[]) => {
+              const list = Array.isArray(data) ? data : [];
+              this.devices.set(list);
+              console.log('Scan devices:', list);
+          })
+          .catch((err) => console.error('Connection failed:', err));
+  }
 
     connectDevice(deviceId: string) {
-        const params = new URLSearchParams({ deviceId });
-        fetch(`${GATEWAY_URL}/api/v1/devices/connect?${params.toString()}`, { method: 'PUT' })
-        .then(res => res.json())
+        const params = new URLSearchParams({deviceId});
+        fetch(`${GATEWAY_URL}/api/v1/devices/connect?${params.toString()}`, {method: 'PUT'})
+        .then((res) => res.json())
         .then((data: ApiDevice[] | ApiDevice | null) => {
             if (Array.isArray(data)) {
                 this.devices.set(data);
@@ -257,8 +260,8 @@ export class ApiService {
             }
             console.log('Connected device: no data');
         })
-        .catch(err => console.error('Connection failed:', err));
-    }
+          .catch((err) => console.error('Connection failed:', err));
+  }
 
     setState(newState: EspressoMachineState) {
         const stateMap: Record<EspressoMachineState, string> = {
@@ -276,339 +279,338 @@ export class ApiService {
             [EspressoMachineState.Water]: 'hotWater',
         };
         const target = stateMap[newState] ?? newState;
-        return fetch(`${GATEWAY_URL}/api/v1/machine/state/${target}`, { method: 'PUT' })
-        .then(res => res.json())
-        .then(data => console.log('State change:', data))
-        .catch(err => console.error('Connection failed:', err));
-    }
+        return fetch(`${GATEWAY_URL}/api/v1/machine/state/${target}`, {method: 'PUT'})
+          .then((res) => res.json())
+          .then((data) => console.log('State change:', data))
+          .catch((err) => console.error('Connection failed:', err));
+  }
 
     tareScale() {
-        return fetch(`${GATEWAY_URL}/api/v1/scale/tare`, { method: 'PUT' })
-        .then(res => res.json())
-        .then(data => console.log('Tare scale:', data))
-        .catch(err => console.error('Connection failed:', err));
-    }
+        return fetch(`${GATEWAY_URL}/api/v1/scale/tare`, {method: 'PUT'})
+          .then((res) => res.json())
+          .then((data) => console.log('Tare scale:', data))
+          .catch((err) => console.error('Connection failed:', err));
+  }
 
     getAllShotIds(): Promise<string[]> {
         return fetch(`${GATEWAY_URL}/api/v1/shots/ids`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
             console.log('Shot IDs:', data);
             this.shotIds.set(data);
             return data as string[];
         })
-        .catch(err => {
-            console.error('Connection failed:', err);
-            return [] as string[];
-        });
-    }
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as string[];
+          });
+  }
 
     getAllCoffeeIds(): Promise<string[]> {
         return fetch(`${GATEWAY_URL}/api/v1/coffee/ids`)
-            .then(res => res.json())
-            .then(data => {
-                console.log('Coffee IDs:', data);
-                this.coffeeIds.set(data);
-                return data as string[];
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as string[];
-            });
-    }
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Coffee IDs:', data);
+            this.coffeeIds.set(data);
+            return data as string[];
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as string[];
+          });
+  }
 
     getAllRoasterIds(): Promise<string[]> {
         return fetch(`${GATEWAY_URL}/api/v1/roaster/ids`)
-            .then(res => res.json())
-            .then(data => {
-                console.log('Roaster IDs:', data);
-                this.roasterIds.set(data);
-                return data as string[];
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as string[];
-            });
-    }
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Roaster IDs:', data);
+            this.roasterIds.set(data);
+            return data as string[];
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as string[];
+          });
+  }
 
     getAllProfileIds(): Promise<string[]> {
         return fetch(`${GATEWAY_URL}/api/v1/profile/ids`)
-            .then(res => res.json())
-            .then(data => {
-                console.log('Profile IDs:', data);
-                this.profileIds.set(data);
-                return data as string[];
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as string[];
-            });
-    }
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Profile IDs:', data);
+            this.profileIds.set(data);
+            return data as string[];
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as string[];
+          });
+  }
 
     getAllRecipeIds(): Promise<string[]> {
         return fetch(`${GATEWAY_URL}/api/v1/recipe/ids`)
-            .then(res => res.json())
-            .then(data => {
-                console.log('Recipe IDs:', data);
-                this.recipeIds.set(data);
-                return data as string[];
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as string[];
-            });
-    }
+        .then((res) => res.json())
+        .then((data) => {
+            console.log('Recipe IDs:', data);
+            this.recipeIds.set(data);
+            return data as string[];
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as string[];
+          });
+  }
 
     getShots(ids: string[]): Promise<Shot[]> {
         const limitedIds = ids; // slice(0, 10);
-        const params = new URLSearchParams({ids: limitedIds.join(',')});
-        return fetch(`${GATEWAY_URL}/api/v1/shots?${params.toString()}`)
-        .then(res => res.json())
+      const params = new URLSearchParams({ids: limitedIds.join(',')});
+      return fetch(`${GATEWAY_URL}/api/v1/shots?${params.toString()}`)
+        .then((res) => res.json())
         .then((data: ApiShot[]) => {
-            const list =  data.map(shotFromApi);
-            console.log('Shots:', list);
-            return list;
-        })
-        .catch(err => {
-            console.error('Connection failed:', err);
-            return [] as Shot[];
-        });
-    }
+          const list = data.map(shotFromApi);
+          console.log('Shots:', list);
+          return list;
+      })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as Shot[];
+          });
+  }
 
     getCoffees(ids: string[]): Promise<Coffee[]> {
         const limitedIds = ids;
-        const params = new URLSearchParams({ids: limitedIds.join(',')});
-        return fetch(`${GATEWAY_URL}/api/v1/coffee?${params.toString()}`)
-            .then(res => res.json())
-            .then((data: Coffee[]) => {
-                const list = Array.isArray(data) ? data : [];
-                console.log('Coffees:', list);
-                return list;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as Coffee[];
-            });
-    }
+      const params = new URLSearchParams({ids: limitedIds.join(',')});
+      return fetch(`${GATEWAY_URL}/api/v1/coffee?${params.toString()}`)
+        .then((res) => res.json())
+        .then((data: Coffee[]) => {
+            const list = Array.isArray(data) ? data : [];
+            console.log('Coffees:', list);
+            return list;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as Coffee[];
+          });
+  }
 
     getRoasters(ids: string[]): Promise<Roaster[]> {
         const limitedIds = ids;
-        const params = new URLSearchParams({ids: limitedIds.join(',')});
-        return fetch(`${GATEWAY_URL}/api/v1/roaster?${params.toString()}`)
-            .then(res => res.json())
-            .then((data: Roaster[]) => {
-                const list = Array.isArray(data) ? data : [];
-                console.log('Roasters:', list);
-                return list;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as Roaster[];
-            });
-    }
+      const params = new URLSearchParams({ids: limitedIds.join(',')});
+      return fetch(`${GATEWAY_URL}/api/v1/roaster?${params.toString()}`)
+        .then((res) => res.json())
+        .then((data: Roaster[]) => {
+            const list = Array.isArray(data) ? data : [];
+            console.log('Roasters:', list);
+            return list;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as Roaster[];
+          });
+  }
 
     getProfiles(ids: string[]): Promise<Profile[]> {
         const limitedIds = ids;
-        const params = new URLSearchParams({ids: limitedIds.join(',')});
-        return fetch(`${GATEWAY_URL}/api/v1/profile?${params.toString()}`)
-            .then(res => res.json())
-            .then((data: Profile[]) => {
-                const list = Array.isArray(data) ? data : [];
-                console.log('Profiles:', list);
-                return list;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as Profile[];
-            });
-    }
+      const params = new URLSearchParams({ids: limitedIds.join(',')});
+      return fetch(`${GATEWAY_URL}/api/v1/profile?${params.toString()}`)
+        .then((res) => res.json())
+        .then((data: Profile[]) => {
+            const list = Array.isArray(data) ? data : [];
+            console.log('Profiles:', list);
+            return list;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as Profile[];
+          });
+  }
 
     getRecipes(ids: string[] | undefined): Promise<RecipeEntity[]> {
         const limitedIds = ids;
-        const params = limitedIds ? new URLSearchParams({ids: limitedIds.join(',')}) : new URLSearchParams();
-        return fetch(`${GATEWAY_URL}/api/v1/recipe?${params.toString()}`)
-            .then(res => res.json())
-            .then((data: RecipeEntity[]) => {
-                const list = Array.isArray(data) ? data : [];
-                console.log('Recipes:', list);
-                return list;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return [] as RecipeEntity[];
-            });
-    }
+      const params = limitedIds
+          ? new URLSearchParams({ids: limitedIds.join(',')})
+          : new URLSearchParams();
+      return fetch(`${GATEWAY_URL}/api/v1/recipe?${params.toString()}`)
+        .then((res) => res.json())
+        .then((data: RecipeEntity[]) => {
+            const list = Array.isArray(data) ? data : [];
+            console.log('Recipes:', list);
+            return list;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return [] as RecipeEntity[];
+          });
+  }
 
     createRecipe(recipe: RecipeEntity): Promise<RecipeEntity | null> {
-        const payload = { ...recipe } as Record<string, unknown>;
+        const payload = {...recipe} as Record<string, unknown>;
         delete payload['__typename'];
         return fetch(`${GATEWAY_URL}/api/v1/recipe`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify(payload),
         })
-            .then(res => res.json())
-            .then((data: RecipeEntity) => {
-                console.log('Create recipe:', data);
-                return data ?? null;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return null;
-            });
-    }
+        .then((res) => res.json())
+        .then((data: RecipeEntity) => {
+            console.log('Create recipe:', data);
+            return data ?? null;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return null;
+          });
+  }
 
     updateRecipe(recipe: RecipeEntity): Promise<RecipeEntity | null> {
-        const payload = { ...recipe } as Record<string, unknown>;
+        const payload = {...recipe} as Record<string, unknown>;
         delete payload['__typename'];
         return fetch(`${GATEWAY_URL}/api/v1/recipe`, {
             method: 'PUT',
-            headers: { 'content-type': 'application/json' },
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify(payload),
         })
-            .then(res => res.json())
-            .then((data: RecipeEntity) => {
-                console.log('Update recipe:', data);
-                return data ?? null;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return null;
-            });
-    }
+        .then((res) => res.json())
+        .then((data: RecipeEntity) => {
+            console.log('Update recipe:', data);
+            return data ?? null;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return null;
+          });
+  }
 
     createCoffee(coffee: Coffee): Promise<Coffee | null> {
-        const payload = { ...coffee } as Record<string, unknown>;
+        const payload = {...coffee} as Record<string, unknown>;
         delete payload['__typename'];
         return fetch(`${GATEWAY_URL}/api/v1/coffee`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify(payload),
         })
-            .then(res => res.json())
-            .then((data: Coffee) => {
-                console.log('Create coffee:', data);
-                return data ?? null;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return null;
-            });
-    }
+        .then((res) => res.json())
+        .then((data: Coffee) => {
+            console.log('Create coffee:', data);
+            return data ?? null;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return null;
+          });
+  }
 
     updateCoffee(coffee: Coffee): Promise<Coffee | null> {
-        const payload = { ...coffee } as Record<string, unknown>;
+        const payload = {...coffee} as Record<string, unknown>;
         delete payload['__typename'];
         return fetch(`${GATEWAY_URL}/api/v1/coffee`, {
             method: 'PUT',
-            headers: { 'content-type': 'application/json' },
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify(payload),
         })
-            .then(res => res.json())
-            .then((data: Coffee) => {
-                console.log('Update coffee:', data);
-                return data ?? null;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return null;
-            });
-    }
+        .then((res) => res.json())
+        .then((data: Coffee) => {
+            console.log('Update coffee:', data);
+            return data ?? null;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return null;
+          });
+  }
 
     createRoaster(roaster: Roaster): Promise<Roaster | null> {
-        const payload = { ...roaster } as Record<string, unknown>;
+        const payload = {...roaster} as Record<string, unknown>;
         delete payload['__typename'];
         return fetch(`${GATEWAY_URL}/api/v1/roaster`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify(payload),
         })
-            .then(res => res.json())
-            .then((data: Roaster) => {
-                console.log('Create roaster:', data);
-                return data ?? null;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return null;
-            });
-    }
+        .then((res) => res.json())
+        .then((data: Roaster) => {
+            console.log('Create roaster:', data);
+            return data ?? null;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return null;
+          });
+  }
 
     updateRoaster(roaster: Roaster): Promise<Roaster | null> {
-        const payload = { ...roaster } as Record<string, unknown>;
+        const payload = {...roaster} as Record<string, unknown>;
         delete payload['__typename'];
         return fetch(`${GATEWAY_URL}/api/v1/roaster`, {
             method: 'PUT',
-            headers: { 'content-type': 'application/json' },
+            headers: {'content-type': 'application/json'},
             body: JSON.stringify(payload),
         })
-            .then(res => res.json())
-            .then((data: Roaster) => {
-                console.log('Update roaster:', data);
-                return data ?? null;
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return null;
-            });
-    }
+        .then((res) => res.json())
+        .then((data: Roaster) => {
+            console.log('Update roaster:', data);
+            return data ?? null;
+        })
+          .catch((err) => {
+              console.error('Connection failed:', err);
+              return null;
+          });
+  }
 
     deleteShots(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
         const params = new URLSearchParams({ids: ids.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/shot?${params.toString()}`, {method: 'DELETE'})
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 console.log('Delete shots:', data);
-                return data as {deleted: number; requested: number; ids: number[]};
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return {deleted: 0, requested: ids.length, ids: []};
-            });
-    }
+          return data as {deleted: number; requested: number; ids: number[]};
+      })
+        .catch((err) => {
+            console.error('Connection failed:', err);
+          return {deleted: 0, requested: ids.length, ids: []};
+      });
+  }
 
     deleteRecipes(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
         const params = new URLSearchParams({ids: ids.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/recipe?${params.toString()}`, {method: 'DELETE'})
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 console.log('Delete recipes:', data);
-                return data as {deleted: number; requested: number; ids: number[]};
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return {deleted: 0, requested: ids.length, ids: []};
-            });
-    }
+          return data as {deleted: number; requested: number; ids: number[]};
+      })
+        .catch((err) => {
+            console.error('Connection failed:', err);
+          return {deleted: 0, requested: ids.length, ids: []};
+      });
+  }
 
     deleteCoffees(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
         const params = new URLSearchParams({ids: ids.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/coffee?${params.toString()}`, {method: 'DELETE'})
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 console.log('Delete coffees:', data);
-                return data as {deleted: number; requested: number; ids: number[]};
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return {deleted: 0, requested: ids.length, ids: []};
-            });
-    }
+          return data as {deleted: number; requested: number; ids: number[]};
+      })
+        .catch((err) => {
+            console.error('Connection failed:', err);
+          return {deleted: 0, requested: ids.length, ids: []};
+      });
+  }
 
     deleteRoasters(ids: string[]): Promise<{deleted: number; requested: number; ids: number[]}> {
         const params = new URLSearchParams({ids: ids.join(',')});
         return fetch(`${GATEWAY_URL}/api/v1/roaster?${params.toString()}`, {method: 'DELETE'})
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 console.log('Delete roasters:', data);
-                return data as {deleted: number; requested: number; ids: number[]};
-            })
-            .catch(err => {
-                console.error('Connection failed:', err);
-                return {deleted: 0, requested: ids.length, ids: []};
-            });
-    }
-
-    
-    
+          return data as {deleted: number; requested: number; ids: number[]};
+      })
+        .catch((err) => {
+            console.error('Connection failed:', err);
+          return {deleted: 0, requested: ids.length, ids: []};
+      });
+  }
 }

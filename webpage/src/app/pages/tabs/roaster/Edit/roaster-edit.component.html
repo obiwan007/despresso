@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Edit Coffee</h2>
+<mat-dialog-content>
+  <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="roaster.name" />
+    </mat-form-field>
+  </div>
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Description</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="roaster.description"></textarea>
+  </mat-form-field>
+
+  <!-- <div class="flex gap-2">
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Type</mat-label>
+      <input matInput [(ngModel)]="roaster.type" />
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="flex-1">
+      <mat-label>Taste</mat-label>
+      <input matInput [(ngModel)]="roaster.taste" />
+    </mat-form-field>
+  </div> -->
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

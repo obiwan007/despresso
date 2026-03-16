@@ -8,22 +8,22 @@ export enum EspressoMachineState {
   Flush = 'flush',
   Idle = 'idle',
   Refill = 'refill',
-    Sleep = 'sleeping',
+    Sleep = 'sleep',
   Steam = 'steam',
-  Water = 'water'
+    Water = 'water',
 }
 
 export enum ScaleState {
   Connected = 'connected',
   Connecting = 'connecting',
   Disconnected = 'disconnected',
-  Disconnecting = 'disconnecting'
+    Disconnecting = 'disconnecting',
 }
 
 export type ShotEntity = {
   __typename?: 'ShotEntity';
     barrista?: string;
-  coffeeId?:string;
+    coffeeId?: string;
     date?: string;
     description?: string;
     doseWeight?: number;
@@ -252,7 +252,7 @@ export type De1ShotHeader = {
 export type De1StepLimiterData = {
     __typename?: 'De1StepLimiterData';
     range: number;
-    value: number
+    value: number;
 };
 
 export type De1StepLimiterDataInput = {
@@ -262,17 +262,17 @@ export type De1StepLimiterDataInput = {
 
 export enum De1Transition {
     Fast = 'fast',
-    Smooth = 'smooth'
+    Smooth = 'smooth',
 }
 
 export enum De1PumpMode {
     Flow = 'flow',
-    Pressure = 'pressure'
+    Pressure = 'pressure',
 }
 
 export enum De1SensorType {
     Coffee = 'coffee',
-    Water = 'water'
+    Water = 'water',
 }
 
 export type Roaster = {
@@ -313,11 +313,10 @@ export type Coffee = {
 export class WaterLevelSnapShot {
     readonly currentLevel: number = 0;
     readonly refillLevel: number = 0;
-    constructor(input: {currentLevel: number; refillLevel: number;}) {
+    constructor(input: {currentLevel: number; refillLevel: number}) {
         this.currentLevel = input.currentLevel;
         this.refillLevel = input.refillLevel;
-
-    }
+  }
 }
 export class ScaleSnapShot {
     readonly weight: number = 0;
@@ -357,31 +356,31 @@ export class SnapShot {
 
     constructor(input: {
         timestamp: string | Date;
-        state: {state: string; substate: string};
-        flow: number;
-        pressure: number;
-        targetFlow: number;
-        targetPressure: number;
-        mixTemperature: number;
-        groupTemperature: number;
-        targetMixTemperature: number;
-        targetGroupTemperature: number;
-        profileFrame: number;
-        steamTemperature: number;
-    }) {
-        this.timestamp = input.timestamp instanceof Date ? input.timestamp : new Date(input.timestamp);
-        this.state = input.state;
-        this.flow = input.flow;
-        this.pressure = input.pressure;
-        this.targetFlow = input.targetFlow;
-        this.targetPressure = input.targetPressure;
-        this.mixTemperature = input.mixTemperature;
-        this.groupTemperature = input.groupTemperature;
-        this.targetMixTemperature = input.targetMixTemperature;
-        this.targetGroupTemperature = input.targetGroupTemperature;
-        this.profileFrame = input.profileFrame;
-        this.steamTemperature = input.steamTemperature;
-    }
+      state: {state: string; substate: string};
+      flow: number;
+      pressure: number;
+      targetFlow: number;
+      targetPressure: number;
+      mixTemperature: number;
+      groupTemperature: number;
+      targetMixTemperature: number;
+      targetGroupTemperature: number;
+      profileFrame: number;
+      steamTemperature: number;
+  }) {
+      this.timestamp = input.timestamp instanceof Date ? input.timestamp : new Date(input.timestamp);
+      this.state = input.state;
+      this.flow = input.flow;
+      this.pressure = input.pressure;
+      this.targetFlow = input.targetFlow;
+      this.targetPressure = input.targetPressure;
+      this.mixTemperature = input.mixTemperature;
+      this.groupTemperature = input.groupTemperature;
+      this.targetMixTemperature = input.targetMixTemperature;
+      this.targetGroupTemperature = input.targetGroupTemperature;
+      this.profileFrame = input.profileFrame;
+      this.steamTemperature = input.steamTemperature;
+  }
 }
 
 export type ShotMeasurementMachine = {
@@ -430,23 +429,22 @@ export type ApiShot = {
     measurements: Array<{
         machine: {
             timestamp: string;
-            state: {state: string; substate: string};
-            flow: number;
-            pressure: number;
-            mixTemperature: number;
-        };
-        scale?: {
-            timestamp: string;
-            weight: number;
-            weightFlow: number;
-            batteryLevel: number;
-        };
-        volume: number;
-    }>;
+        state: {state: string; substate: string};
+        flow: number;
+        pressure: number;
+        mixTemperature: number;
+    };
+      scale?: {
+          timestamp: string;
+          weight: number;
+          weightFlow: number;
+          batteryLevel: number;
+      };
+      volume: number;
+  }>;
     workflow: ShotWorkflow;
     recipe?: RecipeEntity;
     coffee?: Coffee;
-
 };
 
 export const shotFromApi = (input: ApiShot): Shot => {
@@ -461,20 +459,22 @@ export const shotFromApi = (input: ApiShot): Shot => {
                 pressure: m.machine.pressure,
                 mixTemperature: m.machine.mixTemperature,
             },
-            scale: m.scale ? {
+        scale: m.scale
+            ? {
                 timestamp: new Date(m.scale.timestamp),
                 weight: m.scale.weight,
                 weightFlow: m.scale.weightFlow,
                 batteryLevel: m.scale.batteryLevel,
-            } : undefined,
-            volume: m.volume,
-        })),
-        workflow: input.workflow,
-        recipeId: input.recipe?.id,
-        coffeeId: input.coffee?.id,
-        roasterId: input.coffee?.roasterId,
-        profileId: input.recipe?.profileId,        
-    };
+            }
+            : undefined,
+        volume: m.volume,
+    })),
+      workflow: input.workflow,
+      recipeId: input.recipe?.id,
+      coffeeId: input.coffee?.id,
+      roasterId: input.coffee?.roasterId,
+      profileId: input.recipe?.profileId,
+  };
 };
 
 export const shotEntityFromShot = (shot: Shot): ShotEntity => {
@@ -502,7 +502,7 @@ export const shotEntityFromShot = (shot: Shot): ShotEntity => {
             setMixTemp: machine.mixTemperature,
             steamTemp: 0,
             subState: machine.state.substate,
-            weight: scale?.weight ?? 0,            
+            weight: scale?.weight ?? 0,
         };
     });
 
@@ -517,8 +517,7 @@ export const shotEntityFromShot = (shot: Shot): ShotEntity => {
         coffeeId: shot.coffeeId,
         profileId: shot.profileId,
         recipeId: shot.recipeId,
-
-    };
+  };
 };
 
 export type WeightMeasurement = {
