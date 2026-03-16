@@ -46,7 +46,7 @@ class WaterScreenState extends State<WaterScreen> {
         key: ValueKey(value),
         controller: controller,
         textAlign: TextAlign.center,
-        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+        keyboardType: TextInputType.text,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), suffixText: suffix),
         onSubmitted: (text) {
@@ -88,235 +88,233 @@ class WaterScreenState extends State<WaterScreen> {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          Text(S.of(context).screenWaterTemperatureWatertemp(settings.targetHotWaterTemp),
-                              style: Theme.of(context).textTheme.labelLarge),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Slider(
-                                  value: settings.targetHotWaterTemp.toDouble(),
-                                  max: 100,
-                                  min: 30,
-                                  divisions: 100,
-                                  label: "${settings.targetHotWaterTemp} °C",
-                                  onChanged: (double value) {
-                                    setState(() {
-                                      settings.targetHotWaterTemp = value.toInt();
-                                      machineService.updateSettings();
-                                    });
-                                  },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            Text(
+                              S.of(context).screenWaterTemperatureWatertemp(settings.targetHotWaterTemp),
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Slider(
+                                    value: settings.targetHotWaterTemp.toDouble(),
+                                    max: 100,
+                                    min: 30,
+                                    divisions: 100,
+                                    label: "${settings.targetHotWaterTemp} °C",
+                                    onChanged: (double value) {
+                                      setState(() {
+                                        settings.targetHotWaterTemp = value.toInt();
+                                        machineService.updateSettings();
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 90,
+                                  child: _buildIntInput(
+                                    value: settings.targetHotWaterTemp,
+                                    min: 30,
+                                    max: 100,
+                                    suffix: "°C",
+                                    onValue: (value) {
+                                      setState(() {
+                                        settings.targetHotWaterTemp = value;
+                                        machineService.updateSettings();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Stack(
+                          children: <Widget>[
+                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
+                              Center(
+                                child: SizedBox(
+                                  width: 200,
+                                  height: 200,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 15,
+                                    value: machineService.state.shot?.mixTemp ?? 0 / settings.targetHotWaterTemp,
+                                  ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 90,
-                                child: _buildIntInput(
-                                  value: settings.targetHotWaterTemp,
-                                  min: 30,
-                                  max: 100,
-                                  suffix: "°C",
-                                  onValue: (value) {
-                                    setState(() {
-                                      settings.targetHotWaterTemp = value;
-                                      machineService.updateSettings();
-                                    });
-                                  },
-                                ),
+                              Center(child: Text("${machineService.state.shot?.mixTemp.toStringAsFixed(0)} °C")),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 20, thickness: 5, indent: 20, endIndent: 0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Text(
+                                S.of(context).screenSteamTimerS(settings.targetHotWaterLength),
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Slider(
+                                      value: settings.targetHotWaterLength.toDouble(),
+                                      max: 100,
+                                      min: 5,
+                                      divisions: 200,
+                                      label: "${settings.targetHotWaterLength} s",
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          settings.targetHotWaterLength = value.toInt();
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 90,
+                                    child: _buildIntInput(
+                                      value: settings.targetHotWaterLength,
+                                      min: 5,
+                                      max: 100,
+                                      suffix: "s",
+                                      onValue: (value) {
+                                        setState(() {
+                                          settings.targetHotWaterLength = value;
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Stack(
-                        children: <Widget>[
-                          if (machineService.state.coffeeState == EspressoMachineState.water) ...[
-                            Center(
-                              child: SizedBox(
-                                width: 200,
-                                height: 200,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 15,
-                                  value: machineService.state.shot?.mixTemp ?? 0 / settings.targetHotWaterTemp,
-                                ),
-                              ),
-                            ),
-                            Center(child: Text("${machineService.state.shot?.mixTemp.toStringAsFixed(0)} °C")),
-                          ]
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 5,
-                  indent: 20,
-                  endIndent: 0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Text(S.of(context).screenSteamTimerS(settings.targetHotWaterLength),
-                                style: Theme.of(context).textTheme.labelLarge),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Slider(
-                                    value: settings.targetHotWaterLength.toDouble(),
-                                    max: 100,
-                                    min: 5,
-                                    divisions: 200,
-                                    label: "${settings.targetHotWaterLength} s",
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        settings.targetHotWaterLength = value.toInt();
-                                        machineService.updateSettings();
-                                      });
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 90,
-                                  child: _buildIntInput(
-                                    value: settings.targetHotWaterLength,
-                                    min: 5,
-                                    max: 100,
-                                    suffix: "s",
-                                    onValue: (value) {
-                                      setState(() {
-                                        settings.targetHotWaterLength = value;
-                                        machineService.updateSettings();
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: <Widget>[
-                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
-                              Center(
-                                child: SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 15,
-                                    value: machineService.state.coffeeState == EspressoMachineState.water
-                                        ? machineService.timer.inSeconds / settings.targetHotWaterLength
-                                        : 0,
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Stack(
+                            children: <Widget>[
+                              if (machineService.state.coffeeState == EspressoMachineState.water) ...[
+                                Center(
+                                  child: SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 15,
+                                      value: machineService.state.coffeeState == EspressoMachineState.water
+                                          ? machineService.timer.inSeconds / settings.targetHotWaterLength
+                                          : 0,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)}s")),
+                                Center(child: Text("${machineService.timer.inSeconds.toStringAsFixed(0)}s")),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 5,
-                  indent: 20,
-                  endIndent: 0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            Text(S.of(context).screenWaterWeightVolume(settings.targetHotWaterWeight),
-                                style: Theme.of(context).textTheme.labelLarge),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Slider(
-                                    value: settings.targetHotWaterWeight.toDouble(),
-                                    max: 200,
-                                    min: 0,
-                                    divisions: 200,
-                                    label: "${settings.targetHotWaterWeight} g",
-                                    onChanged: (double value) {
-                                      setState(() {
-                                        settings.targetHotWaterWeight = value.toInt();
-                                        settings.targetHotWaterVol = (value * 1.1).toInt();
-                                        machineService.updateSettings();
-                                      });
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 90,
-                                  child: _buildIntInput(
-                                    value: settings.targetHotWaterWeight,
-                                    min: 0,
-                                    max: 200,
-                                    suffix: "g",
-                                    onValue: (value) {
-                                      setState(() {
-                                        settings.targetHotWaterWeight = value;
-                                        settings.targetHotWaterVol = (value * 1.1).toInt();
-                                        machineService.updateSettings();
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Stack(
-                          children: <Widget>[
-                            if (machineService.state.coffeeState == EspressoMachineState.water) ...[
-                              Center(
-                                child: SizedBox(
-                                  width: 200,
-                                  height: 200,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 15,
-                                    value: machineService.scaleService.weight[0] / settings.targetHotWaterWeight,
-                                  ),
-                                ),
+                  const Divider(height: 20, thickness: 5, indent: 20, endIndent: 0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Text(
+                                S.of(context).screenWaterWeightVolume(settings.targetHotWaterWeight),
+                                style: Theme.of(context).textTheme.labelLarge,
                               ),
-                              Center(child: Text("${machineService.scaleService.weight[0].toStringAsFixed(0)} g")),
-                            ]
-                          ],
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Slider(
+                                      value: settings.targetHotWaterWeight.toDouble(),
+                                      max: 200,
+                                      min: 0,
+                                      divisions: 200,
+                                      label: "${settings.targetHotWaterWeight} g",
+                                      onChanged: (double value) {
+                                        setState(() {
+                                          settings.targetHotWaterWeight = value.toInt();
+                                          settings.targetHotWaterVol = (value * 1.1).toInt();
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 90,
+                                    child: _buildIntInput(
+                                      value: settings.targetHotWaterWeight,
+                                      min: 0,
+                                      max: 200,
+                                      suffix: "g",
+                                      onValue: (value) {
+                                        setState(() {
+                                          settings.targetHotWaterWeight = value;
+                                          settings.targetHotWaterVol = (value * 1.1).toInt();
+                                          machineService.updateSettings();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Stack(
+                            children: <Widget>[
+                              if (machineService.state.coffeeState == EspressoMachineState.water) ...[
+                                Center(
+                                  child: SizedBox(
+                                    width: 200,
+                                    height: 200,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 15,
+                                      value: machineService.scaleService.weight[0] / settings.targetHotWaterWeight,
+                                    ),
+                                  ),
+                                ),
+                                Center(child: Text("${machineService.scaleService.weight[0].toStringAsFixed(0)} g")),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

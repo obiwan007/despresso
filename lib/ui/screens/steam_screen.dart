@@ -62,7 +62,7 @@ class SteamScreenState extends State<SteamScreen> {
         key: ValueKey(value),
         controller: controller,
         textAlign: TextAlign.center,
-        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
+        keyboardType: TextInputType.text,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), suffixText: suffix),
         onSubmitted: (text) {
@@ -94,7 +94,7 @@ class SteamScreenState extends State<SteamScreen> {
         key: ValueKey(value),
         controller: controller,
         textAlign: TextAlign.center,
-        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
+        keyboardType: TextInputType.text,
         inputFormatters: [FilteringTextInputFormatter.allow(formatterPattern)],
         decoration: InputDecoration(isDense: true, contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8), suffixText: suffix),
         onSubmitted: (text) {
