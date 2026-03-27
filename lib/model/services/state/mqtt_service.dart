@@ -159,7 +159,7 @@ class MqttService extends ChangeNotifier {
           if (validState) {
             final builder = MqttClientPayloadBuilder();
             builder.addString(DateTime.now().toIso8601String());
-            client.publishMessage(statusRequest, MqttQos.exactlyOnce, builder.payload!);
+            client.publishMessage(statusRequest, MqttQos.exactlyOnce, builder.payload!, retain: true);
           }
         }
       });
@@ -173,7 +173,7 @@ class MqttService extends ChangeNotifier {
       var pubTopic = '$rootTopic/status';
       final builder = MqttClientPayloadBuilder();
       builder.addString(DateTime.now().toIso8601String());
-      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
 
       connected = true;
 
@@ -380,7 +380,7 @@ class MqttService extends ChangeNotifier {
     final topic = '$_haDiscoveryPrefix/$component/despresso/$objectId/config';
     final builder = MqttClientPayloadBuilder();
     builder.addString(jsonEncode(config));
-    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!);
+    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: true);
   }
 
   void handleEvents() {
@@ -391,11 +391,11 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/de1';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.state.name);
-        client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!, retain: true);
 
         builder = MqttClientPayloadBuilder();
         builder.addString(event.subState);
-        client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!, retain: true);
       } catch (e) {
         log.severe("MQTT: $e");
       }
@@ -422,7 +422,7 @@ class MqttService extends ChangeNotifier {
         payload['groupPressure'] = _round1(payload['groupPressure']);
 
         builder.addString(jsonEncode(payload));
-        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
       } catch (e) {
         log.severe("MQTT: $e");
       }
@@ -434,10 +434,10 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/de1/waterlevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.getLevelML().toString());
-        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
         builder = MqttClientPayloadBuilder();
         builder.addString(event.getLevelRefill().toString());
-        client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!, retain: true);
       } catch (e) {
         log.severe("MQTT: $e");
       }
@@ -450,11 +450,11 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/tablet/batterylevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.toString());
-        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
         if (machineService.de1 != null) {
           builder = MqttClientPayloadBuilder();
           builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
-          client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
+          client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!, retain: true);
         }
         log.fine("Batterydata pushed to MQTT");
       } catch (e) {
