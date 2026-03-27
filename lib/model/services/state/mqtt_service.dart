@@ -43,6 +43,8 @@ class MqttService extends ChangeNotifier {
   late StreamSubscription<WaterLevel> streamWaterSubscription;
 
   bool _reconnectInProgress = false;
+  Timer? _reconnectTimer;
+  int _reconnectAttempt = 0;
 
   MqttService() {
     log.info('MQTT:init mqtt');
@@ -55,6 +57,9 @@ class MqttService extends ChangeNotifier {
   }
 
   stopService() {
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+    _reconnectAttempt = 0;
     if (client.connectionStatus?.state == MqttConnectionState.connected) {
       client.disconnect();
     }
@@ -66,6 +71,7 @@ class MqttService extends ChangeNotifier {
       try {
         client = MqttServerClient(settingsService.mqttServer, "");
         client.logging(on: false);
+        client.setProtocolV311();        
         client.port = int.parse(settingsService.mqttPort);
         log.info('MQTT:mqtt service started');
         client.keepAlivePeriod = 60;
@@ -76,16 +82,19 @@ class MqttService extends ChangeNotifier {
 
         client.onConnected = onConnected;
         client.onAutoReconnected = () {
-          log.info("Auto Reconnected");
+          log.info("MQTT: Auto Reconnected");
           connected = true;
+          _reconnectTimer?.cancel();
+          _reconnectTimer = null;
+          _reconnectAttempt = 0;
           publishDiscovery();
           handleEvents();
         };
 
         client.onAutoReconnect = () {
-          log.info("Auto Reconnect - connection lost");
+          log.info("MQTT: Auto Reconnect - connection lost");
           connected = false;
-          _attemptReconnect();
+          _scheduleReconnect();
         };
 
         client.onSubscribed = onSubscribed;
@@ -122,6 +131,7 @@ class MqttService extends ChangeNotifier {
       } else {
         log.severe('MQTT:Client connection failed - disconnecting, status is ${client.connectionStatus}');
         client.disconnect();
+        _scheduleReconnect();
         return -1;
       }
 
@@ -184,6 +194,10 @@ class MqttService extends ChangeNotifier {
   void disconnect() async {
     if (!connected) return;
 
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+    _reconnectAttempt = 0;
+
     log.info('MQTT:Unsubscribing');
     client.unsubscribe(subTopic);
     // client.unsubscribe(pubTopic);
@@ -213,23 +227,47 @@ class MqttService extends ChangeNotifier {
     log.info('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       log.info('MQTT:OnDisconnected callback is solicited, this is correct');
+      return;
     }
+
+    _scheduleReconnect();
   }
 
-  Future<void> _attemptReconnect() async {
-    if (_reconnectInProgress) return;
+  void _scheduleReconnect() {
+    if (_reconnectTimer?.isActive ?? false) return;
     if (!settingsService.mqttEnabled) return;
     if (client.connectionStatus?.state == MqttConnectionState.connected) return;
 
-    _reconnectInProgress = true;
-    try {
-      log.info('MQTT:Attempting reconnect');
-      await client.connect(settingsService.mqttUser, settingsService.mqttPassword);
-    } catch (e) {
-      log.severe('MQTT:Reconnect failed: $e');
-    } finally {
-      _reconnectInProgress = false;
+    if (_reconnectAttempt < 6) {
+      _reconnectAttempt += 1;
     }
+
+    final delaySeconds = _reconnectAttempt <= 1
+        ? 2
+        : (_reconnectAttempt == 2
+              ? 4
+              : (_reconnectAttempt == 3 ? 8 : (_reconnectAttempt == 4 ? 16 : (_reconnectAttempt == 5 ? 32 : 60))));
+
+    log.warning('MQTT:Scheduling reconnect in ${delaySeconds}s');
+    _reconnectTimer = Timer(Duration(seconds: delaySeconds), () async {
+      _reconnectTimer = null;
+      if (_reconnectInProgress) return;
+      if (client.connectionStatus?.state == MqttConnectionState.connected) {
+        _reconnectAttempt = 0;
+        return;
+      }
+
+      _reconnectInProgress = true;
+      try {
+        log.info('MQTT:Attempting reconnect');
+        await client.connect(settingsService.mqttUser, settingsService.mqttPassword);
+      } catch (e) {
+        log.severe('MQTT:Reconnect failed: $e');
+        _scheduleReconnect();
+      } finally {
+        _reconnectInProgress = false;
+      }
+    });
   }
 
   /// The successful connect callback
