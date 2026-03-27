@@ -35,19 +35,21 @@ class MqttService extends ChangeNotifier {
 
   static const _haDiscoveryPrefix = 'homeassistant';
   static const _deviceModel = 'decent de1';
-  static const _deviceManufacturer = 'decent';
+  static const _deviceManufacturer = 'despresso';
 
   late StreamSubscription<EspressoMachineFullState> streamStateSubscription;
   late StreamSubscription<int> streamBatterySubscription;
   late StreamSubscription<ShotState> streamShotSubscription;
   late StreamSubscription<WaterLevel> streamWaterSubscription;
 
+  bool _reconnectInProgress = false;
+
   MqttService() {
     log.info('MQTT:init mqtt');
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
     if (settingsService.mqttRootTopic.isNotEmpty) {
-      rootTopic = "despresso/${settingsService.mqttRootTopic}";
+      rootTopic = "${settingsService.mqttRootTopic}";
     }
     startService();
   }
@@ -75,17 +77,24 @@ class MqttService extends ChangeNotifier {
         client.onConnected = onConnected;
         client.onAutoReconnected = () {
           log.info("Auto Reconnected");
+          connected = true;
+          publishDiscovery();
+          handleEvents();
         };
 
         client.onAutoReconnect = () {
           log.info("Auto Reconnect - connection lost");
+          connected = false;
+          _attemptReconnect();
         };
 
         client.onSubscribed = onSubscribed;
         client.pongCallback = pong;
 
         final connMess = MqttConnectMessage()
-            .withClientIdentifier('despresso')
+            .withClientIdentifier(
+              settingsService.mqttRootTopic.isNotEmpty ? settingsService.mqttRootTopic : 'despresso',
+            )
             // .withWillTopic('willtopic')
             // .withWillMessage('My Will message')
             .startClean()
@@ -204,7 +213,23 @@ class MqttService extends ChangeNotifier {
     log.info('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       log.info('MQTT:OnDisconnected callback is solicited, this is correct');
-    }   
+    }
+  }
+
+  Future<void> _attemptReconnect() async {
+    if (_reconnectInProgress) return;
+    if (!settingsService.mqttEnabled) return;
+    if (client.connectionStatus?.state == MqttConnectionState.connected) return;
+
+    _reconnectInProgress = true;
+    try {
+      log.info('MQTT:Attempting reconnect');
+      await client.connect(settingsService.mqttUser, settingsService.mqttPassword);
+    } catch (e) {
+      log.severe('MQTT:Reconnect failed: $e');
+    } finally {
+      _reconnectInProgress = false;
+    }
   }
 
   /// The successful connect callback
@@ -225,13 +250,13 @@ class MqttService extends ChangeNotifier {
 
     final device = <String, dynamic>{
       'identifiers': [rootTopic],
-      'name': 'despresso',
+      'name': '${settingsService.mqttRootTopic}',
       'model': _deviceModel,
       'manufacturer': _deviceManufacturer,
     };
 
     final stateConfig = <String, dynamic>{
-      'name': 'despresso machine state',
+      'name': 'de1 machine state',
       'unique_id': '${rootTopic}_machine_state',
       'state_topic': '$rootTopic/de1/status',
       'device': device,
@@ -239,7 +264,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'machine_state', stateConfig);
 
     final waterConfig = <String, dynamic>{
-      'name': 'despresso water level',
+      'name': 'de1 water level',
       'unique_id': '${rootTopic}_water_level',
       'state_topic': '$rootTopic/de1/waterlevel',
       'unit_of_measurement': 'ml',
@@ -248,7 +273,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'water_level', waterConfig);
 
     final batteryConfig = <String, dynamic>{
-      'name': 'despresso battery',
+      'name': 'tablet battery',
       'unique_id': '${rootTopic}_battery',
       'state_topic': '$rootTopic/tablet/batterylevel',
       'device_class': 'battery',
@@ -258,7 +283,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'battery', batteryConfig);
 
     final powerSwitchConfig = <String, dynamic>{
-      'name': 'despresso power',
+      'name': 'de1 power',
       'unique_id': '${rootTopic}_power',
       'state_topic': '$rootTopic/de1/status',
       'command_topic': '$rootTopic/de1/setstatus',
@@ -271,7 +296,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('switch', 'power', powerSwitchConfig);
 
     final shotConfig = <String, dynamic>{
-      'name': 'despresso shot',
+      'name': 'de1 shot',
       'unique_id': '${rootTopic}_shot',
       'state_topic': '$rootTopic/de1/shot',
       'value_template': '{{ value_json.subState }}',
@@ -281,7 +306,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'shot', shotConfig);
 
     final shotFields = <Map<String, dynamic>>[
-      {'id': 'shot_substate', 'name': 'substate', 'template': 'subState'},
+      {'id': 'shot_substate', 'name': 'de1 machine substate', 'template': 'subState'},
       {'id': 'shot_weight', 'name': 'shot weight', 'template': 'weight', 'unit': 'g'},
       {'id': 'shot_sample_time', 'name': 'sample time', 'template': 'sampleTime', 'unit': 's'},
       {'id': 'shot_pour_time', 'name': 'pour time', 'template': 'pourTime', 'unit': 's'},
