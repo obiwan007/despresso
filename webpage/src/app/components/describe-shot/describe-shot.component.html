@@ -1,0 +1,91 @@
+<h2 mat-dialog-title>Describe your Shot</h2>
+<div mat-dialog-content>
+  <p class="pb-4" id="shot-desc-help">Add notes about taste, aroma, mouthfeel, and any tweaks.</p>
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Notes</mat-label>
+    <textarea
+      matInput
+      [attr.aria-describedby]="'shot-desc-help'"
+      rows="6"
+      [value]="notes()"
+      (input)="onInput('notes', $event)"
+    ></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Barrista</mat-label>
+    <input matInput [(ngModel)]="barrista" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Drinker</mat-label>
+    <input matInput [(ngModel)]="drinker" />
+  </mat-form-field>
+
+  <div class="slider-row">
+    <label for="enjoyment-slider">Enjoyment</label>
+    <mat-slider
+      id="enjoyment-slider"
+      min="1"
+      max="100"
+      step="1"
+      thumbLabel
+      tickInterval="1"
+      aria-label="Enjoyment rating"
+    >
+      <input matSliderThumb [(ngModel)]="enjoyment" />
+    </mat-slider>
+     <input type="number" class="w-15" matInput [(ngModel)]="enjoyment" />
+  </div>
+
+  <div class="slider-row">
+    <label for="grinder-settings-slider">Grinder Settings</label>
+    <mat-slider
+      id="grinder-settings-slider"
+      min="0"
+      max="100"
+      step="0.1"
+      tickInterval="2"
+      aria-label="Grinder settings"
+    >
+      <input matSliderThumb [(ngModel)]="grinderSettings" />
+    </mat-slider>
+     <input type="number" class="w-15" matInput [(ngModel)]="grinderSettings" />
+  </div>
+
+  <div class="slider-row">
+    <label for="tds-slider">Total Dissolved Solids (TDS)</label>
+    <mat-slider
+      id="tds-slider"
+      min="0"
+      max="20"
+      step="0.01"
+      tickInterval="2"
+      aria-label="Total Dissolved Solids"
+    >
+      <input matSliderThumb [(ngModel)]="totalDissolvedSolids" />
+    </mat-slider>    
+    <input type="number" class="w-15" matInput [(ngModel)]="totalDissolvedSolids" />
+  </div>
+
+  <div class="slider-row">
+    <label for="extraction-yield-slider">Extraction Yield (%)</label>
+    <mat-slider
+      id="extraction-yield-slider"
+      min="0"
+      max="30"
+      step="0.01"
+      tickInterval="5"
+      aria-label="Extraction Yield"
+    >
+      <input matSliderThumb [(ngModel)]="extractionYield" />
+    </mat-slider>
+     <input type="number" class="w-15" matInput [(ngModel)]="extractionYield" />
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-stroked-button (click)="onClose()" aria-label="Close">Close</button>
+  <button mat-flat-button color="primary" (click)="onSave()" aria-label="Save description">
+    Save
+  </button>
+</div>

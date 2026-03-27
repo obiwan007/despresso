@@ -17,7 +17,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.18+1
+version: 1.0.19+1
 
 environment:
   sdk: "^3.8.0"
@@ -45,7 +45,7 @@ dependencies:
   flutter_reactive_ble: ^5.4.0
   json_annotation: ^4.11.0
   build_runner: ^2.3.3
-  json_serializable: ^6.13.0 
+  json_serializable: ^6.13.0
   path_provider: ^2.1.5
   community_charts_flutter: ^1.0.4
   syncfusion_flutter_sliders: ^32.2.7
@@ -72,9 +72,9 @@ dependencies:
   document_file_save_plus:
     git:
       url: https://github.com/Shajk0/document_file_save_plus.git
-      ref: master 
+      ref: master
   sentry_flutter: ^9.14.0
-  feedback_sentry: ^3.0.0
+  feedback_sentry: ^3.2.0
   package_info_plus: ^9.0.0
   intl: ^0.20.2
   csv: ^7.1.0
@@ -82,21 +82,22 @@ dependencies:
   shelf: ^1.4.1
   shelf_static: ^1.1.2
   shelf_router: ^1.1.4
+  shelf_web_socket: ^3.0.0
   network_info_plus: ^7.0.0
   screen_brightness: ^2.1.4
-  flutter_archive: ^6.0.0
+  flutter_archive: ^6.0.4
   sentry_logging: ^9.14.0
   flutter_localizations:
     sdk: flutter
   web_socket_channel: ^3.0.3
   flutter_keyboard_visibility: ^6.0.0
   wakelock_plus: ^1.4.0
-  dashboard: ^0.0.3+1  
+  dashboard: ^0.0.3+1
   flutter_colorpicker:
     git:
       url: https://github.com/mchome/flutter_colorpicker
-      ref: master  # or 786d04363f587b818ce585d25b9c2bb62de95aba
-  flutter_appauth: ^11.0.0
+      ref: master # or 786d04363f587b818ce585d25b9c2bb62de95aba
+  flutter_appauth: ^12.0.0
   flutter_whatsnew: ^1.1.0+1
 
 dev_dependencies:
@@ -150,10 +151,11 @@ flutter:
     - assets/iconStore.png
     - assets/profiles/
     - assets/website/
+    - assets/website/media/
     - assets/website/static/
     - assets/website/static/js/
     - assets/website/static/css/
-    - assets/website/static/media/      
+    - assets/website/static/media/
     - CHANGELOG.md
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -18,13 +18,15 @@ build/
 keys/
 **/report.xml
 **/node_modules
+.angular
+logs_*
 
 # Android Studio will place build artifacts here
 android/app/debug
 android/app/profile
 android/app/release
 android/.idea
-
+webpage/dist
 
 # See https://www.dartlang.org/guides/libraries/private-files
 minipage/build/

@@ -1,0 +1,19 @@
+<button
+	type="button"
+	class="rounded-full border-4 w-28 h-28 sm:w-38 sm:h-32 flex flex-col items-center justify-center gap-1 bg-white/10 text-current shadow hover:scale-105 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+	[ngClass]="{
+		'border-red-600 focus-visible:ring-red-500': color() === 'red',
+		'border-blue-600 focus-visible:ring-blue-500': color() === 'blue',
+		'border-green-600 focus-visible:ring-green-500': color() === 'green',
+        'border-yellow-600 focus-visible:ring-yellow-500': color() === 'orange'
+	}"
+	[disabled]="disabled()"
+	(click)="clicked.emit()"
+	[attr.aria-label]="labelTop() + ' ' + labelBottom()"
+>
+	<mat-icon>{{ icon() }}</mat-icon>
+	<div class="flex flex-col leading-tight items-center">
+		<span class="text-sm sm:text-base font-semibold">{{ labelTop() }}</span>
+		<span class="text-[0.65rem] sm:text-xs opacity-80">{{ labelBottom() }}</span>
+	</div>
+</button>

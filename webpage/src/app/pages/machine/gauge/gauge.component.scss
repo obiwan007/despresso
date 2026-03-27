@@ -1,0 +1,115 @@
+:host {
+  /* Theme-aware gauge variables with fallbacks --mat-card-elevated-container-elevation */
+  --gauge-primary: var(--mat-badge-background-color, #3f51b5);
+  --gauge-surface2: var(--mat-card-elevated-container-color, #ffffff);
+  --gauge-surface: var(--mat-sidenav-content-background-color);
+  --gauge-outline: var(--mat-card-outlined-outline-color, var(--mat-divider-color, #888888));
+  --gauge-outline-variant: var(--mat-app-text-color, #cacaca);
+  --gauge-needle: var(--mat-badge-background-color, red);
+  --gauge-plate-shadow: drop-shadow(0px 4px 10px rgba(0, 0, 0, 0.28));
+}
+
+.needle-group {
+  transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform-box: view-box;
+}
+
+.value-path {
+  transition: stroke-dasharray 100ms cubic-bezier(0.4, 0, 0.2, 1),
+              stroke-dashoffset 100ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gauge-card {
+  display: flex;
+  flex-direction: column;
+  /* Elevation using Angular Material card token, with fallback */
+
+}
+
+.gauge-content {
+  display: flex;
+  
+  justify-content: center;
+  
+}
+
+.gauge-svg-wrapper {
+  display: inline-block;
+}
+
+.gauge-label {
+  font-size: 10px;
+  opacity: 0.5;  
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+.gauge-title {
+  font-size: 10px;
+  opacity: 0.5;  
+  width: 70px;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+.gauge-unit {
+  font-size: 10px;
+  opacity: 0.5;  
+  margin: 0;
+  padding: 0;
+  transform: translateY(-3px);
+}
+
+.gauge-caption-pressure {
+  margin-top: 0px;
+  padding: 0;
+  
+  min-width: 80px!important;  
+  text-align: right;
+}
+.gauge-caption {
+  margin-top: -5px;
+  min-width: 50px!important;  
+  text-align: right;
+}
+
+.pressure{
+  position: relative; top: 110px; left: 0%
+}
+
+.temp{
+  width: 80px;
+  position: relative; top: 130px; left: 20%;
+}
+
+.time{
+  width: 80px;
+  position: relative; top: 130px; left: 20%;
+}
+
+.weight{
+  width: 80px;
+  position: relative; top: 55px; left: 55%; 
+}
+
+.flow{
+  width: 80px;  
+  position: relative; top: 55px; left: 55%; 
+}
+
+.state{
+  position: relative; top: 50px; left: 0%; 
+  opacity: 0.5;  
+  width: 100%;
+  text-align: center;
+}
+
+.values{
+  z-index: 0;
+  transform: translateY(-320px);
+}
+
+.gauge-svg-wrapper svg { 
+  z-index: 0; 
+  position: relative;
+}

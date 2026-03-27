@@ -1,0 +1,28 @@
+.analog-clock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.analog-clock svg {
+  background: none;
+}
+.clock-face {
+  fill: transparent;
+  stroke: #d9d9d955;
+  stroke-width: 4px;
+}
+.hand {
+  stroke: #aaaaaa;
+  stroke-linecap: round;
+  transition: stroke 0.2s;
+}
+.hand.hour {
+  stroke-width: 6px;
+}
+.hand.minute {
+  stroke-width: 4px;
+}
+.hand.second {
+  stroke: #e33;
+  stroke-width: 2px;
+}

@@ -1,0 +1,123 @@
+<div class="gauge-card">
+
+  <div class="gauge-content">
+    <div class="gauge-svg-wrapper" [style.width.px]="size()" [style.height.px]="size()">
+      <svg [attr.viewBox]="'0 0 ' + size() + ' ' + size()" [attr.width]="size()" [attr.height]="size()"
+        [style.--gauge-primary]="colorPrimary() || null"
+        [style.--gauge-surface]="colorSurface() || null"
+        [style.--gauge-outline]="colorOutline() || null"
+        [style.--gauge-outline-variant]="colorOutlineVariant() || null"
+        [style.--gauge-needle]="colorNeedle() || null">
+        <!-- Definitions for elevation effect -->
+        <defs>
+          <!-- <radialGradient id="gaugePlateGrad" cx="50%" cy="45%" r="65%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+          <stop offset="60%" stop-color="#ffffff" stop-opacity="0.08" />
+          <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+        </radialGradient> -->
+          <filter id="gaugePlateShadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.3" />
+          </filter>
+        </defs>
+
+      <!-- Full circle plate with subtle elevation -->
+      <!-- <circle [attr.cx]="cx" [attr.cy]="cy" [attr.r]="plateR" fill="var(--gauge-surface)" filter="url(#gaugePlateShadow)"
+        [style.filter]="'var(--gauge-plate-shadow)'"></circle> -->
+        <circle [attr.cx]="cx" [attr.cy]="cy" [attr.r]="plateR" fill="url(#gaugePlateGrad)" />
+        <circle [attr.cx]="cx" [attr.cy]="cy" [attr.r]="plateR" fill="none" stroke="var(--gauge-outline-variant)" stroke-opacity="0.2" stroke-width="1" />
+        <!-- Background arc (20°–340° by default) -->
+        <path [attr.d]="backgroundPath" stroke="var(--gauge-outline)" [attr.stroke-width]="stroke()"
+          fill="none" stroke-linecap="round" />
+
+        <!-- Value arc uses dasharray to animate the fraction -->
+        <path class="value-path" [attr.d]="backgroundPath" stroke="var(--gauge-primary)" [attr.stroke-width]="2"
+          [style.strokeDasharray]="valueDashArray()" [style.strokeDashoffset]="0"
+          fill="none" stroke-linecap="round" />
+
+        <!-- Needle: base horizontal line, rotated via CSS transform -->
+        <g class="needle-group"
+          [style.transform]="'rotate(' + needleAngle() + 'deg)'"
+          [style.transform-origin]="cx + 'px ' + cy + 'px'">
+          <line [attr.x1]="needleBase().x1" [attr.y1]="needleBase().y1" [attr.x2]="needleBase().x2" [attr.y2]="needleBase().y2"
+            stroke="var(--gauge-needle)" stroke-width="3" />
+        </g>
+
+        <!-- Center dot -->
+        <circle [attr.cx]="cx" [attr.cy]="cy" r="4" fill="var(--gauge-needle)" />
+
+        <!-- Ticks -->
+        <g class="gauge-ticks">
+          @for (t of ticks().major; track t) {
+            <line [attr.x1]="t.x1" [attr.y1]="t.y1" [attr.x2]="t.x2" [attr.y2]="t.y2"
+              stroke="var(--gauge-outline-variant)" stroke-width="2" />
+          }
+          @for (t of ticks().minor; track t) {
+            <line [attr.x1]="t.x1" [attr.y1]="t.y1" [attr.x2]="t.x2" [attr.y2]="t.y2"
+              stroke="var(--gauge-outline-variant)" stroke-width="1" opacity="0.6" />
+          }
+        </g>
+      </svg>
+
+  <div class="values">
+    <div class="pressure" >
+      <div class="flex flex-col">
+        <div class="gauge-label">PRESSURE</div>
+        <div class="flex flex-row justify-center items-end" >
+          <div class="shrink-0 gauge-caption-pressure text-4xl">{{ pressure() | number:'1.1-1' }} </div>
+          <div class="shrink gauge-unit ml-1">bar</div>
+        </div>
+      </div>
+    </div>
+    <div class="temp">
+      <div class="flex flex-col">
+        <div class="gauge-title">TEMP</div>
+        <div class="flex items-end" >
+          <div class="gauge-caption text-lg">{{ temp() | number:'1.1-1' }} </div>
+          <div class="gauge-unit ml-1">°C</div>
+        </div>
+      </div>
+    </div>
+    <div class="time" >
+      <div class="flex flex-col">
+        <div class="gauge-title">TIME</div>
+        <div class="flex items-end" >
+          <div class="gauge-caption text-lg">{{ time() | number:'1.1-1' }} </div>
+          <div class="gauge-unit ml-1">s</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="weight">
+      <div class="flex flex-col" >
+        <div class="gauge-title">WEIGHT</div>
+        <div class="flex items-end" >
+          <div class="gauge-caption text-lg">{{ weight() | number:'1.1-1' }} </div>
+          <div class="gauge-unit ml-1">g</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flex flex-col" >
+        <div class="gauge-title">FLOW</div>
+        <div class="flex items-end" >
+          <div class="gauge-caption text-lg">{{ flow() | number:'1.1-1' }} </div>
+          <div class="gauge-unit ml-1">g/s</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="state">
+      <div class="flex flex-col items-center" >
+        <div class="text-lg mb-0 p-0">{{ status()  }}</div>
+        <div class="mt-0 text-sm p-0">{{ subStatus()  }}</div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<!--  -->
+</div>
+
+</div>

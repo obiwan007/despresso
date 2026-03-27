@@ -1,0 +1,22 @@
+.w-100 { width: 100%; }
+
+.slider-row {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+.slider-row label {
+	min-width: 180px;
+	font-weight: 500;
+}
+.slider-row mat-slider {
+	flex: 1 1 0;
+	min-width: 120px;
+	max-width: 300px;
+}
+.slider-row span {
+	min-width: 40px;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}

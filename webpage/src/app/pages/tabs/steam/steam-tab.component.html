@@ -1,0 +1,81 @@
+<div class="tab-content">
+	<mat-card class="steam-card">
+		<mat-card-title>
+			<div class="title-row">
+				<span>Steam</span>
+			</div>
+		</mat-card-title>
+
+		<mat-card-content>
+			<div class="controls">
+				<div class="left">
+					<!-- Target Steam Temperature -->
+					<div class="control">
+						<div class="label">Temperature {{ settings()?.targetSteamTemp }}°C</div>
+						<mat-slider min="100" max="180" step="1" aria-label="Target steam temperature">
+							<input matSliderThumb [value]="settings()?.targetSteamTemp" (input)="onSteamTempChanged($any($event.target).value)" />
+						</mat-slider>
+					</div>
+					<div class="progress-wrap" aria-live="polite">
+						@if (isSteaming()) {
+							<mat-progress-spinner mode="determinate" [value]="steamTempProgressPct()" diameter="100" strokeWidth="8" aria-label="Steam temperature progress"></mat-progress-spinner>
+							<div class="progress-label">{{ currentSteamTemp() }}°C</div>
+						}
+					</div>
+
+					<hr class="divider" />
+
+					<!-- Steam Length (Timer) -->
+					<div class="control">
+						<div class="label">Timer {{ settings()?.targetSteamLength }} s</div>
+						<mat-slider min="1" max="200" step="1" aria-label="Steam timer">
+							<input matSliderThumb [value]="settings()?.targetSteamLength" (input)="onSteamLengthChanged($any($event.target).value)" />
+						</mat-slider>
+					</div>
+					<div class="progress-wrap" aria-live="polite">
+						@if (isSteaming()) {
+							<mat-progress-spinner mode="indeterminate" diameter="100" strokeWidth="8" aria-label="Steam timer progress"></mat-progress-spinner>
+							<div class="progress-label">Steaming…</div>
+						}
+					</div>
+
+					<!-- Optional: Stop at Milk Temperature -->
+					<div class="control">
+						<div class="label">Stop at {{ settings()?.targetMilkTemperature }}°C</div>
+						<mat-slider min="20" max="80" step="1" aria-label="Target milk temperature">
+							<input matSliderThumb [value]="settings()?.targetMilkTemperature" (input)="onMilkTempChanged($any($event.target).value)" />
+						</mat-slider>
+					</div>
+
+					<hr class="divider" />
+
+					<!-- Steam Flow rate -->
+					<div class="control">
+						<div class="label">Flow {{ settings()?.targetSteamFlow }} ml/s</div>
+						<mat-slider min="0.5" max="4.5" step="0.1" aria-label="Steam flow">
+							<input matSliderThumb [value]="settings()?.targetSteamFlow" (input)="onSteamFlowChanged($any($event.target).value)" />
+						</mat-slider>
+					</div>
+				</div>
+
+				<div class="right">
+					<!-- Preset buttons -->
+					<div class="presets">
+						<div class="preset">
+							<button mat-stroked-button (click)="loadPreset(1)" aria-label="Load Stop 1">Stop 1</button>
+							<button mat-icon-button (click)="savePreset(1)" aria-label="Save Stop 1"><mat-icon>save</mat-icon></button>
+						</div>
+						<div class="preset">
+							<button mat-stroked-button (click)="loadPreset(2)" aria-label="Load Stop 2">Stop 2</button>
+							<button mat-icon-button (click)="savePreset(2)" aria-label="Save Stop 2"><mat-icon>save</mat-icon></button>
+						</div>
+						<div class="preset">
+							<button mat-stroked-button (click)="loadPreset(3)" aria-label="Load Stop 3">Stop 3</button>
+							<button mat-icon-button (click)="savePreset(3)" aria-label="Save Stop 3"><mat-icon>save</mat-icon></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+</div>

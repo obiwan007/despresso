@@ -1,0 +1,39 @@
+:host { display: block; }
+
+.flush-card { 
+    padding: 8px;
+    height: 100%;    
+ }
+
+.title-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+}
+
+.controls {
+	display: flex;
+	gap: 24px;
+}
+
+.left, .right { flex: 1; }
+
+.control { margin-bottom: 12px; }
+.label { font-weight: 500; margin-bottom: 4px; }
+
+/* Make sliders wider and easier to use */
+.control mat-slider {
+	display: block;
+	width: 100%;
+	max-width: 560px;
+}
+
+.progress-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.progress-label { font-size: 12px; opacity: 0.7; }

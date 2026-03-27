@@ -1,0 +1,113 @@
+@if (filteredProfiles(); as list) {
+  <mat-sidenav-container class="profiles-shell">
+    <mat-sidenav [mode]="isWide() ? 'side' : 'over'" position="start" [disableClose]="isWide()" [opened]="isWide() ? true : filtersOpen()" (closedStart)="closeFilters()">
+      <div class="filters">
+        <h3>Filters</h3>
+        <mat-checkbox
+          [checked]="filt().defaultOnly"
+          (change)="setDefaultOnly($event.checked)"
+        >Only default</mat-checkbox>
+        <mat-form-field appearance="outline" class="w100">
+          <mat-label>Hidden</mat-label>
+          <mat-select
+            [value]="filt().hiddenMode"
+            (valueChange)="setHiddenMode($event)">
+            <mat-option value="any">Any</mat-option>
+            <mat-option value="hidden">Hidden only</mat-option>
+            <mat-option value="visible">Visible only</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w100">
+          <mat-label>Author</mat-label>
+          <mat-select
+            [value]="filt().author"
+            (valueChange)="setAuthor($event)">
+            <mat-option value="">Any</mat-option>
+            @for (a of authors(); track a) {
+              <mat-option [value]="a">{{ a }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w100">
+          <mat-label>Type</mat-label>
+          <mat-select
+            [value]="filt().type"
+            (valueChange)="setType($event)">
+            <mat-option value="">Any</mat-option>
+            @for (t of types(); track t) {
+              <mat-option [value]="t">{{ t }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w100">
+          <mat-label>Beverage Type</mat-label>
+          <mat-select
+            [value]="filt().beverageType"
+            (valueChange)="setBeverageType($event)">
+            <mat-option value="">Any</mat-option>
+            @for (b of beverageTypes(); track b) {
+              <mat-option [value]="b">{{ b }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="profiles-container">
+        <mat-card class="profiles-list">
+          <mat-card-title>
+            Profiles
+            <button mat-stroked-button color="primary" style="margin-left: 12px;" (click)="toggleFilters()" [disabled]="isWide()">
+              <mat-icon fontSet="material-symbols-outlined">filter_list</mat-icon>
+              Filters
+            </button>
+          </mat-card-title>
+          <mat-nav-list>
+            @for (p of list; track p) {
+              <a mat-list-item
+                [activated]="p.id === selectedId()"
+                (click)="selectProfile(p.id)">
+                <mat-icon matListItemIcon>description</mat-icon>
+                <div matListItemTitle>{{ p.title }}</div>
+                @if (p.isDefault) {
+                  <div matListItemLine>Default</div>
+                }
+              </a>
+            }
+          </mat-nav-list>
+        </mat-card>
+        @if (selectedProfile(); as sp) {
+          <mat-card class="profile-details">
+            <mat-card-title>{{ sp.title }}</mat-card-title>
+            <mat-card-content>
+              <div class="detail-row">
+                <span class="label">Type</span>
+                <span class="value">{{ sp.shotHeader.type || '—' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Author</span>
+                <span class="value">{{ sp.shotHeader.author || '—' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Beverage Type</span>
+                <span class="value">{{ sp.shotHeader.beverageType || '—' }}</span>
+              </div>
+              @if (sp.shotHeader.notes; as notes) {
+                <div class="detail-row notes">
+                  <span class="label">Notes</span>
+                  <span class="value">{{ notes }}</span>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+} @else {
+  <div class="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+    <span>Loading profiles…</span>
+  </div>
+}
+

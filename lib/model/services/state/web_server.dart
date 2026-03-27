@@ -1,8 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:despresso/model/coffee.dart';
 
+import 'package:despresso/model/de1shotclasses.dart';
+import 'package:despresso/model/recipe.dart';
 import 'package:despresso/model/services/ble/machine_service.dart';
+import 'package:despresso/model/services/ble/scale_service.dart';
+import 'package:despresso/model/services/state/coffee_service.dart';
+import 'package:despresso/model/services/state/profile_service.dart';
+import 'package:despresso/model/shot.dart';
 import 'package:despresso/model/shotstate.dart';
 import 'package:despresso/service_locator.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +22,8 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:shelf_static/shelf_static.dart' as shelf_static;
+import 'package:shelf_web_socket/shelf_web_socket.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 // final client = MqttServerClient(mqttServer, mqttPort.toString());
 
 class WebService extends ChangeNotifier {
@@ -22,25 +31,40 @@ class WebService extends ChangeNotifier {
 
   late SettingsService settingsService;
   late EspressoMachineService machineService;
+  late ScaleService scaleService;
+  late CoffeeService coffeeService;
+  late ProfileService profileService;
 
-  late StreamSubscription<EspressoMachineFullState> streamStateSubscription;
-  late StreamSubscription<int> streamBatterySubscription;
-  late StreamSubscription<ShotState> streamShotSubscription;
-  late StreamSubscription<WaterLevel> streamWaterSubscription;
+  StreamSubscription<EspressoMachineFullState>? streamStateSubscription;
+  StreamSubscription<int>? streamBatterySubscription;
+  StreamSubscription<ShotState>? streamShotSubscription;
+  StreamSubscription<WaterLevel>? streamWaterSubscription;
+  StreamSubscription<WeightMeassurement>? streamScaleSubscription;
+  StreamSubscription<BatteryLevel>? streamScaleBatterySubscription;
 
   HttpServer? server;
 
   bool isRunning = false;
   bool isStarting = false;
 
-  final Map<String, String> header = {
-    "content-type": 'application/json',
-    "Access-Control-Allow-Origin": "*",
-  };
+  final Set<WebSocketChannel> _machineStateSockets = {};
+  final Set<WebSocketChannel> _scaleSnapshotSockets = {};
+  final Set<WebSocketChannel> _waterLevelSockets = {};
+  final Set<WebSocketChannel> _settingsSockets = {};
+  ShotState? _lastShotState;
+  double _lastScaleWeight = 0.0;
+  int _lastScaleBattery = 0;
+  int _lastWaterLevel = 0;
+  int _lastRefillLevel = 0;
+
+  final Map<String, String> header = {"content-type": 'application/json', "Access-Control-Allow-Origin": "*"};
 
   WebService() {
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
+    scaleService = getIt<ScaleService>();
+    coffeeService = getIt<CoffeeService>();
+    profileService = getIt<ProfileService>();
 
     settingsService.addListener(() async {
       if (settingsService.webServer && isRunning == false) {
@@ -49,6 +73,12 @@ class WebService extends ChangeNotifier {
 
       if (settingsService.webServer == false && isRunning == true) {
         await stopService();
+      }
+    });
+
+    settingsService.addListener(() {
+      if (isRunning) {
+        _broadcastSettingsSnapshot();
       }
     });
 
@@ -92,17 +122,181 @@ class WebService extends ChangeNotifier {
       return setMachineState(request);
     });
 
+    router.put('/api/v1/machine/state/<target>', (Request request, String target) {
+      return setMachineStateByTarget(target);
+    });
+
+    router.put('/api/v1/scale/tare', (Request request) {
+      return tareScale();
+    });
+
+    router.put('/api/vi/settings', (Request request) {
+      return updateSettings(request);
+    });
+
+    router.get('/api/v1/shots/ids', (Request request) {
+      return getShotIds();
+    });
+
+    router.get('/api/v1/shots', (Request request) {
+      return getShots(request);
+    });
+
+    router.delete('/api/v1/shot', (Request request) {
+      return deleteShots(request);
+    });
+
+    router.get('/api/v1/coffee', (Request request) {
+      return getCoffees(request);
+    });
+
+    router.post('/api/v1/coffee', (Request request) {
+      return createCoffee(request);
+    });
+
+    router.put('/api/v1/coffee', (Request request) {
+      return updateCoffee(request);
+    });
+
+    router.delete('/api/v1/coffee', (Request request) {
+      return deleteCoffees(request);
+    });
+
+    router.get('/api/v1/roaster', (Request request) {
+      return getRoasters(request);
+    });
+
+    router.post('/api/v1/roaster', (Request request) {
+      return createRoaster(request);
+    });
+
+    router.put('/api/v1/roaster', (Request request) {
+      return updateRoaster(request);
+    });
+
+    router.delete('/api/v1/roaster', (Request request) {
+      return deleteRoasters(request);
+    });
+
+    router.get('/api/v1/profile', (Request request) {
+      return getProfiles(request);
+    });
+
+    router.get('/api/v1/recipe', (Request request) {
+      return getRecipes(request);
+    });
+
+    router.post('/api/v1/recipe', (Request request) {
+      return createRecipe(request);
+    });
+
+    router.put('/api/v1/recipe', (Request request) {
+      return updateRecipe(request);
+    });
+
+    router.delete('/api/v1/recipe', (Request request) {
+      return deleteRecipes(request);
+    });
+
+    router.get('/api/v1/coffee/ids', (Request request) {
+      return getCoffeeIds();
+    });
+
+    router.get('/api/v1/roaster/ids', (Request request) {
+      return getRoasterIds();
+    });
+
+    router.get('/api/v1/profile/ids', (Request request) {
+      return getProfileIds();
+    });
+
+    router.get('/api/v1/recipe/ids', (Request request) {
+      return getRecipeIds();
+    });
+
     router.get('/api/shot', (Request request) {
       var s = jsonEncode(machineService.state.shot?.toJson());
       var res = Response.ok(s, headers: header);
       return res;
     });
 
+    router.get(
+      '/ws/v1/machine/snapshot',
+      webSocketHandler((WebSocketChannel socket, _) {
+        _machineStateSockets.add(socket);
+        _sendMachineState(socket, _lastShotState);
+        socket.stream.listen(
+          (_) {},
+          onDone: () {
+            _machineStateSockets.remove(socket);
+          },
+          onError: (_) {
+            _machineStateSockets.remove(socket);
+          },
+        );
+      }),
+    );
+
+    router.get(
+      '/ws/v1/scale/snapshot',
+      webSocketHandler((WebSocketChannel socket, _) {
+        _scaleSnapshotSockets.add(socket);
+        _sendScaleSnapshot(socket);
+        socket.stream.listen(
+          (_) {},
+          onDone: () {
+            _scaleSnapshotSockets.remove(socket);
+          },
+          onError: (_) {
+            _scaleSnapshotSockets.remove(socket);
+          },
+        );
+      }),
+    );
+
+    router.get(
+      '/ws/v1/machine/waterLevels',
+      webSocketHandler((WebSocketChannel socket, _) {
+        _waterLevelSockets.add(socket);
+        _sendWaterLevelSnapshot(socket);
+        socket.stream.listen(
+          (_) {},
+          onDone: () {
+            _waterLevelSockets.remove(socket);
+          },
+          onError: (_) {
+            _waterLevelSockets.remove(socket);
+          },
+        );
+      }),
+    );
+
+    void settingsSocketHandler(WebSocketChannel socket) {
+      _settingsSockets.add(socket);
+      _sendSettingsSnapshot(socket);
+      socket.stream.listen(
+        (_) {},
+        onDone: () {
+          _settingsSockets.remove(socket);
+        },
+        onError: (_) {
+          _settingsSockets.remove(socket);
+        },
+      );
+    }
+
+    router.get(
+      '/ws/v1/settings',
+      webSocketHandler((WebSocketChannel socket, _) {
+        settingsSocketHandler(socket);
+      }),
+    );    
+
     try {
       server = await shelf_io.serve(
         logRequests()
-            // See https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
-            .addHandler(cascade.handler),
+        // See https://pub.dev/documentation/shelf/latest/shelf/MiddlewareExtensions/addHandler.html
+        .addHandler(cascade.handler),
         InternetAddress.anyIPv4,
         8888,
       );
@@ -112,6 +306,31 @@ class WebService extends ChangeNotifier {
 
       log.info('Serving at http://${server!.address.host}:${server!.port}');
       isRunning = true;
+
+      await streamShotSubscription?.cancel();
+      await streamStateSubscription?.cancel();
+      await streamScaleSubscription?.cancel();
+      await streamScaleBatterySubscription?.cancel();
+      streamShotSubscription = machineService.streamShotState.listen((shotState) {
+        _lastShotState = shotState;
+        _broadcastMachineState(shotState);
+      });
+      streamStateSubscription = machineService.streamState.listen((_) {
+        _broadcastMachineState(_lastShotState);
+      });
+      streamScaleSubscription = scaleService.stream0.listen((measurement) {
+        _lastScaleWeight = measurement.weight;
+        _broadcastScaleSnapshot();
+      });
+      streamScaleBatterySubscription = scaleService.streamBattery0.listen((battery) {
+        _lastScaleBattery = battery.level;
+        _broadcastScaleSnapshot();
+      });
+      streamWaterSubscription = machineService.streamWaterLevel.listen((water) {
+        _lastWaterLevel = water.getLevelML();
+        _lastRefillLevel = water.getLevelRefill();
+        _broadcastWaterLevelSnapshot();
+      });
     } catch (e) {
       log.severe('webserving error $e');
       isRunning = false;
@@ -139,12 +358,1132 @@ class WebService extends ChangeNotifier {
     return res;
   }
 
+  Future<Response> setMachineStateByTarget(String target) async {
+    final mapped = _mapTargetToState(target);
+    if (mapped == null) {
+      return Response(400, body: '{"error":"Unknown target: $target"}', headers: header);
+    }
+
+    if (mapped == EspressoMachineState.idle) {
+      machineService.de1?.switchOn();
+    } else if (mapped == EspressoMachineState.sleep) {
+      machineService.de1?.switchOff();
+    }
+
+    await machineService.setState(mapped);
+    var s = machineService.currentFullState;
+    return Response.ok('{"state": "${s.state.name}", "subState": "${s.subState}"}', headers: header);
+  }
+
+  Future<Response> tareScale() async {
+    await scaleService.tare();
+    return Response.ok('{"status":"ok"}', headers: header);
+  }
+
+  Future<Response> updateSettings(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final updates = <String, dynamic>{};
+
+    void applyBool(String key, bool current, void Function(bool) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readBool(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    void applyInt(String key, int current, void Function(int) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readInt(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    void applyDouble(String key, double current, void Function(double) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readDouble(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    void applyString(String key, String current, void Function(String) setter) {
+      if (payload.containsKey(key)) {
+        final value = _readString(payload[key], fallback: current);
+        setter(value);
+        updates[key] = value;
+      }
+    }
+
+    applyBool(
+      'shotStopOnWeight',
+      settingsService.shotStopOnWeight,
+      (value) => settingsService.shotStopOnWeight = value,
+    );
+    applyBool('shotAutoTare', settingsService.shotAutoTare, (value) => settingsService.shotAutoTare = value);
+    applyBool(
+      'visualizerUpload',
+      settingsService.visualizerUpload,
+      (value) => settingsService.visualizerUpload = value,
+    );
+    applyString('visualizerUser', settingsService.visualizerUser, (value) => settingsService.visualizerUser = value);
+    applyString('visualizerPwd', settingsService.visualizerPwd, (value) => settingsService.visualizerPwd = value);
+    applyString(
+      'visualizerAccessToken',
+      settingsService.visualizerAccessToken,
+      (value) => settingsService.visualizerAccessToken = value,
+    );
+    applyString(
+      'visualizerRefreshToken',
+      settingsService.visualizerRefreshToken,
+      (value) => settingsService.visualizerRefreshToken = value,
+    );
+    applyString(
+      'visualizerExpiring',
+      settingsService.visualizerExpiring,
+      (value) => settingsService.visualizerExpiring = value,
+    );
+    applyDouble('sleepTimer', settingsService.sleepTimer, (value) => settingsService.sleepTimer = value);
+    applyBool(
+      'tabletSleepDuringScreensaver',
+      settingsService.tabletSleepDuringScreensaver,
+      (value) => settingsService.tabletSleepDuringScreensaver = value,
+    );
+    applyDouble(
+      'tabletSleepDuringScreensaverTimeout',
+      settingsService.tabletSleepDuringScreensaverTimeout,
+      (value) => settingsService.tabletSleepDuringScreensaverTimeout = value,
+    );
+    applyBool(
+      'tabletSleepWhenMachineOff',
+      settingsService.tabletSleepWhenMachineOff,
+      (value) => settingsService.tabletSleepWhenMachineOff = value,
+    );
+    applyBool('mqttEnabled', settingsService.mqttEnabled, (value) => settingsService.mqttEnabled = value);
+    applyString('mqttServer', settingsService.mqttServer, (value) => settingsService.mqttServer = value);
+    applyString('mqttPort', settingsService.mqttPort, (value) => settingsService.mqttPort = value);
+    applyString('mqttUser', settingsService.mqttUser, (value) => settingsService.mqttUser = value);
+    applyString('mqttPassword', settingsService.mqttPassword, (value) => settingsService.mqttPassword = value);
+    applyString('mqttRootTopic', settingsService.mqttRootTopic, (value) => settingsService.mqttRootTopic = value);
+    applyBool('mqttSendState', settingsService.mqttSendState, (value) => settingsService.mqttSendState = value);
+    applyBool('mqttSendShot', settingsService.mqttSendShot, (value) => settingsService.mqttSendShot = value);
+    applyBool('mqttSendBattery', settingsService.mqttSendBattery, (value) => settingsService.mqttSendBattery = value);
+    applyBool('mqttSendWater', settingsService.mqttSendWater, (value) => settingsService.mqttSendWater = value);
+    applyBool('smartCharging', settingsService.smartCharging, (value) => settingsService.smartCharging = value);
+    applyBool(
+      'hasSteamThermometer',
+      settingsService.hasSteamThermometer,
+      (value) => settingsService.hasSteamThermometer = value,
+    );
+    applyBool('hasScale', settingsService.hasScale, (value) => settingsService.hasScale = value);
+    applyBool(
+      'hasRefractometer',
+      settingsService.hasRefractometer,
+      (value) => settingsService.hasRefractometer = value,
+    );
+    applyBool('useSentry', settingsService.useSentry, (value) => settingsService.useSentry = value);
+    applyString('currentProfile', settingsService.currentProfile, (value) => settingsService.currentProfile = value);
+    applyString('currentVersion', settingsService.currentVersion, (value) => settingsService.currentVersion = value);
+    applyInt('selectedRoaster', settingsService.selectedRoaster, (value) => settingsService.selectedRoaster = value);
+    applyInt('selectedCoffee', settingsService.selectedCoffee, (value) => settingsService.selectedCoffee = value);
+    applyInt('selectedRecipe', settingsService.selectedRecipe, (value) => settingsService.selectedRecipe = value);
+    applyInt('selectedShot', settingsService.selectedShot, (value) => settingsService.selectedShot = value);
+    applyInt('steamSettings', settingsService.steamSettings, (value) => settingsService.steamSettings = value);
+    applyInt('targetSteamTemp', settingsService.targetSteamTemp, (value) => settingsService.targetSteamTemp = value);
+    applyBool('steamHeaterOff', settingsService.steamHeaterOff, (value) => settingsService.steamHeaterOff = value);
+    applyInt(
+      'targetSteamLength',
+      settingsService.targetSteamLength,
+      (value) => settingsService.targetSteamLength = value,
+    );
+    applyDouble('targetSteamFlow', settingsService.targetSteamFlow, (value) => settingsService.targetSteamFlow = value);
+    applyInt(
+      'targetMilkTemperature',
+      settingsService.targetMilkTemperature,
+      (value) => settingsService.targetMilkTemperature = value,
+    );
+    applyInt(
+      'targetMilkTempPreset1',
+      settingsService.targetMilkTempPreset1,
+      (value) => settingsService.targetMilkTempPreset1 = value,
+    );
+    applyInt(
+      'targetMilkTempPreset2',
+      settingsService.targetMilkTempPreset2,
+      (value) => settingsService.targetMilkTempPreset2 = value,
+    );
+    applyInt(
+      'targetMilkTempPreset3',
+      settingsService.targetMilkTempPreset3,
+      (value) => settingsService.targetMilkTempPreset3 = value,
+    );
+    applyInt(
+      'targetHotWaterTemp',
+      settingsService.targetHotWaterTemp,
+      (value) => settingsService.targetHotWaterTemp = value,
+    );
+    applyInt(
+      'targetHotWaterVol',
+      settingsService.targetHotWaterVol,
+      (value) => settingsService.targetHotWaterVol = value,
+    );
+    applyInt(
+      'targetHotWaterWeight',
+      settingsService.targetHotWaterWeight,
+      (value) => settingsService.targetHotWaterWeight = value,
+    );
+    applyInt(
+      'targetHotWaterLength',
+      settingsService.targetHotWaterLength,
+      (value) => settingsService.targetHotWaterLength = value,
+    );
+    applyInt(
+      'targetEspressoVol',
+      settingsService.targetEspressoVol,
+      (value) => settingsService.targetEspressoVol = value,
+    );
+    applyDouble(
+      'targetEspressoWeight',
+      settingsService.targetEspressoWeight,
+      (value) => settingsService.targetEspressoWeight = value,
+    );
+    applyDouble(
+      'targetEspressoWeightTimeAdjust',
+      settingsService.targetEspressoWeightTimeAdjust,
+      (value) => settingsService.targetEspressoWeightTimeAdjust = value,
+    );
+    applyDouble(
+      'stepLimitWeightTimeAdjust',
+      settingsService.stepLimitWeightTimeAdjust,
+      (value) => settingsService.stepLimitWeightTimeAdjust = value,
+    );
+    applyDouble('targetFlushTime', settingsService.targetFlushTime, (value) => settingsService.targetFlushTime = value);
+    applyDouble(
+      'targetFlushTime2',
+      settingsService.targetFlushTime2,
+      (value) => settingsService.targetFlushTime2 = value,
+    );
+    applyInt('targetGroupTemp', settingsService.targetGroupTemp, (value) => settingsService.targetGroupTemp = value);
+    applyBool('webServer', settingsService.webServer, (value) => settingsService.webServer = value);
+    applyDouble(
+      'targetTempCorrection',
+      settingsService.targetTempCorrection,
+      (value) => settingsService.targetTempCorrection = value,
+    );
+    applyInt('targetWaterlevel', settingsService.targetWaterlevel, (value) => settingsService.targetWaterlevel = value);
+    applyDouble(
+      'screenBrightnessTimer',
+      settingsService.screenBrightnessTimer,
+      (value) => settingsService.screenBrightnessTimer = value,
+    );
+    applyDouble(
+      'screenBrightnessValue',
+      settingsService.screenBrightnessValue,
+      (value) => settingsService.screenBrightnessValue = value,
+    );
+    applyBool('screenTapWake', settingsService.screenTapWake, (value) => settingsService.screenTapWake = value);
+    applyBool('launchWake', settingsService.launchWake, (value) => settingsService.launchWake = value);
+    applyBool(
+      'screenTimoutGoToRecipe',
+      settingsService.screenTimoutGoToRecipe,
+      (value) => settingsService.screenTimoutGoToRecipe = value,
+    );
+    applyBool('screenDarkTheme', settingsService.screenDarkTheme, (value) => settingsService.screenDarkTheme = value);
+    applyInt('screenThemeMode', settingsService.screenThemeMode, (value) => settingsService.screenThemeMode = value);
+    applyString(
+      'screenThemeIndex',
+      settingsService.screenThemeIndex,
+      (value) => settingsService.screenThemeIndex = value,
+    );
+    applyInt('startCounter', settingsService.startCounter, (value) => settingsService.startCounter = value);
+    applyBool('showFlushScreen', settingsService.showFlushScreen, (value) => settingsService.showFlushScreen = value);
+    applyBool(
+      'screensaverOnIfIdle',
+      settingsService.screensaverOnIfIdle,
+      (value) => settingsService.screensaverOnIfIdle = value,
+    );
+    applyBool(
+      'screensaverShowClock',
+      settingsService.screensaverShowClock,
+      (value) => settingsService.screensaverShowClock = value,
+    );
+    applyString('locale', settingsService.locale, (value) => settingsService.locale = value);
+    applyString('profileFilter', settingsService.profileFilter, (value) => settingsService.profileFilter = value);
+    applyBool('useSteam', settingsService.useSteam, (value) => settingsService.useSteam = value);
+    applyBool('useWater', settingsService.useWater, (value) => settingsService.useWater = value);
+    applyBool(
+      'showPressureGraph',
+      settingsService.showPressureGraph,
+      (value) => settingsService.showPressureGraph = value,
+    );
+    applyBool('showFlowGraph', settingsService.showFlowGraph, (value) => settingsService.showFlowGraph = value);
+    applyBool('showWeightGraph', settingsService.showWeightGraph, (value) => settingsService.showWeightGraph = value);
+    applyBool('showTempGraph', settingsService.showTempGraph, (value) => settingsService.showTempGraph = value);
+    applyString('chUrl', settingsService.chUrl, (value) => settingsService.chUrl = value);
+    applyBool('useCafeHub', settingsService.useCafeHub, (value) => settingsService.useCafeHub = value);
+    applyBool('useLongUUID', settingsService.useLongUUID, (value) => settingsService.useLongUUID = value);
+    applyBool(
+      'recordPrePouring',
+      settingsService.recordPrePouring,
+      (value) => settingsService.recordPrePouring = value,
+    );
+    applyBool('savePrePouring', settingsService.savePrePouring, (value) => settingsService.savePrePouring = value);
+    applyBool('scaleStartTimer', settingsService.scaleStartTimer, (value) => settingsService.scaleStartTimer = value);
+    applyBool('tareOnWakeUp', settingsService.tareOnWakeUp, (value) => settingsService.tareOnWakeUp = value);
+    applyDouble('tareOnWeight1', settingsService.tareOnWeight1, (value) => settingsService.tareOnWeight1 = value);
+    applyDouble('tareOnWeight2', settingsService.tareOnWeight2, (value) => settingsService.tareOnWeight2 = value);
+    applyDouble('tareOnWeight3', settingsService.tareOnWeight3, (value) => settingsService.tareOnWeight3 = value);
+    applyDouble('tareOnWeight4', settingsService.tareOnWeight4, (value) => settingsService.tareOnWeight4 = value);
+    applyBool(
+      'tareOnDetectedWeight',
+      settingsService.tareOnDetectedWeight,
+      (value) => settingsService.tareOnDetectedWeight = value,
+    );
+    applyBool(
+      'scaleDisplayOffOnSleep',
+      settingsService.scaleDisplayOffOnSleep,
+      (value) => settingsService.scaleDisplayOffOnSleep = value,
+    );
+    applyString('scalePrimary', settingsService.scalePrimary, (value) => settingsService.scalePrimary = value);
+    applyString('scaleSecondary', settingsService.scaleSecondary, (value) => settingsService.scaleSecondary = value);
+    applyBool(
+      'alwaysAllowSkipping',
+      settingsService.alwaysAllowSkipping,
+      (value) => settingsService.alwaysAllowSkipping = value,
+    );
+
+    settingsService.notifyDelayed();
+
+    return Response.ok(
+      jsonEncode({'updated': updates, 'settings': settingsService.toSettingsSnapshot()}),
+      headers: header,
+    );
+  }
+
+  Response getShotIds() {
+    final ids = coffeeService.shotBox.getAll().map((shot) => shot.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getShots(Request request) {
+    final ids = _parseShotIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final shots = ids.map((id) => coffeeService.shotBox.get(id)).whereType<Shot>().map(_shotToApi).toList();
+
+    try {
+      log.info("getShots with ids: $ids, found: ${shots.length}");
+      return Response.ok(jsonEncode(shots), headers: header);
+    } catch (e) {
+      log.severe("Error getting shots for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve shots"}', headers: header);
+    }
+  }
+
+  Response getCoffees(Request request) {
+    final ids = _parseCoffeeIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final coffees = ids.map((id) => coffeeService.coffeeBox.get(id)).whereType<Coffee>().map(_coffeeToApi).toList();
+
+    try {
+      log.info("getCoffees with ids: $ids, found: ${coffees.length}");
+      return Response.ok(jsonEncode(coffees), headers: header);
+    } catch (e) {
+      log.severe("Error getting coffees for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve coffee"}', headers: header);
+    }
+  }
+
+  Response getRoasters(Request request) {
+    final ids = _parseRoasterIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final roasters = ids.map((id) => coffeeService.roasterBox.get(id)).whereType<Roaster>().map(_roasterToApi).toList();
+
+    try {
+      log.info("getRoasters with ids: $ids, found: ${roasters.length}");
+      return Response.ok(jsonEncode(roasters), headers: header);
+    } catch (e) {
+      log.severe("Error getting roasters for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve roasters"}', headers: header);
+    }
+  }
+
+  Response getProfiles(Request request) {
+    final ids = _parseProfileIds(request);
+    if (ids.isEmpty) {
+      return Response.ok('[]', headers: header);
+    }
+
+    final profiles = profileService.profiles.where((profile) => ids.contains(profile.id)).map(_profileToApi).toList();
+
+    try {
+      log.info("getProfiles with ids: $ids, found: ${profiles.length}");
+      return Response.ok(jsonEncode(profiles), headers: header);
+    } catch (e) {
+      log.severe("Error getting profiles for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve profiles"}', headers: header);
+    }
+  }
+
+  Response getRecipes(Request request) {
+    final ids = _parseRecipeIds(request);
+    final recipes = ids.isEmpty
+        ? coffeeService.recipeBox.getAll().map(_recipeToApi).toList()
+        : ids.map((id) => coffeeService.recipeBox.get(id)).whereType<Recipe>().map(_recipeToApi).toList();
+
+    try {
+      log.info("getRecipes with ids: $ids, found: ${recipes.length}");
+      return Response.ok(jsonEncode(recipes), headers: header);
+    } catch (e) {
+      log.severe("Error getting recipes for ids $ids: $e");
+      return Response(500, body: '{"error":"Failed to retrieve recipes"}', headers: header);
+    }
+  }
+
+  Response deleteShots(Request request) {
+    final ids = _parseShotIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.shotBox.remove(id)) {
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Response deleteCoffees(Request request) {
+    final ids = _parseCoffeeIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.coffeeBox.remove(id)) {
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Response deleteRoasters(Request request) {
+    final ids = _parseRoasterIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.roasterBox.remove(id)) {
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Response deleteRecipes(Request request) {
+    final ids = _parseRecipeIds(request);
+    if (ids.isEmpty) {
+      return Response(400, body: '{"error":"ids query parameter is required"}', headers: header);
+    }
+
+    var removedCount = 0;
+    for (final id in ids) {
+      if (coffeeService.recipeBox.get(id) != null) {
+        coffeeService.removeRecipe(id);
+        removedCount++;
+      }
+    }
+
+    return Response.ok(jsonEncode({'deleted': removedCount, 'requested': ids.length, 'ids': ids}), headers: header);
+  }
+
+  Future<Response> createRoaster(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final roaster = Roaster()
+      ..name = _readString(payload['name'], fallback: '')
+      ..imageURL = _readString(payload['imageURL'], fallback: '')
+      ..description = _readString(payload['description'], fallback: '')
+      ..address = _readString(payload['address'], fallback: '')
+      ..homepage = _readString(payload['homepage'], fallback: '');
+
+    final id = coffeeService.roasterBox.put(roaster);
+    roaster.id = id;
+    return Response.ok(jsonEncode(_roasterToApi(roaster)), headers: header);
+  }
+
+  Future<Response> createCoffee(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final coffee = Coffee()
+      ..name = _readString(payload['name'], fallback: '')
+      ..description = _readString(payload['description'], fallback: '')
+      ..type = _readString(payload['type'], fallback: '')
+      ..taste = _readString(payload['taste'], fallback: '')
+      ..imageURL = _readString(payload['imageURL'], fallback: '')
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: 0.0)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: 0.0)
+      ..acidRating = _readDouble(payload['acidRating'], fallback: 0.0)
+      ..intensityRating = _readDouble(payload['intensityRating'], fallback: 0.0)
+      ..roastLevel = _readDouble(payload['roastLevel'], fallback: 0.0)
+      ..elevation = _readInt(payload['elevation'], fallback: 0)
+      ..price = _readString(payload['price'], fallback: '')
+      ..origin = _readString(payload['origin'], fallback: '')
+      ..region = _readString(payload['region'], fallback: '')
+      ..farm = _readString(payload['farm'], fallback: '')
+      ..process = _readString(payload['process'], fallback: '')
+      ..isShot = _readBool(payload['isShot'], fallback: false);
+
+    final roastDate = _readDate(payload['roastDate']);
+    if (roastDate != null) {
+      coffee.roastDate = roastDate;
+    }
+
+    final cropYear = _readDate(payload['cropyear']);
+    if (cropYear != null) {
+      coffee.cropyear = cropYear;
+    }
+
+    final roasterId = _readInt(payload['roasterId'], fallback: 0);
+    if (roasterId > 0) {
+      coffee.roaster.targetId = roasterId;
+    }
+
+    final id = coffeeService.coffeeBox.put(coffee);
+    coffee.id = id;
+    return Response.ok(jsonEncode(_coffeeToApi(coffee)), headers: header);
+  }
+
+  Future<Response> createRecipe(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final recipe = Recipe()
+      ..name = _readString(payload['name'], fallback: '')
+      ..description = _readString(payload['description'], fallback: '')
+      ..profileId = _readString(payload['profileId'], fallback: '')
+      ..adjustedWeight = _readDouble(payload['adjustedWeight'], fallback: 0.0)
+      ..adjustedPressure = _readDouble(payload['adjustedPressure'], fallback: 0.0)
+      ..adjustedTemp = _readDouble(payload['adjustedTemp'], fallback: 0.0)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: 36.0)
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: 0.0)
+      ..grinderModel = _readString(payload['grinderModel'], fallback: '')
+      ..ratio1 = _readDouble(payload['ratio1'], fallback: 1.0)
+      ..ratio2 = _readDouble(payload['ratio2'], fallback: 2.0)
+      ..isDeleted = _readBool(payload['isDeleted'], fallback: false)
+      ..isFavorite = _readBool(payload['isFavorite'], fallback: false)
+      ..isShot = _readBool(payload['isShot'], fallback: false)
+      ..weightWater = _readDouble(payload['weightWater'], fallback: 0.0)
+      ..useWater = _readBool(payload['useWater'], fallback: true)
+      ..disableStopOnWeight = _readBool(payload['disableStopOnWeight'], fallback: false)
+      ..tempWater = _readDouble(payload['tempWater'], fallback: 85.0)
+      ..timeWater = _readDouble(payload['timeWater'], fallback: 10.0)
+      ..tempSteam = _readDouble(payload['tempSteam'], fallback: 160.0)
+      ..flowSteam = _readDouble(payload['flowSteam'], fallback: 0.0)
+      ..timeSteam = _readDouble(payload['timeSteam'], fallback: 25.0)
+      ..weightMilk = _readDouble(payload['weightMilk'], fallback: 100.0)
+      ..useSteam = _readBool(payload['useSteam'], fallback: false);
+
+    final coffeeId = _readInt(payload['coffeeId'], fallback: 0);
+    if (coffeeId > 0) {
+      recipe.coffee.targetId = coffeeId;
+    }
+
+    final id = coffeeService.recipeBox.put(recipe);
+    recipe.id = id;
+    return Response.ok(jsonEncode(_recipeToApi(recipe)), headers: header);
+  }
+
+  Future<Response> updateRoaster(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final id = _readInt(payload['id'], fallback: 0);
+    if (id <= 0) {
+      return Response(400, body: '{"error":"id is required"}', headers: header);
+    }
+
+    final existing = coffeeService.roasterBox.get(id);
+    if (existing == null) {
+      return Response(404, body: '{"error":"Roaster not found"}', headers: header);
+    }
+
+    existing
+      ..name = _readString(payload['name'], fallback: existing.name)
+      ..imageURL = _readString(payload['imageURL'], fallback: existing.imageURL)
+      ..description = _readString(payload['description'], fallback: existing.description)
+      ..address = _readString(payload['address'], fallback: existing.address)
+      ..homepage = _readString(payload['homepage'], fallback: existing.homepage);
+
+    coffeeService.roasterBox.put(existing);
+    return Response.ok(jsonEncode(_roasterToApi(existing)), headers: header);
+  }
+
+  Future<Response> updateCoffee(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final id = _readInt(payload['id'], fallback: 0);
+    if (id <= 0) {
+      return Response(400, body: '{"error":"id is required"}', headers: header);
+    }
+
+    final existing = coffeeService.coffeeBox.get(id);
+    if (existing == null) {
+      return Response(404, body: '{"error":"Coffee not found"}', headers: header);
+    }
+
+    existing
+      ..name = _readString(payload['name'], fallback: existing.name)
+      ..description = _readString(payload['description'], fallback: existing.description)
+      ..type = _readString(payload['type'], fallback: existing.type)
+      ..taste = _readString(payload['taste'], fallback: existing.taste)
+      ..imageURL = _readString(payload['imageURL'], fallback: existing.imageURL)
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: existing.grinderSettings)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: existing.grinderDoseWeight)
+      ..acidRating = _readDouble(payload['acidRating'], fallback: existing.acidRating)
+      ..intensityRating = _readDouble(payload['intensityRating'], fallback: existing.intensityRating)
+      ..roastLevel = _readDouble(payload['roastLevel'], fallback: existing.roastLevel)
+      ..elevation = _readInt(payload['elevation'], fallback: existing.elevation)
+      ..price = _readString(payload['price'], fallback: existing.price)
+      ..origin = _readString(payload['origin'], fallback: existing.origin)
+      ..region = _readString(payload['region'], fallback: existing.region)
+      ..farm = _readString(payload['farm'], fallback: existing.farm)
+      ..process = _readString(payload['process'], fallback: existing.process)
+      ..isShot = _readBool(payload['isShot'], fallback: existing.isShot);
+
+    final roastDate = _readDate(payload['roastDate']);
+    if (roastDate != null) {
+      existing.roastDate = roastDate;
+    }
+
+    final cropYear = _readDate(payload['cropyear']);
+    if (cropYear != null) {
+      existing.cropyear = cropYear;
+    }
+
+    final roasterId = _readInt(payload['roasterId'], fallback: existing.roaster.targetId);
+    if (roasterId > 0) {
+      existing.roaster.targetId = roasterId;
+    }
+
+    coffeeService.coffeeBox.put(existing);
+    return Response.ok(jsonEncode(_coffeeToApi(existing)), headers: header);
+  }
+
+  Future<Response> updateRecipe(Request request) async {
+    final payload = await _readJsonBody(request);
+    if (payload == null) {
+      return Response(400, body: '{"error":"Invalid JSON body"}', headers: header);
+    }
+
+    final id = _readInt(payload['id'], fallback: 0);
+    if (id <= 0) {
+      return Response(400, body: '{"error":"id is required"}', headers: header);
+    }
+
+    final existing = coffeeService.recipeBox.get(id);
+    if (existing == null) {
+      return Response(404, body: '{"error":"Recipe not found"}', headers: header);
+    }
+
+    existing
+      ..name = _readString(payload['name'], fallback: existing.name)
+      ..description = _readString(payload['description'], fallback: existing.description)
+      ..profileId = _readString(payload['profileId'], fallback: existing.profileId)
+      ..adjustedWeight = _readDouble(payload['adjustedWeight'], fallback: existing.adjustedWeight)
+      ..adjustedPressure = _readDouble(payload['adjustedPressure'], fallback: existing.adjustedPressure)
+      ..adjustedTemp = _readDouble(payload['adjustedTemp'], fallback: existing.adjustedTemp)
+      ..grinderDoseWeight = _readDouble(payload['grinderDoseWeight'], fallback: existing.grinderDoseWeight)
+      ..grinderSettings = _readDouble(payload['grinderSettings'], fallback: existing.grinderSettings)
+      ..grinderModel = _readString(payload['grinderModel'], fallback: existing.grinderModel)
+      ..ratio1 = _readDouble(payload['ratio1'], fallback: existing.ratio1)
+      ..ratio2 = _readDouble(payload['ratio2'], fallback: existing.ratio2)
+      ..isDeleted = _readBool(payload['isDeleted'], fallback: existing.isDeleted)
+      ..isFavorite = _readBool(payload['isFavorite'], fallback: existing.isFavorite)
+      ..isShot = _readBool(payload['isShot'], fallback: existing.isShot)
+      ..weightWater = _readDouble(payload['weightWater'], fallback: existing.weightWater)
+      ..useWater = _readBool(payload['useWater'], fallback: existing.useWater)
+      ..disableStopOnWeight = _readBool(payload['disableStopOnWeight'], fallback: existing.disableStopOnWeight)
+      ..tempWater = _readDouble(payload['tempWater'], fallback: existing.tempWater)
+      ..timeWater = _readDouble(payload['timeWater'], fallback: existing.timeWater)
+      ..tempSteam = _readDouble(payload['tempSteam'], fallback: existing.tempSteam)
+      ..flowSteam = _readDouble(payload['flowSteam'], fallback: existing.flowSteam)
+      ..timeSteam = _readDouble(payload['timeSteam'], fallback: existing.timeSteam)
+      ..weightMilk = _readDouble(payload['weightMilk'], fallback: existing.weightMilk)
+      ..useSteam = _readBool(payload['useSteam'], fallback: existing.useSteam);
+
+    final coffeeId = _readInt(payload['coffeeId'], fallback: existing.coffee.targetId);
+    if (coffeeId > 0) {
+      existing.coffee.targetId = coffeeId;
+    }
+
+    coffeeService.recipeBox.put(existing);
+    return Response.ok(jsonEncode(_recipeToApi(existing)), headers: header);
+  }
+
+  Response getCoffeeIds() {
+    final ids = coffeeService.coffeeBox.getAll().map((coffee) => coffee.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getRoasterIds() {
+    final ids = coffeeService.roasterBox.getAll().map((roaster) => roaster.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getProfileIds() {
+    final ids = profileService.profiles.map((profile) => profile.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  Response getRecipeIds() {
+    final ids = coffeeService.recipeBox.getAll().map((recipe) => recipe.id).toList();
+    return Response.ok(jsonEncode(ids), headers: header);
+  }
+
+  List<int> _parseShotIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  List<int> _parseCoffeeIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  List<int> _parseRoasterIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  List<String> _parseProfileIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => value.trim()).where((value) => value.isNotEmpty).toList();
+  }
+
+  List<int> _parseRecipeIds(Request request) {
+    final params = request.url.queryParameters;
+    final idsParam = params['ids'] ?? params['IDS'] ?? '';
+    if (idsParam.trim().isEmpty) {
+      return [];
+    }
+    return idsParam.split(',').map((value) => int.tryParse(value.trim())).whereType<int>().toList();
+  }
+
+  Future<Map<String, dynamic>?> _readJsonBody(Request request) async {
+    try {
+      final data = await request.readAsString();
+      final decoded = jsonDecode(data);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
+  String _readString(dynamic value, {required String fallback}) {
+    if (value == null) {
+      return fallback;
+    }
+    return value.toString();
+  }
+
+  int _readInt(dynamic value, {required int fallback}) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value) ?? fallback;
+    }
+    return fallback;
+  }
+
+  double _readDouble(dynamic value, {required double fallback}) {
+    if (value is double) {
+      return value;
+    }
+    if (value is num) {
+      return value.toDouble();
+    }
+    if (value is String) {
+      return double.tryParse(value) ?? fallback;
+    }
+    return fallback;
+  }
+
+  bool _readBool(dynamic value, {required bool fallback}) {
+    if (value is bool) {
+      return value;
+    }
+    if (value is String) {
+      final normalized = value.toLowerCase();
+      if (normalized == 'true') {
+        return true;
+      }
+      if (normalized == 'false') {
+        return false;
+      }
+    }
+    return fallback;
+  }
+
+  DateTime? _readDate(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is DateTime) {
+      return value;
+    }
+    if (value is String && value.trim().isNotEmpty) {
+      return DateTime.tryParse(value);
+    }
+    return null;
+  }
+
+  Map<String, dynamic> _shotToApi(Shot shot) {
+    final baseTime = shot.date.toUtc();
+    final workflowName = shot.description.isNotEmpty ? shot.description : (shot.recipe.target?.name ?? 'shot');
+    final measurements = shot.shotstates.map((state) {
+      final timestamp = baseTime.add(Duration(milliseconds: _safeMillis(state.sampleTimeCorrected)));
+      return {
+        'machine': {
+          'timestamp': timestamp.toIso8601String(),
+          'state': {'state': 'espresso', 'substate': state.subState},
+          'flow': _safeNum(state.groupFlow),
+          'pressure': _safeNum(state.groupPressure),
+          'mixTemperature': _safeNum(state.mixTemp),
+        },
+        'scale': {'timestamp': timestamp.toIso8601String(), 'weight': _safeNum(state.weight), 'weightFlow': _safeNum(state.flowWeight), 'batteryLevel': 0},
+        'volume': _safeNum(state.weight),
+      };
+    }).toList();
+
+    return {
+      'id': shot.id.toString(),
+      'timestamp': shot.date.toUtc().toIso8601String(),
+      'measurements': measurements,
+      'recipe': _recipeToApi(shot.recipe.target),
+      'coffee': _coffeeToApi(shot.coffee.target),
+      'workflow': {
+        'name': workflowName,
+        'profileId': shot.profileId.toString(),
+        "visualizerId": shot.visualizerId.toString(),
+        'doseData': {'doseIn': shot.doseWeight, 'doseOut': shot.drinkWeight},
+      },
+    };
+  }
+
+  Map<String, dynamic> _coffeeToApi(Coffee? coffee) {
+    if (coffee == null) {
+      return {};
+    }
+    return {
+      'id': coffee.id.toString(),
+      'name': coffee.name,
+      'description': coffee.description,
+      'type': coffee.type,
+      'taste': coffee.taste,
+      'roasterId': coffee.roaster.targetId.toString(),
+      'imageURL': coffee.imageURL,
+      'grinderSettings': _safeNum(coffee.grinderSettings),
+      'grinderDoseWeight': _safeNum(coffee.grinderDoseWeight),
+      'acidRating': _safeNum(coffee.acidRating),
+      'intensityRating': _safeNum(coffee.intensityRating),
+      'roastLevel': _safeNum(coffee.roastLevel),
+      'roastDate': coffee.roastDate.toUtc().toIso8601String(),
+      'elevation': coffee.elevation,
+      'price': coffee.price,
+      'origin': coffee.origin,
+      'region': coffee.region,
+      'farm': coffee.farm,
+      'cropyear': coffee.cropyear.toUtc().toIso8601String(),
+      'process': coffee.process,
+      'isShot': coffee.isShot,
+    };
+  }
+
+  Map<String, dynamic> _roasterToApi(Roaster? roaster) {
+    if (roaster == null) {
+      return {};
+    }
+    return {
+      'id': roaster.id.toString(),
+      'name': roaster.name,
+      'imageURL': roaster.imageURL,
+      'description': roaster.description,
+      'address': roaster.address,
+      'homepage': roaster.homepage,
+    };
+  }
+
+  Map<String, dynamic> _profileToApi(De1ShotProfile profile) {
+    return {
+      'id': profile.id,
+      'isDefault': profile.isDefault,
+      'title': profile.title,
+      'shotHeader': profile.shotHeader.toJson(),
+      'shotFrames': profile.shotFrames.map((frame) => frame.toJson()).toList(),
+    };
+  }
+
+  Map<String, dynamic> _recipeToApi(Recipe? recipe) {
+    if (recipe == null) {
+      return {};
+    }
+    return {
+      'id': recipe.id.toString(),
+      'coffeeId': recipe.coffee.targetId.toString(),
+      'profileId': recipe.profileId,
+      'adjustedWeight': _safeNum(recipe.adjustedWeight),
+      'adjustedPressure': _safeNum(recipe.adjustedPressure),
+      'adjustedTemp': _safeNum(recipe.adjustedTemp),
+      'grinderDoseWeight': _safeNum(recipe.grinderDoseWeight),
+      'grinderSettings': _safeNum(recipe.grinderSettings),
+      'grinderModel': recipe.grinderModel,
+      'ratio1': _safeNum(recipe.ratio1),
+      'ratio2': _safeNum(recipe.ratio2),
+      'isDeleted': recipe.isDeleted,
+      'isFavorite': recipe.isFavorite,
+      'isShot': recipe.isShot,
+      'name': recipe.name,
+      'description': recipe.description,
+      'weightWater': _safeNum(recipe.weightWater),
+      'useWater': recipe.useWater,
+      'disableStopOnWeight': recipe.disableStopOnWeight,
+      'tempWater': _safeNum(recipe.tempWater),
+      'timeWater': _safeNum(recipe.timeWater),
+      'tempSteam': _safeNum(recipe.tempSteam),
+      'flowSteam': _safeNum(recipe.flowSteam),
+      'timeSteam': _safeNum(recipe.timeSteam),
+      'weightMilk': _safeNum(recipe.weightMilk),
+      'useSteam': recipe.useSteam,
+    };
+  }
+
+  double _safeNum(double value) {
+    return value.isFinite ? value : 0.0;
+  }
+
+  int _safeMillis(double seconds) {
+    return (_safeNum(seconds) * 1000).round();
+  }
+
+  EspressoMachineState? _mapTargetToState(String target) {
+    switch (target) {
+      case 'airPurge':
+        return EspressoMachineState.airPurge;
+      case 'clean':
+        return EspressoMachineState.clean;
+      case 'connecting':
+        return EspressoMachineState.connecting;
+      case 'descale':
+        return EspressoMachineState.descale;
+      case 'disconnected':
+        return EspressoMachineState.disconnected;
+      case 'espresso':
+        return EspressoMachineState.espresso;
+      case 'flush':
+        return EspressoMachineState.flush;
+      case 'idle':
+        return EspressoMachineState.idle;
+      case 'refill':
+        return EspressoMachineState.refill;
+      case 'sleeping':
+        return EspressoMachineState.sleep;
+      case 'steam':
+        return EspressoMachineState.steam;
+      case 'hotWater':
+        return EspressoMachineState.water;
+      default:
+        return null;
+    }
+  }
+
   stopService() async {
     if (server != null) {
+      await streamShotSubscription?.cancel();
+      await streamStateSubscription?.cancel();
+      await streamBatterySubscription?.cancel();
+      await streamWaterSubscription?.cancel();
+      await streamScaleSubscription?.cancel();
+      await streamScaleBatterySubscription?.cancel();
+      for (final socket in _machineStateSockets.toList()) {
+        await socket.sink.close();
+      }
+      _machineStateSockets.clear();
+      for (final socket in _scaleSnapshotSockets.toList()) {
+        await socket.sink.close();
+      }
+      _scaleSnapshotSockets.clear();
+      for (final socket in _waterLevelSockets.toList()) {
+        await socket.sink.close();
+      }
+      _waterLevelSockets.clear();
+      for (final socket in _settingsSockets.toList()) {
+        await socket.sink.close();
+      }
+      _settingsSockets.clear();
       await server!.close(force: true);
       isRunning = false;
       log.info('server stopped');
     }
+  }
+
+  void _broadcastMachineState(ShotState? shotState) {
+    if (_machineStateSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _machineStateSockets.toList()) {
+      _sendMachineState(socket, shotState);
+    }
+  }
+
+  void _sendMachineState(WebSocketChannel socket, ShotState? shotState) {
+    try {
+      socket.sink.add(jsonEncode(_buildMachineStatePayload(shotState)));
+    } catch (e) {
+      _machineStateSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  void _broadcastScaleSnapshot() {
+    if (_scaleSnapshotSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _scaleSnapshotSockets.toList()) {
+      _sendScaleSnapshot(socket);
+    }
+  }
+
+  void _sendScaleSnapshot(WebSocketChannel socket) {
+    try {
+      socket.sink.add(jsonEncode(_buildScaleSnapshotPayload()));
+    } catch (e) {
+      _scaleSnapshotSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  void _broadcastWaterLevelSnapshot() {
+    if (_waterLevelSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _waterLevelSockets.toList()) {
+      _sendWaterLevelSnapshot(socket);
+    }
+  }
+
+  void _broadcastSettingsSnapshot() {
+    if (_settingsSockets.isEmpty) {
+      return;
+    }
+    for (final socket in _settingsSockets.toList()) {
+      _sendSettingsSnapshot(socket);
+    }
+  }
+
+  void _sendWaterLevelSnapshot(WebSocketChannel socket) {
+    try {
+      socket.sink.add(jsonEncode(_buildWaterLevelSnapshotPayload()));
+    } catch (e) {
+      _waterLevelSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  void _sendSettingsSnapshot(WebSocketChannel socket) {
+    try {
+      socket.sink.add(jsonEncode(_buildSettingsSnapshotPayload()));
+    } catch (e) {
+      _settingsSockets.remove(socket);
+      socket.sink.close();
+    }
+  }
+
+  Map<String, dynamic> _buildMachineStatePayload(ShotState? shotState) {
+    final state = machineService.currentFullState;
+    return {
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+      'state': {'state': state.state.name, 'substate': state.subState},
+      'flow': shotState?.groupFlow ?? 0.0,
+      'pressure': shotState?.groupPressure ?? 0.0,
+      'targetFlow': shotState?.setGroupFlow ?? 0.0,
+      'targetPressure': shotState?.setGroupPressure ?? 0.0,
+      'mixTemperature': shotState?.mixTemp ?? 0.0,
+      'groupTemperature': shotState?.headTemp ?? 0.0,
+      'targetMixTemperature': shotState?.setMixTemp ?? 0.0,
+      'targetGroupTemperature': shotState?.setHeadTemp ?? 0.0,
+      'profileFrame': shotState?.frameNumber ?? 0,
+      'steamTemperature': shotState?.steamTemp ?? 0,
+    };
+  }
+
+  Map<String, dynamic> _buildScaleSnapshotPayload() {
+    return {'timestamp': DateTime.now().toUtc().toIso8601String(), 'weight': _lastScaleWeight, 'batteryLevel': _lastScaleBattery};
+  }
+
+  Map<String, dynamic> _buildWaterLevelSnapshotPayload() {
+    return {'currentLevel': _lastWaterLevel, 'refillLevel': _lastRefillLevel};
+  }
+
+  Map<String, dynamic> _buildSettingsSnapshotPayload() {
+    return {'timestamp': DateTime.now().toUtc().toIso8601String(), 'settings': settingsService.toSettingsSnapshot()};
   }
 
   Future<void> prepareWebsite() async {
@@ -155,7 +1494,7 @@ class WebService extends ChangeNotifier {
     // This will give a list of all files inside the `assets`.
 
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-    final get = manifest.listAssets().where((path) => path.startsWith("assets/website")).toList();    
+    final get = manifest.listAssets().where((path) => path.startsWith("assets/website")).toList();
     log.info("Found web content: $get");
 
     for (String element in get) {

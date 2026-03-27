@@ -1,0 +1,62 @@
+.profiles-shell {
+  display: block;
+}
+
+.profiles-container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.profiles-list,
+.profile-details {
+  height: calc(100vh - 80px);
+  overflow: auto;
+  padding: 12px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 8px 0 12px 0;
+  padding: 16px;
+}
+
+.w100 { width: 100%; }
+
+
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.detail-row .label {
+  color: var(--mat-sys-color-on-surface-variant);
+}
+
+.notes .value {
+  white-space: pre-wrap;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+}
+
+@media (max-width: 900px) {
+  .profiles-container {
+    grid-template-columns: 1fr;
+  }
+
+  .profiles-list,
+  .profile-details {
+    height: auto;
+  }
+}

@@ -1,0 +1,83 @@
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.border-4 {
+  border-width: 4px;
+}
+
+.w-28 {
+  width: 7rem;
+}
+
+.h-28 {
+  height: 7rem;
+}
+
+.sm\:w-38 {
+  width: 9.5rem;
+}
+
+.sm\:h-32 {
+  height: 8rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.bg-white\/10 {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.text-current {
+  color: currentColor;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06);
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+.transition-transform {
+  transition-property: transform;
+}
+
+.focus\:outline-none:focus {
+  outline: none;
+}
+
+.focus-visible\:ring-2:focus-visible {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+
+.focus-visible\:ring-offset-2:focus-visible {
+  box-shadow: 0 0 0 4px #fff, 0 0 0 6px #2563eb;
+}
+
+.border-green-600 {
+  border-color: #16a34a;
+}
+
+.border-gray-400 {
+  border-color: #9ca3af;
+}

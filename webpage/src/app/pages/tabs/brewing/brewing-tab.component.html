@@ -1,0 +1,59 @@
+<!-- <mat-card appearance="outlined">  
+  <mat-card-content class="tab-content"> -->
+<div class="tab-content">
+  <plotly-plot
+    [data]="d1()"
+    [config]="graph().config"
+    [layout]="layout()"
+    [useResizeHandler]="true"
+    [style]="{ padding: '0', position: 'relative', width: '100%', height: 'calc(100vh - 180px)' }"
+  ></plotly-plot>
+  <div class="mt-2">
+    @let shot = lastShot();
+    @if (shot) {
+      @let prof = profileService.getProfileById(shot.profileId ?? 'Default');
+      @let coffee = profileService.getCoffeeById(shot.coffeeId);
+      @let roaster = profileService.getRoasterById(coffee?.roasterId);
+      @let recipe = profileService.getRecipeById(shot.recipeId);
+
+      <mat-card class="profiles-list">
+        <mat-card-content>
+          <div>
+            <div class="flex flex-row items-start justify-between">
+              <div class="flex flex-col items-start">
+                <div class="ml-2">
+                  {{ recipe?.name ?? 'no recipe' }} / {{ prof?.title ?? shot.profileId }} /
+                  {{ shot.date | date }}
+                </div>
+                <div class="ml-2">
+                  {{ shot?.pourWeight }}g in {{ shot?.pourTime | number: '1.1-1' }}s
+                </div>
+              </div>
+              <div></div>
+              <div class="flex flex-col items-end">
+                <button mat-button (click)="openDescribeShot()" aria-label="Describe your shot">
+                  Describe your Shot
+                </button>
+                @if (shot.visualizerId) {
+                  <a
+                    mat-button
+                    href="https://visualizer.coffee/shots/{{ shot.visualizerId }}"
+                    target="_blank"
+                    class="ml-2"
+                    >Open in Visualizer</a
+                  >
+                } @else {
+                  <button mat-button (click)="sendShotToVisualizer(shot.id)">
+                    Add to Visualizer
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</div>
+<!-- </mat-card-content>
+</mat-card> -->

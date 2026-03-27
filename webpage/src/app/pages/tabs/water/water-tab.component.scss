@@ -1,0 +1,57 @@
+:host {
+	display: block;
+}
+
+.water-card {
+	padding: 8px;
+    height: 100%;
+}
+
+.title-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+}
+
+.controls {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.control {
+	display: flex;
+	flex-direction: column;
+}
+
+.hint, .progress-hint {
+	font-size: 12px;
+	opacity: 0.75;
+}
+
+.status {
+	margin-top: 16px;
+}
+
+.row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.label {
+	font-weight: 500;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+}

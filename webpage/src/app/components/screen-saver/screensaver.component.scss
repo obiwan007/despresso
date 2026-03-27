@@ -1,0 +1,33 @@
+.screensaver {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,1);
+  color: #fff;
+  width: 100vw;
+  height: 100vh;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.3s;
+  overflow: hidden;
+}
+
+.screensaver-bg {
+  position: absolute;
+  inset: 0;
+  object-fit: contain; /* keep original aspect ratio, fully visible */
+  object-position: center center; /* center the image */
+  opacity: 0; /* animated via component (fade-in/out) */
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: screensaverPan 120s ease-in-out infinite alternate;
+}
+
+@keyframes screensaverPan {
+  from {
+    transform: translate(-5%, -5%);
+  }
+  to {
+    transform: translate(5%, 5%);
+  }
+}
