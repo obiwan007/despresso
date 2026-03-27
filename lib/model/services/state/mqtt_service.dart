@@ -454,7 +454,12 @@ class MqttService extends ChangeNotifier {
         if (machineService.de1 != null) {
           builder = MqttClientPayloadBuilder();
           builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
-          client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!, retain: true);
+          client.publishMessage(
+            '$rootTopic/tablet/usbchargermode',
+            MqttQos.exactlyOnce,
+            builder.payload!,
+            retain: true,
+          );
         }
         log.fine("Batterydata pushed to MQTT");
       } catch (e) {
