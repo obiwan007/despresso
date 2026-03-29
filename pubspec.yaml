@@ -152,10 +152,10 @@ flutter:
     - assets/profiles/
     - assets/website/
     - assets/website/media/
-    - assets/website/static/
-    - assets/website/static/js/
-    - assets/website/static/css/
-    - assets/website/static/media/
+    # - assets/website/static/
+    # - assets/website/static/js/
+    # - assets/website/static/css/
+    # - assets/website/static/media/
     - CHANGELOG.md
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

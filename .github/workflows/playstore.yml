@@ -2,91 +2,106 @@ name: PlayStore
 
 on:
   workflow_dispatch:
-  workflow_call:    
+  workflow_call:
 
 jobs:
   buildall:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest # faster for Android builds
+
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache packages
-        uses: actions/cache@v3
+      # ✅ Cache Gradle (BIGGEST SPEEDUP)
+      - name: Cache Gradle
+        uses: actions/cache@v4
         with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: deps-${{ hashFiles('**/pubspec.lock') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      # ✅ Cache Dart/Flutter dependencies
+      - name: Cache Pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}-
 
       - name: Decode secrets.properties file
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
           PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY: ${{ secrets.PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY }}
         run: |
-          mkdir keys
+          mkdir -p keys
           echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
           echo "$KEYSTORE" | base64 -d > keys/upload-keystore.jks
-          echo "$PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY" > keys/pc-api-7848368376441168283-873-b09f4c9c476d.json
-          chmod a+x android/gradlew
-          pwd
-          ls keys
+          echo "$PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY" > keys/playstore-key.json
+          chmod +x android/gradlew
 
-      - name: restore key properties
+      - name: Restore key.properties
         env:
           KEYPROPERTIES: ${{ secrets.KEYPROPERTIES }}
-        run: echo "$KEYPROPERTIES" > android/key.properties        
-      
-      - name: JavaSetup
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '17'          
-          check-latest: true
+        run: echo "$KEYPROPERTIES" > android/key.properties
 
-      - name: Install Ruby
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Install Ruby (for Fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2.0'
+          ruby-version: 3.2
           bundler-cache: true
-      
-      - name: InstallFlutter
+
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
+          channel: stable
           cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
-          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:' # optional, change this to specify the cache path
-          architecture: x64 # optional, x64 or arm64
 
-      - name: Version
+      - name: Flutter version
         run: flutter --version
 
-      - name: replace sentry key
-        env: 
-          SENTRY_KEY: ${{ secrets.SENTRY_KEY }} 
-          VIS_CLIENT: ${{ secrets.VIS_CLIENT }} 
-          VIS_SECRET: ${{ secrets.VIS_SECRET }} 
+      - name: Replace secrets in code
+        env:
+          SENTRY_KEY: ${{ secrets.SENTRY_KEY }}
+          VIS_CLIENT: ${{ secrets.VIS_CLIENT }}
+          VIS_SECRET: ${{ secrets.VIS_SECRET }}
         run: |
-          export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
-          sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart    
-          sed -i -e "s/<VIS_SECRET>/$VIS_SECRET/g" ./lib/model/services/state/visualizer_service.dart
-          sed -i -e "s/<VIS_CLIENT>/$VIS_CLIENT/g" ./lib/model/services/state/visualizer_service.dart
-      
+          ESCAPED_KEY=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/<SENTRY_KEY>/$ESCAPED_KEY/g" ./lib/main.dart
+          sed -i "s/<VIS_SECRET>/$VIS_SECRET/g" ./lib/model/services/state/visualizer_service.dart
+          sed -i "s/<VIS_CLIENT>/$VIS_CLIENT/g" ./lib/model/services/state/visualizer_service.dart
 
-      - name: Build APK  
-        run: | 
-          flutter build appbundle
-          cat android/local.properties
-          cat android/gradle.properties
+      # ✅ Pre-fetch dependencies (helps cache effectiveness)
+      - name: Get dependencies
+        run: flutter pub get
 
+      # ✅ Build (optimized flags)
+      - name: Build App Bundle
+        run: |
+          flutter build appbundle --release --split-debug-info=build/debug-info
 
-      - name: Bundle install
-        run: cd ./android && bundle install
-      - uses: maierj/fastlane-action@v3.1.0        
-        env:            
-            API_KEY: ${{ secrets.API_KEY }}
-            API_KEY_ID: ${{ secrets.API_KEY_ID }}
-            ISSUER_ID: ${{ secrets.ISSUER_ID }}
-            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      - name: Bundle install (Fastlane)
+        run: |
+          cd android
+          bundle install
+
+      - name: Upload to Play Store
+        uses: maierj/fastlane-action@v3.1.0
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          API_KEY_ID: ${{ secrets.API_KEY_ID }}
+          ISSUER_ID: ${{ secrets.ISSUER_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         with:
-          lane: 'beta'
-          subdirectory: 'android'
+          lane: beta
+          subdirectory: android
