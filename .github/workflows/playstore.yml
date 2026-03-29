@@ -103,5 +103,5 @@ jobs:
           ISSUER_ID: ${{ secrets.ISSUER_ID }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         with:
-          lane: beta
-          subdirectory: android
+          lane: "beta"
+          subdirectory: "android"
