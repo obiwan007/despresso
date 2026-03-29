@@ -38,11 +38,13 @@ jobs:
           KEYSTORE: ${{ secrets.KEYSTORE }}
           PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY: ${{ secrets.PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY }}
         run: |
-          mkdir -p keys
+          mkdir keys
           echo "$KEYSTORE" | base64 -d > android/upload-keystore.jks
           echo "$KEYSTORE" | base64 -d > keys/upload-keystore.jks
-          echo "$PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY" > keys/playstore-key.json
-          chmod +x android/gradlew
+          echo "$PLAYSTORE_PRIVATE_SERVICE_ACCOUNT_KEY" > keys/pc-api-7848368376441168283-873-b09f4c9c476d.json
+          chmod a+x android/gradlew
+          pwd
+          ls keys
 
       - name: Restore key.properties
         env:

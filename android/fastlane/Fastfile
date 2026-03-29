@@ -64,7 +64,7 @@ lane :beta do
     version_code_from_play_store_strings = google_play_track_version_codes(
         package_name: "com.mmmedia.despresso",   # PACKAGE_NAME is a global variable defined earlier
         track: "alpha",          # this can be alpha, Closed Beta etc.
-        json_key: File.expand_path("../keys/playstore-key.json", Dir.pwd),
+        # json_key: File.expand_path("../keys/playstore-key.json", Dir.pwd),
       ).max
 
     version_code_from_play_store = version_code_from_play_store_strings.to_i
