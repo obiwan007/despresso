@@ -350,15 +350,50 @@ class MqttService extends ChangeNotifier {
       {'id': 'shot_pour_time', 'name': 'pour time', 'template': 'pourTime', 'unit': 's'},
       {'id': 'shot_group_pressure', 'name': 'group pressure', 'template': 'groupPressure', 'unit': 'bar'},
       {'id': 'shot_group_flow', 'name': 'group flow', 'template': 'groupFlow', 'unit': 'ml/s'},
-      {'id': 'shot_mix_temp', 'name': 'mix temp', 'template': 'mixTemp', 'unit': '°C'},
-      {'id': 'shot_head_temp', 'name': 'head temp', 'template': 'headTemp', 'unit': '°C'},
-      {'id': 'shot_set_mix_temp', 'name': 'set mix temp', 'template': 'setMixTemp', 'unit': '°C'},
-      {'id': 'shot_set_head_temp', 'name': 'set head temp', 'template': 'setHeadTemp', 'unit': '°C'},
+      {
+        'id': 'shot_mix_temp',
+        'name': 'mix temp',
+        'template': 'mixTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_head_temp',
+        'name': 'head temp',
+        'template': 'headTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_set_mix_temp',
+        'name': 'set mix temp',
+        'template': 'setMixTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_set_head_temp',
+        'name': 'set head temp',
+        'template': 'setHeadTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
       {'id': 'shot_set_group_pressure', 'name': 'set group pressure', 'template': 'setGroupPressure', 'unit': 'bar'},
       {'id': 'shot_set_group_flow', 'name': 'set group flow', 'template': 'setGroupFlow', 'unit': 'ml/s'},
       {'id': 'shot_flow_weight', 'name': 'flow weight', 'template': 'flowWeight', 'unit': 'g'},
       {'id': 'shot_frame_number', 'name': 'frame number', 'template': 'frameNumber'},
-      {'id': 'shot_steam_temp', 'name': 'steam temp', 'template': 'steamTemp', 'unit': '°C'},
+      {
+        'id': 'shot_steam_temp',
+        'name': 'steam temp',
+        'template': 'steamTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
     ];
 
     for (final field in shotFields) {
@@ -371,6 +406,12 @@ class MqttService extends ChangeNotifier {
       };
       if (field['unit'] != null) {
         config['unit_of_measurement'] = field['unit'];
+      }
+      if (field['device_class'] != null) {
+        config['device_class'] = field['device_class'];
+      }
+      if (field['state_class'] != null) {
+        config['state_class'] = field['state_class'];
       }
       _publishDiscoveryConfig('sensor', field['id'], config);
     }
