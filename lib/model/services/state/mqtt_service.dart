@@ -361,7 +361,7 @@ class MqttService extends ChangeNotifier {
         'id': 'shot_mix_temp',
         'name': 'mix temp',
         'template': 'mixTemp',
-        'unit': 'C',
+        'unit': '°C',
         'device_class': 'temperature',
         'state_class': 'measurement',
       },
@@ -369,7 +369,7 @@ class MqttService extends ChangeNotifier {
         'id': 'shot_head_temp',
         'name': 'head temp',
         'template': 'headTemp',
-        'unit': 'C',
+        'unit': '°C',
         'device_class': 'temperature',
         'state_class': 'measurement',
       },
@@ -377,7 +377,7 @@ class MqttService extends ChangeNotifier {
         'id': 'shot_set_mix_temp',
         'name': 'set mix temp',
         'template': 'setMixTemp',
-        'unit': 'C',
+        'unit': '°C',
         'device_class': 'temperature',
         'state_class': 'measurement',
       },
@@ -385,7 +385,7 @@ class MqttService extends ChangeNotifier {
         'id': 'shot_set_head_temp',
         'name': 'set head temp',
         'template': 'setHeadTemp',
-        'unit': 'C',
+        'unit': '°C',
         'device_class': 'temperature',
         'state_class': 'measurement',
       },
@@ -404,7 +404,7 @@ class MqttService extends ChangeNotifier {
         'id': 'shot_steam_temp',
         'name': 'steam temp',
         'template': 'steamTemp',
-        'unit': 'C',
+        'unit': '°C',
         'device_class': 'temperature',
         'state_class': 'measurement',
       },
@@ -434,7 +434,7 @@ class MqttService extends ChangeNotifier {
   void _publishDiscoveryConfig(String component, String objectId, Map<String, dynamic> config) {
     final topic = '$_haDiscoveryPrefix/$component/despresso/$objectId/config';
     final builder = MqttClientPayloadBuilder();
-    builder.addString(jsonEncode(config));
+    builder.addUTF8String(jsonEncode(config));
     client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: true);
   }
 
