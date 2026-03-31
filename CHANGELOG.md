@@ -13,3 +13,7 @@
 ## 1.0.19
 
 - go to IP:8888 to have a little config page
+
+## 1.0.20
+
+- Home Assistant MQTT autodiscovery now contains correct temperatures
