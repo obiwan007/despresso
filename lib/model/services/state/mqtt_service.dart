@@ -35,24 +35,31 @@ class MqttService extends ChangeNotifier {
 
   static const _haDiscoveryPrefix = 'homeassistant';
   static const _deviceModel = 'decent de1';
-  static const _deviceManufacturer = 'decent';
+  static const _deviceManufacturer = 'despresso';
 
   late StreamSubscription<EspressoMachineFullState> streamStateSubscription;
   late StreamSubscription<int> streamBatterySubscription;
   late StreamSubscription<ShotState> streamShotSubscription;
   late StreamSubscription<WaterLevel> streamWaterSubscription;
 
+  bool _reconnectInProgress = false;
+  Timer? _reconnectTimer;
+  int _reconnectAttempt = 0;
+
   MqttService() {
     log.info('MQTT:init mqtt');
     settingsService = getIt<SettingsService>();
     machineService = getIt<EspressoMachineService>();
     if (settingsService.mqttRootTopic.isNotEmpty) {
-      rootTopic = "despresso/${settingsService.mqttRootTopic}";
+      rootTopic = "${settingsService.mqttRootTopic}";
     }
     startService();
   }
 
   stopService() {
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+    _reconnectAttempt = 0;
     if (client.connectionStatus?.state == MqttConnectionState.connected) {
       client.disconnect();
     }
@@ -64,6 +71,7 @@ class MqttService extends ChangeNotifier {
       try {
         client = MqttServerClient(settingsService.mqttServer, "");
         client.logging(on: false);
+        client.setProtocolV311();        
         client.port = int.parse(settingsService.mqttPort);
         log.info('MQTT:mqtt service started');
         client.keepAlivePeriod = 60;
@@ -74,18 +82,28 @@ class MqttService extends ChangeNotifier {
 
         client.onConnected = onConnected;
         client.onAutoReconnected = () {
-          log.info("Auto Reconnected");
+          log.info("MQTT: Auto Reconnected");
+          connected = true;
+          _reconnectTimer?.cancel();
+          _reconnectTimer = null;
+          _reconnectAttempt = 0;
+          publishDiscovery();
+          handleEvents();
         };
 
         client.onAutoReconnect = () {
-          log.info("Auto Reconnect - connection lost");
+          log.info("MQTT: Auto Reconnect - connection lost");
+          connected = false;
+          _scheduleReconnect();
         };
 
         client.onSubscribed = onSubscribed;
         client.pongCallback = pong;
 
         final connMess = MqttConnectMessage()
-            .withClientIdentifier('despresso')
+            .withClientIdentifier(
+              settingsService.mqttRootTopic.isNotEmpty ? settingsService.mqttRootTopic : 'despresso',
+            )
             // .withWillTopic('willtopic')
             // .withWillMessage('My Will message')
             .startClean()
@@ -113,6 +131,7 @@ class MqttService extends ChangeNotifier {
       } else {
         log.severe('MQTT:Client connection failed - disconnecting, status is ${client.connectionStatus}');
         client.disconnect();
+        _scheduleReconnect();
         return -1;
       }
 
@@ -140,7 +159,7 @@ class MqttService extends ChangeNotifier {
           if (validState) {
             final builder = MqttClientPayloadBuilder();
             builder.addString(DateTime.now().toIso8601String());
-            client.publishMessage(statusRequest, MqttQos.exactlyOnce, builder.payload!);
+            client.publishMessage(statusRequest, MqttQos.exactlyOnce, builder.payload!, retain: true);
           }
         }
       });
@@ -154,7 +173,7 @@ class MqttService extends ChangeNotifier {
       var pubTopic = '$rootTopic/status';
       final builder = MqttClientPayloadBuilder();
       builder.addString(DateTime.now().toIso8601String());
-      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+      client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
 
       connected = true;
 
@@ -174,6 +193,10 @@ class MqttService extends ChangeNotifier {
 
   void disconnect() async {
     if (!connected) return;
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+    _reconnectAttempt = 0;
 
     log.info('MQTT:Unsubscribing');
     client.unsubscribe(subTopic);
@@ -204,7 +227,47 @@ class MqttService extends ChangeNotifier {
     log.info('MQTT:OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       log.info('MQTT:OnDisconnected callback is solicited, this is correct');
-    }   
+      return;
+    }
+
+    _scheduleReconnect();
+  }
+
+  void _scheduleReconnect() {
+    if (_reconnectTimer?.isActive ?? false) return;
+    if (!settingsService.mqttEnabled) return;
+    if (client.connectionStatus?.state == MqttConnectionState.connected) return;
+
+    if (_reconnectAttempt < 6) {
+      _reconnectAttempt += 1;
+    }
+
+    final delaySeconds = _reconnectAttempt <= 1
+        ? 2
+        : (_reconnectAttempt == 2
+              ? 4
+              : (_reconnectAttempt == 3 ? 8 : (_reconnectAttempt == 4 ? 16 : (_reconnectAttempt == 5 ? 32 : 60))));
+
+    log.warning('MQTT:Scheduling reconnect in ${delaySeconds}s');
+    _reconnectTimer = Timer(Duration(seconds: delaySeconds), () async {
+      _reconnectTimer = null;
+      if (_reconnectInProgress) return;
+      if (client.connectionStatus?.state == MqttConnectionState.connected) {
+        _reconnectAttempt = 0;
+        return;
+      }
+
+      _reconnectInProgress = true;
+      try {
+        log.info('MQTT:Attempting reconnect');
+        await client.connect(settingsService.mqttUser, settingsService.mqttPassword);
+      } catch (e) {
+        log.severe('MQTT:Reconnect failed: $e');
+        _scheduleReconnect();
+      } finally {
+        _reconnectInProgress = false;
+      }
+    });
   }
 
   /// The successful connect callback
@@ -225,13 +288,13 @@ class MqttService extends ChangeNotifier {
 
     final device = <String, dynamic>{
       'identifiers': [rootTopic],
-      'name': 'despresso',
+      'name': '${settingsService.mqttRootTopic}',
       'model': _deviceModel,
       'manufacturer': _deviceManufacturer,
     };
 
     final stateConfig = <String, dynamic>{
-      'name': 'despresso machine state',
+      'name': 'de1 machine state',
       'unique_id': '${rootTopic}_machine_state',
       'state_topic': '$rootTopic/de1/status',
       'device': device,
@@ -239,7 +302,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'machine_state', stateConfig);
 
     final waterConfig = <String, dynamic>{
-      'name': 'despresso water level',
+      'name': 'de1 water level',
       'unique_id': '${rootTopic}_water_level',
       'state_topic': '$rootTopic/de1/waterlevel',
       'unit_of_measurement': 'ml',
@@ -248,7 +311,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'water_level', waterConfig);
 
     final batteryConfig = <String, dynamic>{
-      'name': 'despresso battery',
+      'name': 'tablet battery',
       'unique_id': '${rootTopic}_battery',
       'state_topic': '$rootTopic/tablet/batterylevel',
       'device_class': 'battery',
@@ -258,7 +321,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'battery', batteryConfig);
 
     final powerSwitchConfig = <String, dynamic>{
-      'name': 'despresso power',
+      'name': 'de1 power',
       'unique_id': '${rootTopic}_power',
       'state_topic': '$rootTopic/de1/status',
       'command_topic': '$rootTopic/de1/setstatus',
@@ -271,7 +334,7 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('switch', 'power', powerSwitchConfig);
 
     final shotConfig = <String, dynamic>{
-      'name': 'despresso shot',
+      'name': 'de1 shot',
       'unique_id': '${rootTopic}_shot',
       'state_topic': '$rootTopic/de1/shot',
       'value_template': '{{ value_json.subState }}',
@@ -281,21 +344,70 @@ class MqttService extends ChangeNotifier {
     _publishDiscoveryConfig('sensor', 'shot', shotConfig);
 
     final shotFields = <Map<String, dynamic>>[
-      {'id': 'shot_substate', 'name': 'substate', 'template': 'subState'},
+      {'id': 'shot_substate', 'name': 'de1 machine substate', 'template': 'subState'},
       {'id': 'shot_weight', 'name': 'shot weight', 'template': 'weight', 'unit': 'g'},
       {'id': 'shot_sample_time', 'name': 'sample time', 'template': 'sampleTime', 'unit': 's'},
       {'id': 'shot_pour_time', 'name': 'pour time', 'template': 'pourTime', 'unit': 's'},
-      {'id': 'shot_group_pressure', 'name': 'group pressure', 'template': 'groupPressure', 'unit': 'bar'},
+      {
+        'id': 'shot_group_pressure',
+        'name': 'group pressure',
+        'template': 'groupPressure',
+        'unit': 'bar',
+        'device_class': 'pressure',
+        'state_class': 'measurement',
+      },
       {'id': 'shot_group_flow', 'name': 'group flow', 'template': 'groupFlow', 'unit': 'ml/s'},
-      {'id': 'shot_mix_temp', 'name': 'mix temp', 'template': 'mixTemp', 'unit': '°C'},
-      {'id': 'shot_head_temp', 'name': 'head temp', 'template': 'headTemp', 'unit': '°C'},
-      {'id': 'shot_set_mix_temp', 'name': 'set mix temp', 'template': 'setMixTemp', 'unit': '°C'},
-      {'id': 'shot_set_head_temp', 'name': 'set head temp', 'template': 'setHeadTemp', 'unit': '°C'},
-      {'id': 'shot_set_group_pressure', 'name': 'set group pressure', 'template': 'setGroupPressure', 'unit': 'bar'},
+      {
+        'id': 'shot_mix_temp',
+        'name': 'mix temp',
+        'template': 'mixTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_head_temp',
+        'name': 'head temp',
+        'template': 'headTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_set_mix_temp',
+        'name': 'set mix temp',
+        'template': 'setMixTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_set_head_temp',
+        'name': 'set head temp',
+        'template': 'setHeadTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
+      {
+        'id': 'shot_set_group_pressure',
+        'name': 'set group pressure',
+        'template': 'setGroupPressure',
+        'unit': 'bar',
+        'device_class': 'pressure',
+        'state_class': 'measurement',
+      },
       {'id': 'shot_set_group_flow', 'name': 'set group flow', 'template': 'setGroupFlow', 'unit': 'ml/s'},
       {'id': 'shot_flow_weight', 'name': 'flow weight', 'template': 'flowWeight', 'unit': 'g'},
       {'id': 'shot_frame_number', 'name': 'frame number', 'template': 'frameNumber'},
-      {'id': 'shot_steam_temp', 'name': 'steam temp', 'template': 'steamTemp', 'unit': '°C'},
+      {
+        'id': 'shot_steam_temp',
+        'name': 'steam temp',
+        'template': 'steamTemp',
+        'unit': '°C',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+      },
     ];
 
     for (final field in shotFields) {
@@ -309,6 +421,12 @@ class MqttService extends ChangeNotifier {
       if (field['unit'] != null) {
         config['unit_of_measurement'] = field['unit'];
       }
+      if (field['device_class'] != null) {
+        config['device_class'] = field['device_class'];
+      }
+      if (field['state_class'] != null) {
+        config['state_class'] = field['state_class'];
+      }
       _publishDiscoveryConfig('sensor', field['id'], config);
     }
   }
@@ -316,8 +434,8 @@ class MqttService extends ChangeNotifier {
   void _publishDiscoveryConfig(String component, String objectId, Map<String, dynamic> config) {
     final topic = '$_haDiscoveryPrefix/$component/despresso/$objectId/config';
     final builder = MqttClientPayloadBuilder();
-    builder.addString(jsonEncode(config));
-    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!);
+    builder.addUTF8String(jsonEncode(config));
+    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: true);
   }
 
   void handleEvents() {
@@ -328,11 +446,11 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/de1';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.state.name);
-        client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage("$pubTopic/status", MqttQos.exactlyOnce, builder.payload!, retain: true);
 
         builder = MqttClientPayloadBuilder();
         builder.addString(event.subState);
-        client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage("$pubTopic/substatus", MqttQos.exactlyOnce, builder.payload!, retain: true);
       } catch (e) {
         log.severe("MQTT: $e");
       }
@@ -359,7 +477,7 @@ class MqttService extends ChangeNotifier {
         payload['groupPressure'] = _round1(payload['groupPressure']);
 
         builder.addString(jsonEncode(payload));
-        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
       } catch (e) {
         log.severe("MQTT: $e");
       }
@@ -371,10 +489,10 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/de1/waterlevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.getLevelML().toString());
-        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
         builder = MqttClientPayloadBuilder();
         builder.addString(event.getLevelRefill().toString());
-        client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage("${pubTopic}limit", MqttQos.exactlyOnce, builder.payload!, retain: true);
       } catch (e) {
         log.severe("MQTT: $e");
       }
@@ -387,11 +505,16 @@ class MqttService extends ChangeNotifier {
         var pubTopic = '$rootTopic/tablet/batterylevel';
         var builder = MqttClientPayloadBuilder();
         builder.addString(event.toString());
-        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!, retain: true);
         if (machineService.de1 != null) {
           builder = MqttClientPayloadBuilder();
           builder.addString(machineService.de1?.usbChargerMode.toString() ?? "-1");
-          client.publishMessage('$rootTopic/tablet/usbchargermode', MqttQos.exactlyOnce, builder.payload!);
+          client.publishMessage(
+            '$rootTopic/tablet/usbchargermode',
+            MqttQos.exactlyOnce,
+            builder.payload!,
+            retain: true,
+          );
         }
         log.fine("Batterydata pushed to MQTT");
       } catch (e) {
