@@ -1,5 +1,8 @@
 name: Testflight
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   workflow_call:
@@ -24,26 +27,26 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: true
-      
+
       - name: InstallFlutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
+          channel: "stable" # or: 'beta', 'dev' or 'master'
           cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
-          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:' # optional, change this to specify the cache path
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:" # optional, change this to specify the cache path
           architecture: x64 # optional, x64 or arm64
 
       - name: Version
         run: flutter --version
 
       - name: replace sentry key
-        env: 
+        env:
           SENTRY_KEY: ${{ secrets.SENTRY_KEY }}
-          VIS_CLIENT: ${{ secrets.VIS_CLIENT }} 
-          VIS_SECRET: ${{ secrets.VIS_SECRET }} 
+          VIS_CLIENT: ${{ secrets.VIS_CLIENT }}
+          VIS_SECRET: ${{ secrets.VIS_SECRET }}
         run: |
           export ESCAPED_KEYWORD=$(printf '%s\n' "$SENTRY_KEY" | sed -e 's/[]\/$*.^[]/\\&/g');
           sed -i -e "s/<SENTRY_KEY>/$ESCAPED_KEYWORD/g" ./lib/main.dart
@@ -53,19 +56,19 @@ jobs:
       - name: Update pods
         run: pod repo update
       - name: Pub get
-        run: flutter pub get          
+        run: flutter pub get
       - name: Bundle install
         run: cd ./ios && bundle install && pod install
-      - uses: maierj/fastlane-action@v3.1.0       
-        env:            
-            MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
-            MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-            MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-            FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
-            API_KEY: ${{ secrets.API_KEY }}
-            API_KEY_ID: ${{ secrets.API_KEY_ID }}
-            ISSUER_ID: ${{ secrets.ISSUER_ID }}
-            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      - uses: maierj/fastlane-action@v3.1.0
+        env:
+          MATCH_KEYCHAIN_PASSWORD: ${{ secrets.MATCH_KEYCHAIN_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          API_KEY: ${{ secrets.API_KEY }}
+          API_KEY_ID: ${{ secrets.API_KEY_ID }}
+          ISSUER_ID: ${{ secrets.ISSUER_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         with:
-          lane: 'betamatch'
-          subdirectory: 'ios'
+          lane: "betamatch"
+          subdirectory: "ios"
