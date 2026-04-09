@@ -95,6 +95,11 @@ jobs:
         run: |
           flutter build appbundle --release --split-debug-info=build/debug-info
 
+      - name: App Dependencies
+        run: |
+          cd android
+          ./gradlew app:dependencies
+
       - name: Bundle install (Fastlane)
         run: |
           cd android
