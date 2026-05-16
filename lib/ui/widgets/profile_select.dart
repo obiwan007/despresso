@@ -38,6 +38,8 @@ class ProfileSelectState extends State<ProfileSelect> {
   late SettingsService settingsService;
 
   late TextEditingController shortCodeController;
+  late TextEditingController searchController;
+  late FocusNode searchFocusNode;
 
   late CoffeeService coffeeService;
 
@@ -46,6 +48,8 @@ class ProfileSelectState extends State<ProfileSelect> {
   late EspressoMachineService machineService;
 
   De1ShotProfile? _selectedProfile;
+  String _searchQuery = '';
+  bool _showSearchResults = false;
 
   List<String> filterOptions = [
     FilterModes.Mine.name,
@@ -69,6 +73,8 @@ class ProfileSelectState extends State<ProfileSelect> {
     coffeeService = getIt<CoffeeService>();
     settingsService = getIt<SettingsService>();
     shortCodeController = TextEditingController();
+    searchController = TextEditingController();
+    searchFocusNode = FocusNode();
 
     selectedFilter = settingsService.profileFilterList;
     final filtered = selectedFilter.where(filterOptions.contains).toList();
@@ -85,6 +91,8 @@ class ProfileSelectState extends State<ProfileSelect> {
   dispose() {
     super.dispose();
     profileService.removeListener(profileListener);
+    searchController.dispose();
+    searchFocusNode.dispose();
   }
 
   @override
@@ -114,7 +122,15 @@ class ProfileSelectState extends State<ProfileSelect> {
 
             if (showOnlyMine) res0 = element.isDefault == false;
 
-            return res0 || res1 || res2 || (res3 || res4 || res5);
+            bool passesFilterMode = res0 || res1 || res2 || (res3 || res4 || res5);
+            
+            // Apply search filter
+            bool passesSearchFilter = true;
+            if (_searchQuery.isNotEmpty) {
+              passesSearchFilter = element.shotHeader.title.toLowerCase().contains(_searchQuery.toLowerCase());
+            }
+
+            return passesFilterMode && passesSearchFilter;
           },
         )
         .map((p) => DropdownMenuItem(
@@ -134,35 +150,119 @@ class ProfileSelectState extends State<ProfileSelect> {
       if (items.isNotEmpty) _selectedProfile = items[0].value;
     }
 
-    return Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
-          child: items.isNotEmpty
-              ? DropdownButton(
-                  isExpanded: false,
-                  alignment: Alignment.centerLeft,
-                  value: _selectedProfile,
-                  items: items,
-                  // itemHeight: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedProfile = value!;
-                      profileService.setProfile(_selectedProfile!);
-                      // calcProfileGraph();
-                      // phases = _createPhases();
-                    });
-                    if (widget.onChanged != null) {
-                      widget.onChanged!(_selectedProfile!);
-                    }
-                  },
-                  hint: const Text("Select item"))
-              : const Text("No profiles found for selection"),
+        // Search TextField
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: TextField(
+            controller: searchController,
+            focusNode: searchFocusNode,
+            decoration: InputDecoration(
+              hintText: 'Search profiles...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchController.clear();
+                          _searchQuery = '';
+                          _showSearchResults = false;
+                        });
+                      },
+                    )
+                  : null,
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+                _showSearchResults = value.isNotEmpty;
+              });
+            },
+          ),
         ),
-        SizedBox(width: 50, child: renderFilterDropdown(context, items)),
-        // Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: renderFilterDropdown(context, items),
-        // ),
+        // Show filtered list when searching
+        if (_showSearchResults && _searchQuery.isNotEmpty)
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.3,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(4),
+                color: Theme.of(context).cardColor,
+              ),
+              child: items.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final profile = items[index].value!;
+                        return ListTile(
+                          title: Text("${profile.shotHeader.title}${profile.isDefault ? '' : ' *'}"),
+                          selected: _selectedProfile?.id == profile.id,
+                          onTap: () {
+                            setState(() {
+                              _selectedProfile = profile;
+                              profileService.setProfile(_selectedProfile!);
+                              searchController.clear();
+                              _searchQuery = '';
+                              _showSearchResults = false;
+                              searchFocusNode.unfocus();
+                            });
+                            if (widget.onChanged != null) {
+                              widget.onChanged!(_selectedProfile!);
+                            }
+                          },
+                        );
+                      },
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("No profiles found"),
+                    ),
+            ),
+          ),
+        // Existing Row with Dropdown and Filter (only show when not searching)
+        if (!_showSearchResults)
+          Row(
+            children: [
+              Expanded(
+                child: items.isNotEmpty
+                    ? DropdownButton(
+                        isExpanded: false,
+                        alignment: Alignment.centerLeft,
+                        value: _selectedProfile,
+                        items: items,
+                        // itemHeight: 40,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedProfile = value!;
+                            profileService.setProfile(_selectedProfile!);
+                            // Clear search after selection
+                            searchController.clear();
+                            _searchQuery = '';
+                            // calcProfileGraph();
+                            // phases = _createPhases();
+                          });
+                          if (widget.onChanged != null) {
+                            widget.onChanged!(_selectedProfile!);
+                          }
+                        },
+                        hint: const Text("Select item"))
+                    : const Text("No profiles found for selection"),
+              ),
+              SizedBox(width: 50, child: renderFilterDropdown(context, items)),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: renderFilterDropdown(context, items),
+              // ),
+            ],
+          ),
       ],
     );
   }
