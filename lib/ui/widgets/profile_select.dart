@@ -139,8 +139,10 @@ class ProfileSelectState extends State<ProfileSelect> {
             ))
         .toList()
         .sortedBy((element) => element.value?.title ?? "");
-    // Check if we need to fallback
-    if (_selectedProfile != null &&
+    // Check if we need to fallback - only reset selection if not searching
+    // When searching, keep the current selection even if it's not visible in filtered results
+    if (_searchQuery.isEmpty &&
+        _selectedProfile != null &&
         null ==
             items.firstWhereOrNull(
               (element) {
