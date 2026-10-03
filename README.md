@@ -25,6 +25,7 @@ For a normal build it should just work.
 - decent de1 (tested with 1.43 hardware)
 - Atomax Skale 2 (thx for sponsoring us!)
 - Acaia Lunar '21
+- Acaia Pearl '21, Pearl S, Pyxis
 - Eureka
 - Decent scale
 

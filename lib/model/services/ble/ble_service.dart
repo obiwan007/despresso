@@ -173,7 +173,10 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
   static isSupportedScale(ble.DiscoveredDevice device) {
     if (device.name.startsWith('ACAIA') || device.name.startsWith('PROCHBT')) {
       return true;
-    } else if (device.name.startsWith('PEARLS') || device.name.startsWith('LUNAR') || device.name.startsWith('PYXIS')) {
+    } else if (device.name.startsWith('PEARLS') ||
+        device.name.startsWith('PEARL-') ||
+        device.name.startsWith('LUNAR') ||
+        device.name.startsWith('PYXIS')) {
       return true;
     } else if (device.name.startsWith('CFS-9002')) {
       return true;
@@ -224,6 +227,7 @@ class BLEService extends ChangeNotifier implements DeviceCommunication {
           AcaiaScale(device, this).addListener(() => _checkdevice(device));
           _devicesList.add(device);
         } else if (device.name.startsWith('PEARLS') ||
+            device.name.startsWith('PEARL-') ||
             device.name.startsWith('LUNAR') ||
             device.name.startsWith('PYXIS')) {
           log.info('Creating AcaiaPYXIS Scale!');

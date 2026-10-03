@@ -17,3 +17,7 @@
 ## 1.0.20
 
 - Home Assistant MQTT autodiscovery now contains correct temperatures
+
+## 1.0.21
+
+- Acaia Pearl 2021 is now detected (advertises as PEARL-xxxx)

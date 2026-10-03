@@ -18,6 +18,7 @@ int instances = 0;
 ///Lunar 2021,
 ///PYXIS
 ///PEARLS
+///PEARL 2021
 class AcaiaPyxisScale extends ChangeNotifier implements AbstractScale {
   var log = l.Logger('AcaiaPyxisScale');
 

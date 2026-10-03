@@ -364,6 +364,7 @@ class CHService extends ChangeNotifier implements DeviceCommunication {
           Future.delayed(delay, () => AcaiaScale(device, this).addListener(() => _checkdevice(device)));
           _devicesList.add(device);
         } else if (device.name.startsWith('PEARLS') ||
+            device.name.startsWith('PEARL-') ||
             device.name.startsWith('LUNAR') ||
             device.name.startsWith('PYXIS')) {
           log.info('Creating AcaiaPYXIS Scale!');
