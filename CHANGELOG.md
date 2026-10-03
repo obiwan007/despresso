@@ -20,4 +20,4 @@
 
 ## 1.0.21
 
-- Acaia Pearl 2021 is now detected (advertises as PEARL-xxxx)
+- Acaia Pearl 2021 is now detected (advertises as PEARL-xxxx). With the latest Acaia firmware, pair the scale in Android Bluetooth settings before connecting in the app.
